@@ -1,221 +1,166 @@
-# Anatomical Mixture-of-Experts (AnatomicalMoEPool)
+# Anatomical Mixture-of-Experts
 
-Within-volume soft mixture-of-experts that replaces the per-slice mean-pool in the OCT
-fine-tune pipeline. Adapted from MAMMOTH (Shao et al., ICLR 2026). Default behavior is
-unchanged when `pool_type: mean` (or omitted) in the config — the new path is fully opt-in.
+A volume-scope soft mixture-of-experts that aggregates ViT patch features from
+an OCT volume into `E·S` learned anatomical prototype tokens. Each prototype
+softly pools the patches resembling it (in `H` independent feature subspaces),
+with axial position embeddings allowing prototypes to specialize by retinal
+layer × axial slice position. Adapted from MAMMOTH (Shao et al., ICLR 2026)
+applied at OCT-volume scope.
 
-## 1. Motivation
+## Architecture
 
-The standard pipeline collapses 256 patch tokens per slice into a single 768-d slice token
-via `out.mean(dim=1)`. This is the only lossy aggregation step in the OCT downstream pipeline
-and discards within-slice anatomical structure (vitreous, RNFL, IPL, INL, OPL, ONL, RPE,
-choroid, sclera).
+| Stage | Shape |
+|---|---|
+| ViT-B/16 per slice | `(S, P, D) = (64, 256, 768)` |
+| `+ axial_pos_embed[s]` | `(B, S, P, D)` |
+| Flatten | `(B, S·P, D) = (B, 16384, 768)` |
+| AnatomicalMoEPool | `(B, E·S, D) = (B, 32, 768)` |
+| Probe | `(B, D)` |
+| Linear head | `(B, 1)` |
 
-AnatomicalMoEPool replaces that mean with a learned soft mixture of `E*S` slot prototypes.
-Each prototype softly pools the patches that most resemble it; together the `E*S` prototypes
-form an anatomical decomposition of each volume. The probe then operates on these prototype
-tokens.
+Defaults: `E=8` experts × `S=4` slots = 32 prototypes; `H=8` heads;
+`head_dim = D/H = 96` (with `skip_wq=True`); `lora_rank = 16`.
 
-## 2. Architecture overview
+## Routing
 
-| Stage | Shape (volume) | Notes |
-|---|---|---|
-| Encoder per slice | `(64, 256, 768)` | ViT-B/16, 16x16 patch grid per slice |
-| Stack across slices | `(B, 64, 256, 768)` | one slice = 256 patches |
-| `+ axial_pos_embed[s]` (volume scope only) | `(B, 64, 256, 768)` | broadcast over patches; encodes axial slice position |
-| Reshape (volume scope) | `(B, 16384, 768)` | one MoE call per volume |
-| AnatomicalMoEPool | `(B, E*S, 768)` | E=8, S=4 by default → 32 prototypes per volume |
-| Probe | `(B, 768)` | MeanPool / CrossAttnPool / AttentiveProbe (no pos_embed in MoE path) |
-| Linear head | `(B, 1)` | binary glaucoma logit |
+Patch tokens `x ∈ ℝ^{B×N×D}` (with `N = S·P`) are routed to slot prototypes
+`Φ ∈ ℝ^{E×H×S×d_h}`, where `d_h = D/H`. Splitting `x` into `H` head subspaces
+`x_h ∈ ℝ^{B×N×H×d_h}` and normalizing both `x_h` and `Φ`:
 
-## 3. Math, step by step
+$$
+\ell_{n,e,h,s} = \frac{1}{\sqrt{d_h}} \langle x_{n,h},\, \Phi_{e,h,s} \rangle
+$$
 
-For one volume input to the aggregator (volume scope, `skip_wq=True`, `E=8, S=4, H=8`,
-`head_dim=96`, `lora_rank=16`):
+Soft assignment by softmax **over tokens** (not experts):
 
-```
-x:                       (B, N=16384, 768)            after axial pos add + flatten
-q  = LayerNorm(x)        (B, N, 768)                  no wq projection (skip_wq=True)
-q_heads = q.view(...)    (B, N, H=8, head_dim=96)     split into 8 heads
+$$
+a_{n,e,h,s} = \frac{\exp(\ell_{n,e,h,s})}{\sum_{n'}\exp(\ell_{n',e,h,s})}
+$$
 
-# Routing logits (per-head similarity vs slot prototypes), scaled by 1/sqrt(head_dim)
-slot_embeds:             (E=8, H=8, S=4, head_dim=96)  trainable prototypes
-logits = einsum(q_heads, slot_embeds_norm) * head_dim**-0.5
-                         (B, N, E, H, S)
+Each slot is a soft summary of the patches that match its prototype:
 
-# Soft slot pooling: softmax over TOKENS (not over experts)
-dispatch = softmax(logits, dim=N=tokens)
-                         (B, N, E, H, S)              each (e,h,s) sums to 1 over N
-slots = einsum(q_heads, dispatch)
-                         (B, E, H, S, head_dim=96)   weighted patch summary per (e,h,s)
+$$
+u_{e,h,s} = \sum_n a_{n,e,h,s}\, x_{n,h}
+$$
 
-# Factorized expert: shared Phi (per head) + per-expert W_low
-r = einsum(slots, Phi) + Phi_bias
-                         (B, E, H, S, lora=16)
-r = ReLU(r)
-z = einsum(r, W_low) + W_low_bias
-                         (B, E, H, S, out_per_head=96)
+The `1/√d_h` scaling is necessary for soft pooling: without it, with `d_h = 96`
+softmax over `N = 16384` collapses to near-hard top-2 selection (top-1
+weight ≈ 0.74; ≈ 2.8 effective tokens routed). With scaling: top-1 ≈ 0.002,
+≈ 10 K effective tokens.
 
-# Concat heads back to embed_dim per (E,S) prototype
-z = z.permute(...).reshape(B, E*S, embed_dim)
-                         (B, 32, 768)
-z = LayerNorm(z)
-```
+## Factorized expert
 
-Routing scaling is critical: without `1/sqrt(head_dim)`, with `head_dim=96` the dot products
-have std ~10, which collapses softmax-over-16k-tokens to near-hard top-2 selection
-(top-1 weight ~0.74, ~2.8 effective tokens routed). With scaling: top-1 weight ~0.002,
-~10K effective tokens routed — true soft pooling.
+Per-slot summaries `u ∈ ℝ^{B×E×H×S×d_h}` are projected to output dim through a
+factorized two-stage MLP. The first stage `Φ̃ ∈ ℝ^{H×d_h×r}` is shared across
+experts within a head; the second stage `W_e ∈ ℝ^{E×H×r×d_o}` is per-expert
+(`r = 16`, `d_o = D/H = 96`):
 
-## 4. Configuration
+$$
+z_{e,h,s} = W_{e,h}\, \mathrm{ReLU}(\tilde\Phi_h\, u_{e,h,s} + b_{1,h}) + b_{2,e,h}
+$$
 
-Recommended config for OCT (also in `configs/downstream_patch_anatomical_moe.yaml`):
+Heads are concatenated to recover `D` per `(E, S)` prototype, followed by
+`LayerNorm`. Output: `(B, E·S, D)`.
+
+## Axial position embedding
+
+Axial slice index is added as a `(1, S, 1, D)` tensor before flattening:
+
+$$
+\tilde x_{s,p} = x_{s,p} + p_s
+$$
+
+`learned`: trainable `nn.Parameter`, registered in the optimizer and
+checkpoint. `sincos`: 1D sinusoidal buffer. `none`: no axial encoding.
+
+Axial pos is essential for OCT volume scope. Without it, the MoE cannot
+distinguish slice 30 from slice 60 because per-slice features are similar in
+content but anatomically distinct (e.g., peripapillary RNFL vs. macular RNFL).
+
+## Configuration
 
 ```yaml
 model:
-  freeze_encoder: false       # MUST be false; frozen path raises NotImplementedError for MoE
+  freeze_encoder: false
   probe_type: cross_attn_pool
-  probe_depth: 1
   head_type: linear
   pool_type: anatomical_moe
   anatomical_moe:
-    moe_scope: volume         # one MoE call per volume (recommended)
-    skip_wq: true             # route directly in encoder feature space
-    axial_pos_embed: learned  # adds (1, num_slices, 1, embed_dim) trainable
-    num_experts: 8            # E
-    num_slots: 4              # S
-    num_heads: 8              # H — independent routing subspaces
-    slot_dim: 256             # ignored when skip_wq=true
-    lora_rank: 16             # bottleneck rank for factorized experts
-    share_phi: true           # share Phi matrix across experts within a head
-    dropout: 0.0
+    moe_scope: volume
+    skip_wq: true
+    axial_pos_embed: learned
+    num_experts: 8
+    num_slots: 4
+    num_heads: 8
+    lora_rank: 16
+    share_phi: true
 training:
-  layer_decay: 0.5            # LLRD on encoder
+  layer_decay: 0.5
   lr_probe: 2.0e-4
   lr_encoder: 2.0e-4
-  lr_head: 2.0e-4
   weight_decay: 0.05
   epochs: 50
-  patience: 15
   warmup_epochs: 5
   accum_steps: 16
-  dropout: 0.1
 data:
-  batch_size: 1               # fine-tune scale; effective batch via accum_steps
-  num_slices: 64              # axial_pos_embed shape locks to this
+  batch_size: 1
+  num_slices: 64
 ```
 
-### Config knobs (model.anatomical_moe)
+| Knob | Default | Effect |
+|---|---|---|
+| `moe_scope` | `volume` | one MoE call per volume; `per_slice` available as ablation |
+| `skip_wq` | `false` | when `true`, route in encoder feature space (`slot_dim = D`) |
+| `axial_pos_embed` | `none` \| `learned` \| `sincos` | per-slice position injection |
+| `num_experts (E)` | 8 | number of prototype groups |
+| `num_slots (S)` | 4 | slots per expert |
+| `num_heads (H)` | 8 | independent routing subspaces |
+| `lora_rank` | 16 | bottleneck for factorized expert |
+| `share_phi` | `true` | share `Φ̃` across experts within a head |
 
-| Key | Type | Default | Notes |
-|---|---|---|---|
-| `moe_scope` | `'per_slice'` \| `'volume'` | `'per_slice'` | volume = one MoE call per volume; per_slice = one per slice (legacy/ablation) |
-| `skip_wq` | bool | `false` | when true, `slot_dim` forced to `embed_dim` and `wq` is `nn.Identity` |
-| `axial_pos_embed` | `'none'` \| `'learned'` \| `'sincos'` | `'none'` | only honored when `moe_scope=volume` |
-| `num_experts` (E) | int | 8 | number of expert prototype groups |
-| `num_slots` (S) | int | 4 | slots per expert |
-| `num_heads` (H) | int | 8 | independent routing subspaces |
-| `slot_dim` | int | 256 | routing space dim (ignored when `skip_wq=true`) |
-| `lora_rank` | int | 16 | bottleneck for factorized experts |
-| `share_phi` | bool | `true` | share Phi across experts within a head |
-| `dropout` | float | 0.0 | dropout on slot prototypes |
+## Parameters
 
-### Mode selection cheat-sheet
+Volume scope, `E=8, S=4, H=8, lora=16, skip_wq=true, D=768`:
 
-| `pool_type` | `freeze_encoder` | Path entered | MoE active? |
-|---|---|---|---|
-| `mean` (default / omitted) | `true` (default) | `run_patch_downstream` (frozen probe) | no — original mean-pool |
-| `mean` | `false` | `run_patch_finetune` | no — original mean-pool |
-| `anatomical_moe` | `true` | `run_patch_downstream` | **raises `NotImplementedError`** |
-| `anatomical_moe` | `false` | `run_patch_finetune` | **yes** — recommended path |
+| Component | Shape | Count |
+|---|---|---|
+| Slot prototypes | `(E, H, S, d_h)` | 24,576 |
+| `Φ̃` (shared) | `(H, d_h, r)` | 12,288 |
+| `W_e` (per-expert) | `(E, H, r, d_o)` | 98,304 |
+| Biases + LayerNorms |  | 9,536 |
+| **AnatomicalMoEPool** |  | **144,704** |
+| Axial pos embed (learned) | `(1, S, 1, D)` | 49,152 |
+| **Total** |  | **193,856** |
 
-## 5. Where the slice count is baked in
+CrossAttnPool: 277 K. AttentiveProbe d=1: 7.17 M. AnatomicalMoEPool sits
+below both at comparable expressivity.
 
-The aggregator itself is shape-agnostic over the token axis (works on any `N`). The
-constraint comes from `axial_pos_embed`:
+## Memory (FT batch=1, accum=16, fp16)
 
-| `axial_pos_embed` | num_slices flexibility |
+| Component | Memory |
 |---|---|
-| `none` | any num_slices works (no axial info encoded) |
-| `learned` | tensor shape `(1, num_slices, 1, embed_dim)` — **locks to training num_slices** |
-| `sincos` | precomputed buffer of same shape — also locks at construction |
+| ViT-B/16 forward | ~600 MB |
+| AnatomicalMoEPool activations | ~70 MB |
+| Probe on 32 tokens | <2 MB |
+| Backward + AdamW state | ~2 GB |
+| **Total** | **~3 GB** |
 
-This is the same constraint as ViT pos_embed locking to a specific image size. Standard
-deployment workarounds (resize input to match training num_slices, or interpolate
-`axial_pos_embed` at load time) apply. See [`docs/design/anatomical_moe_integration.md`](../design/anatomical_moe_integration.md)
-section 9.2 for details.
+## Slice-count constraint
 
-## 6. Parameter budget
+The aggregator is shape-agnostic over `N`. The constraint comes from
+`axial_pos_embed`: `learned` and `sincos` are fixed-shape tensors of size
+`(1, S_train, 1, D)`. Inference at a different `S` requires (a) resampling
+the input to `S_train` slices, or (b) interpolating the axial embedding at
+load time. Same constraint as ViT pos_embed at variable image size.
 
-Default volume-scope config (`E=8, S=4, H=8, slot_dim=embed_dim=768, lora=16`,
-`skip_wq=true`):
-
-```
-slot_embeds  (E=8, H=8, S=4, head_dim=96)         24,576
-phi           (H=8, head_dim=96, lora=16)         12,288
-phi_bias      (H=8, lora=16)                          128
-expert_w     (E=8, H=8, lora=16, out_per_head=96)  98,304
-expert_b     (E=8, H=8, out_per_head=96)            6,144
-LayerNorms (norm_q, norm_slots, norm_out)           3,264
-─────────────────────────────────────────────────────────
-AnatomicalMoEPool                                ~144,704
-
-axial_pos_embed (1, 64, 1, 768) learned            49,152
-─────────────────────────────────────────────────────────
-Total added by MoE path                          ~193,856
-```
-
-For comparison: CrossAttnPool probe is ~277K params; AttentiveProbe d=1 is ~7.17M.
-Volume MoE + learned axial sits below CrossAttnPool in size.
-
-## 7. Memory profile (16 GB GPU, FT batch=1, accum=16, fp16)
-
-```
-Encoder forward (per chunk):              ~600 MB
-Volume MoE on (B=1, 16384, 768):          ~70 MB activations
-Probe (any) on 32 prototype tokens:        <2 MB
-Forward total:                            ~700 MB
-+ Backward + AdamW states:                ~3 GB total
-─────────────────────────────────────────────────────
-Comfortable on 16 GB
-```
-
-## 8. Implementation files
+## Files
 
 | Path | Role |
 |---|---|
-| `src/models/anatomical_moe_pool.py` | `AnatomicalMoEPool` module |
-| `src/eval_downstream.py` | `_build_aggregator`, `_build_probe`, `DownstreamModel`, `build_finetune_param_groups` |
-| `configs/downstream_patch_anatomical_moe.yaml` | Example fine-tune config |
-| `scripts/run_downstream.sh` | AML launcher (exposes `POOL_TYPE`, `MOE_*` env vars) |
-| `scripts/test_anatomical_moe_pool.py` | Module-level unit tests |
-| `scripts/test_anatomical_moe_integration.py` | Integration tests including regression guards |
-| `docs/design/anatomical_moe_integration.md` | Design rationale and audit history |
-
-## 9. Backward compatibility
-
-- Setting `pool_type: mean` (or omitting it) reproduces the existing mean-pool flow exactly.
-- `CrossAttnPool` and `AttentiveProbe` constructors gained `use_pos_embed=True` default,
-  preserving the original RNG init order so same-seed runs match historical numbers
-  bit-for-bit.
-- Frozen-probe path (`run_patch_downstream`) raises `NotImplementedError` for
-  `pool_type != mean` — fail-fast rather than silently running the baseline. Frozen MoE
-  wiring is tracked as a follow-up (see design doc).
-
-## 10. Regression test coverage
-
-| Test | What it guards |
-|---|---|
-| `test_routing_scaling_keeps_dispatch_soft` | Routing logits are scaled by `1/sqrt(head_dim)`; without scaling, soft pool collapses to near-hard top-k at `head_dim=96` |
-| `test_finetune_param_groups_includes_axial_pos_embed` | Learnable axial pos embed is included in optimizer groups (was a P0: param had grad but was never stepped) |
-| `test_checkpoint_save_load_round_trip` | `aggregator` + `axial_pos_embed` survive a save/load round-trip with byte-equal values |
-| `test_checkpoint_missing_axial_raises` | Loading an old checkpoint into an MoE-configured model raises a clear error rather than silently leaving axial pos embed at random init |
-| `test_rng_init_order_preserved_for_default` | `CrossAttnPool` and `AttentiveProbe` default constructors produce the same Linear weights for the same seed as before the `use_pos_embed` flag was added |
-| `test_downstream_model_rejects_pos_embed_with_aggregator` | Hard `ValueError` if a probe with `use_pos_embed=True` is paired with an aggregator |
-| `test_downstream_model_rejects_unknown_scope` | Hard `ValueError` for typos in `moe_scope` |
-
-Run with:
-```
-python scripts/test_anatomical_moe_pool.py
-python scripts/test_anatomical_moe_integration.py
-```
+| `src/models/anatomical_moe_pool.py` | Module |
+| `src/eval_downstream.py` | Factory, `DownstreamModel`, optimizer, checkpoint |
+| `configs/downstream_patch_anatomical_moe.yaml` | Example FT config |
+| `scripts/run_downstream.sh` | Launcher (`POOL_TYPE`, `MOE_*` env vars) |
+| `scripts/test_anatomical_moe_pool.py` | Unit tests |
+| `scripts/test_anatomical_moe_integration.py` | Integration + regression tests |
+| `docs/design/anatomical_moe_integration.md` | Design rationale |

@@ -111,6 +111,61 @@ Axial pos is essential for OCT volume scope. Without it, the MoE cannot
 distinguish slice 30 from slice 60 because per-slice features are similar in
 content but anatomically distinct (e.g., peripapillary RNFL vs. macular RNFL).
 
+## Expected behavior
+
+Slots are not labeled or supervised — they emerge from end-to-end training.
+Empirically in MAMMOTH (histopathology), slots converged on named morphological
+concepts (tumor cells, stroma, lymphocytes, alveoli, red blood cells) verified
+by two board-certified pathologists and a vision-language concept-alignment
+score. Convergence happened within the first epoch because UNI features
+already clustered by morphology at initialization.
+
+The same mechanism is expected to apply to OCT, with a different concept set —
+retinal-layer × axial-position rather than tissue morphology. Predicted
+specializations for `E·S = 32` slots:
+
+| Concept | Expected routing pattern |
+|---|---|
+| Peripapillary RNFL | upper-retinal patches, native slices ~63 (and ~138 OD/OS mirror) |
+| Macular RNFL/GCL | upper-retinal patches, native slices ~95 |
+| Foveal pit | central column, ~3 central slices, characteristic depression |
+| OPL/INL boundary | mid-retinal patches, all slices |
+| ONL / photoreceptors | lower-mid retina, hyper-reflective |
+| RPE / Bruch's membrane | thin high-reflectance band, all slices |
+| Choroid | below RPE, all slices |
+| Vitreous / above-ILM | top rows of every slice, low signal |
+| Sclera / below-choroid | bottom rows |
+
+`E·S = 32` is more slots than named retinal layers (~12), so some slots will
+likely overlap or capture sub-regional variants (e.g., separate slots for
+peripapillary RNFL vs. macular RNFL despite both being "RNFL").
+
+## Validation
+
+Three checks adapted from the MAMMOTH validation protocol:
+
+1. **Routing heatmaps.** For each slot, render dispatch weights over the
+   `(slice, row, col)` grid. Two views per slot: a 2D heatmap on a representative
+   slice (spatial structure within slice) and a 1D curve over the slice axis
+   (axial specialization). Inspect for clean axial localization at expected
+   anatomical depths.
+2. **Anatomical alignment.** Use a public retinal-layer segmentation model
+   (e.g., ReLayNet) to label each patch's dominant layer. For each slot,
+   compute the average routing-weight-weighted layer distribution → a
+   `(slots × layers)` matrix. A specialized slot has a peaked row; an
+   un-specialized slot is uniform. Sort rows by entropy as the diagnostic.
+3. **Emergence dynamics.** Save the routing weights at every checkpoint epoch
+   and recompute the alignment matrix. Expectation per MAMMOTH: alignment
+   already non-trivial at epoch 0 (because the JEPA encoder pre-clusters by
+   anatomy) and stable within ~1 epoch of fine-tune. Slow or noisy
+   convergence indicates encoder features don't cluster by anatomy as
+   strongly as UNI does for histology — a result worth reporting either way.
+
+Optional clinical validation: ophthalmologist eyeballs the per-slot heatmaps
+on 5–10 representative volumes (one glaucoma, one healthy, sample of others)
+and names what each top-N slot is attending to. Equivalent to MAMMOTH's
+pathologist step.
+
 ## Configuration
 
 ```yaml

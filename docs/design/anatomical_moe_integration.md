@@ -1,6 +1,6 @@
 # Design: Integrating AnatomicalMoEPool into the Downstream Pipeline
 
-**Status**: 2026-05-04 (revised), branch `cvpr-anatomical-moe`. **Uncommitted**.
+**Status**: 2026-05-04 (revised), branch `volume-moe`.
 **Module**: `src/models/anatomical_moe_pool.py`.
 
 > **Important note for readers (current state):**

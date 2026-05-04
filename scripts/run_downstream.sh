@@ -195,6 +195,21 @@ model:
   probe_depth: ${PROBE_DEPTH}
   probe_head_dim: ${PROBE_HEAD_DIM}
   head_type: ${HEAD_TYPE}
+  # Optional AnatomicalMoEPool path (default 'mean' = existing behavior).
+  # Only honored by run_patch_finetune (freeze_encoder: false). The frozen
+  # path raises NotImplementedError for non-'mean' pool_type.
+  pool_type: ${POOL_TYPE:-mean}
+  anatomical_moe:
+    moe_scope: ${MOE_SCOPE:-volume}
+    skip_wq: ${MOE_SKIP_WQ:-true}
+    axial_pos_embed: ${MOE_AXIAL_POS:-learned}
+    num_experts: ${MOE_NUM_EXPERTS:-8}
+    num_slots: ${MOE_NUM_SLOTS:-4}
+    num_heads: ${MOE_NUM_HEADS:-8}
+    slot_dim: ${MOE_SLOT_DIM:-256}
+    lora_rank: ${MOE_LORA_RANK:-16}
+    share_phi: ${MOE_SHARE_PHI:-true}
+    dropout: ${MOE_DROPOUT:-0.0}
 training:
   lr_probe: ${LR_PROBE}
   lr_encoder: ${LR_ENCODER}

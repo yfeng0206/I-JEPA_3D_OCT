@@ -57,32 +57,51 @@ import torch.nn as nn
 
 
 class CrossAttnPool(nn.Module):
-    """Minimal cross-attention pool: single-head, no FFN, axial pos_embed.
+    """Minimal cross-attention pool: single-head, no FFN, optional axial pos_embed.
 
     Args:
-        num_slices: number of slice tokens per volume (S in (B, S, D))
-        embed_dim: feature dim of each slice token (D)
-        head_dim: dimensionality of the compressed attention space
+        num_slices: number of slice tokens per volume (N in (B, N, D))
+        embed_dim:  feature dim of each token (D)
+        head_dim:   dimensionality of the compressed attention space
+        use_pos_embed: if True (default, original behavior), an axial pos_embed
+            of shape (1, num_slices, D) is added before attention. If False
+            (e.g. AnatomicalMoEPool path where prototype tokens have no
+            intrinsic axial ordering), the layer is permutation-equivariant.
     """
 
-    def __init__(self, num_slices=100, embed_dim=768, head_dim=64):
+    def __init__(self, num_slices=100, embed_dim=768, head_dim=64,
+                 use_pos_embed=True):
         super(CrossAttnPool, self).__init__()
         self.head_dim = head_dim
         self.scale = head_dim ** -0.5
+        self.use_pos_embed = use_pos_embed
+        # NB: parameter creation and initialization order is preserved from
+        # the original (pre-use_pos_embed-flag) layout so that same-seed runs
+        # produce identical Linear weights. See audit P1 ("RNG init order").
         self.query = nn.Parameter(torch.zeros(1, 1, embed_dim))
-        self.pos_embed = nn.Parameter(torch.zeros(1, num_slices, embed_dim))
+        if use_pos_embed:
+            self.pos_embed = nn.Parameter(torch.zeros(1, num_slices, embed_dim))
+        else:
+            self.pos_embed = None
         self.q_proj = nn.Linear(embed_dim, head_dim, bias=True)
         self.k_proj = nn.Linear(embed_dim, head_dim, bias=True)
         self.v_proj = nn.Linear(embed_dim, head_dim, bias=True)
         self.o_proj = nn.Linear(head_dim, embed_dim, bias=True)
         self.norm = nn.LayerNorm(embed_dim)
         nn.init.trunc_normal_(self.query, std=0.02)
-        nn.init.trunc_normal_(self.pos_embed, std=0.02)
+        if use_pos_embed:
+            nn.init.trunc_normal_(self.pos_embed, std=0.02)
 
     def forward(self, x):
-        """x: (B, num_slices, embed_dim) -> (B, embed_dim)."""
+        """x: (B, N, embed_dim) -> (B, embed_dim).
+
+        N is num_slices in the standard mean-pool path, or num_slices*E*S
+        in the AnatomicalMoEPool path. When use_pos_embed=False, the layer
+        is permutation-equivariant over N.
+        """
         B = x.size(0)
-        x = x + self.pos_embed
+        if self.use_pos_embed:
+            x = x + self.pos_embed
         q = self.q_proj(self.query.expand(B, -1, -1))   # (B, 1, head_dim)
         k = self.k_proj(x)                               # (B, S, head_dim)
         v = self.v_proj(x)                               # (B, S, head_dim)

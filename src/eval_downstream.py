@@ -67,35 +67,122 @@ from src.models.vision_transformer import (
     VisionTransformer, SliceEncoder, Block, VIT_EMBED_DIMS,
 )
 from src.models.attentive_pool_minimal import CrossAttnPool, MeanPool
+from src.models.anatomical_moe_pool import AnatomicalMoEPool
 
 _PROBE_TYPES = ('attentive', 'cross_attn_pool', 'mean_pool')
+_POOL_TYPES = ('mean', 'anatomical_moe')
+_MOE_SCOPES = ('per_slice', 'volume')
+_AXIAL_POS_TYPES = ('none', 'learned', 'sincos')
 
 
-def _build_probe(probe_type, num_slices, embed_dim, model_cfg, device):
-    """Instantiate the slice-aggregation probe. Fails fast on unknown types."""
+def _build_aggregator(model_cfg, embed_dim, num_slices, device):
+    """Build the patch aggregator and report the resulting probe shape.
+
+    Args:
+        num_slices: dataset's per-volume slice count, needed to compute the
+            total token count the probe will see.
+
+    Returns a tuple:
+        aggregator: nn.Module or None (None for mean-pool path)
+        probe_num_tokens: int — sequence length the probe will see
+        moe_scope: 'per_slice' | 'volume' | 'none'  (selects DownstreamModel branch)
+        axial_pos_embed_type: 'none' | 'learned' | 'sincos' (volume scope only)
+        desc: human-readable summary
+
+    Pool-type → behavior:
+      - 'mean' (default): aggregator=None, probe sees (B, num_slices, D).
+      - 'anatomical_moe' + moe_scope='per_slice': aggregator runs once per
+        slice; probe sees (B, num_slices*E*S, D).
+      - 'anatomical_moe' + moe_scope='volume': aggregator runs ONCE on the
+        concatenated (B, num_slices*P, D) patch sequence; probe sees
+        (B, E*S, D). For OCT, pair this with axial_pos_embed_type='learned'
+        so prototypes can specialize by axial slice position.
+    """
+    pool_type = model_cfg.get('pool_type', 'mean')
+    if pool_type not in _POOL_TYPES:
+        raise ValueError(
+            "Unknown pool_type=%r. Valid values: %s"
+            % (pool_type, ', '.join(_POOL_TYPES)))
+    if pool_type == 'mean':
+        return None, num_slices, 'none', 'none', 'mean'
+
+    cfg = model_cfg.get('anatomical_moe', {}) or {}
+    moe_scope = cfg.get('moe_scope', 'per_slice')
+    axial_type = cfg.get('axial_pos_embed', 'none')
+    skip_wq = cfg.get('skip_wq', False)
+    if moe_scope not in _MOE_SCOPES:
+        raise ValueError("Unknown moe_scope=%r. Valid: %s"
+                         % (moe_scope, ', '.join(_MOE_SCOPES)))
+    if axial_type not in _AXIAL_POS_TYPES:
+        raise ValueError("Unknown axial_pos_embed=%r. Valid: %s"
+                         % (axial_type, ', '.join(_AXIAL_POS_TYPES)))
+
+    aggregator = AnatomicalMoEPool(
+        embed_dim=embed_dim,
+        num_experts=cfg.get('num_experts', 8),
+        num_slots=cfg.get('num_slots', 4),
+        num_heads=cfg.get('num_heads', 8),
+        slot_dim=cfg.get('slot_dim', 256),
+        lora_rank=cfg.get('lora_rank', 16),
+        share_phi=cfg.get('share_phi', True),
+        skip_wq=skip_wq,
+        dropout=cfg.get('dropout', 0.0),
+    ).to(device)
+
+    n_proto = aggregator.num_experts * aggregator.num_slots  # E*S
+    if moe_scope == 'per_slice':
+        probe_num_tokens = num_slices * n_proto
+    else:  # 'volume'
+        probe_num_tokens = n_proto
+
+    desc = ('anatomical_moe (E=%d S=%d H=%d, scope=%s, skip_wq=%s, axial=%s '
+            '-> probe sees %d tokens)'
+            % (aggregator.num_experts, aggregator.num_slots,
+               aggregator.num_heads, moe_scope, skip_wq, axial_type,
+               probe_num_tokens))
+    return aggregator, probe_num_tokens, moe_scope, axial_type, desc
+
+
+def _build_probe(probe_type, num_tokens, embed_dim, model_cfg, device,
+                 use_pos_embed=True):
+    """Instantiate the slice-aggregation probe. Fails fast on unknown types.
+
+    Args:
+        num_tokens: sequence length the probe will see (caller computes this
+            from the aggregator: num_slices for mean, num_slices*E*S for
+            per-slice MoE, E*S for volume MoE).
+        use_pos_embed: True for mean-pool baseline; False for MoE paths.
+            (For volume-scope MoE, axial position info is injected BEFORE
+            the aggregator via DownstreamModel.axial_pos_embed, so the probe
+            should not add another position embedding on top.)
+    """
     if probe_type not in _PROBE_TYPES:
         raise ValueError(
             "Unknown probe_type=%r. Valid values: %s"
             % (probe_type, ', '.join(_PROBE_TYPES))
         )
     if probe_type == 'mean_pool':
-        probe = MeanPool(num_slices=num_slices, embed_dim=embed_dim).to(device)
+        probe = MeanPool(num_slices=num_tokens, embed_dim=embed_dim).to(device)
         desc = 'mean_pool (0 params, ablation floor)'
     elif probe_type == 'cross_attn_pool':
         head_dim = model_cfg.get('probe_head_dim', 64)
         probe = CrossAttnPool(
-            num_slices=num_slices, embed_dim=embed_dim, head_dim=head_dim,
+            num_slices=num_tokens, embed_dim=embed_dim, head_dim=head_dim,
+            use_pos_embed=use_pos_embed,
         ).to(device)
-        desc = 'cross_attn_pool (head_dim=%d)' % head_dim
+        desc = ('cross_attn_pool (head_dim=%d, n_tokens=%d, pos_embed=%s)'
+                % (head_dim, num_tokens, use_pos_embed))
     else:  # 'attentive'
         depth = model_cfg.get('probe_depth', 2)
         probe = AttentiveProbe(
-            num_slices=num_slices,
+            num_slices=num_tokens,
             embed_dim=embed_dim,
             num_heads=model_cfg.get('probe_num_heads', 12),
             depth=depth,
+            use_pos_embed=use_pos_embed,
         ).to(device)
-        desc = 'attentive (depth=%d)' % depth
+        desc = ('attentive (depth=%d, n_tokens=%d, pos_embed=%s)'
+                % (depth, num_tokens, use_pos_embed))
     return probe, desc
 try:
     from src.models.feature_extractor import FrozenFeatureExtractor
@@ -130,10 +217,16 @@ class AttentiveProbe(nn.Module):
         Total:                     ~14,255,616
     """
 
-    def __init__(self, num_slices=100, embed_dim=768, num_heads=12, depth=2):
+    def __init__(self, num_slices=100, embed_dim=768, num_heads=12, depth=2,
+                 use_pos_embed=True):
         super(AttentiveProbe, self).__init__()
+        self.use_pos_embed = use_pos_embed
+        # NB: param creation and init order preserved to match pre-flag layout.
         self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
-        self.pos_embed = nn.Parameter(torch.zeros(1, num_slices + 1, embed_dim))
+        if use_pos_embed:
+            self.pos_embed = nn.Parameter(torch.zeros(1, num_slices + 1, embed_dim))
+        else:
+            self.pos_embed = None
         self.blocks = nn.ModuleList([
             Block(embed_dim, num_heads, mlp_ratio=4.0, qkv_bias=True)
             for _ in range(depth)
@@ -141,13 +234,20 @@ class AttentiveProbe(nn.Module):
         self.norm = nn.LayerNorm(embed_dim)
 
         nn.init.trunc_normal_(self.cls_token, std=0.02)
-        nn.init.trunc_normal_(self.pos_embed, std=0.02)
+        if use_pos_embed:
+            nn.init.trunc_normal_(self.pos_embed, std=0.02)
 
     def forward(self, x):
+        """x: (B, N, D) -> (B, D). N is num_slices in mean-pool path, or
+        num_slices*E*S in AnatomicalMoEPool path. When use_pos_embed=False,
+        we do not apply additive position embedding (encoder pos info is
+        already baked into the patch features that prototypes summarize).
+        """
         B = x.size(0)
         cls = self.cls_token.expand(B, -1, -1)
-        x = torch.cat([cls, x], dim=1)   # (B, S+1, D)
-        x = x + self.pos_embed
+        x = torch.cat([cls, x], dim=1)   # (B, N+1, D)
+        if self.use_pos_embed:
+            x = x + self.pos_embed
         for blk in self.blocks:
             x = blk(x)
         x = self.norm(x)
@@ -204,7 +304,8 @@ def cosine_schedule_with_warmup(optimizer, warmup_epochs, total_epochs, steps_pe
     return torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
 
 
-def build_finetune_param_groups(encoder, probe, head, train_cfg):
+def build_finetune_param_groups(encoder, probe, head, train_cfg, aggregator=None,
+                                axial_pos_embed=None):
     """Build AdamW param_groups for fine-tuning.
 
     If ``layer_decay`` in train_cfg is strictly in (0, 1), applies MAE-style
@@ -212,19 +313,22 @@ def build_finetune_param_groups(encoder, probe, head, train_cfg):
       - base LR = ``lr_probe`` (also used for probe / encoder.norm)
       - encoder.patch_embed + pos_embed: base * decay^(num_layers)
       - encoder.blocks[i]:               base * decay^(num_layers - (i+1))
-      - encoder.norm + probe:            base
+      - encoder.norm + probe + aggregator: base
       - head:                            ``lr_head`` (usually = base)
     For ViT-B/16 with 12 blocks and decay=0.65, the deepest layer gets
     ~0.65^13 ≈ 5.69e-3 of base; the top block gets 0.65 of base.
 
     If ``layer_decay`` is missing or >= 1.0, falls back to the older flat
-    3-group setup (encoder, probe, head) so previous configs still work.
+    setup (encoder, [aggregator], probe, head) so previous configs still work.
+
+    Args:
+        aggregator: optional within-slice aggregation module (e.g.
+            AnatomicalMoEPool). If provided, its parameters are added at the
+            base/probe LR. Pass None to retain the prior 3-group behavior.
 
     Returns ``(param_groups, mode)`` where mode is 'llrd' or 'flat'.
-    The first group is always the "deepest" / smallest-LR encoder group
-    and the last two are probe / head, so downstream logging can read
-    ``group[0]`` as the encoder floor and ``group[-2]`` / ``group[-1]``
-    as probe / head LR without branching on mode.
+    The deepest encoder group is always groups[0]; the head is always
+    groups[-1]. The probe and (if present) aggregator sit just before head.
     """
     lr_probe = train_cfg.get('lr_probe', 1e-4)
     lr_head = train_cfg.get('lr_head', lr_probe)
@@ -249,6 +353,12 @@ def build_finetune_param_groups(encoder, probe, head, train_cfg):
                            'name': f'block_{i}'})
         groups.append({'params': list(encoder.norm.parameters()), 'lr': base_lr,
                        'name': 'encoder_norm'})
+        if aggregator is not None:
+            groups.append({'params': list(aggregator.parameters()), 'lr': base_lr,
+                           'name': 'aggregator'})
+        if axial_pos_embed is not None:
+            groups.append({'params': [axial_pos_embed], 'lr': base_lr,
+                           'name': 'axial_pos_embed'})
         groups.append({'params': list(probe.parameters()), 'lr': base_lr,
                        'name': 'probe'})
         groups.append({'params': list(head.parameters()), 'lr': lr_head,
@@ -262,9 +372,15 @@ def build_finetune_param_groups(encoder, probe, head, train_cfg):
     lr_encoder = train_cfg.get('lr_encoder', 5e-6)
     groups = [
         {'params': list(encoder.parameters()), 'lr': lr_encoder, 'name': 'encoder'},
-        {'params': list(probe.parameters()), 'lr': lr_probe, 'name': 'probe'},
-        {'params': list(head.parameters()), 'lr': lr_head, 'name': 'head'},
     ]
+    if aggregator is not None:
+        groups.append({'params': list(aggregator.parameters()), 'lr': lr_probe,
+                       'name': 'aggregator'})
+    if axial_pos_embed is not None:
+        groups.append({'params': [axial_pos_embed], 'lr': lr_probe,
+                       'name': 'axial_pos_embed'})
+    groups.append({'params': list(probe.parameters()), 'lr': lr_probe, 'name': 'probe'})
+    groups.append({'params': list(head.parameters()), 'lr': lr_head, 'name': 'head'})
     groups = [g for g in groups if len(g['params']) > 0]
     return groups, 'flat'
 
@@ -318,16 +434,31 @@ def evaluate(probe, head, loader, criterion, device, return_predictions=False):
 # ---------------------------------------------------------------------------
 
 def precompute_features(encoder, data_dir, split, num_slices, slice_size,
-                        device, chunk_size=50, cache_dir=None):
+                        device, chunk_size=50, cache_dir=None,
+                        keep_patches=False):
     """Encode all volumes in a split with the frozen ViT and cache to disk.
 
+    Args:
+        keep_patches: if False (default, mean-pool path), per-slice features
+            are mean-pooled across patches → (N, num_slices, embed_dim).
+            If True (anatomical-MoE path), the raw patch features are kept
+            → (N, num_slices, num_patches, embed_dim). The downstream
+            aggregator (AnatomicalMoEPool) is then applied at probe time.
+
     Returns:
-        features: (N, num_slices, embed_dim) float32
+        features: (N, num_slices, embed_dim) if keep_patches=False
+                  (N, num_slices, num_patches, embed_dim) if keep_patches=True
         labels:   (N,) long
     """
     cache_path = None
     if cache_dir:
-        cache_path = os.path.join(cache_dir, '%s_s%d.pt' % (split, num_slices))
+        # Preserve original cache filename for the mean-pool path so existing
+        # caches remain valid. Only the new keep_patches path uses a suffix.
+        if keep_patches:
+            cache_path = os.path.join(
+                cache_dir, '%s_s%d_patches.pt' % (split, num_slices))
+        else:
+            cache_path = os.path.join(cache_dir, '%s_s%d.pt' % (split, num_slices))
         if os.path.exists(cache_path):
             print('  Loading cached %s features from %s' % (split, cache_path))
             data = torch.load(cache_path, map_location='cpu')
@@ -356,9 +487,12 @@ def precompute_features(encoder, data_dir, split, num_slices, slice_size,
                 chunk = imagenet_normalize(chunk)  # match pretraining distribution
                 with autocast():
                     out = encoder(chunk)      # (chunk, patches, D)
-                parts.append(out.mean(dim=1).cpu())  # (chunk, D)
+                if keep_patches:
+                    parts.append(out.cpu())              # (chunk, P, D)
+                else:
+                    parts.append(out.mean(dim=1).cpu())  # (chunk, D)
 
-            all_features.append(torch.cat(parts, dim=0))  # (S, D)
+            all_features.append(torch.cat(parts, dim=0))  # (S, [P,] D)
             all_labels.append(label.squeeze())
 
             if (i + 1) % 1000 == 0:
@@ -366,7 +500,7 @@ def precompute_features(encoder, data_dir, split, num_slices, slice_size,
                 print('    %s: %d/%d volumes (%.0fs)'
                       % (split, i + 1, len(dataset), elapsed))
 
-    features = torch.stack(all_features)     # (N, S, D)
+    features = torch.stack(all_features)     # (N, S, [P,] D)
     labels = torch.stack(all_labels).long()  # (N,)
     elapsed = time.time() - t0
     print('  %s: %d volumes encoded in %.0fs (%.1f vol/s)'
@@ -501,6 +635,22 @@ def run_patch_downstream(config, device):
 
     embed_dim = vit_cfg['embed_dim']
     num_slices = data_cfg['num_slices']
+
+    # ---- Hard guard: AnatomicalMoEPool is not yet wired for frozen probe ---
+    # The cached-feature frozen-probe path stores mean-pooled (N, S, D) features.
+    # AnatomicalMoEPool needs raw (N, S, P, D) patches AND requires its
+    # parameters to be in the optimizer with gradients during probe training.
+    # Wiring those changes is non-trivial (cache size 150-800 GB at fp32, plus
+    # optimizer plumbing). Until done, fail fast rather than silently run the
+    # mean-pool path while the config says anatomical_moe.
+    if model_cfg.get('pool_type', 'mean') != 'mean':
+        raise NotImplementedError(
+            "pool_type=%r is not supported in run_patch_downstream "
+            "(frozen-probe path) yet. Use run_patch_finetune (fine-tune) "
+            "or run with pool_type='mean'. The frozen-probe MoE path "
+            "requires raw-patch caching and aggregator-in-optimizer wiring "
+            "that is tracked as a follow-up TODO."
+            % model_cfg.get('pool_type'))
 
     # ---- Pre-compute features (one-time) -----------------------------------
     print('\n--- Pre-computing features with frozen encoder ---')
@@ -955,33 +1105,154 @@ def run_slice_downstream(config, device):
 # Combined model for DDP fine-tuning
 # ---------------------------------------------------------------------------
 
-class DownstreamModel(nn.Module):
-    """End-to-end model: ViT encoder + AttentiveProbe + head.
+def _build_axial_pos_embed(num_slices, embed_dim, kind):
+    """Construct an axial (slice-axis) position embedding for volume-scope MoE.
 
-    Wraps the full pipeline so DDP can sync gradients correctly.
-    Encodes slices in chunks to fit memory while preserving gradients.
+    Returns either a learnable nn.Parameter of shape (1, num_slices, 1, embed_dim)
+    or a non-trainable buffer of the same shape (1D sincos), or None.
+    """
+    if kind == 'none':
+        return None, False
+    if kind == 'learned':
+        p = nn.Parameter(torch.zeros(1, num_slices, 1, embed_dim))
+        nn.init.trunc_normal_(p, std=0.02)
+        return p, True
+    if kind == 'sincos':
+        # Standard 1D sincos: dim/2 sin + dim/2 cos
+        pos = torch.arange(num_slices, dtype=torch.float32).unsqueeze(1)  # (S, 1)
+        i = torch.arange(embed_dim // 2, dtype=torch.float32).unsqueeze(0)  # (1, D/2)
+        omega = 1.0 / (10000 ** (2 * i / embed_dim))
+        ang = pos * omega                             # (S, D/2)
+        sincos = torch.cat([torch.sin(ang), torch.cos(ang)], dim=1)  # (S, D)
+        sincos = sincos.view(1, num_slices, 1, embed_dim)
+        return sincos, False  # buffer, not trainable
+    raise ValueError("Unknown axial_pos_embed kind=%r" % kind)
+
+
+class DownstreamModel(nn.Module):
+    """End-to-end model: ViT encoder + (aggregator) + probe + head.
+
+    Three pooling paths controlled by (aggregator, moe_scope):
+
+    1) mean-pool (aggregator=None):
+         out.mean(dim=1) per slice → features (B, S, D) → probe.
+         Original behavior, preserved bit-for-bit.
+
+    2) per-slice MoE (aggregator set, moe_scope='per_slice'):
+         For each chunk of slices:
+           encoder(chunk) → (chunk, P, D)
+           aggregator(out) → (chunk, E*S, D)         ← MoE called per slice
+         Stack across slices → (B, S*E*S, D) → probe.
+
+    3) volume MoE (aggregator set, moe_scope='volume'):
+         encoder(chunk) → (chunk, P, D)
+         Stack across slices → (B, S, P, D)
+         features += axial_pos_embed[s]              ← optional axial pos
+         flatten → (B, S*P, D)
+         aggregator(features) → (B, E*S, D)          ← single MoE call per volume
+         → probe.
+
+       Volume scope is the cleanest MAMMOTH analog: one aggregator call per
+       "slide-equivalent" (= one volume). axial_pos_embed_type='learned' is
+       recommended for OCT so prototypes can specialize by axial slice
+       position (peripapillary vs macular vs peripheral).
     """
 
-    def __init__(self, encoder, probe, head, chunk_size=25):
+    def __init__(self, encoder, probe, head, chunk_size=25, aggregator=None,
+                 moe_scope='none', num_slices=64, embed_dim=768,
+                 axial_pos_embed_type='none'):
         super(DownstreamModel, self).__init__()
+        # Hard guard against silent misconfiguration: if an aggregator is
+        # active, the probe sees a token sequence with no inherent axial
+        # ordering (per_slice path) or whose axial info is encoded via
+        # axial_pos_embed BEFORE the aggregator (volume path). In either
+        # case the probe should not add its own pos_embed on top.
+        if aggregator is not None and getattr(probe, 'use_pos_embed', False):
+            raise ValueError(
+                'DownstreamModel: aggregator is set but probe has '
+                'use_pos_embed=True. Build the probe with '
+                'use_pos_embed=False when using an aggregator.')
+        if aggregator is not None and moe_scope not in _MOE_SCOPES:
+            raise ValueError(
+                'DownstreamModel: aggregator set but moe_scope=%r is not in %s.'
+                % (moe_scope, _MOE_SCOPES))
+        if aggregator is None and moe_scope not in ('none', 'per_slice'):
+            # 'per_slice' is the historical default that was implicit pre-MoE.
+            raise ValueError(
+                'DownstreamModel: moe_scope=%r requires aggregator to be set.'
+                % moe_scope)
+
         self.encoder = encoder
         self.probe = probe
         self.head = head
         self.chunk_size = chunk_size
+        self.aggregator = aggregator
+        self.moe_scope = moe_scope
+        self.num_slices = num_slices
+        self.embed_dim = embed_dim
+
+        # Axial position embedding (volume scope only).
+        if aggregator is not None and moe_scope == 'volume':
+            ape, trainable = _build_axial_pos_embed(
+                num_slices, embed_dim, axial_pos_embed_type)
+        else:
+            ape, trainable = None, False
+        if ape is None:
+            self.axial_pos_embed = None
+        elif trainable:
+            self.axial_pos_embed = ape  # nn.Parameter, picked up by .parameters()
+        else:
+            # Non-trainable sincos: register as buffer so it moves with .to(device)
+            self.register_buffer('axial_pos_embed', ape)
+
+    def _encode_per_chunk(self, flat):
+        """Run encoder over flattened slice batch in chunks. Returns list of
+        (chunk, P, D) tensors with grads attached for FT mode."""
+        parts = []
+        for i in range(0, flat.size(0), self.chunk_size):
+            chunk = flat[i:i + self.chunk_size]
+            out = self.encoder(chunk)              # (chunk, P, D)
+            parts.append(out)
+        return parts
 
     def forward(self, volumes):
         B, S, C, H, W = volumes.shape
         flat = volumes.reshape(B * S, C, H, W)
         flat = imagenet_normalize(flat)  # match pretraining distribution
-        parts = []
-        for i in range(0, flat.size(0), self.chunk_size):
-            chunk = flat[i:i + self.chunk_size]
-            out = self.encoder(chunk)          # (chunk, patches, D)
-            parts.append(out.mean(dim=1))      # (chunk, D)
-        features = torch.cat(parts, dim=0)     # (B*S, D)
-        features = features.reshape(B, S, -1)  # (B, S, D)
-        pooled = self.probe(features)          # (B, D)
-        return self.head(pooled).squeeze(-1)   # (B,)
+
+        # ---- Mean-pool path (aggregator=None) -----------------------------
+        if self.aggregator is None:
+            parts = []
+            for i in range(0, flat.size(0), self.chunk_size):
+                chunk = flat[i:i + self.chunk_size]
+                out = self.encoder(chunk)          # (chunk, P, D)
+                parts.append(out.mean(dim=1))      # (chunk, D)
+            features = torch.cat(parts, dim=0)     # (B*S, D)
+            features = features.reshape(B, S, -1)  # (B, S, D)
+
+        # ---- Per-slice MoE path -------------------------------------------
+        elif self.moe_scope == 'per_slice':
+            parts = []
+            for i in range(0, flat.size(0), self.chunk_size):
+                chunk = flat[i:i + self.chunk_size]
+                out = self.encoder(chunk)          # (chunk, P, D)
+                parts.append(self.aggregator(out)) # (chunk, E*S, D)
+            features = torch.cat(parts, dim=0)     # (B*S, E*S, D)
+            features = features.reshape(B, S * features.size(1), -1)
+
+        # ---- Volume MoE path ----------------------------------------------
+        else:  # self.moe_scope == 'volume'
+            patch_parts = self._encode_per_chunk(flat)         # list of (chunk, P, D)
+            features = torch.cat(patch_parts, dim=0)           # (B*S, P, D)
+            P = features.size(1)
+            features = features.reshape(B, S, P, -1)           # (B, S, P, D)
+            if self.axial_pos_embed is not None:
+                features = features + self.axial_pos_embed     # broadcasts over B and P
+            features = features.reshape(B, S * P, -1)          # (B, S*P, D)
+            features = self.aggregator(features)               # (B, E*S, D)
+
+        pooled = self.probe(features)              # (B, D)
+        return self.head(pooled).squeeze(-1)       # (B,)
 
 
 # ---------------------------------------------------------------------------
@@ -1082,9 +1353,19 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
     num_slices = data_cfg['num_slices']
 
     probe_type = model_cfg.get('probe_type', 'attentive')
+    # ---- Within-slice aggregator (opt-in via model_cfg.pool_type) ----------
+    # Default pool_type='mean' returns aggregator=None and reproduces the
+    # original mean-pool flow exactly.
+    aggregator, probe_num_tokens, moe_scope, axial_type, agg_desc = (
+        _build_aggregator(model_cfg, embed_dim, num_slices, device='cpu')
+    )
+    if is_main:
+        print('  Aggregator: %s' % agg_desc)
+
     # _build_probe fails fast on unknown probe_type; safe here.
     probe, probe_desc = _build_probe(
-        probe_type, num_slices, embed_dim, model_cfg, device='cpu',
+        probe_type, probe_num_tokens, embed_dim, model_cfg, device='cpu',
+        use_pos_embed=(aggregator is None),
     )
 
     head_type = model_cfg.get('head_type', 'linear')
@@ -1094,7 +1375,14 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
         head = LinearHead(in_dim=embed_dim)
 
     chunk_size = data_cfg.get('encode_chunk_size', 25)
-    model = DownstreamModel(encoder, probe, head, chunk_size).to(device)
+    model = DownstreamModel(
+        encoder, probe, head, chunk_size,
+        aggregator=aggregator,
+        moe_scope=moe_scope,
+        num_slices=num_slices,
+        embed_dim=embed_dim,
+        axial_pos_embed_type=axial_type,
+    ).to(device)
 
     if world_size > 1:
         model = DDP(model, device_ids=[rank], find_unused_parameters=False)
@@ -1148,19 +1436,43 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
     # LLRD if train_cfg['layer_decay'] in (0, 1); flat otherwise. By convention
     # groups[0] = deepest encoder layer (embed in LLRD; whole encoder in flat),
     # groups[-2] = probe, groups[-1] = head. Logging reads these three indices.
+    # Pass the learnable axial pos embed too if it exists (volume MoE +
+    # axial_pos_embed_type='learned' creates an nn.Parameter on the model).
+    learnable_axial = (
+        raw.axial_pos_embed
+        if isinstance(getattr(raw, 'axial_pos_embed', None), nn.Parameter)
+        else None
+    )
     param_groups, pg_mode = build_finetune_param_groups(
         raw.encoder, raw.probe, raw.head, train_cfg,
+        aggregator=raw.aggregator,
+        axial_pos_embed=learnable_axial,
     )
     if is_main:
         if pg_mode == 'llrd':
-            lr_top_block = param_groups[-4]['lr']  # encoder.blocks[-1]
+            # Look up the highest-index 'block_X' group by name. Index-based
+            # access ([-4]) breaks once aggregator / axial_pos_embed groups
+            # are inserted between encoder_norm and probe.
+            block_groups = [g for g in param_groups
+                            if g.get('name', '').startswith('block_')]
+            lr_top_block = block_groups[-1]['lr'] if block_groups else float('nan')
+            head_group = next((g for g in param_groups
+                               if g.get('name') == 'head'), param_groups[-1])
             print('  Optimizer: AdamW + LLRD (decay=%.2f, %d groups)'
                   % (train_cfg.get('layer_decay', 1.0), len(param_groups)))
             print('    LR range: embed=%.2e .. top_block=%.2e .. head=%.2e'
-                  % (param_groups[0]['lr'], lr_top_block, param_groups[-1]['lr']))
+                  % (param_groups[0]['lr'], lr_top_block, head_group['lr']))
         else:
-            print('  Optimizer: AdamW + flat (encoder=%.2e, probe=%.2e, head=%.2e)'
-                  % (param_groups[0]['lr'], param_groups[-2]['lr'], param_groups[-1]['lr']))
+            enc_g = next((g for g in param_groups
+                          if g.get('name') == 'encoder'), param_groups[0])
+            probe_g = next((g for g in param_groups
+                            if g.get('name') == 'probe'), None)
+            head_g = next((g for g in param_groups
+                           if g.get('name') == 'head'), param_groups[-1])
+            print('  Optimizer: AdamW + flat (encoder=%.2e, probe=%s, head=%.2e)'
+                  % (enc_g['lr'],
+                     ('%.2e' % probe_g['lr']) if probe_g else 'n/a',
+                     head_g['lr']))
     optimizer = torch.optim.AdamW(param_groups, weight_decay=train_cfg.get('weight_decay', 0.01))
     steps_per_epoch = len(train_loader) // accum_steps
     scheduler = cosine_schedule_with_warmup(
@@ -1259,13 +1571,19 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
             if improved:
                 best_auc = val_auc
                 patience_counter = 0
-                torch.save({
+                ckpt = {
                     'epoch': epoch,
                     'encoder': raw.encoder.state_dict(),
                     'probe': raw.probe.state_dict(),
                     'head': raw.head.state_dict(),
                     'val_auc': val_auc,
-                }, os.path.join(output_dir, 'best_model.pt'))
+                }
+                if raw.aggregator is not None:
+                    ckpt['aggregator'] = raw.aggregator.state_dict()
+                # Persist learnable axial pos embed (volume MoE only).
+                if isinstance(getattr(raw, 'axial_pos_embed', None), nn.Parameter):
+                    ckpt['axial_pos_embed'] = raw.axial_pos_embed.detach().cpu()
+                torch.save(ckpt, os.path.join(output_dir, 'best_model.pt'))
             else:
                 patience_counter += 1
                 # Only allow early-stop after warmup so a single noisy warmup
@@ -1300,6 +1618,24 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
             raw.encoder.load_state_dict(best_ckpt['encoder'])
             raw.probe.load_state_dict(best_ckpt['probe'])
             raw.head.load_state_dict(best_ckpt['head'])
+            if raw.aggregator is not None:
+                if 'aggregator' not in best_ckpt:
+                    raise RuntimeError(
+                        "DownstreamModel has an aggregator but checkpoint at "
+                        "%s has no 'aggregator' key. The checkpoint was likely "
+                        "saved before aggregator support was added; cannot "
+                        "safely resume MoE training from it." % best_path)
+                raw.aggregator.load_state_dict(best_ckpt['aggregator'])
+            # Restore learnable axial pos embed if model has it.
+            if isinstance(getattr(raw, 'axial_pos_embed', None), nn.Parameter):
+                if 'axial_pos_embed' not in best_ckpt:
+                    raise RuntimeError(
+                        "DownstreamModel has a learnable axial_pos_embed but "
+                        "checkpoint at %s has no 'axial_pos_embed' key. Cannot "
+                        "safely resume." % best_path)
+                with torch.no_grad():
+                    raw.axial_pos_embed.copy_(best_ckpt['axial_pos_embed'].to(
+                        raw.axial_pos_embed.device))
             best_epoch = best_ckpt['epoch']
         else:
             best_epoch = 0

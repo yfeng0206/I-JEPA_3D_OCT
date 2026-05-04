@@ -1,0 +1,75 @@
+# Downstream config — fine-tune with AnatomicalMoEPool (volume scope).
+#
+# This is a FINE-TUNE config (encoder unfrozen, LLRD). It uses
+# run_patch_finetune. The frozen-probe path does NOT yet support
+# AnatomicalMoEPool (run_patch_downstream raises NotImplementedError for
+# pool_type != mean — see the design doc for the cache-strategy reasons).
+#
+# Default behavior preserved if you omit `pool_type` or set it to 'mean'
+# in any other config — that runs the existing mean-pool flow unchanged.
+mode: patch
+data:
+  data_dir: /tmp/fairvision_data/data
+  num_slices: 100
+  slice_size: 256
+  # Fine-tune at small per-GPU batch + accum (full encoder unfrozen).
+  batch_size: 1
+  num_workers: 2
+  encode_chunk_size: 25
+model:
+  encoder_checkpoint: /tmp/ijepa_checkpoints/jepa_patch-best.pth.tar
+  encoder_name: vit_base
+  patch_size: 16
+  crop_size: 256
+  # Required to dispatch to run_patch_finetune (default True sends to frozen).
+  freeze_encoder: false
+  probe_type: cross_attn_pool
+  probe_num_heads: 12
+  probe_depth: 1
+  head_type: linear
+  # ------------------------------------------------------------------
+  # Opt-in pool flag. Default (when omitted) is 'mean' — current behavior.
+  # ------------------------------------------------------------------
+  pool_type: anatomical_moe
+  anatomical_moe:
+    # Where the MoE runs:
+    #   per_slice: aggregator runs once per slice; probe sees S*E*S tokens.
+    #   volume:    aggregator runs ONCE on flattened (S*P, D); probe sees E*S.
+    #              RECOMMENDED for OCT.
+    moe_scope: volume
+
+    # Skip the wq (768->256) projection? When true, slot_dim=embed_dim and
+    # routing is in encoder feature space. Slot prototypes are interpretable
+    # via routing weights in the same space as raw patch features.
+    skip_wq: true
+
+    # Axial (slice-axis) position embedding for volume scope:
+    #   none:    no axial pos info; prototypes can't localize axially.
+    #   learned: trainable (1, num_slices, 1, embed_dim) added before MoE.
+    #            Picked up by build_finetune_param_groups + checkpoint.
+    #   sincos:  fixed 1D sincos buffer. Free, no training needed.
+    # Ignored when moe_scope=per_slice.
+    axial_pos_embed: learned
+
+    num_experts: 8         # E
+    num_slots: 4           # S
+    num_heads: 8           # H — independent routing subspaces
+    slot_dim: 256          # routing dim (ignored when skip_wq=true)
+    lora_rank: 16          # bottleneck rank for factorized experts
+    share_phi: true        # share Phi matrix across experts within a head
+    dropout: 0.0           # dropout on slot prototypes
+training:
+  # Fine-tune scale: small batch + accumulation, LLRD on encoder.
+  layer_decay: 0.5
+  lr_probe: 2.0e-4
+  lr_head: 2.0e-4
+  lr_encoder: 2.0e-4
+  weight_decay: 0.05
+  epochs: 50
+  patience: 15
+  warmup_epochs: 5
+  accum_steps: 16
+  dropout: 0.1
+  seed: 42
+logging:
+  output_dir: /tmp/ijepa_outputs/finetune_anatomical_moe

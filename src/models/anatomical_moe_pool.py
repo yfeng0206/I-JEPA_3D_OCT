@@ -24,9 +24,9 @@ specialize those slots toward distinct retinal-layer × axial-position
 concepts, giving better downstream signal AND interpretable anatomical
 decomposition.
 
-Architecturally based on MAMMOTH (Shao et al., ICLR 2026); see also
-``docs/design/anatomical_moe_integration.md`` for design rationale and
-audit history.
+Architecturally based on MAMMOTH (Shao et al., ICLR 2026). See
+``docs/experiments/anatomical_moe.md`` for the architecture summary
+and configuration knobs.
 
 Key design choices:
   - Soft routing (Puigcerver 2024) — every patch contributes to every slot

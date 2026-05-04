@@ -163,4 +163,3 @@ load time. Same constraint as ViT pos_embed at variable image size.
 | `scripts/run_downstream.sh` | Launcher (`POOL_TYPE`, `MOE_*` env vars) |
 | `scripts/test_anatomical_moe_pool.py` | Unit tests |
 | `scripts/test_anatomical_moe_integration.py` | Integration + regression tests |
-| `docs/design/anatomical_moe_integration.md` | Design rationale |

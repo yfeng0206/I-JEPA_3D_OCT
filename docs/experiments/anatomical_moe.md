@@ -142,6 +142,25 @@ peripapillary RNFL vs. macular RNFL despite both being "RNFL").
 
 ## Validation
 
+The interpretability tool for soft MoE is the **dispatch tensor itself** —
+the routing weights produced inside the forward pass are exactly the model's
+slot assignments, so no auxiliary attribution method is required. This is
+also what MAMMOTH's released visualization script uses. Two alternatives
+that we don't use as the primary tool, with the reason:
+
+- **Δlogit / occlusion** answers a different question (importance to the
+  final prediction, not semantic identity). Useful as a complement —
+  zeroing slot `s` and remeasuring the logit tells you *which* slot
+  matters for prediction — but not a substitute for routing-based
+  identity analysis.
+- **K-NN / k-means clustering on raw features** is redundant for the
+  primary visualization (soft MoE is itself soft clustering). Useful as
+  a pre-training sanity check: cluster encoder features for sampled
+  patches, compute Adjusted Rand Index against a retinal-layer
+  segmentation. High ARI ⇒ features cluster naturally by anatomy ⇒ slot
+  specialization should emerge fast (this is what MAMMOTH found with UNI
+  on histopathology).
+
 Three checks adapted from the MAMMOTH validation protocol:
 
 1. **Routing heatmaps.** For each slot, render dispatch weights over the
@@ -149,6 +168,18 @@ Three checks adapted from the MAMMOTH validation protocol:
    slice (spatial structure within slice) and a 1D curve over the slice axis
    (axial specialization). Inspect for clean axial localization at expected
    anatomical depths.
+
+   Recipe (matching MAMMOTH's released script):
+   ```python
+   out, dispatch = aggregator(x, return_weights=True)   # (B, N=S*P, E, H, S)
+   # Per-slot view:
+   score = dispatch[0, :, e, :, s].mean(dim=-1)          # mean over heads -> (N,)
+   # Robust cross-slot scaling via percentile rank:
+   rank = argsort(argsort(score)) / (N - 1)              # (N,) in [0, 1]
+   overlay = turbo_colormap(rank)                        # alpha-blend onto image
+   ```
+   No occlusion sweeps; the dispatch tensor is already softmax-normalized
+   over tokens by construction.
 2. **Anatomical alignment.** Use a public retinal-layer segmentation model
    (e.g., ReLayNet) to label each patch's dominant layer. For each slot,
    compute the average routing-weight-weighted layer distribution → a

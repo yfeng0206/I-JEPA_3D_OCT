@@ -7,6 +7,40 @@ with axial position embeddings allowing prototypes to specialize by retinal
 layer × axial slice position. Adapted from MAMMOTH (Shao et al., ICLR 2026)
 applied at OCT-volume scope.
 
+## Idea
+
+An OCT volume has stratified, repeating anatomy — the same retinal layers
+(RNFL, GCL, IPL, INL, OPL, ONL, RPE, choroid, ...) appear across all 64
+slices, differing by axial position and disease state. Mean-pooling
+collapses 16,384 patch tokens into one 768-d vector and destroys this
+structure: a thinned-RNFL signal at peripapillary slices is averaged with
+healthy macular tissue and disappears.
+
+Anatomical MoE replaces the mean with `E·S = 32` **learned slot prototypes**.
+Each slot acts as a soft query — "*find the patches that look like this*" —
+and emits a single vector that is a weighted average of the patches matching
+it most strongly. The classifier then sees 32 anatomy-aware summaries
+("morphological prototypes") instead of one global mean. Empirically, slots
+specialize: with axial position embeddings injected before routing, distinct
+slots converge on retinal-layer × slice-position concepts (peripapillary
+RNFL vs. macular RNFL vs. choroid, etc.), with no manual labels.
+
+Three properties make the routing useful at the OCT scale:
+
+- **Soft assignment.** Softmax is taken over tokens (not over experts), so
+  every patch contributes a fraction of itself to every slot rather than
+  being hard-routed to one. Soft routing is stable at our data scale and
+  avoids the expert-collapse failure mode of sparse top-k MoEs.
+- **Multi-head routing.** The embedding is split into `H` independent
+  subspaces; routing happens per head. One head can match patches by
+  intensity-aligned features, another by texture-aligned features, so a
+  single patch contributes to different slots through different aspects of
+  its representation.
+- **Axial position embedding.** A learnable `(1, S, 1, D)` offset added
+  before flattening breaks the inter-slice symmetry: without it, the MoE
+  cannot tell slice 30 from slice 60 because content-only features look
+  similar; with it, slots can localize axially.
+
 ## Architecture
 
 | Stage | Shape |

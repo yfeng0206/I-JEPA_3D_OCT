@@ -25,8 +25,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 
-RESULTS = r'C:\Users\garyfeng\OneDrive - Microsoft\Desktop\I-JEPA_results_presentation'
-ARCHIVE = r'C:\Users\garyfeng\OneDrive - Microsoft\Desktop\I-JEPA_archive'
+# Paths default to siblings of the repo root (I-JEPA_archive/, I-JEPA_results_presentation/).
+# Override via env vars for non-default layouts.
+_REPO    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_PARENT  = os.path.dirname(_REPO)
+RESULTS  = os.environ.get('IJEPA_PRESENTATION_DIR',
+                          os.path.join(_PARENT, 'I-JEPA_results_presentation'))
+ARCHIVE  = os.environ.get('IJEPA_ARCHIVE_DIR',
+                          os.path.join(_PARENT, 'I-JEPA_archive'))
 PLOTS   = os.path.join(RESULTS, 'plots')
 TABLES  = os.path.join(RESULTS, 'tables')
 

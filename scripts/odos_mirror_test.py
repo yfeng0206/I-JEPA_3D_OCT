@@ -32,7 +32,11 @@ from scipy.signal import find_peaks
 
 
 REPO     = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ARCHIVE  = r'C:\Users\garyfeng\OneDrive - Microsoft\Desktop\I-JEPA_archive\04_interpretability_v2_fp32\slice_contributions'
+# Defaults to a sibling of the repo (I-JEPA_archive/...). Override via env var.
+ARCHIVE  = os.environ.get(
+    'IJEPA_SLICE_CONTRIB_DIR',
+    os.path.join(os.path.dirname(REPO),
+                 'I-JEPA_archive', '04_interpretability_v2_fp32', 'slice_contributions'))
 OUT_DIR  = os.path.join(REPO, 'results', 'summary')
 PROBES   = ['meanpool', 'crossattn', 'd1']
 AXIAL    = np.linspace(0, 199, 64)

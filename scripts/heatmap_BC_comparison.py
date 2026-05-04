@@ -28,8 +28,12 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-PRESENT = r'C:\Users\garyfeng\OneDrive - Microsoft\Desktop\I-JEPA_results_presentation'
-REPO    = r'C:\Users\garyfeng\OneDrive - Microsoft\Desktop\I-JEPA'
+# Paths default to siblings of the repo root (I-JEPA/, I-JEPA_results_presentation/).
+# Override via env vars for non-default layouts.
+REPO    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_PARENT = os.path.dirname(REPO)
+PRESENT = os.environ.get('IJEPA_PRESENTATION_DIR',
+                         os.path.join(_PARENT, 'I-JEPA_results_presentation'))
 
 PATCH_DIR = os.path.join(PRESENT, 'patch_aggregate')
 OUT_REPO    = os.path.join(REPO, 'results', 'summary', 'heatmap_grid_BC.png')

@@ -101,19 +101,39 @@ print('Downloaded %d new files' % downloaded)
 "
 cd "$PROJECT_ROOT"
 
-# Download resume checkpoint from blob if requested
+# Download resume checkpoint from blob if requested.
+# When CONFIG_FILE is set, we parse its meta.read_checkpoint so the YAML's
+# expected local path matches the downloaded path (fixes the case where
+# CONFIG_FILE points at a curriculum YAML with meta.read_checkpoint baked in
+# but the env-var READ_CHECKPOINT wasn't passed).
 RESUME_BLOB=${RESUME_BLOB:-}
-if [ -n "$RESUME_BLOB" ] && [ "$LOAD_CHECKPOINT" = "true" ]; then
-    echo "=== Downloading resume checkpoint ==="
-    python -c "
+if [ -n "$RESUME_BLOB" ]; then
+    EFFECTIVE_READ_CHECKPOINT="$READ_CHECKPOINT"
+    if [ -n "${CONFIG_FILE:-}" ] && [ -f "${CONFIG_FILE:-}" ]; then
+        # Parse the curriculum YAML's meta.read_checkpoint to find where the
+        # trainer will look for the resume ckpt.  Fall back to env value.
+        CFG_RC=$(python -c "
+import yaml, sys
+with open('$CONFIG_FILE') as f: cfg = yaml.safe_load(f)
+rc = (cfg.get('meta') or {}).get('read_checkpoint')
+print(rc if rc else '')
+" 2>/dev/null || echo "")
+        if [ -n "$CFG_RC" ]; then
+            EFFECTIVE_READ_CHECKPOINT="$CFG_RC"
+            echo "  [CONFIG_FILE] Using meta.read_checkpoint from YAML: $EFFECTIVE_READ_CHECKPOINT"
+        fi
+    fi
+    if [ "$LOAD_CHECKPOINT" = "true" ] || [ -n "${CONFIG_FILE:-}" ]; then
+        echo "=== Downloading resume checkpoint ==="
+        python -c "
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobClient
 import os
 blob_name = '${RESUME_BLOB}'
-local_path = '${READ_CHECKPOINT}'
+local_path = '${EFFECTIVE_READ_CHECKPOINT}'
 account = '${BLOB_ACCOUNT}'
 container = '${BLOB_CONTAINER}'
-print('Downloading %s ...' % blob_name)
+print('Downloading %s -> %s ...' % (blob_name, local_path))
 cred = DefaultAzureCredential()
 blob = BlobClient(
     account_url='https://%s.blob.core.windows.net' % account,
@@ -126,6 +146,46 @@ with open(local_path, 'wb') as f:
     f.write(blob.download_blob().readall())
 print('Saved to %s (%d bytes)' % (local_path, os.path.getsize(local_path)))
 "
+    fi
+fi
+
+# === Preflight: fail FAST if the trainer is going to need a checkpoint ===
+# Audit FINDING-4: silently proceeding when LOAD_CHECKPOINT=true (or CONFIG_FILE
+# declares meta.load_checkpoint: true) but the local file is missing AND
+# RESUME_BLOB wasn't set wastes an entire torchrun startup before failing with
+# a confusing pickle/IO error.  Catch it here with a clear message.
+PREFLIGHT_LOAD=${LOAD_CHECKPOINT:-false}
+PREFLIGHT_PATH=${READ_CHECKPOINT:-}
+if [ -n "${CONFIG_FILE:-}" ] && [ -f "${CONFIG_FILE:-}" ]; then
+    PREFLIGHT_YAML=$(python -c "
+import yaml
+with open('$CONFIG_FILE') as f: cfg = yaml.safe_load(f)
+meta = cfg.get('meta') or {}
+lc = meta.get('load_checkpoint')
+rc = meta.get('read_checkpoint') or ''
+print('%s|%s' % ('true' if lc else 'false', rc))
+" 2>/dev/null || echo "false|")
+    PREFLIGHT_LOAD=$(echo "$PREFLIGHT_YAML" | cut -d'|' -f1)
+    PREFLIGHT_PATH=$(echo "$PREFLIGHT_YAML" | cut -d'|' -f2)
+fi
+if [ "$PREFLIGHT_LOAD" = "true" ]; then
+    if [ -z "$PREFLIGHT_PATH" ]; then
+        echo "[PREFLIGHT] ERROR: load_checkpoint=true but read_checkpoint is empty." >&2
+        echo "[PREFLIGHT]   Set meta.read_checkpoint in your config or pass READ_CHECKPOINT env var." >&2
+        exit 2
+    fi
+    if [ ! -f "$PREFLIGHT_PATH" ]; then
+        echo "[PREFLIGHT] ERROR: load_checkpoint=true but '$PREFLIGHT_PATH' does not exist." >&2
+        if [ -z "$RESUME_BLOB" ]; then
+            echo "[PREFLIGHT]   RESUME_BLOB env var is unset, so no download was attempted." >&2
+            echo "[PREFLIGHT]   Either set RESUME_BLOB=<blob path> to download the ckpt, or set load_checkpoint=false." >&2
+        else
+            echo "[PREFLIGHT]   RESUME_BLOB='$RESUME_BLOB' was set but the download did not produce the expected file." >&2
+            echo "[PREFLIGHT]   Check the blob path matches what's in EFFECTIVE_READ_CHECKPOINT above." >&2
+        fi
+        exit 2
+    fi
+    echo "[PREFLIGHT] OK: resume checkpoint present at $PREFLIGHT_PATH"
 fi
 
 # Download pretrained encoder from blob if specified
@@ -157,6 +217,25 @@ fi
 
 echo "=== Generating config ==="
 CONFIG_PATH="${OUTPUT_DIR}/config.yaml"
+
+# If CONFIG_FILE env var points to an existing YAML (e.g. one of the
+# configs/patch_vitb16_ep100_R*.yaml curriculum configs), copy it verbatim
+# so we don't lose the mask.curriculum block.  Otherwise fall back to the
+# env-var-templated config below (the historical R1 path).
+CONFIG_FILE=${CONFIG_FILE:-}
+if [ -n "$CONFIG_FILE" ] && [ -f "$CONFIG_FILE" ]; then
+    echo "  Using checked-in config: $CONFIG_FILE"
+    cp "$CONFIG_FILE" "$CONFIG_PATH"
+    # Override the logging.folder so outputs land in the AML-provided dir.
+    python -c "
+import yaml, sys
+with open('${CONFIG_PATH}') as f: cfg = yaml.safe_load(f)
+cfg.setdefault('logging', {})['folder'] = '${OUTPUT_DIR}'
+cfg.setdefault('data', {})['data_dir'] = '${DATA_DIR}/data'
+with open('${CONFIG_PATH}', 'w') as f: yaml.safe_dump(cfg, f, sort_keys=False)
+print('  Patched logging.folder + data.data_dir for AML runtime')
+"
+else
 cat > "${CONFIG_PATH}" << YAMLEOF
 data:
   batch_size: ${BATCH_SIZE}
@@ -203,6 +282,7 @@ logging:
   folder: ${OUTPUT_DIR}
   write_tag: jepa_patch
 YAMLEOF
+fi
 
 echo "=== Config ==="
 cat "${CONFIG_PATH}"

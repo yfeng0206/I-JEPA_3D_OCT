@@ -4,6 +4,8 @@ __pycache__/
 .cache/
 *.pt
 *.pth
+*.pth.tar
+checkpoints/
 data/
 outputs/
 *.log
@@ -16,4 +18,10 @@ results/**/torchrun_stdout.log
 
 # Exclude large pretraining logs (per-iteration CSVs, 6-23MB)
 results/pretraining/*/jepa_patch-log.csv
-checkpoints/jepa_patch-imagenet-init-ep32-best.pth.tar
+
+# Local-only working artifacts (not for PR)
+.audit/
+.vs/
+.vscode/
+_tmp_*
+MASKING_PLAN.md

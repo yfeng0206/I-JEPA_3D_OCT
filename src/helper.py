@@ -226,7 +226,8 @@ def init_opt(encoder, predictor, wd, final_wd, start_lr, ref_lr, final_lr,
 # Checkpoint save / load
 # ---------------------------------------------------------------------------
 
-def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, scaler):
+def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, scaler,
+                    mask_gen=None):
     """Load a training checkpoint.
 
     Args:
@@ -237,6 +238,11 @@ def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, sca
         target_encoder: Target (EMA) encoder model.
         opt: Optimizer.
         scaler: GradScaler (may be None).
+        mask_gen: Optional curriculum mask generator with
+            ``state_dict``/``load_state_dict`` methods.  When set, the
+            ``curriculum`` block in the checkpoint is restored into it.
+            Missing or ``None`` is fine — fresh resume from R1 baseline
+            won't carry curriculum state.
 
     Returns:
         (encoder, predictor, target_encoder, opt, scaler, start_epoch)
@@ -251,13 +257,38 @@ def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, sca
     if scaler is not None and 'scaler' in checkpoint and checkpoint['scaler'] is not None:
         scaler.load_state_dict(checkpoint['scaler'])
 
+    if mask_gen is not None:
+        if checkpoint.get('curriculum') is not None:
+            # The checkpoint has curriculum state — restoring is REQUIRED;
+            # a failure here is fatal (silently cold-starting would secretly
+            # change the experiment).  Only the legitimate "no curriculum
+            # key" case (R1 checkpoint) is allowed to no-op.
+            try:
+                mask_gen.load_state_dict(checkpoint['curriculum'])
+                print("[Checkpoint] Restored curriculum state from %s" % r_path)
+            except (KeyError, RuntimeError) as e:
+                raise RuntimeError(
+                    "Failed to restore curriculum state from %s: %s — "
+                    "refusing to silently cold-start, which would change "
+                    "the experiment.  Either fix the checkpoint or pass "
+                    "mask_gen=None to deliberately discard the state."
+                    % (r_path, e)
+                )
+        else:
+            # No curriculum key — typical when resuming from R1.  This is
+            # expected and benign; just log it.
+            print("[Checkpoint] No 'curriculum' key in %s — starting "
+                  "curriculum state from scratch (expected when resuming "
+                  "from R1 baseline)." % r_path)
+
     start_epoch = checkpoint.get('epoch', 0)
     print("[Checkpoint] Loaded from %s  (epoch %d)" % (r_path, start_epoch))
     return encoder, predictor, target_encoder, opt, scaler, start_epoch
 
 
 def save_checkpoint(path, encoder, predictor, target_encoder, optimizer,
-                    scaler, epoch, loss, batch_size, world_size, lr):
+                    scaler, epoch, loss, batch_size, world_size, lr,
+                    mask_gen=None):
     """Save a training checkpoint.
 
     Args:
@@ -272,6 +303,9 @@ def save_checkpoint(path, encoder, predictor, target_encoder, optimizer,
         batch_size: Per-GPU batch size.
         world_size: Number of distributed processes.
         lr: Current learning rate.
+        mask_gen: Optional curriculum mask generator — if provided and it
+            exposes a ``state_dict``, the dict is stored under ``curriculum``
+            so an AML preempt + resume restores loss-map / cluster state.
     """
     enc_state = encoder.module.state_dict() if hasattr(encoder, 'module') else encoder.state_dict()
     pred_state = predictor.module.state_dict() if hasattr(predictor, 'module') else predictor.state_dict()
@@ -288,6 +322,11 @@ def save_checkpoint(path, encoder, predictor, target_encoder, optimizer,
         'batch_size': batch_size,
         'world_size': world_size,
         'lr': lr,
+        'curriculum': (
+            mask_gen.state_dict()
+            if (mask_gen is not None and hasattr(mask_gen, 'state_dict'))
+            else None
+        ),
     }
 
     os.makedirs(os.path.dirname(path), exist_ok=True)

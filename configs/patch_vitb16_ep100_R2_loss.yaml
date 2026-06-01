@@ -1,0 +1,72 @@
+# R2 — Loss-guided dynamic masking (AnatoMask-adapted for JEPA).
+# Resumes from R1 ep25 checkpoint; curriculum warms up ep25->ep26 (r=0),
+# ramps to r_max=0.5 by ep100.  Uniform multiblock masking when r<r,
+# biased toward high-loss patches when r=r.
+#
+# IMPORTANT (lessons_learned.md):
+#   #1: keep LR=0.00025 (NOT the official I-JEPA sqrt-scaled value)
+#   #2/#16: patience=9999 (no early-stop for final runs; per general rule #3)
+#   #3: blob uploads stay non-blocking (handled in train_patch.py)
+#   #14: this file is YAML so LF/CRLF is irrelevant; shell scripts must be LF.
+
+data:
+  batch_size: 64
+  crop_size: 256
+  crop_scale: [0.3, 1.0]
+  num_workers: 4
+  pin_mem: true
+  data_dir: /tmp/fairvision_data/data
+  num_slices: 100
+  color_jitter_strength: 0.0
+  use_color_distortion: false
+  use_gaussian_blur: false
+  use_horizontal_flip: false
+
+mask:
+  patch_size: 16
+  num_enc_masks: 1
+  num_pred_masks: 4
+  enc_mask_scale: [0.85, 1.0]
+  pred_mask_scale: [0.15, 0.2]
+  aspect_ratio: [0.75, 1.5]
+  allow_overlap: false
+  min_keep: 10
+  curriculum:
+    enabled: true
+    mode: loss_guided
+    # Schedule
+    T_warm: 25            # 1-indexed epoch at which biasing engages
+    T_total: 100          # 1-indexed final epoch
+    r_max: 0.5            # max fraction of pred blocks that are biased
+    ramp_shape: linear    # linear | cosine
+    # Loss-map EMA (half-life expressed in OPTIMIZER STEPS, not microbatches)
+    # ~1 epoch worth of steps (rough). alpha = exp(log(0.5) / halflife).
+    loss_map_halflife_steps: 2000
+    # Maturity gate: don't bias until every patch cell has been observed
+    # this many times.  Prevents chasing noise during the first epoch.
+    loss_maturity_min_count: 32
+
+meta:
+  model_name: vit_base
+  pred_depth: 6
+  pred_emb_dim: 384
+  use_bfloat16: false
+  load_checkpoint: true
+  read_checkpoint: ./checkpoints/jepa_patch-random_posfix-ep25.pth.tar
+
+optimization:
+  epochs: 100
+  lr: 0.00025
+  start_lr: 0.0001
+  final_lr: 0.000001
+  warmup: 5
+  weight_decay: 0.04
+  final_weight_decay: 0.4
+  ema: [0.996, 1.0]
+  ipe_scale: 1.0
+  accum_steps: 2
+  patience: 9999            # No early stopping for final pretraining runs
+
+logging:
+  folder: /tmp/ijepa_outputs/patch_vitb16_ep100_R2_loss
+  write_tag: jepa_patch_R2

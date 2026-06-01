@@ -36,6 +36,7 @@ if _project_root not in sys.path:
 
 from src.helper import init_patch_model, init_opt, load_checkpoint, save_checkpoint
 from src.masks.multiblock import MaskCollator
+from src.masks.curriculum import CurriculumMaskGenerator
 from src.masks.utils import apply_masks
 from src.datasets.oct_slices import OCTSliceDataset
 from src.transforms import make_transforms
@@ -212,6 +213,9 @@ def main(args):
         log('  Encoder init:     random')
 
     # ---- Mask collator -----------------------------------------------------
+    # The uniform multiblock collator is ALWAYS instantiated — it backs the
+    # val_loader and any diagnostic eval, even when curriculum is enabled
+    # (so val loss stays comparable across R1 / R2 / R3a / R3b runs).
     crop_size = data_cfg['crop_size']
     mask_collator = MaskCollator(
         input_size=(crop_size, crop_size),
@@ -224,6 +228,32 @@ def main(args):
         min_keep=mask_cfg['min_keep'],
         allow_overlap=mask_cfg['allow_overlap'],
     )
+
+    # Optional curriculum mask generator.  Drives the training masks only;
+    # val/diag always use the uniform mask_collator above.
+    curr_cfg = mask_cfg.get('curriculum', {}) or {}
+    use_curriculum = bool(curr_cfg.get('enabled', False))
+    mask_gen = None
+    if use_curriculum:
+        mask_gen = CurriculumMaskGenerator(
+            input_size=(crop_size, crop_size),
+            patch_size=mask_cfg['patch_size'],
+            enc_mask_scale=tuple(mask_cfg['enc_mask_scale']),
+            pred_mask_scale=tuple(mask_cfg['pred_mask_scale']),
+            aspect_ratio=tuple(mask_cfg['aspect_ratio']),
+            nenc=mask_cfg['num_enc_masks'],
+            npred=mask_cfg['num_pred_masks'],
+            min_keep=mask_cfg['min_keep'],
+            allow_overlap=mask_cfg['allow_overlap'],
+            curriculum_cfg=curr_cfg,
+            world_size=world_size,
+            rank=rank,
+            device=device,   # NCCL backend requires CUDA tensors for collectives
+        )
+        log('  Curriculum mask enabled: mode=%s T_warm=%d T_total=%d r_max=%.3f ramp=%s'
+            % (curr_cfg.get('mode'), curr_cfg.get('T_warm', 25),
+               curr_cfg.get('T_total', opt_cfg['epochs']),
+               curr_cfg.get('r_max', 0.5), curr_cfg.get('ramp_shape', 'linear')))
 
     # ---- Transforms --------------------------------------------------------
     transform = make_transforms(
@@ -270,7 +300,8 @@ def main(args):
         num_workers=data_cfg['num_workers'],
         pin_memory=data_cfg.get('pin_mem', True),
         drop_last=True,
-        collate_fn=mask_collator,
+        collate_fn=(CurriculumMaskGenerator.stack_collate
+                    if use_curriculum else mask_collator),
     )
 
     val_loader = None
@@ -285,7 +316,7 @@ def main(args):
             num_workers=data_cfg['num_workers'],
             pin_memory=data_cfg.get('pin_mem', True),
             drop_last=False,
-            collate_fn=mask_collator,
+            collate_fn=mask_collator,  # ALWAYS uniform — keeps val loss comparable
         )
 
     accum_steps = opt_cfg.get('accum_steps', 1)
@@ -322,7 +353,8 @@ def main(args):
         pred_unwrap = predictor.module if hasattr(predictor, 'module') else predictor
         enc_unwrap, pred_unwrap, target_encoder, optimizer, scaler, start_epoch = \
             load_checkpoint(device, r_path, enc_unwrap, pred_unwrap,
-                            target_encoder, optimizer, scaler)
+                            target_encoder, optimizer, scaler,
+                            mask_gen=mask_gen)
 
     # ---- Momentum schedule for EMA -----------------------------------------
     ema_start, ema_end = opt_cfg['ema']
@@ -390,19 +422,93 @@ def main(args):
 
     for epoch in range(start_epoch, opt_cfg['epochs']):
         train_sampler.set_epoch(epoch)
+        if use_curriculum:
+            # ``epoch`` is the loop's 0-indexed counter; ``start_epoch`` was
+            # restored from the resume checkpoint's saved (epoch + 1) value
+            # (see save_checkpoint in train_patch.py).  So when resuming from
+            # the R1 ep25 checkpoint, ``epoch`` starts at 25.
+            # We pass it directly so the curriculum's ``T_warm=25`` ramp
+            # treats this first resumed epoch as r_t=0 (the design's BOOTSTRAP
+            # epoch) and r_t engages at epoch 26.
+            mask_gen.set_epoch(epoch, opt_cfg['epochs'])
+            if is_main:
+                # Per-epoch curriculum diagnostic (A5/C8 audit fix + user
+                # request for cluster-quality visibility).
+                #   r_t              : ramp value applied this epoch
+                #   loss_mature      : whether R2 loss-map has enough obs
+                #   clusters_mature  : whether R3b clusters have enough obs
+                #   loss_spread      : (min/max/mean) of R2's per-cell loss
+                #                      EMA — wide spread means the
+                #                      hand-crafted prior is finding signal
+                #   cluster_spread   : (min/max/mean/std) of R3b's per-cluster
+                #                      loss EMA — small spread means K=4 is
+                #                      NOT separating semantic groups and
+                #                      cluster_foreground bias will be noisy
+                #   fg_clusters      : actual cluster IDs chosen as fg this
+                #                      epoch (so user can see if same IDs
+                #                      persist or flip iter-to-iter)
+                lm_min = float(mask_gen._loss_map[mask_gen._loss_count > 0].min().item()) \
+                    if (mask_gen._loss_count > 0).any() else float('nan')
+                lm_max = float(mask_gen._loss_map.max().item())
+                lm_mean = float(mask_gen._loss_map[mask_gen._loss_count > 0].mean().item()) \
+                    if (mask_gen._loss_count > 0).any() else float('nan')
+                cl_min, cl_max, cl_mean, cl_std = mask_gen.cluster_loss_spread()
+                try:
+                    fg_ids = mask_gen._foreground_cluster_mask().nonzero().flatten().tolist()
+                except Exception:
+                    fg_ids = []
+                log('  [Curriculum] ep=%d mode=%s r_t=%.4f '
+                    'loss_mature=%s clusters_mature=%s '
+                    'loss[min/max/mean]=%.4f/%.4f/%.4f '
+                    'cluster_loss[min/max/mean/std]=%.4f/%.4f/%.4f/%.4f '
+                    'fg_clusters=%s'
+                    % (epoch, mask_gen.mode, mask_gen.r_t,
+                       mask_gen._is_loss_map_mature(),
+                       mask_gen._are_clusters_mature(),
+                       lm_min, lm_max, lm_mean,
+                       cl_min, cl_max, cl_mean, cl_std,
+                       fg_ids))
         loss_meter = AverageMeter()
 
         t_epoch_start = time.time()
 
-        for itr, (imgs, masks_enc, masks_pred) in enumerate(train_loader):
+        for itr, batch in enumerate(train_loader):
             t_data = time.time()
 
-            # Move to device
-            imgs = imgs.to(device, non_blocking=True)
-            masks_enc = [m_t.to(device, non_blocking=True) for m_t in masks_enc]
-            masks_pred = [m_t.to(device, non_blocking=True) for m_t in masks_pred]
+            # ---- Unpack batch + mask generation ----
+            # When curriculum is enabled, the train loader returns only the
+            # stacked image tensor (no masks).  We generate masks inline so
+            # that R3b can condition on the teacher's full-grid output.
+            if use_curriculum:
+                imgs = batch.to(device, non_blocking=True)
+                B = imgs.size(0)
 
-            B = imgs.size(0)
+                # For cluster mode, compute the teacher's full unmasked grid
+                # FIRST so generate() can assign clusters.  For other modes
+                # this is unused — but we still compute it here to avoid
+                # re-forwarding in _forward_backward below (zero extra cost
+                # vs the R1 baseline which already does this inside
+                # _forward_backward).
+                with torch.no_grad():
+                    h_full = target_encoder(imgs)  # (B, N, D)
+                    h_full = F.layer_norm(h_full, (h_full.size(-1),))
+
+                # mask_gen.generate() must run on every rank (no rank-0
+                # short-circuit) so its internal state stays in sync.
+                masks_enc, masks_pred = mask_gen.generate(
+                    batch_size=B,
+                    imgs_cpu=batch,         # CPU tensor for intensity prior
+                    h_for_cluster=h_full,   # GPU tensor; only used by R3b
+                )
+                masks_enc = [m_t.to(device, non_blocking=True) for m_t in masks_enc]
+                masks_pred = [m_t.to(device, non_blocking=True) for m_t in masks_pred]
+            else:
+                imgs, masks_enc, masks_pred = batch
+                imgs = imgs.to(device, non_blocking=True)
+                masks_enc = [m_t.to(device, non_blocking=True) for m_t in masks_enc]
+                masks_pred = [m_t.to(device, non_blocking=True) for m_t in masks_pred]
+                B = imgs.size(0)
+                h_full = None  # _forward_backward will compute it
 
             data_ms = (time.time() - t_data) * 1000.0
 
@@ -411,14 +517,19 @@ def main(args):
                 if itr % accum_steps == 0:
                     optimizer.zero_grad(set_to_none=True)
 
-                # Target path (no gradient)
+                # Target path (no gradient).  Reuse the precomputed h_full
+                # when curriculum mode already computed it; otherwise run
+                # the standard R1 target forward.
                 with torch.no_grad():
-                    h = target_encoder(imgs)  # (B, N, D) full patch features
-                    h = F.layer_norm(h, (h.size(-1),))
+                    if h_full is None:
+                        h = target_encoder(imgs)  # (B, N, D) full patch features
+                        h = F.layer_norm(h, (h.size(-1),))
+                    else:
+                        h = h_full
                     # Extract target features at predicted positions
-                    h = apply_masks(h, masks_pred)
+                    h_pred_full = apply_masks(h, masks_pred)  # (B*npred, K_pred, D)
                     # Repeat for each encoder mask
-                    h = repeat_interleave_batch(h, B, repeat=len(masks_enc))
+                    h_rep = repeat_interleave_batch(h_pred_full, B, repeat=len(masks_enc))
 
                 # Context path (with gradient)
                 use_amp = (scaler is not None)
@@ -426,11 +537,11 @@ def main(args):
                     with autocast():
                         z = encoder(imgs, masks_enc)  # masked context tokens
                         z = predictor(z, masks_enc, masks_pred)  # predict targets
-                        loss = F.smooth_l1_loss(z, h) / accum_steps
+                        loss = F.smooth_l1_loss(z, h_rep) / accum_steps
                 else:
                     z = encoder(imgs, masks_enc)
                     z = predictor(z, masks_enc, masks_pred)
-                    loss = F.smooth_l1_loss(z, h) / accum_steps
+                    loss = F.smooth_l1_loss(z, h_rep) / accum_steps
 
                 if use_amp:
                     scaler.scale(loss).backward()
@@ -445,9 +556,23 @@ def main(args):
                     else:
                         optimizer.step()
 
-                return loss.item() * accum_steps  # report unscaled loss
+                # Compute per-token L2 (for curriculum loss-guided / cluster
+                # update).  Use the same z and h_rep so the loss map matches
+                # what the predictor actually saw.  Detach + float to avoid
+                # AMP dtype mismatches and keep memory low.
+                # NOTE: shape is (B*npred*nenc, K_pred) — the curriculum
+                # generator does the (npred, nenc, B, K) reshape internally.
+                if use_curriculum:
+                    with torch.no_grad():
+                        per_token = (z.detach().float()
+                                     - h_rep.detach().float()).pow(2).mean(dim=-1)
+                else:
+                    per_token = None
 
-            (loss_val, fwd_bwd_ms) = gpu_timer(_forward_backward)
+                return loss.item() * accum_steps, per_token  # report unscaled loss
+
+            (fb_result, fwd_bwd_ms) = gpu_timer(_forward_backward)
+            loss_val, per_token_loss = fb_result
 
             # Scheduler + EMA only on optimizer step iterations
             is_step = (itr + 1) % accum_steps == 0 or (itr + 1) == num_micro_batches
@@ -463,6 +588,18 @@ def main(args):
                     for p_online, p_target in zip(enc_unwrap.parameters(),
                                                   target_encoder.parameters()):
                         p_target.data.mul_(m).add_((1.0 - m) * p_online.detach().data)
+
+            # ---- Curriculum state update ----
+            # Must run on every rank (collectives inside); never gated on
+            # is_main.  Accumulates per-microbatch, folds into EMA only on
+            # optimizer-step boundaries.
+            if use_curriculum and per_token_loss is not None:
+                mask_gen.update_after_iter(
+                    per_token_loss=per_token_loss,
+                    masks_pred_idx=masks_pred,
+                    h_for_cluster=h_full,
+                    is_step=is_step,
+                )
 
             loss_meter.update(loss_val)
 
@@ -534,7 +671,12 @@ def main(args):
             pred_diag.train()
 
         # Train eval loss (20 batches, no grad)
-        if is_main and val_loader is not None:
+        # NOTE: skipped when curriculum is enabled because train_loader's
+        # collate_fn (stack_collate) returns only the image tensor — there
+        # are no masks in the batch.  Train-loss is already tracked via
+        # loss_meter; the val_loss + DIAG block above already serve the
+        # same purpose with the uniform val_loader.
+        if is_main and val_loader is not None and not use_curriculum:
             enc_u = encoder.module if hasattr(encoder, 'module') else encoder
             pred_u = predictor.module if hasattr(predictor, 'module') else predictor
             enc_u.eval()
@@ -584,6 +726,7 @@ def main(args):
                             best_path, encoder, predictor, target_encoder, optimizer,
                             scaler, epoch + 1, val_loss, data_cfg['batch_size'],
                             world_size, lr_val,
+                            mask_gen=mask_gen,
                         )
                         upload_to_blob(best_path, blob_prefix, log)
                 else:
@@ -601,6 +744,7 @@ def main(args):
                     ep_path, encoder, predictor, target_encoder, optimizer,
                     scaler, epoch + 1, loss_meter.avg, data_cfg['batch_size'],
                     world_size, lr_val,
+                    mask_gen=mask_gen,
                 )
                 upload_to_blob(ep_path, blob_prefix, log)
             # Upload log CSV every 5 epochs

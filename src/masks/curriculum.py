@@ -232,7 +232,16 @@ class CurriculumMaskGenerator:
         # Loss map (R2): per-grid-cell running EMA of predictor L2.
         # Lives on self.device — used in DDP collectives, so must match
         # the backend (NCCL requires CUDA).
-        self._loss_map = torch.zeros(self.height, self.width, device=self.device)
+        #
+        # Init to NaN (not zero) so the first observation of any cell
+        # initializes the EMA directly rather than starting from a sticky
+        # zero — otherwise cells observed more often (center, by random
+        # block geometry) would converge faster than edge cells and the
+        # z-score over loss_map would encode observation FREQUENCY, not
+        # actual predictor loss.  Mirror of cluster_loss_ema NaN trick.
+        self._loss_map = torch.full(
+            (self.height, self.width), float("nan"), device=self.device
+        )
         self._loss_count = torch.zeros(self.height, self.width, device=self.device)
 
         # Pending accumulator: stats from each micro-batch get added here and
@@ -483,15 +492,26 @@ class CurriculumMaskGenerator:
     def _loss_weight_grid(self) -> torch.Tensor:
         """(H, W) weight grid for R2 loss-guided sampling."""
         # Use the loss EMA directly; clamp to non-negative just in case.
-        return self._loss_map.clamp(min=0.0)
+        # Defensive: replace any still-NaN cell (shouldn't happen because
+        # _is_loss_map_mature gates this on count >= 32 per cell, but in
+        # case of partial restore weirdness, NaN -> 0 stays neutral).
+        wg = torch.nan_to_num(self._loss_map, nan=0.0)
+        return wg.clamp(min=0.0)
 
     def _intensity_weight_grid_for_image(
         self, img_cpu: torch.Tensor
     ) -> torch.Tensor:
-        """(H, W) 0/1 mask of patches whose mean intensity is >= quantile.
+        """(H, W) 0/1 mask of patches whose mean intensity is above quantile.
 
         ``img_cpu`` is (C, H_pix, W_pix) on CPU.  Reduces to per-patch mean
         across channels and pixels, then thresholds at the per-image quantile.
+
+        Tie-safe (FINDING-G2): uses strict ``>`` and falls back to top-K
+        selection when the threshold lands on a tied value (common for OCT
+        slices with large dark vitreous / sclera regions — when background
+        fraction >= quantile, the threshold is the tied background value
+        itself and ``>=`` would silently pick 100% of patches, degrading
+        R3a to no-biasing).
         """
         C, Hp, Wp = img_cpu.shape
         ps = self.patch_size
@@ -503,7 +523,19 @@ class CurriculumMaskGenerator:
         )
         patch_mean = patches.float().mean(dim=(2, 3, 4))  # (H, W)
         thresh = torch.quantile(patch_mean, self.intensity_quantile)
-        return (patch_mean >= thresh).float()
+        mask = (patch_mean > thresh)
+        # Tie fallback: if strict > selects nothing (or too few because the
+        # quantile landed on a tied value), pick exactly the top-K patches
+        # by intensity so foreground fraction stays close to intended.
+        intended_fg = max(1, int(round((1.0 - self.intensity_quantile)
+                                       * patch_mean.numel())))
+        if int(mask.sum().item()) < intended_fg:
+            flat = patch_mean.flatten()
+            topk_idx = torch.topk(flat, intended_fg).indices
+            mask = torch.zeros_like(flat, dtype=torch.bool)
+            mask[topk_idx] = True
+            mask = mask.view(self.height, self.width)
+        return mask.float()
 
     def _cluster_weight_grid_for_image(
         self, assignment: torch.Tensor
@@ -816,13 +848,25 @@ class CurriculumMaskGenerator:
 
     def _fold_pending_into_ema(self) -> None:
         # Loss-map EMA (R2): per-cell mean of new observations, blended in.
+        # NaN-safe first-observation init (FINDING-G1): a cell observed for
+        # the first time takes ``new_mean`` directly; subsequent observations
+        # do the standard EMA blend.  Without this, every cell starts at 0
+        # and converges at a rate proportional to its observation FREQUENCY,
+        # so center cells (observed more by random block geometry) would
+        # look artificially "higher loss" than edge cells purely because
+        # their EMA had more time to escape zero.
         cnt = self._loss_pending_count.clamp(min=1.0)
         new_mean = self._loss_pending_sum / cnt
         observed = self._loss_pending_count > 0
         alpha = self._loss_alpha
-        # Where we have new observations, EMA; otherwise leave the cell alone.
+        nan_mask = torch.isnan(self._loss_map)
+        first_obs = observed & nan_mask
+        ema_obs = observed & ~nan_mask
+        # First observation: initialize directly.
+        self._loss_map = torch.where(first_obs, new_mean, self._loss_map)
+        # Subsequent observations: standard EMA blend.
         self._loss_map = torch.where(
-            observed,
+            ema_obs,
             alpha * self._loss_map + (1.0 - alpha) * new_mean,
             self._loss_map,
         )

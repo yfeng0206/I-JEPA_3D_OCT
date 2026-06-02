@@ -99,6 +99,7 @@ class CurriculumMaskGenerator:
         "loss_guided",
         "intensity_foreground",
         "cluster_foreground",
+        "anatomical_prior",
     )
 
     def __init__(
@@ -154,6 +155,13 @@ class CurriculumMaskGenerator:
             )
         self.T_warm = int(cfg.get("T_warm", 25))
         self.T_total = int(cfg.get("T_total", 100))
+        # When T_total is set explicitly in the config, it WINS over the
+        # ``total_epochs`` the training loop passes to set_epoch().  Without
+        # this, set_epoch(epoch, opt_cfg['epochs']) would silently overwrite an
+        # explicit short ramp (e.g. the oracle's hard-switch T_total=30) with
+        # the full run length, turning a quick hard-switch into a slow full-run
+        # ramp.  Configs that omit T_total keep the legacy full-run behaviour.
+        self._t_total_explicit = "T_total" in cfg
         self.r_max = float(cfg.get("r_max", 0.5))
         self.ramp_shape = cfg.get("ramp_shape", "linear")
         if self.ramp_shape not in ("linear", "cosine"):
@@ -187,6 +195,24 @@ class CurriculumMaskGenerator:
 
         # R3a — intensity threshold
         self.intensity_quantile = float(cfg.get("intensity_quantile", 0.6))
+
+        # ORACLE (anatomical_prior, "v2" retina-following band).  Stateless,
+        # per-slice.  A fixed-size window CENTERED on the retina (intensity-
+        # weighted row centroid) so it follows the band's vertical position
+        # per slice while guaranteeing the region size stays in the 20-40%
+        # band (so the 4 fixed target blocks fit without piling up).
+        #   oracle_region_frac:   target fraction of patches in the masked band.
+        #   oracle_lateral_frac:  fraction of the lateral (x) extent kept
+        #                         (ignore left/right edges).
+        #   oracle_row_offset:    fraction of H to shift the band centre; <0
+        #                         shifts UP toward RNFL for a v3 glaucoma focus,
+        #                         0 = centred on the whole retinal band.
+        #   oracle_min_band_rows: floor on band height (rows) so it is never a
+        #                         razor-thin strip.
+        self.oracle_region_frac = float(cfg.get("oracle_region_frac", 0.28))
+        self.oracle_lateral_frac = float(cfg.get("oracle_lateral_frac", 0.8))
+        self.oracle_row_offset = float(cfg.get("oracle_row_offset", 0.0))
+        self.oracle_min_band_rows = int(cfg.get("oracle_min_band_rows", 3))
 
         # R3b — clustering.  Accept ``K`` as an alias for ``n_clusters`` so
         # the config can use either name.
@@ -301,7 +327,10 @@ class CurriculumMaskGenerator:
         function of ``epoch`` — safe on resume.
         """
         self._epoch = int(epoch)
-        if total_epochs is not None:
+        # Only adopt the loop's run length when T_total was NOT set explicitly
+        # in the config (see _t_total_explicit).  An explicit T_total (e.g. the
+        # oracle hard-switch) must not be overwritten by the full run length.
+        if total_epochs is not None and not self._t_total_explicit:
             self.T_total = int(total_epochs)
         denom = max(self.T_total - self.T_warm, 1)
         frac = max(0.0, min(1.0, (self._epoch - self.T_warm) / float(denom)))
@@ -537,6 +566,91 @@ class CurriculumMaskGenerator:
             mask = mask.view(self.height, self.width)
         return mask.float()
 
+    def _anatomical_prior_weight_grid_for_image(
+        self, img_cpu: torch.Tensor
+    ) -> torch.Tensor:
+        """(H, W) 0/1 grid over the retinal band — ORACLE v2 (retina-following).
+
+        Localizes the bright retinal band per slice from the row-intensity
+        profile (the retina is the bright band between dark vitreous above and
+        darker choroid/sclera below), then masks a fixed-size window CENTRED on
+        the band across most of the lateral extent.  Centring follows the
+        retina's actual vertical position per slice (handles curvature/tilt);
+        the fixed window size keeps the region in the 20-40% band so the 4
+        target blocks fit without piling up.
+
+        Intensity is used only to LOCALIZE the retina here; this is not the
+        (dropped) ``intensity_foreground`` mode, which used intensity as the
+        mask signal itself.
+
+        ``img_cpu`` is (C, H_pix, W_pix) on CPU.
+        """
+        C, Hp, Wp = img_cpu.shape
+        ps = self.patch_size
+        H, W = self.height, self.width
+        patches = (
+            img_cpu.permute(1, 2, 0)
+            .reshape(H, ps, W, ps, C)
+            .permute(0, 2, 1, 3, 4)
+        )
+        patch_mean = patches.float().mean(dim=(2, 3, 4))  # (H, W)
+
+        # Affine-invariant brightness map.  Subtract the per-slice min so the
+        # weighting is RELATIVE to this slice's own contrast.  The training
+        # transform applies ImageNet Normalize; that is affine per channel and,
+        # averaged over the grayscale-replicated channels, stays affine in the
+        # raw value (a*v + b, a>0).  A centroid of (brightness - min) is
+        # affine-invariant, so the band localized is identical whether the
+        # input is raw [0,1] or normalized.  Also removes the old clamp(min=0)
+        # failure where a dim NORMALIZED slice collapsed to center-row masking.
+        prof = patch_mean - patch_mean.min()  # (H, W) >= 0
+        ys = torch.arange(H, dtype=torch.float32)
+        eps = 1e-6
+
+        # Global row centroid -> fallback for dark/edge columns.
+        row_mass = prof.sum(dim=1)  # (H,)
+        gtot = float(row_mass.sum().item())
+        global_c = float((ys * row_mass).sum().item() / gtot) if gtot > eps \
+            else H / 2.0
+
+        # PER-COLUMN centroid -> a curve-following RIBBON, not a rectangle.
+        # Real OCT retina is a curved/tilted band; a single rectangular window
+        # catches only the centre and dilutes with vitreous in the corners.
+        # Tracking the retina's vertical centre per column follows the curve.
+        col_mass = prof.sum(dim=0)  # (W,)
+        col_c = torch.where(
+            col_mass > eps,
+            (ys.view(H, 1) * prof).sum(dim=0) / col_mass.clamp(min=eps),
+            torch.full((W,), global_c),
+        )  # (W,)
+        # Smooth across columns so the ribbon is not jagged (reflect-safe avg).
+        col_c = torch.nn.functional.avg_pool1d(
+            col_c.view(1, 1, W), kernel_size=3, stride=1, padding=1,
+            count_include_pad=False,
+        ).view(W)
+        # Optional vertical offset (negative shifts up toward RNFL for a
+        # v3-style glaucoma-focused oracle; 0 = centred on the band).
+        col_c = col_c + self.oracle_row_offset * H
+
+        # Band height chosen so region ~= oracle_region_frac given the lateral
+        # fraction — guarantees "not too little".  Same total area as the box;
+        # the rows just shift per column to follow the retina.
+        lat_frac = float(self.oracle_lateral_frac)
+        band_h = int(round((self.oracle_region_frac / max(lat_frac, eps)) * H))
+        band_h = max(self.oracle_min_band_rows, min(band_h, H))
+
+        # Central lateral extent (ignore left/right edges, keep most of x).
+        x_keep = max(1, min(int(round(lat_frac * W)), W))
+        x0 = (W - x_keep) // 2
+        x1 = x0 + x_keep
+
+        grid = torch.zeros(H, W, dtype=torch.float32)
+        for x in range(x0, x1):
+            c = int(round(float(col_c[x])))
+            top = max(0, min(c - band_h // 2, H - band_h))
+            grid[top:top + band_h, x] = 1.0
+        return grid
+
     def _cluster_weight_grid_for_image(
         self, assignment: torch.Tensor
     ) -> torch.Tensor:
@@ -596,6 +710,8 @@ class CurriculumMaskGenerator:
                 )
             elif self.mode == "intensity_foreground":
                 bias_active = imgs_cpu is not None
+            elif self.mode == "anatomical_prior":
+                bias_active = imgs_cpu is not None
 
         # Pre-compute cluster assignments per image (R3b) so update_after_iter
         # can reuse them without re-clustering.
@@ -626,6 +742,10 @@ class CurriculumMaskGenerator:
                     weight_grid = self._loss_weight_grid()
                 elif self.mode == "intensity_foreground":
                     weight_grid = self._intensity_weight_grid_for_image(
+                        imgs_cpu[b]
+                    )
+                elif self.mode == "anatomical_prior":
+                    weight_grid = self._anatomical_prior_weight_grid_for_image(
                         imgs_cpu[b]
                     )
                 elif self.mode == "cluster_foreground":
@@ -742,8 +862,9 @@ class CurriculumMaskGenerator:
         learned state.  We early-return after bumping the iter counter so
         R3a doesn't pay loss-map accumulation or all-reduce costs.
         """
-        # R3a: intensity prior is stateless — skip the whole update.
-        if self.mode == "intensity_foreground":
+        # Stateless modes (R3a intensity, ORACLE anatomical_prior) compute the
+        # foreground prior per-image from the input — no learned state to fold.
+        if self.mode in ("intensity_foreground", "anatomical_prior"):
             self._iter += 1
             return
 

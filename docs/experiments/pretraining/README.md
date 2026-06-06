@@ -7,6 +7,7 @@ Self-supervised I-JEPA pretraining on 600K OCT slices (FairVision Training split
 | Run | Init | LR | Epochs | Warmup | EMA | Status |
 |---|---|---|---|---|---|---|
 | [Random-init 100ep](random_100ep.md) | Random | 0.00025 | 100 | 5 | 0.996→1.0 | **completed** — current baseline |
+| [Oracle anatomical 100ep](oracle_100ep.md) | Warm-start random ep25 | 0.00025 | 100 | 5 | 0.996→1.0 | **completed** — Rung 1 (anatomical_prior masking) |
 | DINO-init continuation | DINOv2 or DINOv3 ViT-B/16 | TBD | 100 | TBD | 0.996→1.0 | planned (Phase 3) |
 
 Shared config: ViT-B/16, batch 64×4 GPUs × 2 accum = 512 effective, weight_decay 0.04→0.4 cosine, no early stopping.

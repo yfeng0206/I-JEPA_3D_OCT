@@ -29,23 +29,26 @@ MeanPool + Linear frozen probe across the oracle anatomical checkpoints (warm-st
 
 Monotonic with pretraining length. Train > Val ~0.03 (mild, expected for a 2.3K-param head); Test > Val ~0.02 is a consistent FairVision val(1000)/test(3000) split property seen in every run.
 
-## Oracle vs Random — preliminary (random ep75 still running)
+## Oracle vs Random — frozen MeanPool (final)
 
-| Epoch | Random MeanPool Test AUC | Oracle MeanPool Test AUC | Δ (oracle − random) |
-|---|---|---|---|
-| ep50 | 0.8641 | 0.8740 | +0.0099 |
-| ep75 | _running_ | 0.8836 | _pending_ |
-| ep100 | 0.8746 (from `mean_pool.md`) | 0.8855 | +0.0109 |
+Random backfill complete (job `good_dog_d8lx1wg14t`). **Sanity gate passed**: random ep100 reproduced 0.8746 / val 0.8559 / sens 0.761 / spec 0.838 exactly (same-seed determinism) — harness validated.
 
-Two preliminary reads (both need the sanity gate + bootstrap below before they are claims):
+| Epoch | Random | Oracle | Δ (oracle − random) | 95% CI (paired bootstrap) | p (2-sided) |
+|---|---|---|---|---|---|
+| ep50 | 0.8641 | 0.8740 | +0.0099 | [+0.0051, +0.0147] | <0.0005 *** |
+| ep75 | 0.8723 | 0.8836 | +0.0113 | [+0.0065, +0.0165] | <0.0005 *** |
+| ep100 | 0.8746 | 0.8855 | +0.0109 | [+0.0058, +0.0162] | <0.0005 *** |
 
-1. **Consistent quality gain.** Oracle is ~+0.010 over random at both ep50 and ep100. A consistent offset across independent epochs is stronger than any single point.
-2. **Pretraining efficiency.** Oracle ep50 (0.8740) ≈ random ep100 (0.8746) — oracle reaches random's final MeanPool performance at half the pretraining epochs.
+Paired stratified bootstrap, B=2000, seed 42, same resample indices for both models on the shared 3000-volume Test split (`scripts/bootstrap_frozen_meanpool.py`, method per `ablation_analysis.md`).
 
-Cross-check (no harness bug): random ep50 MeanPool 0.8641 = random ep50 d=1 0.8611 (`d1_sweep.md`) + the ~0.003 MeanPool offset — lands exactly on the existing baseline.
+**The oracle advantage is significant at every epoch** — all three 95% CIs exclude zero (lower bound ≥ +0.005), p < 0.0005. The ~+0.010 gap is not single-seed noise.
 
-## Pending before these become claims
+Two confirmed findings:
+1. **Quality.** Oracle is a significant +0.010–0.011 Test AUC over random at matched epochs.
+2. **Pretraining efficiency.** Oracle ep50 (0.8740) ≈ random ep100 (0.8746) — oracle reaches random's final MeanPool performance at half the pretraining.
 
-- **Sanity gate**: random ep100 re-run must reproduce ~0.8746. If it drifts, the harness changed — stop and investigate.
-- **Paired bootstrap** (B=2000, stratified, `ablation_analysis.md` method) on each run's `test_predictions.npz`: 95% CI + p-value on the +0.010 deltas. Expected significant given the ablation's ~±0.005 paired-delta half-width, but run, not assumed.
-- **Fine-tune comparison**: oracle ep100 fine-tuned (d=1 / MeanPool / CrossAttnPool) vs the random fine-tunes (0.8878 / 0.8868 / 0.8872). Note frozen oracle MeanPool (0.8855) already nearly matches fine-tuned random MeanPool (0.8868).
+Cross-check (no harness bug): random ep50 MeanPool 0.8641 = random ep50 d=1 0.8611 (`d1_sweep.md`) + the ~0.003 MeanPool offset.
+
+## Still pending: fine-tune comparison
+
+Oracle ep100 fine-tuned (d=1 / MeanPool / CrossAttnPool) vs the random fine-tunes (0.8878 / 0.8868 / 0.8872), same paired bootstrap on each run's `test_predictions.npz`. Frozen oracle MeanPool (0.8855) already nearly matches fine-tuned random MeanPool (0.8868) — so oracle fine-tune may push past 0.89, or the gap may compress (encoder near-saturated at ep100). Single-seed deltas; multi-seed replication would firm them up.

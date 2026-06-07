@@ -24,7 +24,7 @@ All rows share identical hyperparameters (bs=256, lr=4e-4, wd=0.05, dropout=0.2,
 
 ## Oracle anatomical (Rung 1)
 
-MeanPool sweep over the oracle-masked checkpoints vs random — [oracle_meanpool_sweep.md](oracle_meanpool_sweep.md). Preliminary: oracle ~+0.010 Test AUC over random at matched epochs, and oracle ep50 ≈ random ep100 (efficiency). Sanity gate + paired bootstrap pending the random backfill sweep.
+MeanPool sweep over the oracle-masked checkpoints vs random — [oracle_meanpool_sweep.md](oracle_meanpool_sweep.md). Oracle is +0.010 Test AUC over random at every epoch (paired bootstrap p<0.0005, all 95% CIs exclude 0), and oracle ep50 ≈ random ep100 (2× pretraining efficiency). Sanity gate passed. Fine-tune comparison next.
 
 ## Sweep plots
 

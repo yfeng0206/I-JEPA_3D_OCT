@@ -22,6 +22,10 @@ All rows share identical hyperparameters (bs=256, lr=4e-4, wd=0.05, dropout=0.2,
 2. **Encoder is the ceiling, not probe capacity.** Across d=3 (21M), d=1 (7M), CrossAttnPool (277K), Val AUC varies within 0.01. Probes above ~7M overfit. See `lessons_learned.md` #7.
 3. **Frozen-probe ceiling is ~0.87-0.88 Test AUC on this dataset.** Fine-tune is the lever for the next 1-2%.
 
+## Oracle anatomical (Rung 1)
+
+MeanPool sweep over the oracle-masked checkpoints vs random — [oracle_meanpool_sweep.md](oracle_meanpool_sweep.md). Preliminary: oracle ~+0.010 Test AUC over random at matched epochs, and oracle ep50 ≈ random ep100 (efficiency). Sanity gate + paired bootstrap pending the random backfill sweep.
+
 ## Sweep plots
 
 Per-pretraining-epoch Val/Test AUC from d=1 sweep ([d1_sweep.md](d1_sweep.md)):

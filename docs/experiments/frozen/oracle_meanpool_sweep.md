@@ -43,9 +43,7 @@ Paired stratified bootstrap, B=2000, seed 42, same resample indices for both mod
 
 **The oracle advantage is significant at every epoch** — all three 95% CIs exclude zero (lower bound ≥ +0.005), p < 0.0005. The ~+0.010 gap is not single-seed noise.
 
-Two confirmed findings:
-1. **Quality.** Oracle is a significant +0.010–0.011 Test AUC over random at matched epochs.
-2. **Pretraining efficiency.** Oracle ep50 (0.8740) ≈ random ep100 (0.8746) — oracle reaches random's final MeanPool performance at half the pretraining.
+**Result.** Oracle gives a consistent **+0.010–0.011 Test AUC** (≈1 point) over random at every measured epoch (ep50/75/100), p<0.0005, all 95% CIs exclude zero. A quality gain on this dataset.
 
 Cross-check (no harness bug): random ep50 MeanPool 0.8641 = random ep50 d=1 0.8611 (`d1_sweep.md`) + the ~0.003 MeanPool offset.
 

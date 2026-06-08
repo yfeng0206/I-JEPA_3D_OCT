@@ -13,6 +13,8 @@ Paired bootstrap (B=2000, stratified, same resample indices across methods) on t
 | Fine-tune LLRD γ=0.5 | CrossAttnPool + Linear | 86M + 277K | **0.8872** |
 | Fine-tune LLRD γ=0.5 | MeanPool + Linear | 86M + 2.3K | **0.8868** |
 
+![Probe-architecture ranking on ep100 — full 2x3 matrix](../../../results/summary/probe_ranking_ep100.png)
+
 ## Paired comparisons — frozen regime
 
 | Comparison | Δ Test AUC | 95% CI | two-sided p | |

@@ -2,9 +2,28 @@
 
 Self-supervised pretraining using [I-JEPA](https://github.com/facebookresearch/ijepa) (Assran et al., CVPR 2023) on [Harvard FairVision](https://github.com/Harvard-Ophthalmology-AI-Lab/FairVision) OCT data, evaluated via frozen probe + fine-tune on binary glaucoma classification.
 
-## Headline results
+## Headline result — anatomy-guided masking
 
-All on FairVision glaucoma held-out test split (3000 volumes). Encoder: random-init I-JEPA ViT-B/16, 100 epochs SSL on 600K OCT slices.
+Biasing the I-JEPA target blocks onto the retinal band (anatomy-guided "oracle" masking, warm-started from random ep25) yields a measurably better encoder than random masking. Best overall: **oracle fine-tune MeanPool 0.8947** on the FairVision glaucoma held-out test split (3000 volumes).
+
+![Oracle masking on real glaucoma B-scans — faint red is the retinal bias band (~27% of patches); yellow is the 4 sampled target blocks the encoder must predict from surrounding context](results/summary/oracle_build_check_real.png)
+
+Paired bootstrap, B=2000, on the 3000-volume Test split:
+
+| Regime | Probe | Random | Oracle | Δ | p |
+|---|---|---|---|---|---|
+| Frozen | MeanPool | 0.8746 | 0.8855 | +0.0109 | <0.0005 |
+| Fine-tune | MeanPool | 0.8868 | **0.8947** | +0.0079 | 0.001 |
+| Fine-tune | CrossAttnPool | 0.8872 | 0.8937 | +0.0065 | 0.009 |
+| Fine-tune | AttentiveProbe d=1 | 0.8878 | 0.8901 | +0.0023 | 0.26 (ns) |
+
+Oracle wins frozen (+0.010 at every checkpoint ep50/75/100, p<0.0005) and fine-tuned (significant for MeanPool and CrossAttnPool; d=1 not significant — the over-parameterized probe). Frozen is the clean headline; the fine-tune protocol overfits fast (val AUC peaks ep3-4/50). Details: [`docs/experiments/frozen/oracle_meanpool_sweep.md`](docs/experiments/frozen/oracle_meanpool_sweep.md), [`docs/experiments/finetune/oracle_finetune.md`](docs/experiments/finetune/oracle_finetune.md).
+
+![Oracle vs random masking: frozen MeanPool sweep (left) and fine-tune across probes (right)](results/summary/oracle_summary.png)
+
+## Probe-architecture ablation (random-init baseline)
+
+The baseline the oracle is compared against: random-init I-JEPA ViT-B/16, 100 epochs SSL on 600K OCT slices. Full 2×3 matrix (3 probes × frozen/fine-tune) on the 3000-volume Test split.
 
 | Method | Probe | Params (trainable) | **Test AUC** |
 |---|---|---|---|
@@ -23,28 +42,7 @@ All on FairVision glaucoma held-out test split (3000 volumes). Encoder: random-i
 - **Fine-tune uplift is real on every probe**: +0.0172 on d=1 (p<0.001), +0.0122 on MeanPool (p<0.001), +0.0080 on CrossAttnPool (p=0.009). Uplift scales inversely with probe capacity — d=1 had the most room to recover, CrossAttnPool the least.
 - **Practical takeaway**: for fine-tune protocols, MeanPool is Pareto-optimal (zero probe params, matches best). For frozen-probe protocols, CrossAttnPool (277K) is Pareto-optimal.
 
-Full statistical analysis: [`docs/experiments/frozen/ablation_analysis.md`](docs/experiments/frozen/ablation_analysis.md).
-
-![Probe-architecture ranking on ep100](results/summary/probe_ranking_ep100.png)
-
-## Anatomy-guided masking — oracle (Rung 1)
-
-Biasing the I-JEPA target blocks onto the retinal band (anatomy-guided "oracle" masking, warm-started from random ep25) yields a measurably better encoder than random masking.
-
-![Oracle masking on real glaucoma B-scans — faint red is the retinal bias band (~27% of patches); yellow is the 4 sampled target blocks the encoder must predict from surrounding context](results/summary/oracle_build_check_real.png)
-
-Paired bootstrap, B=2000, on the 3000-volume Test split:
-
-| Regime | Probe | Random | Oracle | Δ | p |
-|---|---|---|---|---|---|
-| Frozen | MeanPool | 0.8746 | 0.8855 | +0.0109 | <0.0005 |
-| Fine-tune | MeanPool | 0.8868 | **0.8947** | +0.0079 | 0.001 |
-| Fine-tune | CrossAttnPool | 0.8872 | 0.8937 | +0.0065 | 0.009 |
-| Fine-tune | AttentiveProbe d=1 | 0.8878 | 0.8901 | +0.0023 | 0.26 (ns) |
-
-Oracle wins frozen (+0.010 at every checkpoint ep50/75/100, p<0.0005) and fine-tuned (significant for MeanPool and CrossAttnPool; d=1 not significant — the over-parameterized probe). Best overall: oracle fine-tune MeanPool **0.8947**. Frozen is the clean headline; the fine-tune protocol overfits fast (val AUC peaks ep3-4/50). Details: [`docs/experiments/frozen/oracle_meanpool_sweep.md`](docs/experiments/frozen/oracle_meanpool_sweep.md), [`docs/experiments/finetune/oracle_finetune.md`](docs/experiments/finetune/oracle_finetune.md).
-
-![Oracle vs random masking: frozen MeanPool sweep (left) and fine-tune across probes (right)](results/summary/oracle_summary.png)
+Full statistical analysis and the probe-ranking figure: [`docs/experiments/frozen/ablation_analysis.md`](docs/experiments/frozen/ablation_analysis.md).
 
 ## Interpretability — why the three probes tie
 
@@ -101,5 +99,12 @@ Details and backlog: [`docs/research_log.md`](docs/research_log.md).
 - Zhou et al., *A Foundation Model for Generalizable Disease Detection from Retinal Images* (RETFound), Nature 2023. [paper](https://www.nature.com/articles/s41586-023-06555-x)
 - Kakogeorgiou et al., *Attention, Please! Revisiting Attentive Probing for Masked Image Modeling*, ICLR 2026. [arxiv 2506.10178](https://arxiv.org/abs/2506.10178)
 - Luo et al., *FairVision: Equitable Deep Learning for Eye Disease Screening*, 2024. [arxiv 2310.02492](https://arxiv.org/abs/2310.02492)
+
+**Masking strategies (guided / learned masking — the direction this work extends):**
+- *SemMAE: Semantic-Guided Masking for Learning Masked Autoencoders*, NeurIPS 2022. [arxiv 2206.10207](https://arxiv.org/abs/2206.10207)
+- Kakogeorgiou et al., *What to Hide from Your Students: Attention-Guided Masked Image Modeling* (AttMask), ECCV 2022. [arxiv 2203.12719](https://arxiv.org/abs/2203.12719)
+- *AnatoMask: Enhancing Medical Image Segmentation with Reconstruction-guided Self-masking*, ECCV 2024. [arxiv 2407.06468](https://arxiv.org/abs/2407.06468)
+- *DMT-JEPA: Discriminative Masked Targets for Joint-Embedding Predictive Architecture*, 2024. [arxiv 2405.17995](https://arxiv.org/abs/2405.17995)
+- Balestriero & LeCun, *LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics*, 2025. [arxiv 2511.08544](https://arxiv.org/abs/2511.08544)
 
 Full bibliography with context: [`docs/research_log.md`](docs/research_log.md#paper-bibliography).

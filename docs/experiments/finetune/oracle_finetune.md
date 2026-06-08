@@ -12,6 +12,8 @@ Oracle ep100 encoder fine-tuned (encoder unfrozen, LLRD γ=0.5, lr 2e-4, 64 slic
 
 Paired stratified bootstrap (B=2000, seed 42, shared resample indices on the 3000-volume Test split; `scripts/bootstrap_finetune.py`). Random FT predictions reproduced 0.8878/0.8872/0.8868 exactly.
 
+![Fine-tune: oracle vs random across the three probes](../../../results/summary/oracle_finetune_bars.png)
+
 **Oracle beats random under fine-tuning, significantly, for MeanPool (+0.0079) and CrossAttn (+0.0065).** d=1 is positive but not significant — consistent with the d=1 attentive probe overfitting (`ablation_analysis.md`) and masking the encoder difference. Best overall number: **oracle FT MeanPool 0.8947**.
 
 ## Caveat — the FT protocol overfits

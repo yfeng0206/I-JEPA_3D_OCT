@@ -40,6 +40,8 @@ Biasing the I-JEPA target blocks onto the retinal band (anatomy-guided "oracle" 
 
 Oracle wins frozen (+0.010 at every checkpoint ep50/75/100, p<0.0005) and fine-tuned (significant for MeanPool and CrossAttnPool; d=1 not significant — the over-parameterized probe). Best overall: oracle fine-tune MeanPool **0.8947**. Frozen is the clean headline; the fine-tune protocol overfits fast (val AUC peaks ep3-4/50). Details: [`docs/experiments/frozen/oracle_meanpool_sweep.md`](docs/experiments/frozen/oracle_meanpool_sweep.md), [`docs/experiments/finetune/oracle_finetune.md`](docs/experiments/finetune/oracle_finetune.md).
 
+![Oracle vs random masking: frozen MeanPool sweep (left) and fine-tune across probes (right)](results/summary/oracle_summary.png)
+
 ## Interpretability — why the three probes tie
 
 Architecture-agnostic occlusion attribution on all three fine-tune probes. **At the slice level, all three converge on the same bimodal structure along the disc-region axis** — MeanPool and CrossAttnPool curves correlate at r = 0.94, confirming the tied Test AUCs aren't coincidental.

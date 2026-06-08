@@ -27,6 +27,19 @@ Full statistical analysis: [`docs/experiments/frozen/ablation_analysis.md`](docs
 
 ![Probe-architecture ranking on ep100](results/summary/probe_ranking_ep100.png)
 
+## Anatomy-guided masking — oracle (Rung 1)
+
+Biasing the I-JEPA target blocks onto the retinal band (anatomy-guided "oracle" masking, warm-started from random ep25) yields a measurably better encoder than random masking. Paired bootstrap, B=2000, on the 3000-volume Test split:
+
+| Regime | Probe | Random | Oracle | Δ | p |
+|---|---|---|---|---|---|
+| Frozen | MeanPool | 0.8746 | 0.8855 | +0.0109 | <0.0005 |
+| Fine-tune | MeanPool | 0.8868 | **0.8947** | +0.0079 | 0.001 |
+| Fine-tune | CrossAttnPool | 0.8872 | 0.8937 | +0.0065 | 0.009 |
+| Fine-tune | AttentiveProbe d=1 | 0.8878 | 0.8901 | +0.0023 | 0.26 (ns) |
+
+Oracle wins frozen (+0.010 at every checkpoint ep50/75/100, p<0.0005) and fine-tuned (significant for MeanPool and CrossAttnPool; d=1 not significant — the over-parameterized probe). Best overall: oracle fine-tune MeanPool **0.8947**. Frozen is the clean headline; the fine-tune protocol overfits fast (val AUC peaks ep3-4/50). Details: [`docs/experiments/frozen/oracle_meanpool_sweep.md`](docs/experiments/frozen/oracle_meanpool_sweep.md), [`docs/experiments/finetune/oracle_finetune.md`](docs/experiments/finetune/oracle_finetune.md).
+
 ## Interpretability — why the three probes tie
 
 Architecture-agnostic occlusion attribution on all three fine-tune probes. **At the slice level, all three converge on the same bimodal structure along the disc-region axis** — MeanPool and CrossAttnPool curves correlate at r = 0.94, confirming the tied Test AUCs aren't coincidental.
@@ -57,6 +70,7 @@ Harvard FairVision Glaucoma subset: 10,000 subjects (6K Train / 1K Val / 3K Test
 - Phase 1 (done): Random-init I-JEPA SSL → frozen probe + fine-tune evaluation
 - Phase 2 (done): Probe architecture ablations — full 2×3 matrix (3 probes × frozen/fine-tune)
 - Phase 3 (done): Interpretability — occlusion attribution, patch aggregate, bootstrap CI
+- Masking strategy (Rung 1, done): anatomy-guided "oracle" masking beats random — frozen +0.010 (p<0.0005), fine-tune +0.008. Next: self-guided masking (Rung 2)
 - Phase 4 (in progress): Foundation-model baselines on same Test split (DINOv3, OCTCube)
 - Phase 5 (planned): 3D-aware SSL extension (multi-view / axial)
 

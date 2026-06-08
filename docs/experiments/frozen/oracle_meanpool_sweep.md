@@ -41,7 +41,7 @@ Random backfill complete (job `good_dog_d8lx1wg14t`). **Sanity gate passed**: ra
 
 Paired stratified bootstrap, B=2000, seed 42, same resample indices for both models on the shared 3000-volume Test split (`scripts/bootstrap_frozen_meanpool.py`, method per `ablation_analysis.md`).
 
-![Frozen MeanPool: oracle vs random across pretraining epochs](../../../results/summary/oracle_frozen_curve.png)
+![Frozen MeanPool: oracle vs random at ep50/75/100](../../../results/summary/oracle_frozen_bars.png)
 
 **The oracle advantage is significant at every epoch** — all three 95% CIs exclude zero (lower bound ≥ +0.005), p < 0.0005. The ~+0.010 gap is not single-seed noise.
 

@@ -29,7 +29,11 @@ Full statistical analysis: [`docs/experiments/frozen/ablation_analysis.md`](docs
 
 ## Anatomy-guided masking — oracle (Rung 1)
 
-Biasing the I-JEPA target blocks onto the retinal band (anatomy-guided "oracle" masking, warm-started from random ep25) yields a measurably better encoder than random masking. Paired bootstrap, B=2000, on the 3000-volume Test split:
+Biasing the I-JEPA target blocks onto the retinal band (anatomy-guided "oracle" masking, warm-started from random ep25) yields a measurably better encoder than random masking.
+
+![Oracle masking on real glaucoma B-scans — faint red is the retinal bias band (~27% of patches); yellow is the 4 sampled target blocks the encoder must predict from surrounding context](results/summary/oracle_build_check_real.png)
+
+Paired bootstrap, B=2000, on the 3000-volume Test split:
 
 | Regime | Probe | Random | Oracle | Δ | p |
 |---|---|---|---|---|---|

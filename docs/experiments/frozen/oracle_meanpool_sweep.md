@@ -47,6 +47,6 @@ Paired stratified bootstrap, B=2000, seed 42, same resample indices for both mod
 
 Cross-check (no harness bug): random ep50 MeanPool 0.8641 = random ep50 d=1 0.8611 (`d1_sweep.md`) + the ~0.003 MeanPool offset.
 
-## Still pending: fine-tune comparison
+## Fine-tune comparison (done)
 
-Oracle ep100 fine-tuned (d=1 / MeanPool / CrossAttnPool) vs the random fine-tunes (0.8878 / 0.8868 / 0.8872), same paired bootstrap on each run's `test_predictions.npz`. Frozen oracle MeanPool (0.8855) already nearly matches fine-tuned random MeanPool (0.8868) — so oracle fine-tune may push past 0.89, or the gap may compress (encoder near-saturated at ep100). Single-seed deltas; multi-seed replication would firm them up.
+Oracle ep100 fine-tuned beats random ep100 fine-tuned for MeanPool (+0.0079, p=0.001) and CrossAttn (+0.0065, p=0.009); d=1 +0.0023 (ns). Best overall: oracle FT MeanPool 0.8947. The FT protocol overfits (peaks ep3-4/50), so the frozen result stays the headline. See [../finetune/oracle_finetune.md](../finetune/oracle_finetune.md).

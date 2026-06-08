@@ -6,6 +6,8 @@ Branch: `ijepa-mask`. Code: [`src/masks/curriculum.py`](../../src/masks/curricul
 
 ## CVPR main point (the contribution)
 
+![ORACLE masking on real glaucoma B-scans — faint red is the retinal bias band (~27% of patches); yellow is the 4 sampled I-JEPA target blocks the encoder must predict from surrounding context](../../results/summary/oracle_build_check_real.png)
+
 The contribution is the **masking strategy for JEPA**, demonstrated on OCT glaucoma. The thesis, by analogy to CNNs: random masking teaches general structure (like early conv layers); masking the **diagnostically important region** teaches task-specific structure (like deep layers). We prove this in three rungs:
 
 ```

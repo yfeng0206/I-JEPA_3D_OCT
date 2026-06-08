@@ -57,6 +57,26 @@ def finetune(ax, title='Fine-tune — oracle vs random\n*** p<0.001   ** p<0.01 
     grouped_barh(ax, PROBES, RANDOM_FT, ORACLE_FT, (0.86, 0.905), title, stars=FT_STARS, legend=legend)
 
 
+def headline(ax):
+    """Hero bar: best downstream AUC, oracle (ours) vs random-init pretraining."""
+    methods = ['Random-masking\nI-JEPA', 'Anatomy-guided\nmasking (ours)']
+    vals = [0.8878, 0.8947]
+    ax.barh([0, 1], vals, 0.6, color=[C_RANDOM, C_ORACLE])
+    ax.text(vals[0] + 0.0006, 0, f'{vals[0]:.4f}', va='center', fontsize=13)
+    ax.text(vals[1] + 0.0006, 1, f'{vals[1]:.4f}', va='center', fontsize=17, fontweight='bold', color=C_ORACLE)
+    ax.set_yticks([0, 1])
+    ax.set_yticklabels(methods)
+    ax.set_xlim(0.86, 0.902)
+    ax.set_xlabel('Best downstream Test AUC')
+    ax.set_title('Glaucoma classification — FairVision, 3000-volume held-out test', fontsize=13)
+    ax.set_axisbelow(True)
+    ax.grid(axis='x', alpha=0.3)
+
+
+fig, ax = plt.subplots(figsize=(8.5, 2.8)); headline(ax)
+fig.savefig(os.path.join(OUT, 'oracle_headline.png'), dpi=150, bbox_inches='tight'); plt.close(fig)
+
+
 fig, ax = plt.subplots(figsize=(7.5, 4.8)); frozen(ax)
 fig.savefig(os.path.join(OUT, 'oracle_frozen_bars.png'), dpi=150, bbox_inches='tight'); plt.close(fig)
 

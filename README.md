@@ -4,9 +4,9 @@ Self-supervised pretraining using [I-JEPA](https://github.com/facebookresearch/i
 
 ## Headline result — anatomy-guided masking
 
-Biasing the I-JEPA target blocks onto the retinal band (anatomy-guided "oracle" masking, warm-started from random ep25) yields a measurably better encoder than random masking. Best overall: **oracle fine-tune MeanPool 0.8947** on the FairVision glaucoma held-out test split (3000 volumes).
+Best downstream glaucoma classifier: **0.8947 Test AUC** (FairVision, 3000-volume held-out) — fine-tuned MeanPool on an encoder pretrained with anatomy-guided ("oracle") masking, which biases I-JEPA's prediction targets onto the retinal band. Beats random-masking I-JEPA (0.8878) at every probe and regime.
 
-![Oracle masking on real glaucoma B-scans — faint red is the retinal bias band (~27% of patches); yellow is the 4 sampled target blocks the encoder must predict from surrounding context](results/summary/oracle_build_check_real.png)
+![Best downstream Test AUC: anatomy-guided masking (ours) 0.8947 vs random-masking I-JEPA 0.8878](results/summary/oracle_headline.png)
 
 Paired bootstrap, B=2000, on the 3000-volume Test split:
 

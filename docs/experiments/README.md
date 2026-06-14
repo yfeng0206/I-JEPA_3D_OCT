@@ -4,7 +4,7 @@ Three sections: pretraining (the SSL runs), frozen (probe-only evaluation with e
 
 All results use FairVision glaucoma held-out Test split (3000 volumes). Encoder: ViT-B/16.
 
-## Headline
+## Results summary
 
 | Stage | Probe | Params (trainable) | Test AUC | Detail |
 |---|---|---|---|---|

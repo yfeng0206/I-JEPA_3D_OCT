@@ -70,12 +70,12 @@ Oracle ep25 ≡ random ep25 (fork point, r_t=0). Real divergence is ep50/75/100,
 | 75 | **0.140 / 0.151** | 0.145 / 0.147 | 0.26 / 0.82 | 0.24 / 0.84 |
 | 100 | **0.130 / 0.143** | 0.135 / 0.142 | 0.21 / 0.84 | 0.23 / 0.87 |
 
-## Problem check (the point of this doc)
+## Problem check
 
 1. **No collapse.** rep_diversity stays 0.17–0.33 (1.0 = collapsed); ep100 = 0.210, marginally *better* than random's 0.229. cos_sim 0.69–0.88. Healthy throughout.
 2. **Curriculum executed exactly as designed.** r_t = 0.0(ep25) → 0.2 → 0.4 → 0.6 → 0.8 → **1.0(ep30)**, held at 1.0 through ep100. Confirms the `T_total=30` hard-switch fix held (loop's 100-epoch total did not override the config).
 3. **Loss is not "harder."** At matched epochs the oracle's train/val loss is slightly *lower* than random (ep100: 0.130/0.143 vs 0.135/0.142), not higher. My mid-run guess ("masking the retina is a harder task → higher loss") does **not** hold over the full run — predicting a contiguous anatomical band is, if anything, marginally easier in raw loss. Per `lessons_learned.md` #1, loss is not the quality signal anyway; downstream AUC is.
-4. **Mid-run stress phase (ep55–65) — the one thing to understand, not a failure.** cos_sim dips to its min 0.69, l2_dist peaks 18.9, loss peaks — as the EMA target matures under full oracle masking. It **recovers** by ep88 (cos_sim 0.86, rep_div 0.23). Watch that downstream ep50 is not unusually weak because of it.
+4. **Mid-run stress phase (ep55–65), not a failure.** cos_sim dips to its min 0.69, l2_dist peaks 18.9, loss peaks — as the EMA target matures under full oracle masking. It **recovers** by ep88 (cos_sim 0.86, rep_div 0.23). Watch that downstream ep50 is not unusually weak because of it.
 5. **Mild train/val gap at ep100** (0.013 vs random's 0.007) — slightly more specialized/overfit-leaning, expected for a task-biased objective. Flag for the downstream sweep.
 
 ## Available Checkpoints (downloaded locally)

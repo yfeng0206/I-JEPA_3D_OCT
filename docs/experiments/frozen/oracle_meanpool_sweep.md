@@ -51,4 +51,4 @@ Cross-check (no harness bug): random ep50 MeanPool 0.8641 = random ep50 d=1 0.86
 
 ## Fine-tune comparison (done)
 
-Oracle ep100 fine-tuned beats random ep100 fine-tuned for MeanPool (+0.0079, p=0.001) and CrossAttn (+0.0065, p=0.009); d=1 +0.0023 (ns). Best overall: oracle FT MeanPool 0.8947. The FT protocol overfits (peaks ep3-4/50), so the frozen result stays the headline. See [../finetune/oracle_finetune.md](../finetune/oracle_finetune.md).
+Oracle ep100 fine-tuned beats random ep100 fine-tuned for MeanPool (+0.0079, p=0.001) and CrossAttn (+0.0065, p=0.009); d=1 +0.0023 (ns). Best overall: oracle FT MeanPool 0.8947. The FT protocol overfits (peaks ep3-4/50). See [../finetune/oracle_finetune.md](../finetune/oracle_finetune.md).

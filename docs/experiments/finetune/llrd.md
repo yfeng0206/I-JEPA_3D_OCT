@@ -2,7 +2,7 @@
 
 Three parallel fine-tune runs with identical LLRD + optimizer settings, differing only in the slice-aggregation probe. All three initialize from the random-init I-JEPA ViT-B/16 ep100 checkpoint, unfreeze the encoder, and use MAE-style Layer-wise LR Decay (γ=0.5).
 
-## Results — headline
+## Results
 
 | Run | Probe | Probe params | Best epoch | Val AUC | Test AUC |
 |---|---|---|---|---|---|
@@ -102,13 +102,13 @@ All three peak at ep4-5, plateau through ep10, then decline as the encoder over-
 | AMP | fp16 autocast |
 | GPUs | 4× T4 (DDP) |
 
-## Interpretation — the two-regime story
+## Interpretation — the two regimes
 
 **Frozen eval**: probe architecture matters. CrossAttnPool beats d=1 (p=0.002, +0.009), beats MeanPool (p=0.04, +0.005). The probe has to do all the work of slice-weighting on its own; d=1 at 7M params overfits the 6K-volume dataset while CrossAttnPool at 277K finds the sweet spot.
 
 **Fine-tune eval**: probe architecture is noise. d=1 / CrossAttnPool / MeanPool all tie at ~0.887 AUC. Encoder top-block + LayerNorm adaptation provides enough additional capacity that the probe doesn't need to do anything sophisticated.
 
-Paper claim:
+Claim:
 > *"Probe architecture matters for frozen-probe evaluation only. Under fine-tune, a trivial mean-pool with zero probe parameters matches a 7M AttentiveProbe on multi-slice OCT classification. The common practice of bolting attentive probes onto fine-tuned encoders is unjustified on this task — encoder adaptation absorbs the probe's role."*
 
 ## Note: the gate fix was essential

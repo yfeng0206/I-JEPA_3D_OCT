@@ -1,6 +1,6 @@
 # Research Log
 
-Reference log for paper writing. Each entry records a problem or decision, the investigation (what we read / consulted), the solution or decision, and outcomes. New entries appended at the top of each section; sections updated whenever we learn something worth keeping.
+Reference log. Each entry records a problem or decision, the investigation (what we read / consulted), the solution or decision, and outcomes. New entries appended at the top of each section; sections updated whenever we learn something worth keeping.
 
 ## Contents
 - [Session Log](#session-log) — chronological problem/solution entries
@@ -87,13 +87,13 @@ That's within Zhou 2025's 2-4% fine-tune-vs-LP gap range. The insight: the meani
 **References**: Linear scaling rule is standard — Goyal et al. "Accurate, Large Minibatch SGD" (2017) is the canonical reference for SGD; similar principle applies (approximately) to AdamW.
 
 #### 7. Literature-comparison check: is our 0.846 frozen-probe AUC reportable?
-**Context**: Fear that overfit pattern (train AUC 1.0, val 0.85) would be flagged by reviewers.
+**Context**: Checking whether the overfit pattern (train AUC 1.0, val 0.85) undermines reporting the frozen-probe AUC.
 **Investigation**:
 - Papers don't publish per-epoch probe training curves; they report final val/test AUC at best-val-epoch.
 - [Zhou 2025](https://arxiv.org/abs/2509.03421v1) Fig 5: frozen linear probes on retinal tasks average 0.761-0.787 across 10 tasks; our 0.846 on glaucoma is in the upper range.
 - [RETFound on PAPILA (fundus)](https://www.nature.com/articles/s41586-023-06555-x): frozen probe AUC 0.86 — comparable to ours on OCT.
 - RETFound fine-tuned on OCT glaucoma (2K scans, 50 epochs): AUC 0.91 → ~5% gain from fine-tune is literature-typical.
-**Conclusion**: 0.846 frozen is publishable and competitive. Fine-tune is the lever for 0.88-0.91 territory.
+**Conclusion**: 0.846 frozen is competitive with the literature. Fine-tune reaches 0.88-0.91 territory.
 **References**:
 - [Zhou et al. 2025 (Generalist vs Specialist VFMs for Ocular Disease)](https://arxiv.org/abs/2509.03421v1)
 - [RETFound (Zhou et al. Nature 2023)](https://www.nature.com/articles/s41586-023-06555-x)
@@ -108,7 +108,7 @@ That's within Zhou 2025's 2-4% fine-tune-vs-LP gap range. The insight: the meani
 **Correction**: Only I-JEPA and V-JEPA use attentive probes in this family. Cited in a paper, need to say "following V-JEPA's attentive probing protocol" not "following DINOv2."
 **References**: [V-JEPA](https://arxiv.org/html/2404.08471v1), [DINOv2](https://arxiv.org/html/2304.07193v2), [US-JEPA](https://arxiv.org/html/2602.19322).
 
-#### 9. Zhou 2025 paper — "Generalist vs Specialist" — summary of findings useful for framing
+#### 9. Zhou 2025 paper — "Generalist vs Specialist" — summary of findings
 **Key results** (fine-tune AUROC averaged over 10 ocular + systemic tasks):
 - RETFound-DINOv2 = 0.830 (winner)
 - DINOv3-ViT-L = 0.816
@@ -248,7 +248,7 @@ That's within Zhou 2025's 2-4% fine-tune-vs-LP gap range. The insight: the meani
 
 ## Corrections
 
-Claims I made that turned out to be wrong, and the correct answer. Keeping these visible so they don't sneak back into the paper.
+Claims I made that turned out to be wrong, and the correct answer. Keeping these visible so they don't reappear.
 
 - **"DINOv2 standard uses attentive probe"** → WRONG. DINOv2 paper uses linear classifier on frozen features. Only I-JEPA and V-JEPA (and some successors) use attentive probes.
 - **"US-JEPA uses d=1 attentive probe"** → WRONG. US-JEPA uses linear probing; treats ultrasound frames individually, no temporal aggregation in eval.
@@ -257,4 +257,4 @@ Claims I made that turned out to be wrong, and the correct answer. Keeping these
 
 ---
 
-*Log maintained by us during development. Append new problems/solutions/references here rather than to chat — this is the durable source when we sit down to write the paper.*
+*Log maintained during development. Append new problems/solutions/references here rather than to chat — this is the durable record.*

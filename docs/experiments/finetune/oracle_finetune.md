@@ -18,9 +18,9 @@ Paired stratified bootstrap (B=2000, seed 42, shared resample indices on the 300
 
 ## Caveat — the FT protocol overfits
 
-Every FT run (oracle and random) peaks val AUC at **ep3-4 of 50** — during the 10-epoch warmup, before the encoder meaningfully adapts — then overfits (val loss climbs sharply). So these are "lightly fine-tuned" numbers; the selected checkpoint is barely past frozen. The comparison is fair (matched configs, both overfit identically), but the protocol is not exercising real fine-tuning. A proper re-tune (lower encoder/head LR, stronger regularization or partial freezing, multi-seed) is backlogged. The frozen result is the cleaner headline.
+Every FT run (oracle and random) peaks val AUC at **ep3-4 of 50** — during the 10-epoch warmup, before the encoder meaningfully adapts — then overfits (val loss climbs sharply). So these are "lightly fine-tuned" numbers; the selected checkpoint is barely past frozen. The comparison is fair (matched configs, both overfit identically), but the protocol is not exercising real fine-tuning. A proper re-tune (lower encoder/head LR, stronger regularization or partial freezing, multi-seed) is backlogged. The frozen result is the cleaner comparison.
 
-## Combined story (frozen + fine-tune)
+## Combined (frozen + fine-tune)
 
 Oracle beats random at every measured point:
 - **Frozen MeanPool**: +0.010 at ep50/75/100, p<0.0005 (`../frozen/oracle_meanpool_sweep.md`).

@@ -12,7 +12,7 @@ DDP on 4× T4 (16 GB each), batch_size=1/GPU, grad accumulation=4 → effective 
 | LLRD γ=0.5 on ep100, CrossAttnPool | Random-init SSL ep100 | CrossAttnPool + Linear (277K) | 0.8729 (ep5) | **0.8872** | [llrd.md](llrd.md) |
 | LLRD γ=0.5 on ep100, MeanPool | Random-init SSL ep100 | MeanPool + Linear (0 probe params) | 0.8717 (ep5) | **0.8868** | [llrd.md](llrd.md) |
 
-**Headline**: all three fine-tune runs are **statistically tied** on Test AUC (paired bootstrap, pairwise two-sided p > 0.6). The probe architecture — from 7.17M params (AttentiveProbe d=1) down to 0 probe params (MeanPool) — makes no measurable difference under fine-tuning on this task.
+All three fine-tune runs are **statistically tied** on Test AUC (paired bootstrap, pairwise two-sided p > 0.6). The probe architecture — from 7.17M params (AttentiveProbe d=1) down to 0 probe params (MeanPool) — makes no measurable difference under fine-tuning on this task.
 
 | Pairwise | Δ Test AUC | 95% CI | two-sided p | Verdict |
 |---|---|---|---|---|

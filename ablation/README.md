@@ -38,7 +38,7 @@ OCT Volume (200 B-scans)
 |----|-----------|----------|--------|
 | P2a | Kermany supervised → FairVision | Does supervised OCT pretraining beat self-supervised? | planned |
 | P2b | Kermany I-JEPA → FairVision | Is I-JEPA on Kermany (84K labeled OCT) better than on FairVision? | planned |
-| P2c | MAE pretrain on FairVision 600K | Is I-JEPA actually better than MAE on our data? (paper claims yes) | planned |
+| P2c | MAE pretrain on FairVision 600K | Is I-JEPA actually better than MAE on our data? (literature suggests yes) | planned |
 
 ### Phase 3: Multi-view / 3D
 *Does leveraging the 3D structure of OCT volumes help?*
@@ -68,4 +68,4 @@ OCT Volume (200 B-scans)
 | 3 | P3a: Multi-view inference | 2-3 days | Free improvement, no retraining needed |
 | 4 | P2a: Kermany supervised | 3-5 days | Test supervised vs self-supervised |
 | 5 | P2c: MAE on FairVision | 1 week | Verify I-JEPA > MAE on our data |
-| 6 | P3b/c: Multi-view pretraining | 2 weeks | Novel contribution for paper |
+| 6 | P3b/c: Multi-view pretraining | 2 weeks | Tests the 3D-structure hypothesis |

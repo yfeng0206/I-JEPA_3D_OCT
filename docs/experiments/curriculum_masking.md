@@ -4,11 +4,11 @@ Branch: `ijepa-mask`. Code: [`src/masks/curriculum.py`](../../src/masks/curricul
 
 > **This is a living plan.** The status tracker (§0) is the source of truth for "where are we." After a context reset: read §0, then the section referenced by the first TODO row.
 
-## CVPR main point (the contribution)
+## Approach
 
 ![ORACLE masking on real glaucoma B-scans — faint red is the retinal bias band (~27% of patches); yellow is the 4 sampled I-JEPA target blocks the encoder must predict from surrounding context](../../results/summary/oracle_build_check_real.png)
 
-The contribution is the **masking strategy for JEPA**, demonstrated on OCT glaucoma. The thesis, by analogy to CNNs: random masking teaches general structure (like early conv layers); masking the **diagnostically important region** teaches task-specific structure (like deep layers). We prove this in three rungs:
+The focus is the **masking strategy for JEPA**, demonstrated on OCT glaucoma. The thesis, by analogy to CNNs: random masking teaches general structure (like early conv layers); masking the **diagnostically important region** teaches task-specific structure (like deep layers). We test this in three rungs:
 
 ```
 RUNG 1  ORACLE      hand-pick the glaucoma region (known from our interpretability)
@@ -16,7 +16,7 @@ RUNG 1  ORACLE      hand-pick the glaucoma region (known from our interpretabili
                        cheap kill if it doesn't beat random
 RUNG 2  SELF-GUIDED teacher feature clusters discover that region with NO labels
                     -> proves we reach the ceiling automatically; validated against
-                       the supervised attribution map (the signature result)
+                       the supervised attribution map
 RUNG 3  CURRICULUM  random -> specific within one run (general -> specific over time)
                     -> the deployable method; best downstream AUC and/or fewer epochs
 ```
@@ -33,7 +33,7 @@ Legend: DONE / WIP / TODO / DROPPED
 
 | # | Decision | State | Detail |
 |---|---|---|---|
-| D1 | CVPR point = anatomy-guided masking for JEPA (oracle -> self-guided -> curriculum) | DONE | top, §1 |
+| D1 | Focus = anatomy-guided masking for JEPA (oracle -> self-guided -> curriculum) | DONE | top, §1 |
 | D2 | DROP R2 loss-guided (MAE-era, fights JEPA, confirmed by literature) | DONE | §8 |
 | D3 | DROP R3a intensity (too crude, ~= R3b-degenerate) | DONE | §8 |
 | D4 | Rung 1 = ORACLE v2 retina-following band (intensity-localized, ~25% region, NOT a fixed box) | DONE | §5.1 |
@@ -41,8 +41,8 @@ Legend: DONE / WIP / TODO / DROPPED
 | D6 | Rung 3 = random->specific curriculum, end-to-end | DONE | §5.3 |
 | D7 | Masks must be PER-IMAGE dynamic (no position memory) | DONE | §4 |
 | D8 | R3 cluster: top-1 selection, K controls region size; target 20-40% | DONE | §5.2 |
-| D9 | Warm-start ep25 for oracle/self-guided SCREEN; end-to-end for curriculum HEADLINE | DONE | §6 |
-| D10 | Signature result = self-supervised mask converges on supervised attribution | DONE | §7 |
+| D9 | Warm-start ep25 for oracle/self-guided SCREEN; end-to-end for curriculum | DONE | §6 |
+| D10 | Self-supervised mask converges on supervised attribution | DONE | §7 |
 | D11 | Substrate = 2D I-JEPA; 3D V-JEPA = extension | DONE | §12 |
 
 ### Code changes (map to `src/masks/curriculum.py` unless noted)
@@ -55,7 +55,7 @@ Legend: DONE / WIP / TODO / DROPPED
 | C4 | Remove `loss_guided` (R2) and `intensity_foreground` (R3a) from `VALID_MODES` | TODO | `VALID_MODES` (~L98) | keep code dormant for reproducibility |
 | C5 | `r_max=1.0` + hard-switch profile (step) for warm-start screen | TODO | `_update_r_t` (~L298), config | current cap 0.5 = never fully specific |
 | C6 | Expose K as ablation knob (presets K=2,4,8) | TODO | config + `n_clusters` (~L193) | |
-| C7 | End-to-end curriculum schedule (random->specific over full run) | TODO | `_update_r_t` + train loop | Rung 3 headline |
+| C7 | End-to-end curriculum schedule (random->specific over full run) | TODO | `_update_r_t` + train loop | Rung 3 |
 
 ### Validation gates (pruned — see §10 for why the rest were inferable)
 
@@ -252,7 +252,7 @@ Region size by K (top-1, balanced clusters, 256-patch grid):
 
 Validation (G2, G4): the self-guided region must (a) match the oracle region and the attribution map, (b) vary per image. See §7.
 
-### 5.3 Rung 3 — CURRICULUM (random -> specific, the headline)
+### 5.3 Rung 3 — CURRICULUM (random -> specific)
 
 Purpose: the deployable method and the cleanest test of the thesis. One end-to-end run from scratch, mask transitions random -> specific over training time.
 
@@ -267,24 +267,24 @@ ONE run from scratch, 100 epochs:
 
 Compare against: R1 ep100 (pure random, exists) and the warm-start results (§6).
 
-## 6. Checkpoint strategy — warm-start screen vs end-to-end headline
+## 6. Checkpoint strategy — warm-start screen vs end-to-end
 
 | | Warm-start from ep25 | End-to-end 100ep from scratch |
 |---|---|---|
-| Role | cheap SCREEN | HEADLINE |
+| Role | cheap SCREEN | end-to-end |
 | Used for | Rung 1 (oracle), Rung 2 (self-guided) | Rung 3 (curriculum) |
 | Tests | "does specific masking improve a partially-trained model? save compute?" | "does a random->specific curriculum beat random in one run?" |
 | Cost | 75 more epochs/arm, ep25 shared | full 100ep/arm |
 | Confound | mixes warm-start + mask benefit | clean, one variable |
 | Maps to | the "fewer epochs" win | the "better AUC" win |
 
-Rationale: warm-start is the efficient way to screen oracle and self-guided (shared start, mask is the only variable). The curriculum IS the thesis (general->specific over one continuous run), so it must be end-to-end and is the headline figure. Warm-start results become the efficiency ablation.
+Rationale: warm-start is the efficient way to screen oracle and self-guided (shared start, mask is the only variable). The curriculum IS the thesis (general->specific over one continuous run), so it must be end-to-end. Warm-start results become the efficiency ablation.
 
-## 7. Signature result — self-supervised mask meets supervised attribution
+## 7. Self-supervised mask meets supervised attribution
 
 The masking literature can't prove their mask hits the "important" region — they have no independent ground truth. We built one: the occlusion-attribution maps show exactly where the supervised glaucoma probe attends.
 
-Claim no one else can make:
+Claim:
 > The self-guided mask (R3/R4), with no labels, selects the same region the supervised probe uses (correlation r = X with the attribution map). Masking that region improves downstream AUC.
 
 This converts the interpretability work into the validation backbone. Critical separation: the ORACLE may peek at attribution (it is the upper bound); the SELF-GUIDED rung must not — only then is the convergence a real discovery, not leakage.
@@ -334,7 +334,7 @@ Most of the originally-planned gates were inferable-by-construction or redundant
 
 Develop and prove the masking ladder on 2D I-JEPA (this branch, existing infra — no PyTorch upgrade, no V-JEPA port). The masking idea is orthogonal to 2D-vs-3D.
 
-3D V-JEPA (anisotropic tubelets + volume masking, matching the Nature slices-to-volumes trend) is an EXTENSION: "the same anatomy-guided masking generalizes to OCT volumes." Separate branch, separate experiment, future-work paragraph — not a dependency for the CVPR submission.
+3D V-JEPA (anisotropic tubelets + volume masking, matching the Nature slices-to-volumes trend) is an EXTENSION: "the same anatomy-guided masking generalizes to OCT volumes." Separate branch, separate experiment, future work — not a dependency for this work.
 
 ## 13. Open questions
 
@@ -354,9 +354,9 @@ Day 3:    Submit ORACLE warm-start run (Rung 1), live collapse monitoring on.
           If oracle (a GOOD v2 oracle) <= random, STOP and rethink.
 Day 4-5:  Fix R3 top-1 selection + add R4 NCut (G2a already told us if clusters are anatomical)
 Day 6-7:  Submit R3 (K2/K4/K8) + R4 warm-start runs (Rung 2), live monitoring on
-Day 8+:   Submit CURRICULUM end-to-end run (Rung 3, headline), live monitoring on
+Day 8+:   Submit CURRICULUM end-to-end run (Rung 3), live monitoring on
           Downstream eval (frozen + fine-tune AUC) on all + R1 ep100
-          G2b numeric attribution correlation for the signature figure
+          G2b numeric attribution correlation
 ```
 
 The oracle run (Day 3) is the gate on everything: if masking the known glaucoma region (with a good retina-following oracle) doesn't beat random, the thesis is wrong and we stop cheap. No separate stability gate — collapse is monitored live in every run.

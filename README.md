@@ -2,7 +2,7 @@
 
 Self-supervised pretraining using [I-JEPA](https://github.com/facebookresearch/ijepa) (Assran et al., CVPR 2023) on [Harvard FairVision](https://github.com/Harvard-Ophthalmology-AI-Lab/FairVision) OCT data, evaluated via frozen probe + fine-tune on binary glaucoma classification.
 
-## Headline result — anatomy-guided masking
+## Result — anatomy-guided masking
 
 Best downstream glaucoma classifier: **0.8947 Test AUC** (FairVision, 3000-volume held-out) — fine-tuned MeanPool on an encoder pretrained with anatomy-guided ("oracle") masking, which biases I-JEPA's prediction targets onto the retinal band. Beats random-masking I-JEPA (0.8878) at every probe and regime.
 
@@ -17,7 +17,7 @@ Paired bootstrap, B=2000, on the 3000-volume Test split:
 | Fine-tune | CrossAttnPool | 0.8872 | 0.8937 | +0.0065 | 0.009 |
 | Fine-tune | AttentiveProbe d=1 | 0.8878 | 0.8901 | +0.0023 | 0.26 (ns) |
 
-Oracle wins frozen (+0.010 at every checkpoint ep50/75/100, p<0.0005) and fine-tuned (significant for MeanPool and CrossAttnPool; d=1 not significant — the over-parameterized probe). Frozen is the clean headline; the fine-tune protocol overfits fast (val AUC peaks ep3-4/50). Details: [`docs/experiments/frozen/oracle_meanpool_sweep.md`](docs/experiments/frozen/oracle_meanpool_sweep.md), [`docs/experiments/finetune/oracle_finetune.md`](docs/experiments/finetune/oracle_finetune.md).
+Oracle wins frozen (+0.010 at every checkpoint ep50/75/100, p<0.0005) and fine-tuned (significant for MeanPool and CrossAttnPool; d=1 not significant, p=0.26). The fine-tune protocol overfits (val AUC peaks ep3-4/50). Details: [`docs/experiments/frozen/oracle_meanpool_sweep.md`](docs/experiments/frozen/oracle_meanpool_sweep.md), [`docs/experiments/finetune/oracle_finetune.md`](docs/experiments/finetune/oracle_finetune.md).
 
 ![Oracle vs random masking: frozen MeanPool sweep (left) and fine-tune across probes (right)](results/summary/oracle_summary.png)
 
@@ -34,7 +34,7 @@ The baseline the oracle is compared against: random-init I-JEPA ViT-B/16, 100 ep
 | Frozen probe | MeanPool + Linear (no attention, no pos) | 2.3K | 0.8746 |
 | Frozen probe | AttentiveProbe d=1 + Linear | 7.17M | 0.8706 |
 
-**Headline finding — fine-tune collapses the probe ablation.** All three fine-tune runs land within 0.001 AUC of each other (p > 0.6 all pairwise). Under fine-tuning, the probe architecture is irrelevant: MeanPool (0 probe params, just a 2.3K linear head) matches the 7.17M AttentiveProbe and the 277K CrossAttnPool. Whatever slice-weighting the attention probes learn in the frozen regime, the encoder's top-block + encoder.norm adaptation absorbs under fine-tune.
+**Fine-tune collapses the probe ablation.** All three fine-tune runs land within 0.001 AUC of each other (p > 0.6 all pairwise). Under fine-tuning, the probe architecture is irrelevant: MeanPool (0 probe params, just a 2.3K linear head) matches the 7.17M AttentiveProbe and the 277K CrossAttnPool. Whatever slice-weighting the attention probes learn in the frozen regime, the encoder's top-block + encoder.norm adaptation absorbs under fine-tune.
 
 **Ablation findings** (paired bootstrap, B=2000, 95% CI):
 - **Frozen: probe architecture matters.** CrossAttnPool (277K) beats d=1 (7.17M) by +0.009 (p=0.002). CrossAttnPool beats MeanPool by +0.005 (p=0.04). d=1 fails to improve over MeanPool (p=0.08, ns) despite 3000× more params — d=1 is over-parameterized.

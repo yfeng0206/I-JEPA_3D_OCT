@@ -55,7 +55,7 @@ Fine-tune uplift is statistically real on every probe, but scales inversely with
 
 Even fine-tune + MeanPool (zero probe parameters) beats the best frozen probe significantly. The fine-tune uplift is not about the probe — it's about encoder adaptation.
 
-## Interpretation — the two-regime story
+## Interpretation — the two regimes
 
 1. **MeanPool vs d=1 under frozen is NOT significant** (two-sided p=0.16). We cannot claim MeanPool beats d=1. What we CAN claim: 3000× more probe params in d=1 buy no measurable AUC gain on this task. d=1 is not earning its capacity on 6K volumes.
 
@@ -79,14 +79,14 @@ With 6000 training volumes:
 
 Under fine-tune the 86M encoder dominates and this ratio becomes ill-defined — the denominator "unique trainable capacity per sample" includes encoder top-block updates, which operate at very low LR. Effectively the encoder is a learned-slowly-adapted feature extractor, not a 86M-capacity learner.
 
-## Paper claims (safe)
+## Findings (well-supported)
 
 - **CrossAttnPool significantly outperforms the standard I-JEPA-style d=1 AttentiveProbe** at 26× fewer parameters under frozen-probe evaluation (+0.009 AUC, p=0.004).
 - **Under fine-tune, the probe architecture is irrelevant.** A zero-probe-parameter mean-pool matches a 7.17M-parameter attentive probe on Test AUC (pairwise p > 0.6). Fine-tune uplift is entirely encoder-side.
 - **For frozen-probe protocols**, CrossAttnPool is Pareto-optimal. **For fine-tune protocols**, MeanPool is Pareto-optimal (zero probe params).
 - **Fine-tuning with MAE-style LLRD γ=0.5 adds +0.008-0.017 Test AUC** over the corresponding frozen probe, consistent with (but below) Zhou 2025's 2-4% retinal fine-tune-vs-LP gap.
 
-## Paper claims (requires more data)
+## Findings (require more data)
 
 - **"d=1 overfits"** — directionally consistent (MeanPool's +0.004 over d=1, CrossAttnPool's +0.009 over d=1) but only the CrossAttnPool gap is individually significant. Would benefit from multi-seed replication.
 - **"Slice positional information is strictly required"** — CrossAttnPool beats MeanPool under frozen only marginally (p=0.09 two-sided). Under fine-tune they tie (pos_embed-equipped CrossAttnPool vs position-blind MeanPool both at ~0.887). Not a decisive claim.

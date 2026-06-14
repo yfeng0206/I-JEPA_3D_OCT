@@ -41,7 +41,7 @@ The number we get here answers: "with everything position-aware removed, how muc
 | d=1 AttentiveProbe + Linear | 7.17M | 0.8597 | 0.8706 |
 | CrossAttnPool + Linear | 277K | 0.8650 | 0.8791 |
 
-**Surprising finding**: mean_pool beats the d=1 AttentiveProbe on Test AUC (+0.004), despite discarding slice ordering entirely. Strong evidence that the d=1 probe's 7M params cause overfitting rather than capturing real signal. Attention-based pooling IS genuinely helping on this task — but only in the minimal CrossAttnPool form (+0.005 Test AUC over mean_pool), not the over-parameterized d=1 form.
+**Finding**: mean_pool beats the d=1 AttentiveProbe on Test AUC (+0.004), despite discarding slice ordering entirely. Strong evidence that the d=1 probe's 7M params cause overfitting rather than capturing real signal. Attention-based pooling IS genuinely helping on this task — but only in the minimal CrossAttnPool form (+0.005 Test AUC over mean_pool), not the over-parameterized d=1 form.
 
 Interpretation: for FairVision glaucoma (6K volumes, ~balanced prevalence), a tiny linear probe on mean-pooled features is already a very strong baseline. Slice-level attention + position embeddings add ~0.5% AUC on top. Anything bigger overfits.
 

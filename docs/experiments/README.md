@@ -5,7 +5,7 @@ Three sections: pretraining (the SSL runs), frozen (probe-only evaluation with e
 Research direction plans:
 
 - [`curriculum_masking.md`](curriculum_masking.md) — retinal/anatomy-guided target allocation.
-- [`semantic_teacher_guided_masking.md`](semantic_teacher_guided_masking.md) — DINOv3/VLM semantic-teacher target allocation, ImageNet first and OCT transfer after validation.
+- [`semantic_teacher_guided_masking.md`](semantic_teacher_guided_masking.md) — local ImageNet-50 frozen I-JEPA/DINOv3/Qwen3-VL/Molmo maps and probes before guided masking.
 
 All results use FairVision glaucoma held-out Test split (3000 volumes). Encoder: ViT-B/16.
 

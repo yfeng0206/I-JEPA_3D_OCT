@@ -2,1194 +2,621 @@
 
 Branch: `vlm-guided-masking`
 
-> This is a living research plan. It defines the experiments, controls, decision gates, and allowed claims for a new direction. Offline Phase 0 map tooling is implemented; training-time semantic target allocation is not.
+> This is the active research plan. The immediate goal is a small preliminary
+> comparison, not a complete conference experiment matrix. Phase 0 map tooling
+> exists; semantic-guided I-JEPA training does not.
 
-## 0. Executive decision
+## 0. Current decision
 
-The project will test whether a frozen semantic vision model can improve I-JEPA by changing only where its ordinary target blocks are sampled.
+Phase 0 is a local, frozen-model ImageNet-50 study. It has three deliverables:
 
-The primary comparison is:
+1. audit existing published and Hugging Face/GitHub I-JEPA ImageNet results and
+   checkpoints, including ImageNet-50/100 results if they exist;
+2. run frozen kNN and linear-probe evaluation on a reproducible ImageNet-50
+   subset when no directly comparable published result exists;
+3. generate a human-reviewable semantic-map atlas for I-JEPA, DINOv3,
+   Qwen3-VL, and Molmo.
+
+The encoders remain frozen. kNN trains nothing, and a linear probe trains only
+a small classifier head. There is no encoder fine-tuning or masked pretraining
+in Phase 0.
+
+Phase 1, only after positive Phase-0 evidence, will compare:
 
 ```text
 random I-JEPA targets
         vs
-frozen DINOv3-guided targets
+DINOv3-guided targets
         vs
-frozen language-aligned vision-guided targets
+the best grounded VLM-guided target policy
 ```
 
-The default guide is **DINOv3**, not a VLM. A language-aligned guide remains in scope only if it produces better spatial maps and better downstream representations under matched architecture, mask budget, compute accounting, and evaluation.
+### Scope lock
 
-Scope lock:
+- ImageNet-50 is the primary quick test domain.
+- ImageNet-100 is a fallback/extension when a directly comparable published
+  result or already-prepared subset makes it inexpensive.
+- DINOv3 is the primary dense vision guide.
+- Qwen3-VL and Molmo are the two VLMs evaluated in Phase 0.
+- Use official paper/model-card checkpoints and published parameter counts.
+  Do not create custom model scales merely to force parameter equality.
+- Use a standard DINOv3 checkpoint recommended by its official release. Report
+  architecture differences rather than claiming that language supervision is
+  isolated by parameter matching.
+- The dataset supplies images only. Any caption or fixed generic instruction is
+  internal training-time supervision.
+- Every VLM atlas panel includes the generated text beside the shaded regions.
+- The guide changes only where ordinary I-JEPA target blocks are sampled.
+- Guide features and text are not given to the I-JEPA predictor.
+- Target block count, shapes, unique coverage, overlap, retained context, query
+  count, and loss normalization must be matched.
+- External guides remain frozen for the first experiment.
 
-- Guide research compares DINOv3 against language-aligned or generative VLMs.
-- Segmentation models are not target-allocation arms in this branch.
-- Segmentation annotations and dense benchmarks are used only to evaluate map quality and downstream transfer.
-- If a VLM cannot expose a reliable spatial readout, it is removed rather than paired with an external segmentation model.
+### Explicitly deferred
 
-Primary ImageNet guides:
+The preliminary experiment does not include:
 
-1. DINOv3 ViT-B/16.
-2. SigLIP 2 Base/16-224 vision tower.
-3. I-JEPA ep25 endogenous saliency and clustering baselines.
-4. A MILAN-style frozen CLIP image-attention baseline.
-5. A stronger generative VLM such as Qwen3-VL or Molmo only after its visual-token grounding method passes Phase 0 validation.
+- SigLIP or SigLIP 2;
+- CLIP as a primary guide;
+- SAM or an external segmentation refinement stage;
+- MedGemma;
+- both VLMs in guided pretraining (only the Phase-0 winner may advance);
+- guide fine-tuning or LoRA;
+- feature alignment or distillation;
+- predictor-capacity sweeps;
+- semantic-region dilation sweeps;
+- from-scratch confirmation;
+- OCT transfer;
+- 3-D or axial modeling.
 
-Primary OCT guides, if the ImageNet direction survives:
-
-1. MIRAGE-Base.
-2. RETFound-OCT.
-3. DINOv3 as the generic control.
-4. MedSigLIP or EyeCLIP as language-aligned controls.
-5. RetinaVLM and LO-VLM only as optional pseudo-text/localization studies.
-
-MedGemma is not a primary guide because the proposed experiment does not require language generation. Its image encoder is the relevant component.
+MILAN remains required prior art and a design warning. It is not a primary
+modern guide arm.
 
 ## 0.1 Status tracker
 
-Legend: DONE / IN PROGRESS / TODO / STOPPED
+Legend: DONE / IN PROGRESS / TODO / DEFERRED
 
 | ID | Work item | State | Gate |
 |---|---|---|---|
-| R0 | Primary-source literature and implementation audit | IN PROGRESS | Papers complete; interfaces, weights, and licenses pending |
-| R1 | Create dedicated branch | DONE | `vlm-guided-masking` |
-| P0-A | Pin model weights, licenses, transforms, and checkpoints | IN PROGRESS | CLIP/SigLIP tested; DINOv3 access and full legal manifest pending |
-| P0-B | Build common semantic-map extraction API | DONE | Lazy DINOv3, SigLIP 2, CLIP, and local I-JEPA adapters |
-| P0-C | Produce ImageNet visual atlas and scorecard | IN PROGRESS | Atlas CLI works; labeled ImageNet scorecard pending |
-| P0-D | Analyze why OCT ribbon beat random | TODO | Anatomy vs position vs geometry separated |
-| P1 | Frozen-guide ImageNet continuation | TODO | Guide beats matched-budget random |
-| P2-A | Mask scale, dilation, and predictor interaction | TODO | Robust optimum, not one tuned setting |
-| P2-B | Anchored low-LR guide adaptation | TODO | Beats frozen guide without semantic drift |
-| P2-C | From-scratch confirmation | TODO | Gain not limited to ep25 curriculum |
-| P3-A | OCT guide map benchmark | TODO | External labels show useful localization |
-| P3-B | OCT pretraining and transfer | TODO | FairVision plus external OCT gain |
+| P0-A | Common frozen-guide tensor API | DONE | Dense tokens map to a validated spatial grid |
+| P0-B | Audit online I-JEPA checkpoints/results | IN PROGRESS | Official assets and published ImageNet-1K/50/100 results recorded |
+| P0-C | Choose reproducible ImageNet-50 definition | IN PROGRESS | Published class manifest and legitimate data source pinned |
+| P0-D | DINOv3 adapter/checkpoint | DONE, access pending | Approved checkpoint loads and produces stable maps |
+| P0-E | Qwen3-VL and Molmo grounding smoke | TODO | Captions and native grounding work on 20 images |
+| P0-F | Frozen ImageNet-50 kNN/linear evaluation | TODO | Comparable fixed protocol for all available encoders |
+| P0-G | Generate a 100-200 image atlas | TODO | DINO and VLM maps are spatially meaningful and stable |
+| P1-A | Implement exact-budget score-to-target sampler | TODO | Guided masks match random realized statistics |
+| P1-B | Short random/DINO/VLM continuation | TODO | One guide beats random on development evaluation |
+| P2 | Replication and larger evaluation | DEFERRED | Preliminary result is positive |
+| P3 | OCT guide comparison and transfer | DEFERRED | ImageNet guide policy survives |
 
-### 0.2 Implemented Phase 0 scaffold
+## 0.2 What the current code does
 
-Files:
+Implemented:
 
-- `src/guides/base.py` — validated dense-guide tensor contract.
-- `src/guides/maps.py` — native/cosine/PCA maps and label-free diagnostics.
-- `src/guides/hf_guides.py` — DINOv3, SigLIP 2, and CLIP vision adapters.
-- `src/guides/ijepa.py` — local target-encoder map adapter.
-- `scripts/semantic_map_atlas.py` — deterministic shared-crop extraction, NPZ/JSON output, and atlas rendering.
-- `configs/semantic_maps/phase0_guides.yaml` — model identifiers and defaults.
-- `requirements-phase0.txt` — isolated modern sidecar environment.
-- `tests/test_semantic_guides.py` — download-free tensor/map tests.
+- `src/guides/base.py` defines a common dense-token output contract.
+- `src/guides/hf_guides.py` exposes DINOv3, SigLIP 2, and CLIP vision maps.
+- `src/guides/ijepa.py` exposes a local I-JEPA teacher-token baseline.
+- `src/guides/maps.py` computes native maps, global-to-patch cosine, token PCA,
+  and basic map diagnostics.
+- `scripts/semantic_map_atlas.py` creates deterministic center-crop maps,
+  metrics, NPZ files, and visual atlases.
+- `configs/semantic_maps/phase0_guides.yaml` records current model identifiers.
+- `requirements-phase0.txt` defines the isolated modern sidecar environment.
+
+Not implemented:
+
+- caption generation;
+- entity/relation parsing;
+- phrase or object grounding;
+- Qwen3-VL/Molmo adapters;
+- ImageNet-50 data preparation and frozen evaluation;
+- map-to-I-JEPA target sampling;
+- `train_patch.py` guide integration;
+- guided-pretraining configs;
+- fixed-budget mask matching;
+- any DINO/VLM training result.
+
+## 1. How encoder features map back to the image
+
+For a ViT with input size 224 and patch size 16:
+
+```text
+224 x 224 image
+      |
+      v
+14 x 14 = 196 spatial patches
+      |
+      v
+196 patch tokens, each with d features
+```
+
+Patch tokens preserve raster order:
+
+```text
+token 0   -> row 0, col 0
+token 1   -> row 0, col 1
+...
+token 195 -> row 13, col 13
+```
+
+Therefore dense tokens already map to image regions:
+
+\[
+F \in \mathbb{R}^{196 \times d}
+\longrightarrow
+F_{\mathrm{grid}} \in \mathbb{R}^{14 \times 14 \times d}.
+\]
+
+PCA is not required for this spatial mapping. PCA is one way to reduce each
+patch's \(d\)-dimensional feature into a scalar visualization.
+
+## 1.1 DINOv3 score maps
+
+The primary DINOv3 readout is selected during the small atlas stage.
+
+Candidate readouts:
+
+1. model-native CLS/global-to-patch relevance;
+2. global-to-patch cosine similarity;
+3. first token-PCA component as a diagnostic;
+4. optional feature clustering only if the first two fail.
+
+Global-to-patch cosine:
+
+\[
+s_i =
+\cos\left(
+\operatorname{LN}(f_i),
+\operatorname{LN}(f_{\mathrm{global}})
+\right).
+\]
+
+Token PCA:
+
+```text
+patch tokens
+    -> subtract per-image patch mean
+    -> compute first principal direction
+    -> project each patch token
+    -> reshape scalar values to 14 x 14
+```
+
+PCA measures dominant variation. It does not prove semantic importance. It may
+highlight foreground/background, texture, color, illumination, or boundaries.
+For this reason PCA remains a visual diagnostic rather than the primary guide.
+
+## 1.2 Grounded-VLM score maps
+
+The desired VLM path is:
+
+```text
+image only
+    |
+    v
+automatic image description
+    |
+    v
+entities and relations
+    |
+    v
+native boxes, points, or phrase-to-patch scores
+    |
+    v
+one fused semantic score map
+```
 
 Example:
 
-```powershell
-python scripts/semantic_map_atlas.py `
-  --inputs "path\to\images\*.png" `
-  --guides clip siglip2 `
-  --output-dir results\semantic_maps `
-  --device cpu
+```text
+caption: "A dog is drinking water from a bowl."
+
+entities:
+  dog
+  water
+  bowl
+
+relation:
+  dog drinking water
 ```
 
-Outputs:
+Grounded outputs are rasterized onto the 14x14 patch grid. A variable number
+of valid entities is fused into one map; target block count remains fixed.
 
-- `semantic_map_metrics.json`
-- `maps/<image>__<guide>.npz`
-- `atlases/<image>.png`
+Raw decoder attention is not accepted as grounding without validation. The
+selected VLM must expose native boxes, pointing, or another demonstrably
+faithful spatial readout.
 
-DINOv3 is intentionally not silently substituted when its gated checkpoint is unavailable. The JSON report records the access failure and the experiment remains blocked until approved weights or a verified local path are supplied.
+## 1.3 Qwen3-VL and Molmo
 
-## 1. Research question
+Phase 0 evaluates the standard/recommended official checkpoints from the
+Qwen3-VL and Molmo papers/model cards. Record, rather than recalculate:
 
-The direction asks:
+- official checkpoint name and revision;
+- published vision-tower and total parameter counts;
+- input resolution and visual-token count;
+- precision/quantization recommended for inference;
+- license and access requirements;
+- grounding/pointing/box interface;
+- peak local inference memory and elapsed time.
 
-> Can a frozen semantic teacher identify spatial regions that are better I-JEPA prediction targets than uniformly random blocks?
+The full VLM is needed to produce generated text and native grounding. It
+remains frozen and is used only for batched inference. No VLM weights are
+trained in Phase 0.
 
-The experiment separates three questions:
+Run a 20-image smoke test on images containing:
 
-1. **Dense semantics:** Are DINOv3 patch features sufficient?
-2. **Language-aligned teacher comparison:** Does the selected language-aligned teacher outperform the selected DINOv3 teacher?
-3. **Target allocation:** Does converting these maps into matched-budget I-JEPA blocks improve learned representations?
+- one large object;
+- multiple interacting objects;
+- small objects;
+- clutter;
+- occlusion;
+- non-central objects.
 
-The project does not initially use text generation, language decoding, or language tokens inside I-JEPA.
+Each model must:
 
-Qwen3-VL or Molmo enters only as a Phase 0 grounding experiment:
+- generate a relevant per-image description;
+- identify more than one entity when appropriate;
+- return usable spatial grounding;
+- avoid gross hallucinations;
+- retain reasonable grounding under resize/flip;
+- fit available inference memory and runtime.
 
-1. vision-tower-only dense tokens;
-2. automatic image description without a user prompt;
-3. generated concept-to-visual-token grounding;
-4. no language decoder during I-JEPA pretraining unless this grounding clearly beats DINOv3.
+Both models may appear in the atlas and frozen encoder table. Only the better
+grounded guide may advance to Phase 1. If neither passes, stop the VLM arm and
+continue only with DINOv3.
 
-## 1.1 Working hypotheses
+## 2. Phase 0: data, published baselines, and frozen evaluation
 
-| Hypothesis | Prediction |
+### 2.1 Local storage
+
+All datasets, downloaded checkpoints, feature caches, and generated atlases
+live on `D:`. The repository remains on `C:`.
+
+```text
+D:\jepa_phase0\
+  datasets\
+    imagenet50\
+  models\
+    ijepa\
+    dinov3\
+    qwen3_vl\
+    molmo\
+  cache\
+    frozen_features\
+    maps\
+  results\
+    atlases\
+    probes\
+    manifests\
+```
+
+`D:` currently has sufficient capacity for the subset and model caches. These
+paths remain gitignored and are never uploaded to Azure.
+
+### 2.2 ImageNet-50 subset
+
+Use one published ImageNet-50 class manifest if a recognized definition is
+found. Record:
+
+- paper/repository source;
+- WordNet IDs and class-index mapping;
+- train/validation counts;
+- source archive/dataset revision;
+- license/access requirements;
+- per-file checksums or a deterministic manifest hash.
+
+If no recognized ImageNet-50 definition exists, create a deterministic
+ImageNet-50 development subset by taking the first 50 classes from the selected
+published ImageNet-100 manifest. Name it as this project's derived subset and
+do not present it as a canonical benchmark.
+
+Images remain on disk. DataLoader workers decode and transfer mini-batches;
+the dataset is never loaded into GPU memory as a whole.
+
+### 2.3 Online I-JEPA checkpoint and result audit
+
+Before downloading or evaluating models, search:
+
+- the official Meta I-JEPA repository and checkpoint links;
+- official Hugging Face I-JEPA model cards;
+- the I-JEPA paper and supplement;
+- later papers that evaluate frozen I-JEPA on ImageNet-50/100.
+
+Record:
+
+- model architecture, patch size, input size, and official parameter count;
+- pretraining dataset and epoch count;
+- checkpoint URL, revision, hash, and license;
+- published full ImageNet-1K kNN/linear/fine-tune results;
+- published ImageNet-50/100 results, if any;
+- downstream classification/dense tasks and evaluation protocol.
+
+If no published ImageNet-50/100 result exists, evaluate the frozen official
+checkpoint locally. Do not retrain I-JEPA.
+
+Published ImageNet-1K values and local ImageNet-50 values remain separate
+tables because they are not directly comparable.
+
+### 2.4 Frozen ImageNet-50 evaluation
+
+Evaluate:
+
+1. official I-JEPA checkpoint;
+2. selected DINOv3 checkpoint;
+3. Qwen3-VL vision tower;
+4. Molmo vision tower.
+
+For every encoder:
+
+- load images in mini-batches;
+- use the model's official preprocessing;
+- extract a frozen global/pooled image representation;
+- cache features to `D:\jepa_phase0\cache\frozen_features`;
+- run kNN classification;
+- train a linear classifier only;
+- report fixed train/validation protocol, top-1/top-5 accuracy, model source,
+  parameter count, throughput, and GPU-hours.
+
+Terminology:
+
+- kNN: no learned model parameters;
+- linear probe: encoder frozen, only a linear head is trained;
+- fine-tuning: encoder weights updated, which Phase 0 does not do.
+
+Use the official paper/model-card parameter count and recommended inference
+precision. Determine mini-batch size from the official architecture and memory
+requirements, with a safety reserve; confirm once with a smoke batch. Do not
+perform a batch-size benchmark sweep.
+
+### 2.5 Small map sanity test
+
+#### Data
+
+- 100-200 ImageNet-50 training images.
+- 30-50 manually reviewed images.
+- Use existing boxes or ImageNet-S masks when readily available.
+- Do not use locked final evaluation data for guide selection.
+
+#### Atlas output
+
+For each image:
+
+1. original image;
+2. DINOv3 primary map;
+3. DINOv3 token-PCA diagnostic;
+4. Qwen3-VL generated text and grounded regions;
+5. Molmo generated text and grounded regions;
+6. fused VLM score maps;
+7. DINO-VLM difference maps;
+8. sample shaded regions and guided target rectangles.
+
+Generated text must be rendered beside its shaded region overlay in the saved
+atlas, not only written to JSON.
+
+#### Minimal diagnostics
+
+- foreground pointing accuracy or overlap;
+- multi-object coverage;
+- map center and border bias;
+- map entropy/effective support;
+- geometric stability after alignment;
+- caption validity;
+- grounding validity;
+- hallucination and abstention rate;
+- guide inference time and peak memory.
+
+This stage rejects obviously broken maps. It is not a full benchmark.
+
+#### Phase-0 decisions
+
+| Observation | Decision |
 |---|---|
-| H1: semantic target density | Frozen semantic guides beat random at fixed target/context budget |
-| H2: language-aligned teacher comparison | SigLIP 2 empirically beats the selected DINOv3 comparator on map quality and transfer |
-| H3: DINO is sufficient | DINOv3 ties or beats the language-aligned guide |
-| H3b: stronger VLM reasoning helps grounding | Qwen3-VL/Molmo grounding beats both DINOv3 and SigLIP 2 |
-| H4: OCT oracle is anatomical | True retina-following maps beat center, shifted, rolled, and background controls |
-| H5: curriculum matters | ep25 switch wins while guided-from-epoch-0 does not |
-| H6: guide adaptation helps | Anchored low-LR adaptation beats the frozen guide |
-| H7: guide adaptation harms semantics | Frozen guide remains better and maps drift/collapse when unfrozen |
+| Both VLMs ground poorly despite good captions | Drop VLM |
+| VLM and DINO maps are effectively identical | Keep DINO only |
+| DINO map is better and more stable | Keep DINO only |
+| One VLM adds reliable multi-entity/relation localization | Advance that VLM |
+| Both maps are center/border shortcuts | Stop semantic-guide experiment |
 
-## 2. What this method is and is not
+## 3. Turning a score map into I-JEPA targets
 
-### 2.1 Semantic-guided spatial target allocation
+The guide produces a non-negative score map \(S\).
 
-A frozen guide generates a per-image score map:
+For candidate rectangle \(R\):
 
 \[
-G(x) \rightarrow F_G \in \mathbb{R}^{B \times H_G \times W_G \times d_G},
-\qquad
-g_G \in \mathbb{R}^{B \times d_G}.
+q(R)=\frac{1}{|R|}\sum_{i\in R}S_i.
 \]
 
-One common diagnostic score is global-to-patch cosine similarity:
+The guided policy raises the probability of target configurations covering
+high-scoring patches.
+
+### Fixed-budget contract
+
+First sample a canonical random I-JEPA target configuration:
 
 \[
-r_i =
-\cos\left(
-\operatorname{LN}(f_i),
-\operatorname{LN}(g_G)
-\right).
+\mathbf{R}^{\mathrm{ref}}
+=
+(R_1^{\mathrm{ref}},R_2^{\mathrm{ref}},
+R_3^{\mathrm{ref}},R_4^{\mathrm{ref}}).
 \]
 
-Rank normalization makes scores comparable across models:
+The guided configuration must match the reference per image:
 
-\[
-S_i =
-\frac{\operatorname{rank}(r_i)-0.5}{H_GW_G}.
-\]
-
-This readout is not a valid model-neutral primary map by itself. DINOv3 exposes a CLS/global token in the same transformer stream, while SigLIP 2 obtains its global representation through learned attention pooling and projection. Each guide therefore uses a model-native primary readout, selected on a calibration split and locked before evaluation. Shared readouts such as token PCA, feature norm, and clustering remain cross-guide diagnostics.
-
-The selected score map changes only the probability of sampling target-block locations:
-
-\[
-M \sim \pi(T_{\text{sem}}(x)),
-\]
-
-\[
-\mathcal{L}_{\text{I-JEPA}} =
-D\left(
-P(E_\theta(x_{\bar M}),M),
-\operatorname{sg}(E_\xi(x)_M)
-\right).
-\]
-
-The semantic teacher features are not prediction targets and are not inputs to the I-JEPA predictor.
-
-### 2.2 Representation alignment or distillation
-
-Alignment is a different method:
-
-\[
-\mathcal{L}_{\text{align}} =
-D\left(
-A(z_{\text{student}}),
-\operatorname{sg}(z_{\text{teacher}})
-\right).
-\]
-
-The guide determines the feature values the model must match.
-
-This is related to, but distinct from, the proposed frozen-guide allocation.
-
-### 2.3 Representation fusion
-
-Fusion supplies frozen features as model inputs:
-
-\[
-\hat y = P(x,z_{\text{teacher}}).
-\]
-
-This also differs from target allocation.
-
-### 2.4 VLA/vision-language JEPA precedent
-
-Three similarly named works must not be conflated:
-
-- [VL-JEPA](https://arxiv.org/abs/2512.10942) predicts text-semantic embeddings from frozen V-JEPA-2 visual features and a query.
-- [VLA-JEPA](https://arxiv.org/abs/2602.10098) uses VLM latent-action states to help predict future frozen V-JEPA-2 world features.
-- [JEPA-VLA](https://arxiv.org/abs/2602.11832) injects frozen V-JEPA-2 features into a VLA through projection or gated cross-attention.
-
-These papers support frozen semantic features, representation fusion, and slow semantic adaptation. They do not establish semantic spatial target allocation for image I-JEPA.
-
-Therefore this project must not be described as "mapping VLM features into JEPA space" unless an explicit alignment loss is added in Phase 2.
-
-## 3. Prior art and novelty boundary
-
-The broad idea "use a VLM or CLIP to guide masking" is occupied.
-
-| Work | What it already establishes | Difference from this plan |
-|---|---|---|
-| [MILAN](https://arxiv.org/abs/2208.06049) | Frozen CLIP image attention guides visible-patch sampling and CLIP patch features become MAE targets | MAE, visible-patch selection, not contiguous I-JEPA target blocks |
-| [CMT-MAE](https://arxiv.org/abs/2412.17566) | Frozen CLIP and momentum-student attention guide MAE masks; CLIP/student features are targets | MAE and feature reconstruction, not standard I-JEPA targets |
-| [TC-JEPA](https://arxiv.org/abs/2605.03245) | Automatically synthesized captions condition JEPA and learn patch-word relations | Captions condition prediction; they do not choose target-block locations |
-| [DSeq-JEPA](https://arxiv.org/abs/2511.17354) | EMA-attention semantic regions and a random-to-informed JEPA curriculum | Endogenous saliency plus sequential prediction, not frozen external guide comparison |
-| [Mask What Matters](https://arxiv.org/abs/2509.23054) | Text/VLM/SAM medical ROI localization and differentiated masking | Uses prompts and external localization stack; pixel reconstruction |
-| [RetinaVLM](https://arxiv.org/abs/2407.08410) | Generated OCT reports and phrase-specific GradCAM maps | Report/prompt dependent and post-hoc; not I-JEPA target allocation |
-| [AttMask](https://arxiv.org/abs/2203.12719) | EMA-teacher attention guides masking | Internal EMA teacher rather than frozen foundation guide |
-| [SemMAE](https://arxiv.org/abs/2206.10207) | Semantic parts and part-level masking curriculum | MAE with separately learned semantic parts |
-
-### 3.1 Defensible narrow claim
-
-A future claim may be:
-
-> Prompt-free semantic target-block allocation for I-JEPA uses a frozen vision or vision-language teacher to derive per-image spatial scores, converts those scores into geometry- and budget-controlled contiguous target blocks, and leaves the standard EMA I-JEPA target representation unchanged.
-
-This claim is only defensible if:
-
-- the guide receives no human prompt or downstream label;
-- the I-JEPA predictor receives no guide features or text;
-- target count, shape, union, overlap, and retained context are matched;
-- DINOv3, MILAN-style CLIP, DSeq, clustering, and random baselines are included;
-- ImageNet-1K and OCT results are both reported.
-
-Even a matched patch size, hidden width, and parameter count do not isolate the causal effect of language supervision: DINOv3 and SigLIP 2 differ in data, objectives, teacher lineage, optimization, and auxiliary losses. The project may claim that one teacher empirically outperforms the other, not that language alignment alone caused the difference.
-
-### 3.2 Claims that are not allowed
-
-Do not claim:
-
-- first VLM-guided masking;
-- first prompt-free CLIP-guided masking;
-- first caption-conditioned JEPA;
-- first patch-text grounding in JEPA;
-- first medical text-guided masking;
-- first OCT VLM saliency;
-- representation alignment when only mask locations change;
-- language-free self-supervision without disclosing the frozen guide's image-text pretraining;
-- efficiency without including guide inference cost.
-
-## 4. Common tensor contract
-
-### 4.1 I-JEPA
-
-For \(x \in \mathbb{R}^{B\times3\times H\times W}\) and patch size \(p=16\):
-
-\[
-N = (H/p)(W/p).
-\]
-
-\[
-E_\theta(x) \rightarrow Z \in \mathbb{R}^{B\times N\times768}.
-\]
-
-The EMA target encoder is:
-
-\[
-\xi_t=m_t\xi_{t-1}+(1-m_t)\theta_t.
-\]
-
-The predictor estimates target representations:
-
-\[
-\hat H_{\mathcal M}
-=P_\psi(E_\theta(x_\mathcal C),\mathcal C,\mathcal M).
-\]
-
-\[
-\mathcal L_{\text{JEPA}}
-=\frac1{|\mathcal M|}
-\sum_{i\in\mathcal M}
-\operatorname{SmoothL1}(\hat h_i,\operatorname{sg}(h_i)).
-\]
-
-ImageNet target grid: 224/16 = 14, so \(N=196\).
-
-Current OCT grid: 256/16 = 16, so \(N=256\).
-
-### 4.2 Guide adapters
-
-| Guide | Primary dense tensor | Notes |
-|---|---|---|
-| DINOv3 ViT-B/16 | patch tokens, 14×14×768 | Native readout: CLS/global-to-patch affinity or validated dense-feature readout |
-| SigLIP 2 Base/16-224 | patch tokens, 14×14×768 | Native readout: pooling-query attention or another validated model-native map; do not compare pooled and raw tokens naively |
-| CLIP ViT-B/16 | final patch tokens/attention | Reproduce MILAN-style frozen guide baseline |
-| I-JEPA ep25 | 14×14×768 | Endogenous saliency, DSeq-map, and clustering controls |
-| MIRAGE-Base | 16×16×768 for 512/32 OCT | Exact spatial grid match to current OCT |
-| RETFound-OCT | 14×14×1024 at 224/16 | Requires exposing patch tokens |
-| EyeCLIP | coarse CLIP spatial tokens | OCT-supported but no released mask API |
-| RetinaVLM | approximately 6×6 ResNet feature map | Phrase/report-conditioned GradCAM |
-
-References:
-
-- [DINOv3](https://arxiv.org/abs/2508.10104)
-- [SigLIP 2](https://arxiv.org/abs/2502.14786)
-- [MIRAGE](https://arxiv.org/abs/2506.08900)
-- [RETFound](https://doi.org/10.1038/s41586-023-06555-x)
-- [EyeCLIP](https://arxiv.org/abs/2409.06644)
-- [RetinaVLM](https://arxiv.org/abs/2407.08410)
-
-## 5. Matched-budget masking contract
-
-The scientific comparison must not inherit the current variable target-union confound.
-
-For every image and every arm, match:
-
-- number of target blocks;
-- target block shape vector;
+- ordered block-shape vector;
 - unique target-token union;
 - pairwise target-overlap signature;
 - retained context-token count;
 - prediction query count;
 - loss normalization.
 
-### 5.1 Paired reference masks and joint sampling
+Only target locations and guide scores may differ.
 
-The causal comparison begins by sampling a canonical random I-JEPA reference mask set:
+If no matched guided configuration exists, fall back to the paired random
+configuration and log the fallback. Never silently relax the invariants.
 
-\[
-\mathbf R^{\text{ref}} =
-(R_1^{\text{ref}},R_2^{\text{ref}},R_3^{\text{ref}},R_4^{\text{ref}}).
-\]
+### Preliminary target policy
 
-The reference determines:
+The first experiment uses semantic regions as prediction targets because this
+directly tests the existing retinal-ribbon hypothesis.
 
-- ordered block-shape vector;
-- unique target-union cardinality;
-- pairwise overlap signature;
-- retained context-token count after context sampling and truncation;
-- number of prediction queries.
+Important-as-visible, MILAN-style sampling is deferred. It becomes the first
+fallback if semantic-as-target guidance fails.
 
-The guided sampler constructs a feasible set \(\mathcal F(\mathbf R^{\text{ref}})\) of four-window configurations with the same realized statistics. The policy samples a complete four-window configuration, not four independent windows.
+## 4. Phase 1: short preliminary training
 
-For candidate rectangle \(R\):
+### Arms
 
-\[
-q(R)=\frac1{|R|}\sum_{i\in R}S_i.
-\]
+1. random matched-budget targets;
+2. DINOv3-guided targets;
+3. grounded-VLM-guided targets.
 
-For a candidate four-window configuration \(\mathbf R\):
+### Protocol
 
-\[
-Q(\mathbf R)=\sum_{j=1}^4 q(R_j).
-\]
+- Start every arm from the same complete random I-JEPA ep25 checkpoint.
+- Continue ep25 to ep50.
+- Use one exploratory seed.
+- Use identical data order, augmentation, optimizer, scheduler, target shapes,
+  and realized target/context budget.
+- Keep guides frozen and in inference mode.
+- The guide receives the exact augmented crop with guide-specific normalization.
+- Use development evaluation only.
 
-Guided joint sampling:
+### Evaluation
 
-\[
-\pi(\mathbf R)=
-(1-\epsilon)
-\frac{\exp(Q(\mathbf R)/\tau)}
-{\sum_{\mathbf R'\in\mathcal F(\mathbf R^{\text{ref}})}
-\exp(Q(\mathbf R')/\tau)}
-+\frac{\epsilon}{|\mathcal F(\mathbf R^{\text{ref}})|},
-\]
-
-where every feasible configuration matches the reference geometry, union, overlap, query, and context statistics.
-
-Initial values \(\epsilon=0.2\) and \(\tau=0.15\) are provisional and must be calibrated before locked evaluation.
-
-If no matched guided configuration exists, use logged rejection sampling or fall back to the paired random reference. Never silently relax the invariants.
-
-### 5.2 Budget strata
-
-Phase 0 must first measure the empirical canonical I-JEPA distributions of:
-
-- target union;
-- target overlap;
-- retained context;
-- block shape;
-- target/context distance.
-
-Define preregistered budget strata from those distributions. Every causal comparison occurs within a stratum or against a paired reference mask. The plan does not replace canonical I-JEPA with a new 61–66% non-overlapping target regime.
-
-A canonical unconditioned random I-JEPA arm remains in the final table to show whether matched-budget conditioning itself changes performance.
-
-### 5.3 Required telemetry
-
-Log every step:
-
-- block shape and coordinates;
-- unique target positions;
-- context count;
-- pairwise target IoU;
-- target-in-guide-region fraction;
-- map entropy;
-- selected guide score;
-- sampling probability;
-- fallback frequency;
-- guide inference time;
-- peak memory.
-
-## 6. Phase 0: map validity and mechanism analysis
-
-Phase 0 produces maps and measurements before any pretraining comparison.
-
-### 6.1 Artifact gate
-
-For every guide:
-
-1. Pin paper, code commit, model identifier, weight SHA256, license, and preprocessing.
-2. Record pretraining data and possible ImageNet/OCT overlap.
-3. Verify exact input resolution and normalization.
-4. Run a deterministic forward test.
-5. Save guide outputs and map checksums for a small public fixture set.
-
-For I-JEPA:
-
-1. Verify the ImageNet ep25 checkpoint contains encoder, target encoder, predictor, optimizer, scaler, and scheduler state.
-2. Replay a known random-mask batch and compare loss to the original log.
-3. If no complete checkpoint exists, train one canonical random prefix and fan out from it.
-
-### 6.2 ImageNet semantic-map benchmark
-
-Data:
-
-1. 10,000 stratified unlabeled ImageNet training images for development.
-2. ImageNet-S `train-semi` labels for cross-validated guide/readout calibration and Phase 1 dense-proxy gates.
-3. A fixed ImageNet training-derived probe development split for Phase 1 linear-probe gates.
-4. Locked ImageNet validation for one-shot final classification evaluation after method/arm lock.
-5. Locked ImageNet-S validation for one-shot final map and dense evaluation after method/arm lock.
-6. ILSVRC localization boxes for weak localization.
-7. Optional COCO/ADE20K confirmation without retuning extraction.
-
-[ImageNet-S](https://arxiv.org/abs/2106.03149) is the primary labeled map benchmark.
-
-### 6.3 Map extraction methods
-
-Primary readouts are model native:
-
-1. DINOv3: validated CLS/global affinity or another documented dense readout.
-2. SigLIP 2: pooling-query attention or another validated vision-tower readout.
-3. CLIP: final-layer attention/importance matching the MILAN policy.
-4. I-JEPA: endogenous mean-token affinity, attention proxy, or clustering baseline.
-
-Cross-guide diagnostics:
-
-5. Token PCA with sign oriented on calibration data.
-6. Feature norm and novelty.
-7. Spherical k-means.
-8. TokenCut/NCut-style affinity partition.
-9. DSeq-style saliency and connected components.
-
-Evaluate guide × readout interactions on ImageNet-S `train-semi` cross-validation. Lock one primary readout per guide before any ImageNet-S validation or locked downstream evaluation.
-
-### 6.4 Label-free map diagnostics
-
-These measure stability and degeneracy, not semantic correctness.
-
-Equivariance for geometric transform \(a\) and inverse warp \(W_a\):
-
-\[
-Q_{\text{equiv}}
-=
-\mathbb E_a
-\left[
-\rho(S(a(x)),W_aS(x))
-\right].
-\]
-
-Top-\(q\) set stability:
-
-\[
-Q_{\text{top}}(q)
-=
-\mathbb E_a
-\frac{|T_q(S(a(x)))\cap W_aT_q(S(x))|}
-{|T_q(S(a(x)))\cup W_aT_q(S(x))|}.
-\]
-
-Evaluate \(q\in\{0.1,0.25,0.5\}\).
-
-Effective support:
-
-\[
-p_i=\operatorname{softmax}(S_i/\tau),
-\qquad
-A_{\text{eff}}
-=\frac{\exp(-\sum_i p_i\log p_i)}{N}.
-\]
-
-Additional diagnostics:
-
-- patch correspondence cycle consistency;
-- cluster ARI/NMI across augmentations;
-- connected-component count and size distribution;
-- normalized total variation;
-- Moran's \(I\);
-- image-edge and map-boundary alignment;
-- sensitivity to JPEG, blur, grayscale, and background replacement;
-- center-of-mass bias;
-- border occupancy.
-
-### 6.5 Labeled map metrics
-
-For foreground/semantic mask \(Y\):
-
-- patch/pixel foreground AP;
-- AUROC;
-- calibrated IoU and Dice;
-- boundary F1;
-- pointing-game accuracy;
-- CorLoc or MaxBoxAcc;
-- multi-object coverage;
-- foreground/background feature-separation margin;
-- cluster purity, NMI, and Hungarian-matched mIoU.
-
-Report all component metrics; a composite score may be used for screening but cannot replace them.
-
-### 6.6 Visual atlas
-
-For each guide and image, render:
-
-1. original image;
-2. token-PCA RGB;
-3. global-to-patch cosine;
-4. native-attention map;
-5. top 10/25/50% masks;
-6. connected components;
-7. ground-truth overlay;
-8. DINO/VLM difference map;
-9. sampled matched-budget target rectangles;
-10. metric panel.
-
-Stratify examples by:
-
-- object size;
-- multiple objects;
-- clutter;
-- texture;
-- occlusion;
-- center bias;
-- guide disagreement;
-- high stability but low semantic accuracy.
-
-The manual review requested by the project owner will use this atlas. Development metrics determine model selection; locked metrics are read once after the method and final arms are fixed.
-
-### 6.7 DINO versus language-aligned guide gate
-
-SigLIP 2 remains only if:
-
-- it improves cross-validated ImageNet-S `train-semi` foreground AP/mIoU over DINOv3 by a preregistered meaningful margin;
-- equivariance and top-set stability are not materially worse;
-- the advantage survives map extraction and spatial-resolution controls.
-
-Provisional screening values:
-
-- +0.02 foreground AP or +0.015 mIoU;
-- stability degradation no worse than 0.02.
-
-These values are planning thresholds and must be recalibrated using development variance before final use.
-
-If DINOv3 ties or wins, drop the VLM hypothesis and continue as dense-semantic-teacher target allocation.
-
-### 6.8 Why did the OCT retinal ribbon win?
-
-Existing evidence is hypothesis-generating:
-
-- ribbon masking improved frozen MeanPool by +0.0099, +0.0113, and +0.0109 at ep50/75/100;
-- fine-tuned MeanPool improved +0.0079;
-- raw JEPA loss was not consistently higher;
-- representation diversity remained healthy.
-
-Therefore "the ribbon won because it was consistently harder" is not supported. Oracle validation loss was higher at some checkpoints, so the plan must report the full trajectory rather than summarize it as uniformly easier or harder.
-
-Competing explanations:
-
-| Hypothesis | Prediction |
-|---|---|
-| task-relevant supervision density | true retinal band beats equal-area shifted/background maps |
-| center/position shortcut | fixed center stripe matches retina-following ribbon |
-| cleaner/easier targets | lower gradient variance and better transfer |
-| anatomy-rich representation | stronger layer/lesion probes and regional effective rank |
-| warm-start specialization | ep25 switch wins; guided-from-epoch-0 does not |
-| geometry-only effect | rolled or shifted maps retain the gain |
-
-The historical Test split informed the ribbon design and has been evaluated repeatedly. It is Legacy-Development, not confirmatory evidence.
-
-Retrospective checkpoint analysis:
-
-1. Reconstruct target-coverage distributions.
-2. Obtain independent retinal/layer masks for at least 250 blinded, stratified slices that were not used to design the ribbon.
-3. Measure target overlap with retina, RNFL, vitreous, and choroid.
-4. Compute by region:
-   - per-token JEPA error;
-   - feature variance and effective rank;
-   - feature norm and covariance spectrum;
-   - patch-label probe performance;
-   - cross-checkpoint CKA.
-5. Estimate encoder gradient signal-to-noise:
-
-\[
-G_{\text{SNR}}
-=
-\frac{\|\mathbb E[g]\|_2^2}
-{\mathbb E[\|g-\mathbb E[g]\|_2^2]+\epsilon}.
-\]
-
-Causal controls from the same ep25 checkpoint:
-
-- random matched-budget;
-- intensity-localized retina-following ribbon;
-- fixed center stripe;
-- ribbon shifted up/down;
-- spatially rolled ribbon;
-- anti-retina/background;
-- image-independent geometry-matched positions.
-
-Screen for 10 epochs; extend only random, true ribbon, and the strongest shortcut control.
-
-If center/shifted controls match the true ribbon, reframe the OCT result as positional or geometric curriculum rather than anatomy-guided masking.
-
-## 7. Phase 1: frozen-guide ImageNet continuation
-
-### 7.1 Primary arms
-
-| Arm | Score map | Purpose |
-|---|---|---|
-| Random matched-budget | uniform feasible-window scores | primary causal control |
-| DSeq-map | endogenous I-JEPA saliency/components | nearest JEPA where-to-predict baseline |
-| Endogenous attention | EMA-target/global-token or validated attention proxy | AttMask-style internal saliency control |
-| Clustering | ep25 I-JEPA clusters ranked by observed error | endogenous semantic/difficulty baseline |
-| DINOv3 | frozen dense guide | primary generic semantic teacher |
-| SigLIP 2 | frozen language-aligned vision tower | empirical teacher comparison; does not isolate language supervision |
-| MILAN attention-policy ablation | frozen CLIP attention | direct prompt-free CLIP masking-policy precedent; not a full MILAN reproduction |
-| Low-level controls | center/radial, edge, gradient, entropy | tests whether semantics beat positional and low-level heuristics |
-
-Faithful DSeq-JEPA is not equivalent to a DSeq score map. It changes prediction order and model behavior; a faithful implementation belongs in the final comparison if the project advances.
-
-### 7.2 DSeq-map approximation
-
-The current I-JEPA has no output CLS token. Use a parameter-free query:
-
-\[
-q=\frac1N\sum_iF_i^{(10)}.
-\]
-
-\[
-A_i=\frac{q^\top F_i^{(10)}}{\sqrt d}.
-\]
-
-Normalize \(A\), apply Otsu thresholding and connected components, rank regions by mean score, then convert the ranks to \(S\).
-
-This is named `DSeq-map`; it must not be presented as faithful DSeq-JEPA.
-
-### 7.3 Cluster baseline
-
-\[
-c_i=\arg\max_k \hat f_i^\top\hat\mu_k.
-\]
-
-This arm is a hardness control, not a pure semantic baseline.
-
-Collect error labels through periodic uniform audit masks, independent of the cluster-guided policy. For audit target tokens:
-
-\[
-e_i=\frac1d\|\hat h_i-h_i\|_2^2.
-\]
-
-Update cluster score only from the audit stream:
-
-\[
-\ell_k
-\leftarrow
-\alpha\ell_k
-+(1-\alpha)
-\operatorname{mean}_{i:c_i=k} e_i.
-\]
-
-\[
-S_i=\operatorname{rank}(\ell_{c_i}).
-\]
-
-Select \(K\) from `{4,6,8}` using map stability and effective occupancy, not downstream labels. Log audit propensities and cluster observation counts; never let selected clusters exclusively determine their own score.
-
-### 7.4 Training schedule
-
-1. Start every arm from the same complete random I-JEPA ep25 checkpoint.
-2. Continue ep25-to-50 with identical optimizer, scheduler, data order, augmentations, target shapes, and budget.
-3. Keep external guides frozen and in inference mode.
-4. The guide receives the exact augmented crop with its own normalization.
-5. Extend passing arms to ep75 and ep100.
-6. Save ep50/75/100 checkpoints and complete guide/compute telemetry.
-
-Cached full-image maps are prohibited unless the exact random crop and geometric transformation can be applied without interpolation error.
-
-### 7.5 Compute controls
-
-- load vision towers only;
-- record guide FLOPs, memory, and step time;
-- run a guide-forward-but-ignore-map control on a diagnostic subset;
-- report update-matched and GPU-hour-matched results;
-- do not claim efficiency if teacher overhead removes the convergence gain.
-
-### 7.6 Evaluation
-
-Representation health:
-
-- JEPA train/validation loss;
+- frozen kNN or linear probe;
+- fixed-checkpoint downstream accuracy;
+- representation variance/effective rank;
 - predictor-target cosine;
-- token standard deviation;
-- covariance off-diagonal energy;
-- effective rank;
-- alignment and uniformity;
-- patch/image feature norms;
-- map entropy and target coverage.
+- train/validation loss;
+- target coverage and overlap telemetry;
+- map entropy and fallback rate;
+- update-matched and GPU-hour-matched cost.
 
-ImageNet:
+### Preliminary decision table
 
-- frozen kNN;
-- frozen linear probe on the development probe split for screening;
-- 1% and 10% label probes;
-- full fine-tune for finalists;
-- ImageNet-A/R/Sketch/V2 robustness;
-- optional iNaturalist, CUB, and Cars transfer.
+| Result | Decision |
+|---|---|
+| VLM > DINO > random | Continue language-grounded research |
+| DINO approximately equals VLM and both beat random | Drop language; use DINO |
+| DINO > VLM | Drop language |
+| VLM > random but not DINO | Drop language |
+| Neither guide beats random | Stop frozen semantic guidance |
+| Training or representation collapse | Stop affected arm |
 
-Dense:
+The preliminary result is a screen, not a publication claim. Independent
+prefixes, multiple seeds, longer training, and locked evaluation occur only
+after a positive screen.
 
-- ImageNet-S `train-semi` cross-validated linear segmentation mIoU for screening;
-- ADE20K frozen/linear decoder;
-- COCO detection/segmentation for finalists.
+## 5. Prior art boundary
 
-Locked final endpoints after method/arm lock:
+The broad idea "use a language-trained model to guide masking" is occupied.
 
-- ImageNet validation frozen linear-probe top-1;
-- ImageNet-S validation linear segmentation mIoU;
-- robustness and transfer results for finalists.
+### MILAN
 
-Statistics:
+MILAN:
 
-- paired training/downstream seeds;
-- patient/image bootstrap where appropriate;
-- hierarchical seed/image uncertainty;
-- multiplicity adjustment across confirmatory arms;
-- fixed checkpoints, not best-checkpoint selection.
+- uses frozen CLIP image features as reconstruction targets;
+- uses final CLIP CLS attention to sample important patches;
+- keeps high-attention patches visible;
+- reconstructs CLIP visual-token features with an MAE-style prompting decoder;
+- does not generate per-image captions;
+- does not ground caption entities or relations;
+- is not I-JEPA.
 
-### 7.7 Phase 1 gates
+MILAN's semantic sampling contributed only a modest fine-tuning gain after its
+CLIP target and prompting decoder. Its linear-probe results warn that focusing
+too strongly on important visible patches can specialize the encoder.
 
-Extend an arm past ep50 only if:
+### Other required references
 
-- no collapse or invariant violation;
-- meaningful positive movement on the development linear-probe or ImageNet-S `train-semi` cross-validated mIoU;
-- acceptable teacher overhead.
+- DSeq-JEPA: endogenous attention-based regions and sequential JEPA prediction.
+- Mask What Matters: text-guided medical ROI masking with an external stack.
+- AttMask: teacher-attention masking.
+- SemMAE: semantic parts and part-level masking.
+- TC-JEPA: caption-conditioned JEPA and patch-word relations.
 
-The final frozen-guide winner must:
+### Narrow future claim
 
-- have a one-shot locked confidence interval above random on at least one final endpoint;
-- avoid meaningful regression on the other locked endpoint;
-- remain positive across independent seeds;
-- pass shuffled, shifted, inverse, and random-weight controls.
+Only after evidence:
 
-Stop frozen semantic guidance if the best arm's upper confidence bound excludes a practically meaningful gain.
+> A frozen semantic teacher can improve geometry- and budget-controlled I-JEPA
+> target allocation; a grounded modern VLM adds value beyond DINOv3.
 
-## 8. Phase 2: scale, co-adaptation, and from-scratch training
-
-### 8.1 Semantic-region scale
-
-For thresholded semantic region \(R\):
-
-\[
-A_R=|R|,
-\qquad
-d_R=2\sqrt{A_R/\pi}.
-\]
-
-Define target-to-region area ratio:
-
-\[
-\gamma=\frac{A_M}{A_R}.
-\]
-
-Define relative dilation:
-
-\[
-\delta=\frac{r_{\text{dilation}}}{d_R}.
-\]
-
-Test:
-
-- erosion/dilation `{-2,-1,0,+1,+2}` patches;
-- \(\gamma \in \{0.5,1.0,2.0\}\);
-- four small regions versus one large region;
-- interior versus boundary ring versus interior+context;
-- semantic core plus random exploration.
-
-This tests the hypothesis that the target window should be larger than the localized semantic core.
-
-### 8.2 Predictor capacity interaction
-
-The transformer predictor already has global attention; do not call this convolutional receptive-field scaling.
-
-| Predictor | Depth | Width |
-|---|---:|---:|
-| Small | 3 | 192 |
-| Baseline | 6 | 384 |
-| Large | 9 | 384 |
-
-Track:
-
-\[
-\kappa=\frac{K_{\text{context}}}{K_{\text{target}}}.
-\]
-
-This predictor-capacity study runs from scratch. It does not load the Phase 1 ep25 predictor because changing depth/width would introduce predictor-restart and weight-transfer confounds.
-
-Use successive halving:
-
-1. all combinations to ep40;
-2. top four to ep60;
-3. top two to ep100.
-
-### 8.3 Why ordinary unfreezing does not work
-
-Discrete top-k/window sampling provides no gradient from I-JEPA loss to the guide.
-
-Low-LR unfreezing therefore requires a separate differentiable objective. Without one, the guide will not adapt.
-
-### 8.4 Anchored guide adaptation
-
-Train a saliency head:
-
-\[
-s_i=w^\top G_\phi(x)_i.
-\]
-
-Use observed JEPA errors for pairwise ranking:
-
-\[
-\mathcal L_{\text{rank}}
-=
-\sum_{i,j}
-\omega_i\omega_j
-\log\left(
-1+\exp[-y_{ij}(s_i-s_j)]
-\right),
-\]
-
-\[
-y_{ij}=\operatorname{sign}(e_i-e_j),
-\qquad
-\omega_i=\frac1{\max(\pi_i,\pi_{\min})}.
-\]
-
-Anchor the adapted guide to the frozen source:
-
-\[
-\mathcal L_{\text{anchor}}
-=
-\frac1{ND}
-\left\|
-\hat G_\phi(x)
--\operatorname{sg}(\hat G_{\phi_0}(x))
-\right\|_2^2.
-\]
-
-Map equivariance:
-
-\[
-\mathcal L_{\text{eq}}
-=
-\|S_\phi(a(x))-W_aS_\phi(x)\|_1.
-\]
-
-Total:
-
-\[
-\mathcal L_G
-=
-\mathcal L_{\text{rank}}
-+\lambda_a\mathcal L_{\text{anchor}}
-+\lambda_e\mathcal L_{\text{eq}}
-+\lambda_h\mathcal L_{\text{entropy}}.
-\]
-
-Schedule:
-
-1. train saliency head only at approximately `1e-4`;
-2. optionally unfreeze the top two guide blocks at approximately `1e-6`;
-3. keep the remaining guide frozen;
-4. retain random exploration;
-5. compare semantic-only, hardness-only, and semantic/hardness mixtures.
-
-Stop adaptation if:
-
-- equivariance drops materially;
-- anchor drift grows monotonically;
-- entropy collapses;
-- frozen guide remains better after the preregistered adaptation window.
-
-### 8.5 Optional explicit alignment ablation
-
-Inspired by VL-JEPA/VLA-JEPA, an explicit feature-alignment branch may be tested:
-
-\[
-\mathcal L
-=
-\mathcal L_{\text{I-JEPA}}
-+\lambda_{\text{align}}
-D\left(
-A(E_\theta(x)),
-\operatorname{sg}(G_{\phi_0}(x))
-\right).
-\]
-
-This is a separate method family. It must be named representation distillation/alignment and compared against allocation-only.
-
-### 8.6 From-scratch confirmation
-
-Run:
-
-1. random from epoch 0;
-2. frozen-guide winner from epoch 0;
-3. random ep0-to-25 then guide winner;
-4. optional faithful DSeq-JEPA.
-
-Use independent seeds for the first three.
-
-Interpretation:
-
-- only switch arm wins: curriculum/specialization claim;
-- from-scratch winner also wins: general semantic-allocation claim;
-- alignment wins but allocation does not: pivot to semantic distillation;
-- frozen wins but adapted loses: keep guide frozen.
-
-A 100-epoch result is a controlled confirmation, not full ImageNet convergence. Longer 300/600-epoch runs occur only after positive multi-seed evidence.
-
-## 9. Phase 3: OCT transfer
-
-### 9.1 Legal, access, and data-overlap gate
-
-No OCT guide advances until a model manifest records:
-
-- code license;
-- weight/model-card terms;
-- access requirements;
-- allowed frozen inference;
-- allowed modification/fine-tuning;
-- allowed redistribution;
-- publication requirements;
-- pretraining datasets and possible overlap with evaluation cohorts.
-
-The public MIRAGE repository currently states CC BY 4.0 for code and models, while RETFound and several other candidates have more restrictive terms. The exact weight terms must still be verified from the downloaded artifact/model card before use. Missing or ambiguous terms block adaptation and redistribution.
-
-### 9.2 Model priority
-
-| Tier | Model | Role and limitation |
-|---|---|---|
-| A | MIRAGE-Base | primary OCT spatial guide; dense 16×16 map; anatomy privileged by layer pseudo-label pretraining |
-| A | RETFound-OCT | strong OCT encoder; patch tokens require adapter exposure |
-| A control | DINOv3-B/16 | generic dense baseline |
-| B | MedSigLIP | medical language-aligned image encoder; OCT specificity unproven |
-| B | EyeCLIP | ophthalmology CLIP with OCT support; coarse/non-native spatial map |
-| B | RetinaVLM | generated reports and phrase GradCAM; coarse and prompt/phrase dependent |
-| B | LO-VLM/OCT-BLIP | compact OCT caption generator; no released spatial-mask API |
-| C | OCTCube-M | 3-D OCT representation; later volume-level extension |
-
-Primary references:
-
-- [MIRAGE](https://arxiv.org/abs/2506.08900)
-- [RETFound](https://doi.org/10.1038/s41586-023-06555-x)
-- [EyeCLIP](https://arxiv.org/abs/2409.06644)
-- [RetinaVLM](https://arxiv.org/abs/2407.08410)
-- [LO-VLM](https://doi.org/10.1101/2025.08.07.669187)
-- [MedGemma/MedSigLIP](https://arxiv.org/abs/2507.05201)
-- [OCTCube-M](https://arxiv.org/abs/2408.11227)
-
-LO-VLM is a pseudo-text generator, not a direct mask source unless its BLIP vision tokens or cross-attention are instrumented.
-
-RetinaVLM saliency is phrase/report conditioned and validated on fovea-centered Topcon OCT. It is not a universal OCT mask generator.
-
-MIRAGE has the strongest verified direct spatial interface but imports privileged retinal-layer pseudo-label supervision.
-
-### 9.3 OCT map benchmark
-
-Dataset roles must remain disjoint:
-
-- GOALS training annotations: guide/readout calibration through internal cross-validation.
-- Locked GOALS evaluation: one-shot map and glaucoma/layer evaluation.
-- RETOUCH: external fluid segmentation and multi-vendor robustness; no guide selection.
-- OLIVES: external biomarker and longitudinal transfer; no guide selection.
-- OCTID: external disease transfer and limited delineation.
-- FairVision: development only until a locked final protocol exists.
-
-Metrics:
-
-- retinal/layer/lesion AP;
-- Dice and boundary F1;
-- layer-wise target coverage;
-- small-lesion recall;
-- cross-device map equivariance;
-- adjacent B-scan consistency;
-- center/border bias;
-- guide disagreement and failure taxonomy.
-
-Axial consistency after alignment:
-
-\[
-Q_{\text{axial}}
-=
-\frac1{S-1}
-\sum_s
-\rho(S(x_s),S(x_{s+1})).
-\]
-
-### 9.4 OCT pretraining
-
-1. Reproduce matched-budget random OCT baseline.
-2. Resume a common random ep25 checkpoint.
-3. Compare:
-   - winning ImageNet policy with DINOv3;
-   - MIRAGE;
-   - RETFound;
-   - best language-aligned guide only if Phase 0/1 justified it.
-4. Screen ep25-to-50.
-5. Extend top two to ep75/100.
-6. Run winner from scratch.
-7. Consider OCTCube-M or axial consistency only after the 2-D claim is established.
-
-### 9.5 OCT downstream tasks
-
-| Dataset | Task | Primary metric |
-|---|---|---|
-| FairVision | volume-level glaucoma classification | patient-level AUROC |
-| GOALS | glaucoma classification | AUROC/accuracy |
-| GOALS | retinal-layer segmentation | Dice/boundary F1 |
-| RETOUCH | fluid segmentation | macro Dice |
-| OLIVES | biomarker prediction | macro AUROC/F1 |
-| OCTID | disease classification | macro AUROC/F1 |
-| Kermany OCT2017 | secondary leakage-audited disease benchmark only | macro AUROC |
-
-All primary splits must group both eyes and all visits by patient. Kermany OCT2017 lacks dependable public patient identifiers and cannot serve as a confirmatory benchmark unless a trustworthy grouping key is recovered.
-
-### 9.6 OCT gate
-
-The winning policy must:
-
-- improve FairVision under paired multi-seed evaluation;
-- improve or tie at least one independent OCT dataset;
-- avoid major subgroup degradation;
-- preserve map quality under device shift;
-- retain a positive effect across independent seeds;
-- pass a training-data overlap audit for every external guide.
-
-If gains appear only on FairVision, the method is dataset specific.
-
-## 10. Compute and scaling gates
-
-Define \(C_{100}\) as measured GPU-hours for one canonical 100-epoch run on the selected hardware.
-
-Before Phase 1:
-
-1. Run a 1,000-step throughput and memory benchmark for each guide.
-2. Include guide inference in total GPU-hour accounting.
-3. Do not extend every arm beyond ep50.
-4. Do not run multiple seeds for losing arms.
-5. Do not start co-adaptation without a frozen-guide winner.
-6. Do not start 300/600-epoch training without positive multi-seed ep100 evidence.
-7. Do not load language decoders or text towers in the primary ImageNet experiment.
-
-Screening cost is computed after Phase 0 eliminates unsupported guides:
-
-\[
-C_{\text{screen}}
-=
-A_{\text{primary}}\times0.25C_{100}
-+C_{\text{controls}}
-+C_{\text{probes}},
-\]
-
-where \(A_{\text{primary}}\) is the preregistered number of ep25-to-50 arms. Six primary arms cost 1.5 \(C_{100}\) before mechanism controls, downstream evaluation, and guide overhead.
-
-Confirmatory seeds require independently trained ep0-to-25 prefixes. Multiple continuations from one prefix do not constitute independent pretraining seeds.
-
-## 11. Branch implementation plan
-
-### Phase 0 files
-
-- `src/guides/base.py`: guide tensor contract.
-- `src/guides/dinov3.py`: DINOv3 adapter.
-- `src/guides/siglip2.py`: SigLIP 2 vision adapter.
-- `src/guides/clip.py`: MILAN-style CLIP adapter.
-- `src/guides/ijepa.py`: endogenous I-JEPA map adapter.
-- `scripts/semantic_map_benchmark.py`: extraction and metrics.
-- `scripts/plot_semantic_map_atlas.py`: visual atlas.
-- `configs/semantic_maps/*.yaml`: pinned guide configs.
-
-### Phase 1 files
-
-- `src/masks/fixed_budget.py`: exact-budget target sampler.
-- `src/masks/semantic_guided.py`: common score-to-window policy.
-- `src/masks/dseq_map.py`: DSeq-map baseline.
-- `src/masks/cluster_guide.py`: cluster baseline.
-- `configs/imagenet_guided/*.yaml`: continuation arms.
-- `scripts/compare_guided_pretraining.py`: fixed-checkpoint statistics.
-- checkpoint and compute manifests.
-
-### Phase 2 files
-
-- guide saliency head and ranking objective;
-- anchor/equivariance losses;
-- dilation and scale sweep configs;
-- predictor-capacity configs;
-- from-scratch configs.
-
-### Phase 3 files
-
-- MIRAGE, RETFound, EyeCLIP, MedSigLIP, RetinaVLM adapters;
-- optional LO-VLM pseudo-text adapter;
-- OCT semantic-map benchmark;
-- patient-level evaluation configs;
-- data-overlap and license manifest.
-
-No heavy checkpoints or raw datasets are committed.
-
-## 12. Hard stop and pivot rules
-
-1. Drop the VLM hypothesis if DINOv3 ties or wins.
-2. Stop frozen semantic guidance if no guide beats matched-budget random.
-3. Pivot to positional masking if center/shifted maps reproduce the OCT result.
-4. Pivot to explicit anatomy if only MIRAGE/labeled anatomy maps work.
-5. Keep the guide frozen if low-LR adaptation fails.
-6. Restrict the claim to curriculum if only ep25 switch wins.
-7. Pivot to 3-D/axial modeling if no 2-D guide transfers beyond FairVision.
-8. Abandon efficiency claims if quality gain per GPU-hour is nonpositive.
-9. Stop publication claims if improvements disappear across seeds or external datasets.
-
-## 13. Allowed and forbidden claims
-
-Allowed only after evidence:
-
-- frozen semantic teachers can improve matched-budget I-JEPA target allocation;
-- language-aligned pretraining adds value beyond DINOv3;
-- semantic-region dilation interacts with predictor capacity;
-- anchored low-LR adaptation improves a frozen guide;
-- an ImageNet policy transfers to OCT.
-
-Forbidden:
+Do not claim:
 
 - first VLM-guided masking;
 - first prompt-free CLIP masking;
 - first caption-conditioned JEPA;
-- first OCT VLM saliency;
-- "mapped into JEPA space" without alignment loss;
-- language-free training without disclosing external image-text pretraining;
-- efficiency without guide compute;
-- clinical mask validity without external anatomical evaluation.
+- first patch-text grounding in JEPA;
+- language supervision as the isolated causal factor;
+- efficiency without guide inference cost.
 
-## 14. References
+## 6. Deferred work after a positive preliminary result
 
-1. Assran et al., [I-JEPA](https://arxiv.org/abs/2301.08243), CVPR 2023.
-2. Siméoni et al., [DINOv3](https://arxiv.org/abs/2508.10104), 2025.
-3. Tschannen et al., [SigLIP 2](https://arxiv.org/abs/2502.14786), 2025.
-4. He et al., [DSeq-JEPA](https://arxiv.org/abs/2511.17354), 2025.
-5. Hou et al., [MILAN](https://arxiv.org/abs/2208.06049), 2022.
-6. [CMT-MAE](https://arxiv.org/abs/2412.17566), 2024.
-7. Apple, [TC-JEPA](https://arxiv.org/abs/2605.03245), 2026.
-8. Wang et al., [Mask What Matters](https://arxiv.org/abs/2509.23054), 2025.
-9. Chen et al., [VL-JEPA](https://arxiv.org/abs/2512.10942), ICLR 2026.
-10. Sun et al., [VLA-JEPA](https://arxiv.org/abs/2602.10098), 2026.
-11. Miao et al., [JEPA-VLA](https://arxiv.org/abs/2602.11832), 2026.
-12. Gao et al., [ImageNet-S](https://arxiv.org/abs/2106.03149), 2021.
-13. Kakogeorgiou et al., [AttMask](https://arxiv.org/abs/2203.12719), ECCV 2022.
-14. Li et al., [SemMAE](https://arxiv.org/abs/2206.10207), NeurIPS 2022.
-15. Li et al., [AnatoMask](https://arxiv.org/abs/2407.06468), ECCV 2024.
-16. Morano et al., [MIRAGE](https://arxiv.org/abs/2506.08900), npj Digital Medicine 2025.
-17. Zhou et al., [RETFound](https://doi.org/10.1038/s41586-023-06555-x), Nature 2023.
-18. Shi et al., [EyeCLIP](https://arxiv.org/abs/2409.06644), npj Digital Medicine 2025.
-19. Holland et al., [RetinaVLM](https://arxiv.org/abs/2407.08410), 2024.
-20. Haghighi et al., [LO-VLM](https://doi.org/10.1101/2025.08.07.669187), bioRxiv 2025.
-21. Sellergren et al., [MedGemma and MedSigLIP](https://arxiv.org/abs/2507.05201), 2025.
-22. Liu et al., [OCTCube-M](https://arxiv.org/abs/2408.11227), 2024.
-23. Fang et al., [GOALS](https://arxiv.org/abs/2207.14447), 2022.
-24. Prabhushankar et al., [OLIVES](https://arxiv.org/abs/2209.11195), 2022.
-25. Gholami et al., [OCTID](https://arxiv.org/abs/1812.07056), 2018.
+Only after one guide beats random:
+
+1. repeat with independent prefixes/seeds;
+2. extend passing arms to ep75/100;
+3. run a faithful DSeq-JEPA baseline;
+4. compare semantic-as-target versus semantic-as-visible;
+5. test from-scratch training;
+6. evaluate ImageNet-S/ADE20K or another dense task;
+7. transfer the winning policy to OCT;
+8. compare MIRAGE, RETFound, and the best justified language-aligned OCT guide;
+9. consider selector distillation;
+10. consider anchored low-LR guide adaptation.
+
+## 7. OCT transfer, deferred
+
+If the ImageNet experiment survives:
+
+Primary OCT guides:
+
+1. MIRAGE-Base;
+2. RETFound-OCT;
+3. DINOv3 generic control.
+
+Language candidates such as LO-VLM or RetinaVLM enter only if their phrase
+maps pass an OCT grounding gate and add value beyond MIRAGE.
+
+No OCT guide advances without:
+
+- weight/license verification;
+- training-data overlap audit;
+- external anatomical map evaluation;
+- cross-device robustness analysis.
+
+## 8. Hard stop rules
+
+1. Drop the VLM arm if no modern VLM grounds entities reliably.
+2. Drop language if DINOv3 ties or wins.
+3. Stop semantic guidance if neither guide beats random.
+4. Stop an arm if coverage/context matching fails.
+5. Stop an arm if representation health degrades materially.
+6. Do not extend losing arms beyond ep50.
+7. Do not run multiple seeds before a positive preliminary result.
+8. Do not fine-tune guides before a frozen guide wins.
+9. Do not begin OCT transfer before ImageNet evidence.
+10. Do not claim efficiency if guide overhead removes the gain.
+
+## 9. Immediate next actions
+
+No training code changes are included yet.
+
+Next:
+
+1. finish the online I-JEPA checkpoint/result audit;
+2. pin a published or derived ImageNet-50 class manifest and data source;
+3. record official Qwen3-VL, Molmo, DINOv3, and I-JEPA checkpoints, parameter
+   counts, revisions, licenses, and recommended inference settings;
+4. download ImageNet-50 and checkpoints to `D:\jepa_phase0`;
+5. add Qwen3-VL and Molmo adapters using official inference/grounding code;
+6. run the 20-image grounding smoke;
+7. run frozen ImageNet-50 kNN/linear evaluation;
+8. generate the 100-200 image atlas with generated text and shaded regions;
+9. select and lock one readout per guide;
+10. implement the fixed-budget score-to-target sampler only after Phase-0
+    review;
+11. run the three-arm ep25-to-50 preliminary comparison in Phase 1.

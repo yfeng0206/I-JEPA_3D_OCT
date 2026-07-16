@@ -20,12 +20,20 @@ frozen language-aligned vision-guided targets
 
 The default guide is **DINOv3**, not a VLM. A language-aligned guide remains in scope only if it produces better spatial maps and better downstream representations under matched architecture, mask budget, compute accounting, and evaluation.
 
+Scope lock:
+
+- Guide research compares DINOv3 against language-aligned or generative VLMs.
+- Segmentation models are not target-allocation arms in this branch.
+- Segmentation annotations and dense benchmarks are used only to evaluate map quality and downstream transfer.
+- If a VLM cannot expose a reliable spatial readout, it is removed rather than paired with an external segmentation model.
+
 Primary ImageNet guides:
 
 1. DINOv3 ViT-B/16.
 2. SigLIP 2 Base/16-224 vision tower.
 3. I-JEPA ep25 endogenous saliency and clustering baselines.
 4. A MILAN-style frozen CLIP image-attention baseline.
+5. A stronger generative VLM such as Qwen3-VL or Molmo only after its visual-token grounding method passes Phase 0 validation.
 
 Primary OCT guides, if the ImageNet direction survives:
 
@@ -101,6 +109,13 @@ The experiment separates three questions:
 
 The project does not initially use text generation, language decoding, or language tokens inside I-JEPA.
 
+Qwen3-VL or Molmo enters only as a Phase 0 grounding experiment:
+
+1. vision-tower-only dense tokens;
+2. automatic image description without a user prompt;
+3. generated concept-to-visual-token grounding;
+4. no language decoder during I-JEPA pretraining unless this grounding clearly beats DINOv3.
+
 ## 1.1 Working hypotheses
 
 | Hypothesis | Prediction |
@@ -108,6 +123,7 @@ The project does not initially use text generation, language decoding, or langua
 | H1: semantic target density | Frozen semantic guides beat random at fixed target/context budget |
 | H2: language-aligned teacher comparison | SigLIP 2 empirically beats the selected DINOv3 comparator on map quality and transfer |
 | H3: DINO is sufficient | DINOv3 ties or beats the language-aligned guide |
+| H3b: stronger VLM reasoning helps grounding | Qwen3-VL/Molmo grounding beats both DINOv3 and SigLIP 2 |
 | H4: OCT oracle is anatomical | True retina-following maps beat center, shifted, rolled, and background controls |
 | H5: curriculum matters | ep25 switch wins while guided-from-epoch-0 does not |
 | H6: guide adaptation helps | Anchored low-LR adaptation beats the frozen guide |

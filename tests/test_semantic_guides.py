@@ -21,11 +21,13 @@ from src.guides.maps import (
 class GuideOutputTests(unittest.TestCase):
     def test_package_import_is_dependency_isolated(self):
         self.assertEqual(
-            set(available_guides()), {"clip", "dinov3", "ijepa", "siglip2"}
+            set(available_guides()),
+            {"clip", "dinov3", "ijepa", "molmo", "qwen3_vl", "siglip2"},
         )
         command = (
             "import sys; import src.guides; "
             "assert 'transformers' not in sys.modules; "
+            "assert 'src.guides.vlm_guides' not in sys.modules; "
             "assert 'matplotlib' not in sys.modules"
         )
         subprocess.run([sys.executable, "-c", command], check=True)
@@ -120,6 +122,15 @@ class MapTests(unittest.TestCase):
         self.assertTrue(
             torch.allclose(token_pca_map(output_a), token_pca_map(output_b))
         )
+
+    def test_nonspatial_token_sequence_does_not_create_fake_maps(self):
+        output = GuideOutput(
+            patch_tokens=torch.randn(1, 8, 4),
+            grid_size=(1, 8),
+            global_token=torch.randn(1, 4),
+            metadata={"spatial_token_grid": False},
+        )
+        self.assertEqual(extract_maps(output), {})
 
 
 if __name__ == "__main__":

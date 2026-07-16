@@ -12,6 +12,8 @@ _GUIDE_CLASSES = {
     "siglip2": ("src.guides.hf_guides", "SigLIP2Guide"),
     "clip": ("src.guides.hf_guides", "CLIPGuide"),
     "ijepa": ("src.guides.ijepa", "IJEPAGuide"),
+    "qwen3_vl": ("src.guides.vlm_guides", "Qwen3VLGuide"),
+    "molmo": ("src.guides.vlm_guides", "MolmoPointGuide"),
 }
 
 
@@ -32,4 +34,9 @@ def available_guides():
     return tuple(sorted(_GUIDE_CLASSES))
 
 
-from .base import GuideOutput, SemanticGuide  # noqa: E402,F401
+from .base import (  # noqa: E402,F401
+    GroundingBox,
+    GroundingPoint,
+    GuideOutput,
+    SemanticGuide,
+)

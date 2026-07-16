@@ -1,10 +1,28 @@
-# Phase-0 semantic-map tooling runs in a modern sidecar environment.
+# Phase-0 semantic-map tooling runs in a modern local sidecar environment.
+# Install torch/torchvision from the official CUDA 12.8 index first:
+#   python -m pip install torch==2.7.1+cu128 torchvision==0.22.1+cu128 \
+#     --index-url https://download.pytorch.org/whl/cu128
+#
 # The active I-JEPA training environment remains unchanged.
-torch>=2.2
-torchvision>=0.17
-transformers>=4.56,<6
-huggingface-hub>=0.24
-numpy>=1.24
-pillow>=9.5
-matplotlib>=3.7
-pyyaml>=6.0
+accelerate==1.14.0
+datasets==5.0.0
+decord2==3.4.0
+einops==0.8.2
+huggingface_hub==0.36.2
+kaggle==2.2.3
+matplotlib==3.11.0
+numpy==2.4.4
+opencv-python-headless==5.0.0.93
+pandas==3.0.3
+pillow==12.2.0
+protobuf==7.35.1
+PyYAML==6.0.3
+qwen-vl-utils==0.0.14
+safetensors==0.8.0
+scikit-learn==1.9.0
+scipy==1.17.1
+sentencepiece==0.2.2
+torch==2.7.1+cu128
+torchvision==0.22.1+cu128
+tqdm==4.68.4
+transformers==4.57.1

@@ -9,5 +9,8 @@
 ### Added
 
 - Phase 0 frozen semantic-guide API with lazy DINOv3, SigLIP 2, CLIP, and local I-JEPA adapters.
-- Deterministic semantic-map atlas CLI with anonymized artifacts, model-native maps, token PCA, label-free diagnostics, and atomic output handling.
+- Deterministic manifest-driven semantic-map atlas CLI with generated captions, native box/point overlays, token PCA, TokenCut-style NCut, illustrative target blocks, anonymized artifacts, and atomic output handling.
 - Isolated Phase 0 dependency manifest, guide configuration, and download-free unit tests.
+- Locked ImageNet-50 class, model, checkpoint, license, and frozen-evaluation evidence manifests for local Phase-0 execution.
+- Resumable integrity-checked frozen-feature caches with weighted kNN and encoder-frozen linear-probe evaluation.
+- Phase-0 preliminary findings with real I-JEPA/Qwen3-VL/MolmoPoint integration evidence and explicit ImageNet/DINOv3 access blockers.

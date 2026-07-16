@@ -6,6 +6,8 @@ Research direction plans:
 
 - [`curriculum_masking.md`](curriculum_masking.md) — retinal/anatomy-guided target allocation.
 - [`semantic_teacher_guided_masking.md`](semantic_teacher_guided_masking.md) — local ImageNet-50 frozen I-JEPA/DINOv3/Qwen3-VL/Molmo maps and probes before guided masking.
+- [`phase0_imagenet50_evidence.md`](phase0_imagenet50_evidence.md) — locked Phase-0 dataset, checkpoint, protocol, and prior-result evidence.
+- [`phase0_imagenet50_findings.md`](phase0_imagenet50_findings.md) — completed tooling, real local smokes, review verdict, and access-blocked results.
 
 All results use FairVision glaucoma held-out Test split (3000 volumes). Encoder: ViT-B/16.
 

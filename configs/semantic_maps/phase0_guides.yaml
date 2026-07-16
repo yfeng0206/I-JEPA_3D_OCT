@@ -1,34 +1,102 @@
+dataset:
+  id: phase0-cmc-in100-prefix50-v1
+  canonical: false
+  num_classes: 50
+  wnid_manifest: manifests/phase0-cmc-in100-prefix50-v1.wnids.txt
+  class_names: manifests/phase0-cmc-in100-prefix50-v1.classes.json
+
 guides:
-  dinov3:
-    enabled: true
-    model_id: facebook/dinov3-vitb16-pretrain-lvd1689m
-    revision: main
-    input_size: 224
-    local_files_only: false
-
-  siglip2:
-    enabled: true
-    model_id: google/siglip2-base-patch16-224
-    revision: main
-    input_size: 224
-    local_files_only: false
-
-  clip:
-    enabled: true
-    model_id: openai/clip-vit-base-patch16
-    revision: main
-    input_size: 224
-    local_files_only: false
-
   ijepa:
-    enabled: false
-    weights_path: null
+    enabled: true
+    official_model_id: IN1K-vit.h.14-300e
+    weights_path: 'D:\jepa_phase0\models\ijepa\IN1K-vit.h.14-300e-target_encoder.safetensors'
+    weights_sha256: 03fdafbd89f4e20184a83e5ce71a605fe0ff2ce69aee9eb4b6dabc8c8f5cd899
     checkpoint_key: target_encoder
     input_size: 224
-    patch_size: 16
-    embed_dim: 768
-    depth: 12
-    num_heads: 12
+    patch_size: 14
+    embed_dim: 1280
+    depth: 32
+    num_heads: 16
+    dtype: float16
+    published_parameters: 630762240
+    evaluation_batch_size: 64
+    atlas_batch_size: 4
+
+  dinov3:
+    enabled: true
+    official_model_id: facebook/dinov3-vitl16-pretrain-lvd1689m
+    model_id: facebook/dinov3-vitl16-pretrain-lvd1689m
+    revision: ea8dc2863c51be0a264bab82070e3e8836b02d51
+    cache_dir: 'D:\jepa_phase0\models\dinov3'
+    input_size: 224
+    dtype: float32
+    published_parameters: 300000000
+    evaluation_batch_size: 64
+    atlas_batch_size: 4
+    local_files_only: true
+
+  qwen3_vl:
+    enabled: true
+    official_model_id: Qwen/Qwen3-VL-8B-Instruct
+    model_id: 'D:\jepa_phase0\models\qwen3_vl'
+    revision: 0c351dd01ed87e9c1b53cbc748cba10e6187ff3b
+    input_size: 512
+    dtype: bfloat16
+    published_parameters: 8767123696
+    published_visual_parameters: 576388336
+    evaluation_batch_size: 1
+    atlas_batch_size: 1
+    local_files_only: true
+    caption_max_new_tokens: 48
+    grounding_max_new_tokens: 96
+
+  molmo:
+    enabled: true
+    official_model_id: allenai/MolmoPoint-8B
+    model_id: 'D:\jepa_phase0\models\molmo'
+    revision: 188130f961c8e0888a34e11121a1423c461a01ba
+    dtype: bfloat16
+    published_parameters: 8677855065
+    published_visual_connector_parameters: 469115216
+    evaluation_batch_size: 1
+    atlas_batch_size: 1
+    local_files_only: true
+    caption_max_new_tokens: 48
+    point_max_new_tokens: 64
+
+  siglip2:
+    enabled: false
+    model_id: google/siglip2-base-patch16-224
+
+  clip:
+    enabled: false
+    model_id: openai/clip-vit-base-patch16
+
+evaluation:
+  knn_train_chunk_size: 8192
+  knn_query_chunk_size: 256
+  linear_probe:
+    validation_fraction: 0.1
+    max_iter: 1000
+    tolerance: 1.0e-12
+
+maps:
+  pca:
+    components: 3
+    whiten: true
+    source: DINOv3 official PCA visualization, adapted without foreground fit
+  tokencut:
+    enabled: true
+    root: 'D:\jepa_phase0\official\TokenCut'
+    source_commit: fed52cd5b60891baefd8ec7110dafa73be816ee1
+    tau: 0.2
+    eps: 1.0e-5
+  grounding:
+    grid_size: [16, 16]
+    point_sigma_fraction: 0.08
+  illustrative_targets:
+    block_size: [4, 4]
+    count: 4
 
 metrics:
   temperature: 0.15

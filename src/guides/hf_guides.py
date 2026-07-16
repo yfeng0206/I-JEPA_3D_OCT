@@ -52,8 +52,10 @@ class DINOv3Guide(_FixedImageGuide):
         try:
             from transformers import AutoModel
 
+            pretrained_kwargs = self._pretrained_kwargs()
+            pretrained_kwargs["attn_implementation"] = "eager"
             self.model = AutoModel.from_pretrained(
-                self.model_id, **self._pretrained_kwargs()
+                self.model_id, **pretrained_kwargs
             ).to(self.device).eval()
         except Exception as exc:
             raise RuntimeError(
@@ -72,7 +74,7 @@ class DINOv3Guide(_FixedImageGuide):
         images = self._prepare_images(images)
         output = self.model(
             pixel_values=images,
-            output_attentions=False,
+            output_attentions=True,
             return_dict=True,
         )
         tokens = output.last_hidden_state
@@ -86,18 +88,72 @@ class DINOv3Guide(_FixedImageGuide):
             )
         patches = tokens[:, prefix_count:]
         global_token = tokens[:, 0]
+        if not output.attentions:
+            raise RuntimeError(
+                "DINOv3 did not return attention weights; eager attention "
+                "is required for the native attention diagnostic"
+            )
+        last_attention = output.attentions[-1]
+        native_map = last_attention[:, :, 0, prefix_count:].mean(dim=1)
+        native_map = native_map.view(tokens.size(0), *grid_size)
         result = GuideOutput(
             patch_tokens=patches,
             grid_size=grid_size,
             global_token=global_token,
+            native_map=native_map,
             metadata={
                 "model_id": self.model_id,
-                "readout": "global_patch_cosine",
+                "readout": "final_cls_attention_mean_adapted",
                 "special_token_count": prefix_count,
+                "attention_heads": int(last_attention.size(1)),
+                "spatial_token_grid": True,
+            },
+            model_metadata={
+                "guide": self.name,
+                "official_model_id": self.model_id,
+                "dtype": str(self.dtype).replace("torch.", ""),
+                "device": str(self.device),
+                "frozen": True,
             },
         )
-        result.native_map = global_patch_cosine(result)
         return result
+
+    @torch.no_grad()
+    def encode_features(self, images):
+        """Return frozen CLS/patch features without attention materialization."""
+        images = self._prepare_images(images)
+        output = self.model(
+            pixel_values=images,
+            output_attentions=False,
+            return_dict=True,
+        )
+        tokens = output.last_hidden_state
+        grid_size = _grid_from_image(images, self.patch_size)
+        patch_count = grid_size[0] * grid_size[1]
+        prefix_count = int(tokens.size(1) - patch_count)
+        if prefix_count < 1:
+            raise ValueError(
+                "DINOv3 output has fewer tokens than the expected patch grid"
+            )
+        return GuideOutput(
+            patch_tokens=tokens[:, prefix_count:],
+            grid_size=grid_size,
+            global_token=tokens[:, 0],
+            metadata={
+                "model_id": self.model_id,
+                "readout": "final_normalized_cls_token",
+                "special_token_count": prefix_count,
+                "features_only": True,
+                "spatial_token_grid": True,
+            },
+            model_metadata={
+                "guide": self.name,
+                "official_model_id": self.model_id,
+                "dtype": str(self.dtype).replace("torch.", ""),
+                "device": str(self.device),
+                "frozen": True,
+            },
+        )
 
 
 class SigLIP2Guide(SemanticGuide):

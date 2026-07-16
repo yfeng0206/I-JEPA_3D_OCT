@@ -1,0 +1,119 @@
+schema_version: 1
+evidence_cutoff: "2026-07-15"
+
+dataset:
+  id: phase0-cmc-in100-prefix50-v1
+  canonical: false
+  description: >-
+    Project-derived first 50 ordered WNIDs from the published CMC
+    ImageNet-100 manifest.
+  source_repository: HobbitLong/CMC
+  source_commit: 7b227be0b10ef4e526c72af07664f5079ed9ee09
+  source_file: imagenet100.txt
+  source_blob_sha1: 6dccf9be4f2f5efe33d0f5ae03a20bc438d3e658
+  wnid_manifest: phase0-cmc-in100-prefix50-v1.wnids.txt
+  wnid_manifest_sha256: 206e19b5df0c7118ce22a67972ae43f354bf8dc147a7b8850ddbd499a37b11af
+  class_names: phase0-cmc-in100-prefix50-v1.classes.json
+  class_names_source: https://storage.googleapis.com/download.tensorflow.org/data/imagenet_class_index.json
+  class_names_source_sha256: a1e7a966a1f601d39e4b43e119b3e7dd4a2ad3ea08cf69847cbaf021013767bc
+  expected_train_images: 63747
+  expected_validation_images: 2500
+  access:
+    terms_url: https://image-net.org/download.php
+    allowed_sources:
+      - official ImageNet access
+      - official Kaggle ImageNet localization challenge after accepting rules
+      - gated ILSVRC/imagenet-1k Hugging Face dataset after accepting terms
+    public_repackaged_mirrors_allowed: false
+
+models:
+  ijepa:
+    role: frozen_reference
+    architecture: vit_huge_patch14_224
+    published_parameters: 630762240
+    checkpoint_url: https://dl.fbaipublicfiles.com/ijepa/IN1K-vit.h.14-300e.pth.tar
+    checkpoint_state_key: target_encoder
+    checkpoint_sha256: 0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22
+    extracted_target_encoder:
+      filename: IN1K-vit.h.14-300e-target_encoder.safetensors
+      local_path: 'D:\jepa_phase0\models\ijepa\IN1K-vit.h.14-300e-target_encoder.safetensors'
+      sha256: 03fdafbd89f4e20184a83e5ce71a605fe0ff2ce69aee9eb4b6dabc8c8f5cd899
+      bytes: 2523086392
+      tensor_count: 389
+    pretraining_dataset: ImageNet-1K
+    pretraining_epochs: 300
+    input_size: 224
+    patch_size: 14
+    embed_dim: 1280
+    depth: 32
+    num_heads: 16
+    preprocessing:
+      resize_short_side: 256
+      center_crop: 224
+      mean: [0.485, 0.456, 0.406]
+      std: [0.229, 0.224, 0.225]
+    frozen_readout: mean final target-encoder patch tokens
+    license: CC-BY-NC-4.0
+    license_url: https://github.com/facebookresearch/ijepa/blob/52c1ae95d05f743e000e8f10a1f3a79b10cff048/LICENSE
+
+  dinov3:
+    role: primary_dense_vision_guide
+    model_id: facebook/dinov3-vitl16-pretrain-lvd1689m
+    revision: ea8dc2863c51be0a264bab82070e3e8836b02d51
+    official_parameters: 300000000
+    artifact_parameters: 303129600
+    input_size: 224
+    patch_size: 16
+    frozen_readout: final normalized CLS token
+    inference_dtype: float32
+    inference_batch_size: 64
+    access: manual Hugging Face approval required
+    license: DINOv3 License
+    license_url: https://ai.meta.com/resources/models-and-libraries/dinov3-license/
+
+  qwen3_vl:
+    role: grounded_vlm
+    model_id: Qwen/Qwen3-VL-8B-Instruct
+    local_path: 'D:\jepa_phase0\models\qwen3_vl'
+    revision: 0c351dd01ed87e9c1b53cbc748cba10e6187ff3b
+    official_size: 8B
+    artifact_parameters: 8767123696
+    artifact_visual_parameters: 576388336
+    input_area: 512x512
+    frozen_readout: mean final post-merger image tokens
+    inference_dtype: bfloat16
+    inference_batch_size: 1
+    grounding: generated bbox_2d and point_2d coordinates in [0, 1000]
+    license: Apache-2.0
+    license_url: https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct
+
+  molmo:
+    role: grounded_vlm
+    model_id: allenai/MolmoPoint-8B
+    local_path: 'D:\jepa_phase0\models\molmo'
+    revision: 188130f961c8e0888a34e11121a1423c461a01ba
+    official_size: 8B
+    artifact_parameters: 8677855065
+    artifact_visual_connector_parameters: 469115216
+    input_size: 378
+    frozen_readout: mean valid post-pooling/post-projector vision tokens
+    inference_dtype: bfloat16
+    inference_batch_size: 1
+    trust_remote_code: true
+    grounding: generated native points; no official box API
+    license: Apache-2.0
+    license_url: https://huggingface.co/allenai/MolmoPoint-8B
+
+environment:
+  python: "3.11"
+  transformers: "4.57.1"
+  local_root: 'D:\jepa_phase0'
+  gpu: NVIDIA GeForce RTX 3090
+  gpu_memory_gib: 24
+
+external_code:
+  tokencut:
+    repository: YangtaoWANG95/TokenCut
+    commit: fed52cd5b60891baefd8ec7110dafa73be816ee1
+    local_path: 'D:\jepa_phase0\official\TokenCut'
+    license: MIT

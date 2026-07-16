@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 import unittest
@@ -5,9 +6,11 @@ import unittest
 from scripts.semantic_map_atlas import (
     commit_output_dir,
     image_id,
+    load_input_manifest,
     prepare_output_dir,
     safe_model_id,
     sanitize_error,
+    sanitize_metadata,
 )
 
 
@@ -62,6 +65,45 @@ class AtlasUtilityTests(unittest.TestCase):
             identifier = safe_model_id(model_path)
             self.assertTrue(identifier.startswith("local_model_"))
             self.assertNotIn(root, identifier)
+
+    def test_manifest_checks_image_content(self):
+        with tempfile.TemporaryDirectory() as root:
+            image_path = os.path.join(root, "image.png")
+            with open(image_path, "wb") as handle:
+                handle.write(b"content")
+            expected = image_id(image_path).removeprefix("img_")
+            import hashlib
+
+            full_hash = hashlib.sha256(b"content").hexdigest()
+            manifest_path = os.path.join(root, "inputs.json")
+            with open(manifest_path, "w", encoding="utf-8") as handle:
+                json.dump(
+                    {
+                        "dataset_id": "tiny",
+                        "images": [
+                            {
+                                "path": image_path,
+                                "image_sha256": full_hash,
+                                "class_name": "object",
+                            }
+                        ],
+                    },
+                    handle,
+                )
+            entries, metadata = load_input_manifest(manifest_path, 1)
+            self.assertEqual(entries[0]["image_id"], "img_" + expected)
+            self.assertEqual(metadata["dataset_id"], "tiny")
+
+            with open(image_path, "wb") as handle:
+                handle.write(b"changed")
+            with self.assertRaises(RuntimeError):
+                load_input_manifest(manifest_path, 1)
+
+    def test_metadata_sanitization_converts_tensors(self):
+        import torch
+
+        value = sanitize_metadata({"tensor": torch.tensor([1, 2])})
+        self.assertEqual(value, {"tensor": [1, 2]})
 
 
 if __name__ == "__main__":

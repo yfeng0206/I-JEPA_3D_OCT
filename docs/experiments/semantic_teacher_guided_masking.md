@@ -2,7 +2,7 @@
 
 Branch: `vlm-guided-masking`
 
-> This is a living research plan. It defines the experiments, controls, decision gates, and allowed claims for a new direction. No semantic-teacher masking implementation is complete yet.
+> This is a living research plan. It defines the experiments, controls, decision gates, and allowed claims for a new direction. Offline Phase 0 map tooling is implemented; training-time semantic target allocation is not.
 
 ## 0. Executive decision
 
@@ -45,9 +45,9 @@ Legend: DONE / IN PROGRESS / TODO / STOPPED
 |---|---|---|---|
 | R0 | Primary-source literature and implementation audit | IN PROGRESS | Papers complete; interfaces, weights, and licenses pending |
 | R1 | Create dedicated branch | DONE | `vlm-guided-masking` |
-| P0-A | Pin model weights, licenses, transforms, and checkpoints | TODO | All hashes reproducible |
-| P0-B | Build common semantic-map extraction API | TODO | Same tensor contract across guides |
-| P0-C | Produce ImageNet visual atlas and scorecard | TODO | DINO/VLM map quality quantified |
+| P0-A | Pin model weights, licenses, transforms, and checkpoints | IN PROGRESS | CLIP/SigLIP tested; DINOv3 access and full legal manifest pending |
+| P0-B | Build common semantic-map extraction API | DONE | Lazy DINOv3, SigLIP 2, CLIP, and local I-JEPA adapters |
+| P0-C | Produce ImageNet visual atlas and scorecard | IN PROGRESS | Atlas CLI works; labeled ImageNet scorecard pending |
 | P0-D | Analyze why OCT ribbon beat random | TODO | Anatomy vs position vs geometry separated |
 | P1 | Frozen-guide ImageNet continuation | TODO | Guide beats matched-budget random |
 | P2-A | Mask scale, dilation, and predictor interaction | TODO | Robust optimum, not one tuned setting |
@@ -55,6 +55,37 @@ Legend: DONE / IN PROGRESS / TODO / STOPPED
 | P2-C | From-scratch confirmation | TODO | Gain not limited to ep25 curriculum |
 | P3-A | OCT guide map benchmark | TODO | External labels show useful localization |
 | P3-B | OCT pretraining and transfer | TODO | FairVision plus external OCT gain |
+
+### 0.2 Implemented Phase 0 scaffold
+
+Files:
+
+- `src/guides/base.py` — validated dense-guide tensor contract.
+- `src/guides/maps.py` — native/cosine/PCA maps and label-free diagnostics.
+- `src/guides/hf_guides.py` — DINOv3, SigLIP 2, and CLIP vision adapters.
+- `src/guides/ijepa.py` — local target-encoder map adapter.
+- `scripts/semantic_map_atlas.py` — deterministic shared-crop extraction, NPZ/JSON output, and atlas rendering.
+- `configs/semantic_maps/phase0_guides.yaml` — model identifiers and defaults.
+- `requirements-phase0.txt` — isolated modern sidecar environment.
+- `tests/test_semantic_guides.py` — download-free tensor/map tests.
+
+Example:
+
+```powershell
+python scripts/semantic_map_atlas.py `
+  --inputs "path\to\images\*.png" `
+  --guides clip siglip2 `
+  --output-dir results\semantic_maps `
+  --device cpu
+```
+
+Outputs:
+
+- `semantic_map_metrics.json`
+- `maps/<image>__<guide>.npz`
+- `atlases/<image>.png`
+
+DINOv3 is intentionally not silently substituted when its gated checkpoint is unavailable. The JSON report records the access failure and the experiment remains blocked until approved weights or a verified local path are supplied.
 
 ## 1. Research question
 

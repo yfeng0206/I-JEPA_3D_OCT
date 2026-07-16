@@ -1,0 +1,10 @@
+# Phase-0 semantic-map tooling runs in a modern sidecar environment.
+# The active I-JEPA training environment remains unchanged.
+torch>=2.2
+torchvision>=0.17
+transformers>=4.56,<6
+huggingface-hub>=0.24
+numpy>=1.24
+pillow>=9.5
+matplotlib>=3.7
+pyyaml>=6.0

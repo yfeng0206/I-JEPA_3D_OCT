@@ -32,6 +32,42 @@ cannot yet be produced. The locked plan remains
 Full citations and protocol details are in
 [`phase0_imagenet50_evidence.md`](phase0_imagenet50_evidence.md).
 
+## Locked-plan reconciliation
+
+The answer to “is Phase 0 complete?” is **no**. Research and implementation are
+ready, but the required ImageNet experiment has not run.
+
+| Locked requirement | State | Evidence or missing output |
+|---|---|---|
+| Audit official/credible I-JEPA checkpoints and results | Complete | Official ImageNet-1K tables, transfer tables, checkpoint, architecture, protocol, hashes, and third-party ImageNet-100 context are recorded |
+| Find an official I-JEPA ImageNet-50/100 frozen kNN/linear table | Not found | No directly comparable public result exists as of the evidence cutoff |
+| Obtain an I-JEPA checkpoint usable for ImageNet-50 | Complete | Official ImageNet-1K-pretrained ViT-H/14 `target_encoder`; no ImageNet-50-specific checkpoint is needed for frozen evaluation |
+| Pin a reproducible ImageNet-50 definition | Research complete | CMC-derived 50-WNID manifest and expected 63,747/2,500 counts are pinned |
+| Materialize and verify ImageNet-50 files | Blocked | No terms-compliant local archive or configured credentials; actual file counts/content manifest do not exist yet |
+| Download all four checkpoints | Partial | I-JEPA, Qwen3-VL, and MolmoPoint are local; DINOv3 remains access-gated |
+| Run 20-image Qwen/Molmo grounding gate | Blocked | Only one-image API/memory smokes exist |
+| Run frozen ImageNet-50 kNN/linear for all encoders | Blocked | Code exists; there is no real ImageNet-50 result table |
+| Generate 100-200-image atlas and manually review 30-50 | Blocked | Only small integration atlases exist; no DINO panels |
+| Report grounding/stability/coverage/hallucination diagnostics | Blocked | Requires the manifest-locked ImageNet sample and annotations/manual review |
+| Lock one readout/guide and decide Phase 1 | Blocked | DINO versus VLM comparison has not run |
+
+The existing official checkpoint is:
+
+```text
+Meta I-JEPA ViT-H/14, ImageNet-1K, 300 epochs
+state: target_encoder
+parameters: 630,762,240
+input/patch: 224 / 14
+raw SHA-256:
+0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22
+extracted safetensors SHA-256:
+03fdafbd89f4e20184a83e5ce71a605fe0ff2ce69aee9eb4b6dabc8c8f5cd899
+```
+
+There is therefore a valid checkpoint but **no I-JEPA ImageNet-50 benchmark
+number yet**. The locked plan explicitly requires computing that number locally
+when no published table exists.
+
 ## Completed implementation
 
 - Explicit-WNID ImageNet subset loading and content-addressed dataset snapshots.

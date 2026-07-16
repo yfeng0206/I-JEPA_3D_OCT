@@ -1,6 +1,6 @@
 # Phase-0 ImageNet-50 Evidence Lock
 
-**Evidence cutoff:** 2026-07-15
+**Evidence cutoff:** 2026-07-16
 
 This document records the primary-source decisions used to implement the
 locked Phase-0 plan. Published values and future local measurements are kept
@@ -130,6 +130,53 @@ These results are not directly comparable to the local Phase-0 protocol:
     [SCOTT Table 3](https://arxiv.org/html/2502.18056v2#S4.T3)
 
 No published I-JEPA ImageNet-50 result was found.
+
+### Official downstream tasks and protocols
+
+The official paper evaluates the ImageNet-1K-pretrained ViT-H/14 on frozen
+transfer classification and low-level prediction tasks:
+
+| Protocol | Architecture | CIFAR-100 | Places205 | iNat18 |
+|---|---|---:|---:|---:|
+| Frozen linear transfer | ViT-H/14 | 87.5 | 58.4 | 47.6 |
+
+Source:
+[I-JEPA paper Table 3](https://ar5iv.labs.arxiv.org/html/2301.08243#S5.T3).
+
+| Protocol | Architecture | CLEVR/Count | CLEVR/Dist |
+|---|---|---:|---:|
+| Frozen linear low-level transfer | ViT-H/14 | 86.7 | 72.4 |
+
+Source:
+[I-JEPA paper Table 4](https://ar5iv.labs.arxiv.org/html/2301.08243#S6.T4).
+
+The transfer protocol freezes the encoder and uses average-pooled patch
+representations because the I-JEPA encoder has no CLS token. It reports the best
+linear result from either the final layer or concatenated final four layers,
+with either a linear head or batch-normalization plus a linear head, otherwise
+following the VISSL recipe. CIFAR-100 images are resized to 224 x 224. CLEVR
+counting and distance use center crop plus horizontal flip rather than random
+crop, because cropping can remove objects or depth cues.
+
+The official ImageNet-1K frozen-linear protocol is not the local Phase-0
+logistic-regression protocol: it average-pools patch tokens, uses LARS with
+batch size 16,384 for 50 epochs, decays the learning rate by 10 every 15 epochs,
+and sweeps reference learning rates `[0.01, 0.05, 0.001]` and weight decays
+`[0.0005, 0.0]`.
+
+For ImageNet-1% low-shot evaluation, the paper adapts the full encoder for 50
+epochs with AdamW and cosine decay; this is fine-tuning, not a frozen linear
+result. Its ViT-H/14 top-1 is 73.3%. The appendix also reports full ImageNet-1K
+fine-tuning for a 448-pixel ViT-H/16 at 87.1% top-1
+([Table 15](https://ar5iv.labs.arxiv.org/html/2301.08243#A4.T15)).
+
+The original release does not report semantic segmentation or object detection
+for these image checkpoints. It calls CLEVR counting and distance “local” or
+“low-level and dense prediction” tasks, but evaluates them with frozen global
+linear probes rather than a dense segmentation/detection head.
+
+Primary protocol source:
+[I-JEPA Appendix A.2](https://ar5iv.labs.arxiv.org/html/2301.08243#A2).
 
 ## 4. I-JEPA local checkpoint
 

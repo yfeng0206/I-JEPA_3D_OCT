@@ -1,7 +1,7 @@
 # Phase-0 ImageNet-50 Preliminary Findings
 
-**Status:** implementation complete; full experiment blocked on ImageNet and
-DINOv3 access.
+**Status:** implementation and ImageNet-50 materialization complete; full
+experiment awaits a free GPU window and DINOv3 access.
 
 This document separates completed research/tooling evidence from results that
 cannot yet be produced. The locked plan remains
@@ -43,11 +43,11 @@ ready, but the required ImageNet experiment has not run.
 | Find an official I-JEPA ImageNet-50/100 frozen kNN/linear table | Not found | No directly comparable public result exists as of the evidence cutoff |
 | Obtain an I-JEPA checkpoint usable for ImageNet-50 | Complete | Official ImageNet-1K-pretrained ViT-H/14 `target_encoder`; no ImageNet-50-specific checkpoint is needed for frozen evaluation |
 | Pin a reproducible ImageNet-50 definition | Research complete | CMC-derived 50-WNID manifest and expected 63,747/2,500 counts are pinned |
-| Materialize and verify ImageNet-50 files | Blocked | No terms-compliant local archive or configured credentials; actual file counts/content manifest do not exist yet |
+| Materialize and verify ImageNet-50 files | Complete | 63,747 train + 2,500 validation images; every file SHA-256-recorded and decode-verified |
 | Download all four checkpoints | Partial | I-JEPA, Qwen3-VL, and MolmoPoint are local; DINOv3 remains access-gated |
-| Run 20-image Qwen/Molmo grounding gate | Blocked | Only one-image API/memory smokes exist |
-| Run frozen ImageNet-50 kNN/linear for all encoders | Blocked | Code exists; there is no real ImageNet-50 result table |
-| Generate 100-200-image atlas and manually review 30-50 | Blocked | Only small integration atlases exist; no DINO panels |
+| Run 20-image Qwen/Molmo grounding gate | Ready, not run | Deterministic first-20-WNID manifest exists; GPU is currently reserved by the user |
+| Run frozen ImageNet-50 kNN/linear for all encoders | Partial blocker | Data/code are ready; GPU run has not started and DINOv3 remains gated |
+| Generate 100-200-image atlas and manually review 30-50 | Partial blocker | Deterministic 150-image manifest exists; GPU run and DINO panels remain |
 | Report grounding/stability/coverage/hallucination diagnostics | Blocked | Requires the manifest-locked ImageNet sample and annotations/manual review |
 | Lock one readout/guide and decide Phase 1 | Blocked | DINO versus VLM comparison has not run |
 
@@ -111,6 +111,10 @@ accuracy is only a pipeline check and is not a benchmark result.
 Local artifacts:
 
 ```text
+D:\Users\Gary\Desktop\ImageNet_Data\
+  phase0-cmc-in100-prefix50-v1
+  manifests\phase0-grounding-20.json
+  manifests\phase0-atlas-150.json
 D:\jepa_phase0\results\atlases\ijepa_qwen_smoke
 D:\jepa_phase0\results\atlases\molmo_smoke_visiononly
 D:\jepa_phase0\results\manifests\qwen_smoke.json
@@ -141,9 +145,10 @@ The following are not available and must not be inferred:
 - DINOv3 attention, PCA, TokenCut, or DINO-VLM difference results;
 - a Phase-1 guide selection.
 
-No official ImageNet archive/credentials are configured, and DINOv3 still
-requires approved access. Unauthorized mirrors were not used.
+Official ImageNet-50 files are now present and verified. DINOv3 still requires
+approved access. Unauthorized mirrors were not used.
 
 **Current decision:** the implementation is ready, but the scientific decision
-is **WAIT FOR ACCESS**. Qwen and Molmo both pass one-image API/memory checks;
-neither has passed the reliability gate, and DINOv3 has not yet been compared.
+is **WAIT FOR THE GPU WINDOW AND DINO ACCESS**. Qwen and Molmo both pass
+one-image API/memory checks; neither has passed the reliability gate, and
+DINOv3 has not yet been compared.

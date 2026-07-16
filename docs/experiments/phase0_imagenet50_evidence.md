@@ -80,9 +80,61 @@ devkit  fa75699e90414af021442c21a62c3abf
 Source:
 [`torchvision/datasets/imagenet.py`](https://github.com/pytorch/vision/blob/main/torchvision/datasets/imagenet.py).
 
-At the time of the local audit, no ImageNet/Kaggle/Hugging Face credentials
-were present. Data download therefore remains blocked until the account terms
-are accepted and credentials are configured.
+The official ImageNet server exposed the ILSVRC2012 archives directly on
+2026-07-16. The locked 50 classes were materialized under:
+
+```text
+D:\Users\Gary\Desktop\ImageNet_Data\phase0-cmc-in100-prefix50-v1
+```
+
+To avoid retaining the 147.9 GB full training archive, the acquisition process
+indexed its 1,000 class-tar headers with HTTP byte ranges and downloaded only
+the 50 selected class payloads. The complete validation archive and devkit were
+downloaded, MD5-verified, used to recover validation WNIDs, and the temporary
+validation archive was removed after extraction.
+
+Actual local data:
+
+| Split | Classes | Images | Content-manifest SHA-256 |
+|---|---:|---:|---|
+| Train | 50 | 63,747 | `5f80288517408e01577279b5a56f7ba35dcff6977db625c48ea0610134f7a6d8` |
+| Validation | 50 | 2,500 | `e1192dca08f9fa4a3f996cf6f5125853eb8938121de3bde379af0f2a126e85f7` |
+
+All 66,247 retained files passed PIL decode verification. The exact selected
+official class-tar payloads total 7,679,006,720 bytes; the extracted train and
+validation JPEGs total 7,998,298,132 bytes (7.45 GiB). Thus a quoted 6.27 GB
+size does not describe these exact official files for the locked WNID set,
+although the final retained dataset is still only ImageNet-50 rather than the
+147.9 GB ImageNet-1K training archive.
+
+Per-file SHA-256 records:
+
+```text
+D:\Users\Gary\Desktop\ImageNet_Data\manifests\
+  phase0-cmc-in100-prefix50-v1\train.json
+  phase0-cmc-in100-prefix50-v1\val.json
+```
+
+### Official ImageNet split format
+
+- **Train:** the official archive contains 1,000 nested `n########.tar` class
+  archives. The WNID is the label. The Phase-0 output retains only the locked 50
+  WNID directories.
+- **Validation:** the official archive contains 50,000 flat, ordered JPEGs.
+  Labels come from `ILSVRC2012_validation_ground_truth.txt`; `meta.mat` maps
+  integer synset IDs to WNIDs. The selected subset contains exactly 50 images
+  for each of the 50 classes.
+- **Test:** the official classification test archive contains flat images but
+  public ground-truth labels are not released. It is not downloaded or used.
+  Phase 0 fits probes on `train` and reports once on `val`.
+
+Final loader layout:
+
+```text
+phase0-cmc-in100-prefix50-v1\
+  train\<WNID>\*.JPEG
+  val\<WNID>\*.JPEG
+```
 
 ## 3. Existing I-JEPA results
 
@@ -450,19 +502,17 @@ locked 20-image test runs.
 
 At the time of this audit:
 
-- no Hugging Face token was configured;
-- no Kaggle credentials were configured;
-- no local official ImageNet archive was identified;
 - DINOv3 manual access had not been approved.
 
 The official public I-JEPA, Qwen3-VL, and MolmoPoint assets are present under
-`D:\jepa_phase0`; only ImageNet and DINOv3 access remain blocked.
+`D:\jepa_phase0`, and the official ImageNet-50 materialization is present under
+`D:\Users\Gary\Desktop\ImageNet_Data`. Only DINOv3 access remains blocked.
 
 Do not bypass these controls using public repackaged ImageNet mirrors or
 unofficial DINO weights.
 
-If ImageNet access remains unavailable, only user-owned/CC0 smoke images may
-be used and no ImageNet accuracy may be reported.
+No ImageNet accuracy may be reported until frozen feature extraction and the
+locked probes have actually run on this materialization.
 
 ## 10. Allowed claims
 

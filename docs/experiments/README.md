@@ -2,6 +2,11 @@
 
 Three sections: pretraining (the SSL runs), frozen (probe-only evaluation with encoder frozen), finetune (encoder unfrozen).
 
+Research direction plans:
+
+- [`curriculum_masking.md`](curriculum_masking.md) — retinal/anatomy-guided target allocation.
+- [`semantic_teacher_guided_masking.md`](semantic_teacher_guided_masking.md) — DINOv3/VLM semantic-teacher target allocation, ImageNet first and OCT transfer after validation.
+
 All results use FairVision glaucoma held-out Test split (3000 volumes). Encoder: ViT-B/16.
 
 ## Results summary
@@ -38,6 +43,8 @@ docs/experiments/
     README.md
     llrd.md              unfrozen encoder + LLRD γ=0.5 on ep100 (3 probes)
   interpretability.md    occlusion attribution: 3 probes converge on disc-rim
+  curriculum_masking.md  anatomy-guided masking research plan
+  semantic_teacher_guided_masking.md  semantic-teacher masking research plan
 ```
 
 ## Reference

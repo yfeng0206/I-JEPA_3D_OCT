@@ -1,0 +1,115 @@
+dataset:
+  id: phase0-cmc-in100-prefix50-v1
+  canonical: false
+  num_classes: 50
+  wnid_manifest: manifests/phase0-cmc-in100-prefix50-v1.wnids.txt
+  class_names: manifests/phase0-cmc-in100-prefix50-v1.classes.json
+
+guides:
+  ijepa:
+    enabled: true
+    official_model_id: IN1K-vit.h.14-300e
+    weights_path: 'D:\jepa_phase0\models\ijepa\IN1K-vit.h.14-300e-target_encoder.safetensors'
+    weights_sha256: 03fdafbd89f4e20184a83e5ce71a605fe0ff2ce69aee9eb4b6dabc8c8f5cd899
+    checkpoint_key: target_encoder
+    input_size: 224
+    patch_size: 14
+    embed_dim: 1280
+    depth: 32
+    num_heads: 16
+    dtype: float16
+    published_parameters: 630762240
+    evaluation_batch_size: 64
+    atlas_batch_size: 4
+
+  dinov3:
+    enabled: true
+    official_model_id: facebook/dinov3-vit7b16-pretrain-lvd1689m
+    model_id: 'D:\jepa_phase0\models\dinov3'
+    revision: b80367753773648a6793235ab9c65cdbb029506f
+    input_size: 224
+    dtype: bfloat16
+    published_parameters: 6716000000
+    evaluation_batch_size: 1
+    atlas_batch_size: 1
+    local_files_only: true
+
+  qwen3_vl:
+    enabled: true
+    official_model_id: Qwen/Qwen3-VL-8B-Instruct
+    model_id: 'D:\jepa_phase0\models\qwen3_vl'
+    revision: 0c351dd01ed87e9c1b53cbc748cba10e6187ff3b
+    dtype: bfloat16
+    published_parameters: 8767123696
+    published_visual_parameters: 576388336
+    evaluation_batch_size: 1
+    atlas_batch_size: 1
+    local_files_only: true
+    grounding_mode: single_point
+    caption_max_new_tokens: 512
+    single_point_max_new_tokens: 96
+    plural_points_max_new_tokens: 512
+    boxes_max_new_tokens: 256
+
+  molmo:
+    enabled: true
+    official_model_id: allenai/MolmoPoint-8B
+    model_id: 'D:\jepa_phase0\models\molmo'
+    revision: 188130f961c8e0888a34e11121a1423c461a01ba
+    dtype: bfloat16
+    published_parameters: 8677855065
+    published_visual_connector_parameters: 469115216
+    evaluation_batch_size: 1
+    atlas_batch_size: 1
+    local_files_only: true
+    grounding_mode: single_point
+    caption_max_new_tokens: 512
+    point_max_new_tokens: 64
+    plural_point_max_new_tokens: 200
+
+  siglip2:
+    enabled: false
+    model_id: google/siglip2-base-patch16-224
+
+  clip:
+    enabled: false
+    model_id: openai/clip-vit-base-patch16
+
+evaluation:
+  knn_train_chunk_size: 8192
+  knn_query_chunk_size: 256
+  linear_probe:
+    validation_fraction: 0.1
+    max_iter: 1000
+    tolerance: 1.0e-12
+
+maps:
+  pca:
+    components: 3
+    whiten: true
+    diagnostic: per-image all-patch PCA at the standard 224 evaluation crop
+    paper_style:
+      script: scripts/dinov3_pca_atlas.py
+      image_height: 768
+      source_commit: 6876159a11b4df116f30f667f8c9888617df0751
+      foreground: supervised nine-mask logistic classifier, retrained for ViT-7B
+      color_transfer: sigmoid(2*z), background black
+      orientation_policy: retain all 48 sign/RGB variants
+    unsupervised:
+      method: DINOv2-style two-stage per-image PCA adaptation
+      polarity_policy: retain both unresolved PC1 polarities
+  tokencut:
+    enabled: true
+    root: 'D:\jepa_phase0\official\TokenCut'
+    source_commit: fed52cd5b60891baefd8ec7110dafa73be816ee1
+    tau: 0.2
+    eps: 1.0e-5
+  grounding:
+    grid_size: [16, 16]
+    point_sigma_fraction: 0.08
+  illustrative_targets:
+    block_size: [4, 4]
+    count: 4
+
+metrics:
+  temperature: 0.15

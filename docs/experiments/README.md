@@ -2,6 +2,15 @@
 
 Three sections: pretraining (the SSL runs), frozen (probe-only evaluation with encoder frozen), finetune (encoder unfrozen).
 
+Research direction plans:
+
+- [`curriculum_masking.md`](curriculum_masking.md) — retinal/anatomy-guided target allocation.
+- [`mirage_guided_masking.md`](mirage_guided_masking.md) — **active direction.** Rung 1b: MIRAGE-Large segmentation as the target-block prior, replacing the hand-crafted oracle band. Policy sweep, where the oracle band fails, and the rejected alternatives.
+
+Archived direction:
+
+- [`archive/semantic_teacher_phase0/`](../../archive/semantic_teacher_phase0/) — the frozen semantic-teacher screen (ImageNet-50 I-JEPA / DINOv3 / Qwen3-VL / Molmo / SAM3 / TokenCut maps, CNN stage atlas). Parked 2026-07-31: VLM-derived maps are object-centric, prompt-unstable and not anatomically addressable, so they could not serve as a target-block prior. A medical segmentation model answers the same need directly, which became the MIRAGE direction. Phase-0 evidence and findings are preserved there.
+
 All results use FairVision glaucoma held-out Test split (3000 volumes). Encoder: ViT-B/16.
 
 ## Results summary
@@ -38,7 +47,12 @@ docs/experiments/
     README.md
     llrd.md              unfrozen encoder + LLRD γ=0.5 on ep100 (3 probes)
   interpretability.md    occlusion attribution: 3 probes converge on disc-rim
+  curriculum_masking.md  anatomy-guided masking research plan
+  mirage_guided_masking.md  MIRAGE segmentation-guided masking (Rung 1b, ACTIVE)
 ```
+
+The semantic-teacher research plan and its Phase-0 docs moved to
+`archive/semantic_teacher_phase0/docs/` when that direction was parked.
 
 ## Reference
 

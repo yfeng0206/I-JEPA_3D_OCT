@@ -18,6 +18,7 @@ results/**/torchrun_stdout.log
 
 # Exclude large pretraining logs (per-iteration CSVs, 6-23MB)
 results/pretraining/*/jepa_patch-log.csv
+results/phase0_local_examples/
 
 # Local-only working artifacts (not for PR)
 .audit/

@@ -68,6 +68,19 @@ Mistakes, debug-traps, and invariants we've paid to learn. Keep these visible so
 - **What happens:** Windows-edited scripts get CRLF. AML Linux bash chokes with `$'\r': command not found`.
 - **Rule:** `.gitattributes` has `*.sh text eol=lf`, but the working copy can still drift. Run `sed -i 's/\r$//' scripts/*.sh` before submitting.
 
+### 17. A config value that two components read must be passed to BOTH
+- **What happens:** `configs/patch_mirage_envelope.yaml` set `mirage_occupancy_threshold: 0.25`. The collator read it from the curriculum config, but `train_patch.py` built `GuidedOCTSliceDataset` without the kwarg, so the dataset kept its `0.5` default. The dataset builds the *placement region* (where a target block may go) and the collator builds the *scoring truth* (what "on retina" is measured against) — so blocks were **placed from one grid and scored against another**. Nothing crashed; no logged metric looked wrong. Measured cost: infeasible blocks +175%, admissible region −10%.
+- **Rule:** When a single config key drives behaviour in more than one component, assert the wiring in a test rather than trusting the call site. `tests/test_mirage_config_wiring.py` parses the constructor call with `ast` and fails if the kwarg is missing. Prefer a default that is *obviously invalid* over a plausible one — a silently-wrong 0.5 is far worse than a crash.
+
+### 18. `.npz` member access decodes the WHOLE array — 200× read amplification
+- **What happens:** `np.load(path)["oct_bscans"]` decompresses the entire (200, 200, 200) 8 MB volume even when you index one slice out of it. Reading a 40 KB slice costs 8 MB of I/O. Training ran at **7.6 img/s with the GPU idle at 0–1% and 30 W** (~68 days) while the GPU ceiling was 177.7 img/s (~2.9 days).
+- **Why it hides:** benchmarks on a few hundred volumes fit in the OS page cache and look fine. It only appears once the working set (48 GB) exceeds RAM (32 GB).
+- **Rule:** Always confirm whether a run is GPU-bound before trusting a throughput number — `nvidia-smi` power draw is the fastest tell (a busy 3090 pulls 250 W+; 30 W means starved). For slice-sampled volume datasets use `scripts/build_slice_cache.py`, which stores exactly the sampled slices in a flat memmap. Assert bit-equality against the original path so the cache can never change training data.
+
+### 19. Validation DataLoader workers stack on top of the training loader's
+- **What happens:** the val loader was created with `num_workers=data_cfg['num_workers']` (6) and re-spawned every epoch while the training loader's 6 were still alive. On Windows this exhausted the system commit limit and killed the run mid-validation with `RuntimeError: Couldn't open shared file mapping ... error code: 1455`.
+- **Rule:** Give validation its own small worker count (`val_num_workers: 2`) — it is a small fraction of wall time. Never run heavy analysis jobs on the training box. And keep `save_every` small (5, not 25): a crash at epoch 32 with 25-epoch saves could only fall back to epoch 27.
+
 ---
 
 ## Fine-tuning
@@ -90,6 +103,7 @@ Intentional, not bugs:
 | Target path AMP | Under autocast | fp32 (no autocast) | Slightly more precise targets |
 | LayerNorm epsilon | 1e-6 | 1e-5 (PyTorch default) | Minor |
 | CLS token | Interpolation code present | No CLS, direct pos_embed add | Cleaner, avoids the no-CLS interpolation bug |
+| Target block sizes | **One `p_size` shared by all `npred` blocks** | 4 independently sampled sizes | **Not benign.** The collator truncates every target in a batch to the shortest, and indices are row-major sorted, so truncation shears the bottom row off a block. Official's truncation is a no-op (0.00% loss); ours discards ~10% of target patches and leaves ~37.5% of delivered blocks non-rectangular. Shared by all arms and by the ep25 checkpoint, so it is left alone rather than introducing a second variable — but fix it in a v2. See `docs/experiments/mirage_guided_masking.md`. |
 
 ---
 

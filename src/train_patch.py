@@ -36,10 +36,11 @@ if _project_root not in sys.path:
 
 from src.helper import init_patch_model, init_opt, load_checkpoint, save_checkpoint
 from src.masks.multiblock import MaskCollator
-from src.masks.curriculum import CurriculumMaskGenerator
+from src.masks.curriculum import CurriculumMaskGenerator, MirageMaskCollator
 from src.masks.utils import apply_masks
 from src.datasets.oct_slices import OCTSliceDataset
-from src.transforms import make_transforms
+from src.datasets.oct_slices_guided import GuidedOCTSliceDataset
+from src.transforms import make_transforms, make_paired_transforms
 from src.utils.distributed import init_distributed
 from src.utils.logging import CSVLogger, AverageMeter, gpu_timer
 from src.utils.tensors import repeat_interleave_batch
@@ -270,15 +271,76 @@ def main(args):
     num_slices = data_cfg.get('num_slices', 32)
     log('Loading dataset from %s ...' % data_dir)
 
+    # MIRAGE-guided training needs the image and its retinal envelope to share
+    # one random crop, so it uses a paired transform + guided dataset.  Every
+    # other path is untouched.
+    use_mirage = use_curriculum and curr_cfg.get('mode') == 'mirage_envelope'
+    guide_dir = curr_cfg.get('mirage_guide_dir')
+    if use_mirage:
+        if not guide_dir:
+            raise ValueError(
+                "curriculum.mode='mirage_envelope' requires "
+                "curriculum.mirage_guide_dir"
+            )
+        paired_transform = make_paired_transforms(
+            crop_size=crop_size,
+            crop_scale=tuple(data_cfg.get('crop_scale', (0.3, 1.0))),
+            gaussian_blur=data_cfg.get('use_gaussian_blur', False),
+            horizontal_flip=data_cfg.get('use_horizontal_flip', False),
+            color_distortion=data_cfg.get('use_color_distortion', False),
+            color_jitter=data_cfg.get('color_jitter_strength', 0.0),
+        )
+        log('  MIRAGE guides: %s (dilate=%d patches, occupancy_threshold=%.2f)'
+            % (guide_dir, int(curr_cfg.get('mirage_dilate_patches', 1)),
+               float(curr_cfg.get('mirage_occupancy_threshold', 0.5))))
+
     # Training set
     train_dir = os.path.join(data_dir, 'Training')
     if not os.path.isdir(train_dir):
         raise FileNotFoundError("No Training split found under %s" % data_dir)
-    train_dataset = OCTSliceDataset(
-        data_dir=train_dir, num_slices=num_slices,
-        slice_size=crop_size, transform=transform,
-    )
+    slice_cache_dir = data_cfg.get('slice_cache_dir')
+
+    def _slice_cache(split):
+        """Path to the prebuilt slice cache for ``split``, if configured."""
+        if not slice_cache_dir:
+            return None
+        path = os.path.join(slice_cache_dir, split)
+        if not os.path.isdir(path):
+            raise FileNotFoundError(
+                "slice_cache_dir is set but %s does not exist. Build it with "
+                "scripts/build_slice_cache.py." % path
+            )
+        return path
+
+    if use_mirage:
+        train_dataset = GuidedOCTSliceDataset(
+            data_dir=train_dir,
+            guide_dir=os.path.join(guide_dir, 'Training'),
+            num_slices=num_slices,
+            slice_size=crop_size,
+            transform=paired_transform,
+            patch_size=mask_cfg['patch_size'],
+            dilate_patches=int(curr_cfg.get('mirage_dilate_patches', 1)),
+            # The dataset builds the channel-1 placement grid that the collator
+            # draws target-block candidates from, so it must use the SAME
+            # threshold the collator scores against.  Without this the dataset
+            # silently kept its 0.5 default while the collator used the
+            # configured value, placing blocks under one policy and measuring
+            # them under another.
+            occupancy_threshold=float(
+                curr_cfg.get('mirage_occupancy_threshold', 0.5)
+            ),
+            slice_cache=_slice_cache('Training'),
+        )
+    else:
+        train_dataset = OCTSliceDataset(
+            data_dir=train_dir, num_slices=num_slices,
+            slice_size=crop_size, transform=transform,
+            slice_cache=_slice_cache('Training'),
+        )
     log('  Training: %d slices (%d volumes)' % (len(train_dataset), len(train_dataset.file_paths)))
+    if slice_cache_dir:
+        log('  Slice cache: %s' % slice_cache_dir)
 
     # Validation set (for val loss tracking)
     val_dir = os.path.join(data_dir, 'Validation')
@@ -287,8 +349,27 @@ def main(args):
         val_dataset = OCTSliceDataset(
             data_dir=val_dir, num_slices=num_slices,
             slice_size=crop_size, transform=transform,
+            slice_cache=_slice_cache('Validation'),
         )
         log('  Validation: %d slices (%d volumes)' % (len(val_dataset), len(val_dataset.file_paths)))
+
+    # MIRAGE masks depend only on the precomputed guide, so their (expensive)
+    # rejection sampling is pushed into the DataLoader workers where it overlaps
+    # with GPU compute instead of stalling the training loop.
+    mirage_collator = None
+    if use_mirage:
+        mirage_collator = MirageMaskCollator(
+            input_size=(crop_size, crop_size),
+            patch_size=mask_cfg['patch_size'],
+            enc_mask_scale=tuple(mask_cfg['enc_mask_scale']),
+            pred_mask_scale=tuple(mask_cfg['pred_mask_scale']),
+            aspect_ratio=tuple(mask_cfg['aspect_ratio']),
+            nenc=mask_cfg['num_enc_masks'],
+            npred=mask_cfg['num_pred_masks'],
+            min_keep=mask_cfg['min_keep'],
+            allow_overlap=mask_cfg['allow_overlap'],
+            curriculum_cfg=curr_cfg,
+        )
 
     train_sampler = DistributedSampler(
         train_dataset, num_replicas=world_size, rank=rank, shuffle=True,
@@ -300,8 +381,12 @@ def main(args):
         num_workers=data_cfg['num_workers'],
         pin_memory=data_cfg.get('pin_mem', True),
         drop_last=True,
-        collate_fn=(CurriculumMaskGenerator.stack_collate
-                    if use_curriculum else mask_collator),
+        collate_fn=(
+            mirage_collator
+            if use_mirage
+            else (CurriculumMaskGenerator.stack_collate
+                  if use_curriculum else mask_collator)
+        ),
     )
 
     val_loader = None
@@ -313,7 +398,12 @@ def main(args):
             val_dataset,
             batch_size=data_cfg['batch_size'],
             sampler=val_sampler,
-            num_workers=data_cfg['num_workers'],
+            # Validation runs between training epochs but its workers are spawned
+            # on top of the training loader's, so a high count here doubles peak
+            # commit.  On Windows that surfaced as "Couldn't open shared file
+            # mapping ... error code 1455" (commit limit) and killed a run.
+            # Validation is a small fraction of wall time, so keep this low.
+            num_workers=data_cfg.get('val_num_workers', 2),
             pin_memory=data_cfg.get('pin_mem', True),
             drop_last=False,
             collate_fn=mask_collator,  # ALWAYS uniform — keeps val loss comparable
@@ -431,6 +521,10 @@ def main(args):
             # treats this first resumed epoch as r_t=0 (the design's BOOTSTRAP
             # epoch) and r_t engages at epoch 26.
             mask_gen.set_epoch(epoch, opt_cfg['epochs'])
+            if mirage_collator is not None:
+                # Workers receive a pickled copy when the epoch's iterator is
+                # created below, so the ramp must be set before that happens.
+                mirage_collator.set_epoch(epoch, opt_cfg['epochs'])
             if is_main:
                 # Per-epoch curriculum diagnostic (A5/C8 audit fix + user
                 # request for cluster-quality visibility).
@@ -480,28 +574,39 @@ def main(args):
             # stacked image tensor (no masks).  We generate masks inline so
             # that R3b can condition on the teacher's full-grid output.
             if use_curriculum:
-                imgs = batch.to(device, non_blocking=True)
-                B = imgs.size(0)
+                if use_mirage:
+                    # Masks already came from the workers.
+                    imgs_cpu, masks_enc, masks_pred, mirage_stats = batch
+                    imgs = imgs_cpu.to(device, non_blocking=True)
+                    masks_enc = [m.to(device, non_blocking=True) for m in masks_enc]
+                    masks_pred = [m.to(device, non_blocking=True) for m in masks_pred]
+                    B = imgs.size(0)
+                    h_full = None  # computed inside _forward_backward
+                else:
+                    imgs_cpu = batch
+                    mirage_stats = None
+                    imgs = batch.to(device, non_blocking=True)
+                    B = imgs.size(0)
 
-                # For cluster mode, compute the teacher's full unmasked grid
-                # FIRST so generate() can assign clusters.  For other modes
-                # this is unused — but we still compute it here to avoid
-                # re-forwarding in _forward_backward below (zero extra cost
-                # vs the R1 baseline which already does this inside
-                # _forward_backward).
-                with torch.no_grad():
-                    h_full = target_encoder(imgs)  # (B, N, D)
-                    h_full = F.layer_norm(h_full, (h_full.size(-1),))
+                    # For cluster mode, compute the teacher's full unmasked grid
+                    # FIRST so generate() can assign clusters.  For other modes
+                    # this is unused — but we still compute it here to avoid
+                    # re-forwarding in _forward_backward below (zero extra cost
+                    # vs the R1 baseline which already does this inside
+                    # _forward_backward).
+                    with torch.no_grad():
+                        h_full = target_encoder(imgs)  # (B, N, D)
+                        h_full = F.layer_norm(h_full, (h_full.size(-1),))
 
-                # mask_gen.generate() must run on every rank (no rank-0
-                # short-circuit) so its internal state stays in sync.
-                masks_enc, masks_pred = mask_gen.generate(
-                    batch_size=B,
-                    imgs_cpu=batch,         # CPU tensor for intensity prior
-                    h_for_cluster=h_full,   # GPU tensor; only used by R3b
-                )
-                masks_enc = [m_t.to(device, non_blocking=True) for m_t in masks_enc]
-                masks_pred = [m_t.to(device, non_blocking=True) for m_t in masks_pred]
+                    # mask_gen.generate() must run on every rank (no rank-0
+                    # short-circuit) so its internal state stays in sync.
+                    masks_enc, masks_pred = mask_gen.generate(
+                        batch_size=B,
+                        imgs_cpu=imgs_cpu,      # CPU tensor for intensity prior
+                        h_for_cluster=h_full,   # GPU tensor; only used by R3b
+                    )
+                    masks_enc = [m_t.to(device, non_blocking=True) for m_t in masks_enc]
+                    masks_pred = [m_t.to(device, non_blocking=True) for m_t in masks_pred]
             else:
                 imgs, masks_enc, masks_pred = batch
                 imgs = imgs.to(device, non_blocking=True)
@@ -593,7 +698,11 @@ def main(args):
             # Must run on every rank (collectives inside); never gated on
             # is_main.  Accumulates per-microbatch, folds into EMA only on
             # optimizer-step boundaries.
-            if use_curriculum and per_token_loss is not None:
+            #
+            # Skipped for mirage_envelope: its masks are produced in the
+            # workers and depend on nothing this would update, so the
+            # collectives and EMA bookkeeping would be pure overhead.
+            if use_curriculum and not use_mirage and per_token_loss is not None:
                 mask_gen.update_after_iter(
                     per_token_loss=per_token_loss,
                     masks_pred_idx=masks_pred,
@@ -614,6 +723,21 @@ def main(args):
                     'ema=%.5f  gpu=%.0fMB'
                     % (epoch + 1, opt_cfg['epochs'], itr + 1, num_micro_batches,
                        loss_val, lr_val, wd_val, m, gpu_mem_mb))
+                if use_mirage:
+                    # The six required MIRAGE mask statistics, plus the
+                    # acceptance / fallback health of the guide.
+                    ms = mirage_stats
+                    if ms:
+                        log('    [MIRAGE] patches/block=%.1f  unique_targets=%.1f  '
+                            'context=%.1f  on_region=%.3f  background=%.3f  '
+                            'fallbacks=%d  infeasible=%d  unbiased=%d  '
+                            'accept=%.2f  fill=%.3f  retina_visible=%.3f  tries=%.1f'
+                            % (ms['patches_per_block'], ms['unique_target_patches'],
+                               ms['context_patches'], ms['target_on_region'],
+                               ms['target_background'], ms['fallbacks'],
+                               ms['infeasible'], ms['unbiased_by_ramp'],
+                               ms['accept_rate'], ms['mean_block_fill'],
+                               ms['retina_visible'], ms['mean_attempts']))
 
             # CSV log
             if csv_logger is not None:
@@ -738,7 +862,8 @@ def main(args):
 
         # Save periodic + best checkpoints (main process only)
         if is_main:
-            if (epoch + 1) % 25 == 0:
+            save_every = int(opt_cfg.get('save_every', 25))
+            if (epoch + 1) % save_every == 0:
                 ep_path = os.path.join(output_dir, '%s-ep%d.pth.tar' % (write_tag, epoch + 1))
                 save_checkpoint(
                     ep_path, encoder, predictor, target_encoder, optimizer,

@@ -1,0 +1,185 @@
+schema_version: 1
+evidence_cutoff: "2026-07-16"
+
+dataset:
+  id: phase0-cmc-in100-prefix50-v1
+  canonical: false
+  description: >-
+    Project-derived first 50 ordered WNIDs from the published CMC
+    ImageNet-100 manifest.
+  source_repository: HobbitLong/CMC
+  source_commit: 7b227be0b10ef4e526c72af07664f5079ed9ee09
+  source_file: imagenet100.txt
+  source_blob_sha1: 6dccf9be4f2f5efe33d0f5ae03a20bc438d3e658
+  wnid_manifest: phase0-cmc-in100-prefix50-v1.wnids.txt
+  wnid_manifest_sha256: 206e19b5df0c7118ce22a67972ae43f354bf8dc147a7b8850ddbd499a37b11af
+  class_names: phase0-cmc-in100-prefix50-v1.classes.json
+  class_names_source: https://storage.googleapis.com/download.tensorflow.org/data/imagenet_class_index.json
+  class_names_source_sha256: a1e7a966a1f601d39e4b43e119b3e7dd4a2ad3ea08cf69847cbaf021013767bc
+  expected_train_images: 63747
+  expected_validation_images: 2500
+  local_materialization:
+    completed: "2026-07-16"
+    root: 'D:\Users\Gary\Desktop\ImageNet_Data\phase0-cmc-in100-prefix50-v1'
+    train_images: 63747
+    validation_images: 2500
+    retained_image_bytes: 7998298132
+    train_content_sha256: 5f80288517408e01577279b5a56f7ba35dcff6977db625c48ea0610134f7a6d8
+    validation_content_sha256: e1192dca08f9fa4a3f996cf6f5125853eb8938121de3bde379af0f2a126e85f7
+    all_images_decode_verified: true
+    summary_manifest:
+      path: 'D:\Users\Gary\Desktop\ImageNet_Data\manifests\phase0-cmc-in100-prefix50-v1\summary.json'
+      sha256: c6276cdf8cbee1d65a524db451a7d54bdfb768398efe0bf0c065b1318f7e7c6f
+    train_file_manifest:
+      path: 'D:\Users\Gary\Desktop\ImageNet_Data\manifests\phase0-cmc-in100-prefix50-v1\train.json'
+      sha256: b8afc9512a0a1ddb3c6376a9092b338c695eaafa4f0432225ecd33097719733d
+    validation_file_manifest:
+      path: 'D:\Users\Gary\Desktop\ImageNet_Data\manifests\phase0-cmc-in100-prefix50-v1\val.json'
+      sha256: e381e55d80851fa17176e8aa3d6313cbc3e01d544151f62c81cbb861e5b553b4
+    grounding_20_manifest:
+      path: 'D:\Users\Gary\Desktop\ImageNet_Data\manifests\phase0-grounding-20.json'
+      sha256: 5a7c1b656919598a9f63627f968bf7ca1207682a17ed19164e9e2123de07de32
+    atlas_150_manifest:
+      path: 'D:\Users\Gary\Desktop\ImageNet_Data\manifests\phase0-atlas-150.json'
+      sha256: b991cf1489577f0904b3a589b82b1a2c77a1cf169e2e62f75090277ba09c9145
+  access:
+    terms_url: https://image-net.org/download.php
+    allowed_sources:
+      - official ImageNet access
+      - official Kaggle ImageNet localization challenge after accepting rules
+      - gated ILSVRC/imagenet-1k Hugging Face dataset after accepting terms
+    public_repackaged_mirrors_allowed: false
+  acquisition:
+    train_source: official ImageNet ILSVRC2012 archive via HTTP byte ranges
+    train_selected_payload_bytes: 7679006720
+    train_member_index_sha256: 3497a831057fc1cbd8b92a417d0b1c5e936643ebce2c8875bc568b2e4e4e4a39
+    selected_train_members_sha256: ad9bbb97cbf26d72b9c705674d4787997034362cb6e85124dc9be30c07d30ce7
+    validation_archive_md5: 29b22e2961454d5413ddabcf34fc5622
+    devkit_md5: fa75699e90414af021442c21a62c3abf
+
+models:
+  ijepa:
+    role: frozen_reference
+    architecture: vit_huge_patch14_224
+    published_parameters: 630762240
+    checkpoint_url: https://dl.fbaipublicfiles.com/ijepa/IN1K-vit.h.14-300e.pth.tar
+    checkpoint_state_key: target_encoder
+    checkpoint_sha256: 0382013c481743e9ccea89f970bc6c6aa126aa19a62127500d6e672a641aae22
+    extracted_target_encoder:
+      filename: IN1K-vit.h.14-300e-target_encoder.safetensors
+      local_path: 'D:\jepa_phase0\models\ijepa\IN1K-vit.h.14-300e-target_encoder.safetensors'
+      sha256: 03fdafbd89f4e20184a83e5ce71a605fe0ff2ce69aee9eb4b6dabc8c8f5cd899
+      bytes: 2523086392
+      tensor_count: 389
+    pretraining_dataset: ImageNet-1K
+    pretraining_epochs: 300
+    input_size: 224
+    patch_size: 14
+    embed_dim: 1280
+    depth: 32
+    num_heads: 16
+    preprocessing:
+      resize_short_side: 256
+      center_crop: 224
+      mean: [0.485, 0.456, 0.406]
+      std: [0.229, 0.224, 0.225]
+    frozen_readout: mean final target-encoder patch tokens
+    license: CC-BY-NC-4.0
+    license_url: https://github.com/facebookresearch/ijepa/blob/52c1ae95d05f743e000e8f10a1f3a79b10cff048/LICENSE
+
+  dinov3:
+    role: primary_dense_vision_guide
+    model_id: facebook/dinov3-vit7b16-pretrain-lvd1689m
+    local_path: 'D:\jepa_phase0\models\dinov3'
+    revision: b80367753773648a6793235ab9c65cdbb029506f
+    official_parameters: 6716000000
+    artifact_parameters: 6716035072
+    tensor_count: 687
+    artifact_bytes: 26864283632
+    shard_hash_manifest:
+      path: 'D:\jepa_phase0\models\dinov3\sha256.json'
+      sha256: 0f4e85c0eac28b2023da1227b49e9efc177f86aa905c361f287d1f40d4d1f294
+    input_size: 224
+    patch_size: 16
+    embed_dim: 4096
+    num_heads: 32
+    frozen_readout: final normalized CLS token
+    inference_dtype: bfloat16
+    inference_batch_size: 1
+    access: approved and authenticated on 2026-07-16
+    comparison_role: total-system-size-matched control for 8B VLM guides
+    license: DINOv3 License
+    license_url: https://ai.meta.com/resources/models-and-libraries/dinov3-license/
+
+  qwen3_vl:
+    role: grounded_vlm
+    model_id: Qwen/Qwen3-VL-8B-Instruct
+    local_path: 'D:\jepa_phase0\models\qwen3_vl'
+    revision: 0c351dd01ed87e9c1b53cbc748cba10e6187ff3b
+    official_size: 8B
+    artifact_parameters: 8767123696
+    artifact_visual_parameters: 576388336
+    input_area: aspect-preserving dynamic resolution from full source
+    frozen_readout: mean final post-merger image tokens
+    inference_dtype: bfloat16
+    inference_batch_size: 1
+    grounding: generated bbox_2d and point_2d coordinates in [0, 1000]
+    primary_grounding: matched single-point mode
+    auxiliary_grounding:
+      - plural points
+      - boxes as a separate Qwen-only capability
+    license: Apache-2.0
+    license_url: https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct
+
+  molmo:
+    role: grounded_vlm
+    model_id: allenai/MolmoPoint-8B
+    local_path: 'D:\jepa_phase0\models\molmo'
+    revision: 188130f961c8e0888a34e11121a1423c461a01ba
+    official_size: 8B
+    artifact_parameters: 8677855065
+    artifact_visual_connector_parameters: 469115216
+    input_size: 378
+    frozen_readout: mean valid post-pooling/post-projector vision tokens
+    inference_dtype: bfloat16
+    inference_batch_size: 1
+    trust_remote_code: true
+    grounding: generated native points; no official box API
+    preprocessing: full source, global view plus up to 24 local 378x378 crops
+    primary_grounding: matched single-point mode
+    auxiliary_grounding: plural points
+    license: Apache-2.0
+    license_url: https://huggingface.co/allenai/MolmoPoint-8B
+
+  sam3:
+    role: experimental_dense_segmenter
+    model_id: facebook/sam3
+    local_path: 'D:\jepa_phase0\models\sam3'
+    revision: 3c879f39826c281e95690f02c7821c4de09afae7
+    artifact_parameters: 859922360
+    tensor_count: 1797
+    safetensors:
+      bytes: 3439938512
+      sha256: 6d06f0a5f84e435071fe6603e61d0b4cc7b40e0d39d487cfd4d67d8cc11cc14a
+    official_checkpoint:
+      filename: sam3.pt
+      bytes: 3450062241
+      sha256: 9999e2341ceef5e136daa386eecb55cb414446a00ac2b55eb2dfd2f7c3cf8c9e
+    inference_dtype: bfloat16
+    runtime: isolated Transformers 5.14.1 on Windows
+    license: SAM License
+    license_url: https://huggingface.co/facebook/sam3/blob/3c879f39826c281e95690f02c7821c4de09afae7/LICENSE
+
+environment:
+  python: "3.11"
+  transformers: "4.57.1"
+  local_root: 'D:\jepa_phase0'
+  gpu: NVIDIA GeForce RTX 3090
+  gpu_memory_gib: 24
+
+external_code:
+  tokencut:
+    repository: YangtaoWANG95/TokenCut
+    commit: fed52cd5b60891baefd8ec7110dafa73be816ee1
+    local_path: 'D:\jepa_phase0\official\TokenCut'
+    license: MIT

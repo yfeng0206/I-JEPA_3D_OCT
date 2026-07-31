@@ -5,6 +5,7 @@ Three sections: pretraining (the SSL runs), frozen (probe-only evaluation with e
 Research direction plans:
 
 - [`curriculum_masking.md`](curriculum_masking.md) — retinal/anatomy-guided target allocation.
+- [`mirage_guided_masking.md`](mirage_guided_masking.md) — Rung 1b: MIRAGE-Large segmentation as the target-block prior, replacing the hand-crafted oracle band. Policy sweep, two silent bugs found pre-launch, and the rejected alternatives.
 - [`semantic_teacher_guided_masking.md`](semantic_teacher_guided_masking.md) — local ImageNet-50 frozen I-JEPA/DINOv3/Qwen3-VL/Molmo maps and probes before guided masking.
 - [`phase0_imagenet50_evidence.md`](phase0_imagenet50_evidence.md) — locked Phase-0 dataset, checkpoint, protocol, and prior-result evidence.
 - [`phase0_imagenet50_findings.md`](phase0_imagenet50_findings.md) — completed tooling, real local smokes, review verdict, and access-blocked results.
@@ -47,6 +48,7 @@ docs/experiments/
     llrd.md              unfrozen encoder + LLRD γ=0.5 on ep100 (3 probes)
   interpretability.md    occlusion attribution: 3 probes converge on disc-rim
   curriculum_masking.md  anatomy-guided masking research plan
+  mirage_guided_masking.md  MIRAGE segmentation-guided masking (Rung 1b)
   semantic_teacher_guided_masking.md  semantic-teacher masking research plan
 ```
 

@@ -22,6 +22,7 @@ import numpy as np
 from PIL import Image
 import torch
 import torchvision.transforms.functional as TF
+from torchvision.transforms import InterpolationMode
 import yaml
 
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,6 +41,8 @@ from src.guides.maps import (  # noqa: E402
     token_pca_rgb,
 )
 from src.guides.tokencut import tokencut_partition  # noqa: E402
+
+_VLM_GUIDES = frozenset(("qwen3_vl", "molmo"))
 
 
 def parse_args():
@@ -66,6 +69,13 @@ def parse_args():
     )
     parser.add_argument("--guides", nargs="*", default=None)
     parser.add_argument(
+        "--grounding-mode",
+        choices=("single_point", "plural_points", "boxes"),
+        help=(
+            "Override the configured VLM grounding mode. Molmo rejects boxes."
+        ),
+    )
+    parser.add_argument(
         "--output-dir",
         default=r"D:\jepa_phase0\results\atlases\phase0",
     )
@@ -80,7 +90,7 @@ def parse_args():
         "--crop-size",
         type=int,
         default=224,
-        help="Shared deterministic center crop before guide preprocessing.",
+        help="I-JEPA/DINO center-crop size; VLMs always receive full sources.",
     )
     parser.add_argument(
         "--save-tokens",
@@ -97,6 +107,11 @@ def parse_args():
         "--include-source-paths",
         action="store_true",
         help="Include absolute input paths in output JSON.",
+    )
+    parser.add_argument(
+        "--show-class-labels",
+        action="store_true",
+        help="Show manifest class labels in panels (off for blinded review).",
     )
     return parser.parse_args()
 
@@ -258,24 +273,80 @@ def commit_output_dir(run_dir, output_dir, overwrite):
         shutil.rmtree(backup_dir)
 
 
-def load_images(entries, crop_size):
+def load_images(entries, crop_size=None):
     tensors = []
     originals = []
     for entry in entries:
         with Image.open(entry["path"]) as image:
             image = image.convert("RGB")
-            tensor = TF.to_tensor(image)
-            tensor = TF.resize(tensor, crop_size, antialias=True)
-            tensor = TF.center_crop(tensor, [crop_size, crop_size])
-            originals.append(TF.to_pil_image(tensor))
-            tensors.append(tensor)
+            originals.append(image.copy())
+            tensors.append(TF.to_tensor(image))
     return originals, tensors
+
+
+def guide_input_transform_profile(guide_name, crop_size=224):
+    guide_name = str(guide_name).lower()
+    if guide_name in _VLM_GUIDES:
+        profile = {
+            "name": (
+                "full_source_to_tensor_qwen_dynamic_resolution"
+                if guide_name == "qwen3_vl"
+                else "full_source_to_tensor_molmo_global_plus_local_crops"
+            ),
+            "resize": None,
+            "center_crop": None,
+            "preserves_source_aspect_ratio": True,
+        }
+        profile["official_processor"] = (
+            "aspect_preserving_dynamic_resolution"
+            if guide_name == "qwen3_vl"
+            else "global_plus_up_to_24_local_crops"
+        )
+        return profile
+    resize_short_side = int(round(256 * int(crop_size) / 224.0))
+    return {
+        "name": "resize_%d_center_crop_%d"
+        % (resize_short_side, int(crop_size)),
+        "resize_short_side": resize_short_side,
+        "center_crop": int(crop_size),
+        "interpolation": "bicubic",
+        "antialias": True,
+    }
+
+
+def guide_input_tensors(tensors, guide_name, crop_size=224):
+    profile = guide_input_transform_profile(guide_name, crop_size)
+    if str(guide_name).lower() in _VLM_GUIDES:
+        return list(tensors)
+    return [
+        TF.center_crop(
+            TF.resize(
+                tensor,
+                profile["resize_short_side"],
+                interpolation=InterpolationMode.BICUBIC,
+                antialias=True,
+            ),
+            [profile["center_crop"], profile["center_crop"]],
+        )
+        for tensor in tensors
+    ]
+
+
+def validate_atlas_batch_size(guide_name, batch_size):
+    batch_size = int(batch_size)
+    if batch_size <= 0:
+        raise ValueError("atlas batch size must be positive")
+    if str(guide_name).lower() in _VLM_GUIDES and batch_size != 1:
+        raise ValueError(
+            "%s atlas generation requires batch size 1" % guide_name
+        )
+    return batch_size
 
 
 def stack_batch(tensors):
     shapes = {tuple(tensor.shape) for tensor in tensors}
     if len(shapes) != 1:
-        raise ValueError("all shared crops must have the same tensor shape")
+        raise ValueError("all tensors in one guide batch must have the same shape")
     return torch.stack(tensors, dim=0)
 
 
@@ -286,9 +357,9 @@ def tensor_values(values, index):
     }
 
 
-def select_primary_map(maps, grounded=None):
-    if grounded is not None:
-        return "grounded_native_raster", grounded
+def select_primary_map(maps, derived_grounding=None):
+    if derived_grounding is not None:
+        return "derived_grounding_raster", derived_grounding
     for name in ("native", "global_cosine", "token_pca"):
         if name in maps:
             return name, maps[name]
@@ -315,7 +386,7 @@ def save_guide_npz(
     guide_name,
     maps,
     pca_rgb,
-    grounded,
+    derived_grounding,
     token_cut,
     patch_tokens,
 ):
@@ -326,9 +397,9 @@ def save_guide_npz(
         payload[name] = value.detach().float().cpu().numpy()
     if pca_rgb is not None:
         payload["token_pca_rgb"] = pca_rgb.detach().float().cpu().numpy()
-    if grounded is not None:
-        payload["grounded_native_raster"] = (
-            grounded.detach().float().cpu().numpy()
+    if derived_grounding is not None:
+        payload["derived_grounding_raster"] = (
+            derived_grounding.detach().float().cpu().numpy()
         )
     if token_cut is not None:
         payload["tokencut_mask"] = (
@@ -414,14 +485,6 @@ def _point_pixels(point, image_size):
 
 def _draw_grounding(axis, original, data, guide_name):
     axis.imshow(original)
-    if data.get("grounded") is not None:
-        axis.imshow(
-            _map_image(data["grounded"], original.size),
-            cmap="jet",
-            alpha=0.28,
-            vmin=0,
-            vmax=255,
-        )
     for box in data["boxes"]:
         x1, y1, x2, y2 = _box_pixels(box, original.size)
         axis.add_patch(
@@ -438,19 +501,22 @@ def _draw_grounding(axis, original, data, guide_name):
         x, y = _point_pixels(point, original.size)
         axis.scatter([x], [y], s=80, c="yellow", edgecolors="black")
     caption = data.get("caption") or "[no generated caption]"
+    if len(caption) > 240:
+        caption = caption[:237].rstrip() + "..."
     axis.set_title(
-        "%s native grounding\n%s"
+        "%s raw point/box grounding\n%s"
         % (guide_name, textwrap.fill(caption, width=36)),
         fontsize=9,
     )
 
 
-def _draw_targets(axis, original, data, guide_name):
+def _draw_targets(axis, original, data, guide_name, title=None):
     _draw_overlay(
         axis,
         original,
         data["primary"],
-        "%s illustrative top blocks\n(not Phase-1 masks)" % guide_name,
+        title
+        or "%s illustrative top blocks\n(not Phase-1 masks)" % guide_name,
     )
     grid_height, grid_width = data["primary"].shape
     image_width, image_height = original.size
@@ -503,7 +569,13 @@ def difference_map(dino_map, vlm_map, size=(16, 16)):
     return dino - vlm
 
 
-def plot_atlas(original, entry, guide_data, output_path):
+def plot_atlas(
+    original,
+    entry,
+    guide_data,
+    output_path,
+    show_class_labels=False,
+):
     panel_count = 1
     for name, data in guide_data.items():
         if name in ("qwen3_vl", "molmo"):
@@ -522,7 +594,7 @@ def plot_atlas(original, entry, guide_data, output_path):
             dino is not None
             and dino.get("primary") is not None
             and vlm is not None
-            and vlm.get("grounded") is not None
+            and vlm.get("derived_grounding_raster") is not None
         ):
             panel_count += 1
 
@@ -537,7 +609,7 @@ def plot_atlas(original, entry, guide_data, output_path):
     flat_axes = list(axes.flat)
     cursor = 0
     flat_axes[cursor].imshow(original)
-    class_name = entry.get("class_name")
+    class_name = entry.get("class_name") if show_class_labels else None
     flat_axes[cursor].set_title(
         "original" + ("\n%s" % class_name if class_name else "")
     )
@@ -550,19 +622,30 @@ def plot_atlas(original, entry, guide_data, output_path):
     )
     for name in ordered_names:
         data = guide_data[name]
+        guide_image = data.get("input_image", original)
         if name in ("qwen3_vl", "molmo"):
             _draw_grounding(flat_axes[cursor], original, data, name)
             cursor += 1
             if data.get("primary") is not None:
-                _draw_targets(flat_axes[cursor], original, data, name)
+                _draw_targets(
+                    flat_axes[cursor],
+                    original,
+                    data,
+                    name,
+                    title=(
+                        "%s derived grounding raster\n"
+                        "illustrative top blocks (not Phase-1 masks)" % name
+                    ),
+                )
                 cursor += 1
             continue
         if data.get("primary") is not None:
             _draw_overlay(
                 flat_axes[cursor],
-                original,
+                guide_image,
                 data["primary"],
-                "%s %s" % (name, data["primary_name"]),
+                "%s %s\nmodel input crop"
+                % (name, data["primary_name"]),
             )
             cursor += 1
         if data.get("pca_rgb") is not None:
@@ -575,20 +658,20 @@ def plot_atlas(original, entry, guide_data, output_path):
             cursor += 1
         if data.get("token_cut") is not None:
             _draw_tokencut(
-                flat_axes[cursor], original, data["token_cut"]
+                flat_axes[cursor], guide_image, data["token_cut"]
             )
             cursor += 1
         if data.get("primary") is not None:
-            _draw_targets(flat_axes[cursor], original, data, name)
+            _draw_targets(flat_axes[cursor], guide_image, data, name)
             cursor += 1
 
     if dino is not None and dino.get("primary") is not None:
         for name in ("qwen3_vl", "molmo"):
             vlm = guide_data.get(name)
-            if vlm is None or vlm.get("grounded") is None:
+            if vlm is None or vlm.get("derived_grounding_raster") is None:
                 continue
             difference = difference_map(
-                dino["primary"], vlm["grounded"]
+                dino["primary"], vlm["derived_grounding_raster"]
             )
             flat_axes[cursor].imshow(
                 difference.numpy(),
@@ -597,7 +680,7 @@ def plot_atlas(original, entry, guide_data, output_path):
                 vmax=1,
             )
             flat_axes[cursor].set_title(
-                "DINOv3 minus %s grounded score" % name
+                "DINOv3 minus %s derived grounding raster" % name
             )
             cursor += 1
 
@@ -646,7 +729,7 @@ def main():
             "selection_uses_model_output": False,
         }
     paths = [entry["path"] for entry in entries]
-    originals, tensors = load_images(entries, args.crop_size)
+    originals, source_tensors = load_images(entries, args.crop_size)
     output_dir, run_dir = prepare_output_dir(
         args.output_dir, overwrite=args.overwrite
     )
@@ -664,6 +747,10 @@ def main():
         for guide_name in selected:
             values = dict(config.get("guides", {}).get(guide_name, {}) or {})
             values.pop("enabled", None)
+            if guide_name in _VLM_GUIDES:
+                values.pop("input_size", None)
+                if args.grounding_mode is not None:
+                    values["grounding_mode"] = args.grounding_mode
             atlas_batch_size = int(
                 args.batch_size
                 if args.batch_size is not None
@@ -671,8 +758,15 @@ def main():
             )
             values.pop("evaluation_batch_size", None)
             values["device"] = args.device
-            if atlas_batch_size <= 0:
-                raise ValueError("atlas batch size must be positive")
+            atlas_batch_size = validate_atlas_batch_size(
+                guide_name, atlas_batch_size
+            )
+            input_profile = guide_input_transform_profile(
+                guide_name, args.crop_size
+            )
+            tensors = guide_input_tensors(
+                source_tensors, guide_name, args.crop_size
+            )
             guide = None
             try:
                 print("Loading guide %s..." % guide_name, flush=True)
@@ -729,10 +823,10 @@ def main():
                         boxes or points
                         for boxes, points in zip(boxes_batch, points_batch)
                     )
-                    grounded_batch = None
+                    derived_grounding_batch = None
                     if has_grounding:
                         grounding_config = map_config.get("grounding", {})
-                        grounded_batch = grounding_score_map(
+                        derived_grounding_batch = grounding_score_map(
                             boxes_batch,
                             points_batch,
                             grid_size=tuple(
@@ -754,9 +848,9 @@ def main():
                             name: value[local_index].detach().float().cpu()
                             for name, value in maps.items()
                         }
-                        grounded = (
-                            grounded_batch[local_index].detach().cpu()
-                            if grounded_batch is not None
+                        derived_grounding = (
+                            derived_grounding_batch[local_index].detach().cpu()
+                            if derived_grounding_batch is not None
                             and (
                                 boxes_batch[local_index]
                                 or points_batch[local_index]
@@ -764,7 +858,7 @@ def main():
                             else None
                         )
                         primary_name, primary = select_primary_map(
-                            per_maps, grounded
+                            per_maps, derived_grounding
                         )
                         target_config = map_config.get(
                             "illustrative_targets", {}
@@ -811,18 +905,25 @@ def main():
                             "primary_name": primary_name,
                             "primary": primary,
                             "pca_rgb": per_pca,
-                            "grounded": grounded,
+                            "derived_grounding_raster": derived_grounding,
                             "boxes": boxes,
                             "points": points,
                             "caption": caption,
                             "rectangles": rectangles,
                             "token_cut": token_cut,
+                            "input_image": (
+                                originals[global_index]
+                                if guide_name in _VLM_GUIDES
+                                else TF.to_pil_image(tensors[global_index])
+                            ),
                         }
                         atlas_data[global_index][guide_name] = data
 
                         metric_maps = dict(per_maps)
-                        if grounded is not None:
-                            metric_maps["grounded_native_raster"] = grounded
+                        if derived_grounding is not None:
+                            metric_maps["derived_grounding_raster"] = (
+                                derived_grounding
+                            )
                         map_metrics = {
                             name: tensor_values(
                                 summarize_map(
@@ -839,6 +940,10 @@ def main():
                             "guide": guide_name,
                             "model_id": safe_model_id(guide.model_id),
                             "model_config": sanitize_metadata(values),
+                            "input_transform_profile": input_profile,
+                            "grounding_mode": output.metadata.get(
+                                "grounding_mode"
+                            ),
                             "primary_map": primary_name,
                             "grid_size": list(output.grid_size),
                             "patch_token_shape": list(
@@ -911,7 +1016,7 @@ def main():
                             guide_name,
                             per_maps,
                             per_pca,
-                            grounded,
+                            derived_grounding,
                             token_cut,
                             (
                                 output.patch_tokens[local_index]
@@ -952,16 +1057,20 @@ def main():
                     "atlases",
                     entries[index]["image_id"] + ".png",
                 ),
+                show_class_labels=args.show_class_labels,
             )
             dino = atlas_data[index].get("dinov3")
             if dino is None or dino.get("primary") is None:
                 continue
             for name in ("qwen3_vl", "molmo"):
                 vlm = atlas_data[index].get(name)
-                if vlm is None or vlm.get("grounded") is None:
+                if (
+                    vlm is None
+                    or vlm.get("derived_grounding_raster") is None
+                ):
                     continue
                 value = difference_map(
-                    dino["primary"], vlm["grounded"]
+                    dino["primary"], vlm["derived_grounding_raster"]
                 )
                 np.savez_compressed(
                     os.path.join(

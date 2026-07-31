@@ -16,18 +16,38 @@ from .base import (
 )
 
 
-CAPTION_PROMPT = (
-    "Describe this image in one factual sentence of at most 20 words."
+CAPTION_PROMPT = "Describe this image."
+QWEN_SINGLE_POINT_PROMPT = (
+    "Identify and locate the single most visually prominent visible object. "
+    "Return only one JSON object like "
+    '{"point_2d": [x, y], "label": "specific noun phrase"}. '
+    "The label must name the object (for example, person, hat, or dog) and "
+    "must not repeat the instruction."
 )
-QWEN_BOX_PROMPT = (
-    "Return one JSON item with bbox_2d and label for the most prominent "
-    "named class instance."
+QWEN_PLURAL_POINTS_PROMPT = (
+    "Identify and locate up to 10 distinct, whole, visually prominent objects. "
+    "Do not list object parts or duplicate objects. Return only "
+    'a JSON list of items like {"point_2d": [x, y], '
+    '"label": "specific noun phrase"}. Each label must name the object and '
+    'must not be "visible object" or "visually prominent object".'
 )
-QWEN_POINT_PROMPT = (
-    "Return one JSON item with point_2d and label for the most prominent "
-    "named class instance."
+QWEN_BOXES_PROMPT = (
+    "Identify and locate up to 10 distinct, whole, visually prominent objects "
+    "using bounding boxes. Do not list object parts or duplicate objects. "
+    "Return only a JSON "
+    'list of items like {"bbox_2d": [x1, y1, x2, y2], '
+    '"label": "specific noun phrase"}. Each label must name the object and '
+    'must not be "visible object" or "visually prominent object".'
 )
-MOLMO_POINT_PROMPT = "Point to the most prominent object in the image."
+MOLMO_SINGLE_POINT_PROMPT = (
+    "Point to the single most visually prominent object."
+)
+MOLMO_PLURAL_POINTS_PROMPT = "Point to all visually prominent objects."
+
+_GROUNDING_MODE_ALIASES = {
+    "point": "single_point",
+    "box": "boxes",
+}
 
 _JSON_FENCE = re.compile(
     r"\A```(?:json)?\s*(.*?)\s*```\Z", flags=re.IGNORECASE | re.DOTALL
@@ -35,24 +55,27 @@ _JSON_FENCE = re.compile(
 
 
 def build_vlm_prompt(guide, task, class_name=None):
-    """Build exactly the deterministic prompts fixed by the evidence lock."""
+    """Build image-only prompts for captioning and the selected grounding mode."""
 
     guide = str(guide).lower()
     task = str(task).lower()
+    if class_name is not None:
+        raise ValueError("VLM prompts are image-only and do not accept class labels")
     if task == "caption":
         return CAPTION_PROMPT
+    task = _GROUNDING_MODE_ALIASES.get(task, task)
     if guide == "qwen3_vl":
-        if task == "box":
-            return QWEN_BOX_PROMPT
-        if task == "point":
-            return QWEN_POINT_PROMPT
-    if guide in ("molmo", "molmopoint") and task == "point":
-        if class_name is not None:
-            raise ValueError(
-                "Phase-0 MolmoPoint grounding is image-only and does not "
-                "accept class-conditioned prompts"
-            )
-        return MOLMO_POINT_PROMPT
+        if task == "single_point":
+            return QWEN_SINGLE_POINT_PROMPT
+        if task == "plural_points":
+            return QWEN_PLURAL_POINTS_PROMPT
+        if task == "boxes":
+            return QWEN_BOXES_PROMPT
+    if guide in ("molmo", "molmopoint"):
+        if task == "single_point":
+            return MOLMO_SINGLE_POINT_PROMPT
+        if task == "plural_points":
+            return MOLMO_PLURAL_POINTS_PROMPT
     raise ValueError("unsupported prompt request %r/%r" % (guide, task))
 
 
@@ -60,7 +83,7 @@ def _reject_json_constant(value):
     raise ValueError("non-finite JSON constant %r is not allowed" % value)
 
 
-def _load_one_json_item(text):
+def _load_json_items(text):
     if not isinstance(text, str) or not text.strip():
         raise ValueError("grounding output is empty")
     payload = text.strip()
@@ -72,13 +95,15 @@ def _load_one_json_item(text):
     try:
         value = json.loads(payload, parse_constant=_reject_json_constant)
     except (TypeError, ValueError) as exc:
-        raise ValueError("grounding output is not one strict JSON item") from exc
-    if isinstance(value, list):
-        if len(value) != 1:
-            raise ValueError("grounding JSON list must contain exactly one item")
-        value = value[0]
-    if not isinstance(value, dict):
-        raise ValueError("grounding JSON item must be an object")
+        raise ValueError("grounding output is not strict JSON") from exc
+    if isinstance(value, dict):
+        return [value]
+    if not isinstance(value, list) or not value:
+        raise ValueError(
+            "grounding JSON must be an object or a nonempty list of objects"
+        )
+    if not all(isinstance(item, dict) for item in value):
+        raise ValueError("every grounding JSON list item must be an object")
     return value
 
 
@@ -97,31 +122,51 @@ def _strict_coordinates(value, count):
 
 
 def parse_qwen_grounding(text, grounding_type, image_size=None):
-    """Strictly parse one Qwen normalized-1000 box or point JSON item."""
+    """Strictly parse all Qwen normalized-1000 boxes or points."""
 
     grounding_type = str(grounding_type).lower()
-    item = _load_one_json_item(text)
-    if grounding_type == "box":
-        if set(item) != {"bbox_2d", "label"}:
-            raise ValueError("box JSON must contain only bbox_2d and label")
-        coordinates = _strict_coordinates(item["bbox_2d"], 4)
-        return GroundingBox(
-            label=item["label"],
-            bbox_2d=coordinates,
-            coordinate_space="normalized_1000",
-            image_size=image_size,
+    grounding_type = _GROUNDING_MODE_ALIASES.get(
+        grounding_type, grounding_type
+    )
+    if grounding_type in ("single_point", "plural_points"):
+        kind = "point"
+    elif grounding_type == "boxes":
+        kind = "box"
+    else:
+        raise ValueError(
+            "grounding_type must be point/single_point/plural_points or box/boxes"
         )
-    if grounding_type == "point":
-        if set(item) != {"point_2d", "label"}:
-            raise ValueError("point JSON must contain only point_2d and label")
-        coordinates = _strict_coordinates(item["point_2d"], 2)
-        return GroundingPoint(
-            label=item["label"],
-            point_2d=coordinates,
-            coordinate_space="normalized_1000",
-            image_size=image_size,
+
+    items = _load_json_items(text)
+    if grounding_type == "single_point" and len(items) != 1:
+        raise ValueError(
+            "single-point grounding must contain exactly one JSON item"
         )
-    raise ValueError("grounding_type must be 'box' or 'point'")
+    parsed = []
+    for item in items:
+        if kind == "box":
+            if set(item) != {"bbox_2d", "label"}:
+                raise ValueError("box JSON must contain only bbox_2d and label")
+            parsed.append(
+                GroundingBox(
+                    label=item["label"],
+                    bbox_2d=_strict_coordinates(item["bbox_2d"], 4),
+                    coordinate_space="normalized_1000",
+                    image_size=image_size,
+                )
+            )
+        else:
+            if set(item) != {"point_2d", "label"}:
+                raise ValueError("point JSON must contain only point_2d and label")
+            parsed.append(
+                GroundingPoint(
+                    label=item["label"],
+                    point_2d=_strict_coordinates(item["point_2d"], 2),
+                    coordinate_space="normalized_1000",
+                    image_size=image_size,
+                )
+            )
+    return parsed
 
 
 def try_parse_qwen_grounding(text, grounding_type, image_size=None):
@@ -133,9 +178,13 @@ def try_parse_qwen_grounding(text, grounding_type, image_size=None):
             None,
         )
     except (TypeError, ValueError) as exc:
+        kind = str(grounding_type).lower()
+        kind = _GROUNDING_MODE_ALIASES.get(kind, kind)
+        kind = "box" if kind == "boxes" else "point"
         return None, {
-            "code": "invalid_%s" % grounding_type,
+            "code": "invalid_%s" % kind,
             "reason": str(exc),
+            "raw_output": text if isinstance(text, str) else repr(text),
         }
 
 
@@ -196,19 +245,6 @@ def _image_to_pil(image):
     return Image.fromarray(array, mode="RGB")
 
 
-def _resize_pil_square(image, input_size):
-    from PIL import Image
-
-    input_size = int(input_size)
-    if input_size <= 0:
-        raise ValueError("VLM input_size must be positive")
-    if image.size == (input_size, input_size):
-        return image
-    return image.resize(
-        (input_size, input_size), resample=Image.Resampling.BICUBIC
-    )
-
-
 def _tensor_inputs_to_device(inputs, device):
     return {
         key: value.to(device) if isinstance(value, torch.Tensor) else value
@@ -237,8 +273,19 @@ def _generation_sequences(output):
     return output.sequences if hasattr(output, "sequences") else output
 
 
+def _greedy_decoding_metadata(max_new_tokens):
+    return {
+        "strategy": "greedy",
+        "do_sample": False,
+        "max_new_tokens": int(max_new_tokens),
+        "use_cache": True,
+    }
+
+
 class _FrozenVLMGuide(SemanticGuide):
     expected_revision = ""
+    default_grounding_mode = "single_point"
+    supported_grounding_modes = ()
 
     def __init__(
         self,
@@ -250,6 +297,9 @@ class _FrozenVLMGuide(SemanticGuide):
         **kwargs
     ):
         kwargs.setdefault("revision", self.expected_revision)
+        kwargs["grounding_mode"] = self._validate_grounding_mode(
+            kwargs.get("grounding_mode", self.default_grounding_mode)
+        )
         super().__init__(
             model_id=model_id,
             device=device,
@@ -310,12 +360,34 @@ class _FrozenVLMGuide(SemanticGuide):
             "device": str(self.device),
             "batch_size": 1,
             "frozen": True,
+            "grounding_mode": self._selected_grounding_mode(),
+            "decoding": {
+                "strategy": "greedy",
+                "do_sample": False,
+            },
+            "input_profile": "full_source_rgb_official_processor",
         }
 
     def _validate_batch_one(self, images):
         self.validate_images(images)
         if images.size(0) != 1:
             raise ValueError("%s Phase-0 adapter requires batch size 1" % self.name)
+
+    @classmethod
+    def _validate_grounding_mode(cls, grounding_mode):
+        mode = str(grounding_mode).lower()
+        mode = _GROUNDING_MODE_ALIASES.get(mode, mode)
+        if mode not in cls.supported_grounding_modes:
+            raise ValueError(
+                "%s grounding_mode must be one of %s; got %r"
+                % (cls.name, cls.supported_grounding_modes, grounding_mode)
+            )
+        return mode
+
+    def _selected_grounding_mode(self):
+        return self._validate_grounding_mode(
+            self.kwargs.get("grounding_mode", self.default_grounding_mode)
+        )
 
     @staticmethod
     def _task_failure(task, failure):
@@ -331,6 +403,7 @@ class Qwen3VLGuide(_FrozenVLMGuide):
     official_model_id = "Qwen/Qwen3-VL-8B-Instruct"
     default_model_id = r"D:\jepa_phase0\models\qwen3_vl"
     expected_revision = "0c351dd01ed87e9c1b53cbc748cba10e6187ff3b"
+    supported_grounding_modes = ("single_point", "plural_points", "boxes")
 
     def _load_model(self):
         self._require_bfloat16()
@@ -404,14 +477,31 @@ class Qwen3VLGuide(_FrozenVLMGuide):
             "text": text,
             "token_ids": generated[0].detach().cpu().tolist(),
             "latency_seconds": elapsed,
+            "decoding": _greedy_decoding_metadata(max_new_tokens),
         }
         return text, raw, inputs
+
+    def _vision_patch_size(self):
+        value = getattr(self.model.config.vision_config, "patch_size", None)
+        if value is None:
+            image_processor = getattr(self.processor, "image_processor", None)
+            value = getattr(image_processor, "patch_size", None)
+        if isinstance(value, (list, tuple)):
+            if len(value) != 2:
+                raise ValueError("Qwen3-VL patch_size must have two dimensions")
+            height, width = (int(value[0]), int(value[1]))
+        elif value is not None:
+            height = width = int(value)
+        else:
+            return None
+        if height <= 0 or width <= 0:
+            raise ValueError("Qwen3-VL patch_size must be positive")
+        return height, width
 
     def _feature_output(self, images):
         self._validate_batch_one(images)
         original_size = (int(images.size(-1)), int(images.size(-2)))
-        input_size = int(self.kwargs.get("input_size", 512))
-        image = _resize_pil_square(_image_to_pil(images[0]), input_size)
+        image = _image_to_pil(images[0])
         inputs = self._prepare(image, CAPTION_PROMPT)
         image_embeds, deepstack_embeds = self.model.get_image_features(
             pixel_values=inputs["pixel_values"],
@@ -425,6 +515,15 @@ class Qwen3VLGuide(_FrozenVLMGuide):
         merge_size = int(self.model.config.vision_config.spatial_merge_size)
         if temporal != 1:
             raise ValueError("Qwen3-VL image preprocessing returned a video grid")
+        patch_size = self._vision_patch_size()
+        processor_image_size = (
+            (
+                grid_width * patch_size[1],
+                grid_height * patch_size[0],
+            )
+            if patch_size is not None
+            else None
+        )
         grid_size = (
             grid_height // merge_size,
             grid_width // merge_size,
@@ -442,6 +541,8 @@ class Qwen3VLGuide(_FrozenVLMGuide):
             merge_size,
             len(deepstack_embeds),
             original_size,
+            processor_image_size,
+            patch_size,
         )
 
     @torch.inference_mode()
@@ -457,6 +558,8 @@ class Qwen3VLGuide(_FrozenVLMGuide):
                 merge_size,
                 deepstack_count,
                 original_size,
+                processor_image_size,
+                patch_size,
             ) = self._feature_output(images)
         elapsed, memory = self._finish_telemetry(started)
         return GuideOutput(
@@ -468,6 +571,9 @@ class Qwen3VLGuide(_FrozenVLMGuide):
                 "deepstack_feature_count": deepstack_count,
                 "features_only": True,
                 "spatial_token_grid": True,
+                "input_transform_profile": (
+                    "full_source_to_tensor_official_dynamic_resolution"
+                ),
             },
             original_image_sizes=[original_size],
             model_metadata=self._metadata(),
@@ -478,17 +584,25 @@ class Qwen3VLGuide(_FrozenVLMGuide):
                     "image_grid_thw": tuple(int(value) for value in grid_thw),
                     "post_merger_grid": grid_size,
                     "spatial_merge_size": merge_size,
-                    "model_input_size": (
-                        int(self.kwargs.get("input_size", 512)),
-                        int(self.kwargs.get("input_size", 512)),
+                    "vision_patch_size": patch_size,
+                    "processor_image_size": processor_image_size,
+                    "model_input_size": processor_image_size,
+                    "processor_resize": (
+                        "aspect_preserving_dynamic_resolution"
                     ),
                     "original_image_size": original_size,
+                    "source_image_size": original_size,
                 }
             ],
         )
 
     @torch.inference_mode()
-    def encode(self, images):
+    def encode(self, images, class_names=None):
+        if class_names is not None or self.kwargs.get("class_name") is not None:
+            raise ValueError(
+                "Qwen3-VL grounding must not receive class labels"
+            )
+        grounding_mode = self._selected_grounding_mode()
         failures = []
         started = self._start_telemetry()
         with self._autocast():
@@ -501,38 +615,46 @@ class Qwen3VLGuide(_FrozenVLMGuide):
                 merge_size,
                 deepstack_count,
                 image_size,
+                processor_image_size,
+                patch_size,
             ) = self._feature_output(images)
             caption, caption_raw, _ = self._generate_task(
                 image,
                 "caption",
                 int(self.kwargs.get("caption_max_new_tokens", 48)),
             )
-
-            box_text, box_raw, _ = self._generate_task(
-                image,
-                "box",
-                int(self.kwargs.get("grounding_max_new_tokens", 96)),
+            default_grounding_tokens = (
+                200
+                if grounding_mode in ("plural_points", "boxes")
+                else 96
             )
-            point_text, point_raw, _ = self._generate_task(
+            grounding_text, grounding_raw, _ = self._generate_task(
                 image,
-                "point",
-                int(self.kwargs.get("grounding_max_new_tokens", 96)),
+                grounding_mode,
+                int(
+                    self.kwargs.get(
+                        "%s_max_new_tokens" % grounding_mode,
+                        self.kwargs.get(
+                            "grounding_max_new_tokens",
+                            default_grounding_tokens,
+                        ),
+                    )
+                ),
             )
 
-        box, box_failure = try_parse_qwen_grounding(
-            box_text, "box", image_size=image_size
+        parsed, grounding_failure = try_parse_qwen_grounding(
+            grounding_text, grounding_mode, image_size=image_size
         )
-        point, point_failure = try_parse_qwen_grounding(
-            point_text, "point", image_size=image_size
-        )
+        boxes = parsed if grounding_mode == "boxes" and parsed is not None else []
+        points = parsed if grounding_mode != "boxes" and parsed is not None else []
         if not caption:
             failures.append(
                 {"task": "caption", "code": "empty_caption", "reason": "empty text"}
             )
-        if box_failure is not None:
-            failures.append(self._task_failure("box", box_failure))
-        if point_failure is not None:
-            failures.append(self._task_failure("point", point_failure))
+        if grounding_failure is not None:
+            failures.append(
+                self._task_failure(grounding_mode, grounding_failure)
+            )
         elapsed, memory = self._finish_telemetry(started)
         global_token = patches.float().mean(dim=1)
         return GuideOutput(
@@ -542,17 +664,26 @@ class Qwen3VLGuide(_FrozenVLMGuide):
             metadata={
                 "readout": "mean_final_post_merger_image_tokens",
                 "grounding_coordinate_space": "normalized_1000",
+                "grounding_mode": grounding_mode,
+                "grounding_contract": (
+                    "qwen_boxes"
+                    if grounding_mode == "boxes"
+                    else "qwen_points"
+                ),
                 "deepstack_feature_count": deepstack_count,
                 "spatial_token_grid": True,
+                "input_transform_profile": (
+                    "full_source_to_tensor_official_dynamic_resolution"
+                ),
             },
             generated_text=[caption],
-            grounding_regions=[[box] if box is not None else []],
-            grounding_points=[[point] if point is not None else []],
+            grounding_regions=[boxes],
+            grounding_points=[points],
             raw_generation=[
                 {
                     "caption": caption_raw,
-                    "box": box_raw,
-                    "point": point_raw,
+                    "grounding_mode": grounding_mode,
+                    "grounding": grounding_raw,
                 }
             ],
             original_image_sizes=[image_size],
@@ -564,11 +695,14 @@ class Qwen3VLGuide(_FrozenVLMGuide):
                     "image_grid_thw": tuple(int(value) for value in grid_thw),
                     "post_merger_grid": grid_size,
                     "spatial_merge_size": merge_size,
-                    "model_input_size": (
-                        int(self.kwargs.get("input_size", 512)),
-                        int(self.kwargs.get("input_size", 512)),
+                    "vision_patch_size": patch_size,
+                    "processor_image_size": processor_image_size,
+                    "model_input_size": processor_image_size,
+                    "processor_resize": (
+                        "aspect_preserving_dynamic_resolution"
                     ),
                     "original_image_size": image_size,
+                    "source_image_size": image_size,
                 }
             ],
             failures=[failures],
@@ -582,6 +716,7 @@ class MolmoPointGuide(_FrozenVLMGuide):
     official_model_id = "allenai/MolmoPoint-8B"
     default_model_id = r"D:\jepa_phase0\models\molmo"
     expected_revision = "188130f961c8e0888a34e11121a1423c461a01ba"
+    supported_grounding_modes = ("single_point", "plural_points")
 
     def _load_model(self):
         self._require_bfloat16()
@@ -769,6 +904,9 @@ class MolmoPointGuide(_FrozenVLMGuide):
                 "feature_extraction_path": "official_vit_plus_connector",
                 "features_only": True,
                 "spatial_token_grid": False,
+                "input_transform_profile": (
+                    "full_source_to_tensor_official_global_plus_local_crops"
+                ),
             },
             original_image_sizes=[image_size],
             model_metadata=self._metadata(),
@@ -780,6 +918,10 @@ class MolmoPointGuide(_FrozenVLMGuide):
                     "image_num_crops": image_num_crops,
                     "valid_pooled_tokens": valid_count,
                     "original_image_size": image_size,
+                    "source_image_size": image_size,
+                    "processor_crop_strategy": (
+                        "official_global_plus_up_to_24_local_crops"
+                    ),
                 }
             ],
         )
@@ -791,15 +933,14 @@ class MolmoPointGuide(_FrozenVLMGuide):
             raise ValueError(
                 "Phase-0 MolmoPoint grounding must not receive class labels"
             )
-        grounding_label = "prominent object"
+        grounding_mode = self._selected_grounding_mode()
+        grounding_label = "visually prominent object"
         image_size = (int(images.size(-1)), int(images.size(-2)))
         image = _image_to_pil(images[0])
         failures = []
         started = self._start_telemetry()
         caption_prompt = build_vlm_prompt(self.name, "caption")
-        point_prompt = build_vlm_prompt(
-            self.name, "point"
-        )
+        point_prompt = build_vlm_prompt(self.name, grounding_mode)
         with self._autocast():
             caption_inputs, patches = self._feature_output(image)
             caption, caption_ids, caption_latency = self._generate(
@@ -822,7 +963,14 @@ class MolmoPointGuide(_FrozenVLMGuide):
             )
             raw_point_text, point_ids, point_latency = self._generate(
                 point_inputs,
-                int(self.kwargs.get("point_max_new_tokens", 64)),
+                int(
+                    self.kwargs.get(
+                        "plural_point_max_new_tokens",
+                        200,
+                    )
+                    if grounding_mode == "plural_points"
+                    else self.kwargs.get("point_max_new_tokens", 64)
+                ),
                 logits_processor=logit_processor,
                 keep_special=True,
             )
@@ -854,7 +1002,9 @@ class MolmoPointGuide(_FrozenVLMGuide):
                 {"task": "caption", "code": "empty_caption", "reason": "empty text"}
             )
         if point_failure is not None:
-            failures.append(self._task_failure("point", point_failure))
+            failures.append(
+                self._task_failure(grounding_mode, point_failure)
+            )
         token_pooling = point_inputs["image_token_pooling"].detach().cpu()
         valid_count = int((token_pooling >= 0).any(dim=-1).sum().item())
         if patches.size(1) != valid_count:
@@ -875,9 +1025,13 @@ class MolmoPointGuide(_FrozenVLMGuide):
             metadata={
                 "readout": "mean_valid_post_pooling_post_projector_tokens",
                 "grounding_contract": "native_points_only",
+                "grounding_mode": grounding_mode,
                 "token_layout": "official_pooled_token_sequence",
                 "feature_extraction_path": "official_vit_plus_connector",
                 "spatial_token_grid": False,
+                "input_transform_profile": (
+                    "full_source_to_tensor_official_global_plus_local_crops"
+                ),
             },
             generated_text=[caption],
             grounding_regions=[[]],
@@ -889,12 +1043,28 @@ class MolmoPointGuide(_FrozenVLMGuide):
                         "text": caption,
                         "token_ids": caption_ids[0].detach().cpu().tolist(),
                         "latency_seconds": caption_latency,
+                        "decoding": _greedy_decoding_metadata(
+                            int(self.kwargs.get("caption_max_new_tokens", 48))
+                        ),
                     },
-                    "point": {
+                    "grounding_mode": grounding_mode,
+                    "grounding": {
                         "prompt": point_prompt,
                         "text": raw_point_text,
                         "token_ids": point_ids[0].detach().cpu().tolist(),
                         "latency_seconds": point_latency,
+                        "decoding": _greedy_decoding_metadata(
+                            int(
+                                self.kwargs.get(
+                                    "plural_point_max_new_tokens",
+                                    200,
+                                )
+                                if grounding_mode == "plural_points"
+                                else self.kwargs.get(
+                                    "point_max_new_tokens", 64
+                                )
+                            )
+                        ),
                     },
                 }
             ],
@@ -914,6 +1084,10 @@ class MolmoPointGuide(_FrozenVLMGuide):
                         pointing_metadata["image_sizes"]
                     ),
                     "valid_image_token_count": valid_count,
+                    "source_image_size": image_size,
+                    "processor_crop_strategy": (
+                        "official_global_plus_up_to_24_local_crops"
+                    ),
                 }
             ],
             failures=[failures],

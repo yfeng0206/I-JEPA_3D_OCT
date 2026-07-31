@@ -36,6 +36,34 @@ from src.evaluation.imagenet_frozen import (  # noqa: E402
 )
 from src.guides import available_guides, build_guide  # noqa: E402
 
+_VLM_GUIDES = frozenset(("qwen3_vl", "molmo"))
+_STANDARD_TRANSFORM_PROFILE = {
+    "name": "resize_256_center_crop_224",
+    "resize_short_side": 256,
+    "center_crop": 224,
+    "interpolation": "bicubic",
+    "antialias": True,
+    "tensor_range": "float32_[0,1]",
+}
+_VLM_TRANSFORM_PROFILES = {
+    "qwen3_vl": {
+        "name": "full_source_to_tensor_qwen_dynamic_resolution",
+        "resize": None,
+        "center_crop": None,
+        "preserves_source_aspect_ratio": True,
+        "official_processor": "aspect_preserving_dynamic_resolution",
+        "tensor_range": "float32_[0,1]",
+    },
+    "molmo": {
+        "name": "full_source_to_tensor_molmo_global_plus_local_crops",
+        "resize": None,
+        "center_crop": None,
+        "preserves_source_aspect_ratio": True,
+        "official_processor": "global_plus_up_to_24_local_crops",
+        "tensor_range": "float32_[0,1]",
+    },
+}
+
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -124,7 +152,19 @@ def _plain(value):
     return str(value)
 
 
-def shared_transform():
+def evaluation_transform_profile(guide_name):
+    """Return the frozen source transform recorded in feature provenance."""
+
+    name = str(guide_name).lower()
+    profile = _VLM_TRANSFORM_PROFILES.get(
+        name, _STANDARD_TRANSFORM_PROFILE
+    )
+    return dict(profile)
+
+
+def guide_transform(guide_name):
+    if str(guide_name).lower() in _VLM_GUIDES:
+        return transforms.ToTensor()
     return transforms.Compose(
         [
             transforms.Resize(
@@ -138,12 +178,34 @@ def shared_transform():
     )
 
 
-def build_dataset(root, split, wnid_manifest):
+def validate_evaluation_batch_size(guide_name, batch_size):
+    batch_size = int(batch_size)
+    if batch_size <= 0:
+        raise ValueError("batch size must be positive")
+    if guide_name in _VLM_GUIDES and batch_size != 1:
+        raise ValueError(
+            "%s full-source feature extraction requires batch size 1"
+            % guide_name
+        )
+    if str(guide_name).lower() in _VLM_GUIDES and batch_size != 1:
+        raise ValueError(
+            "%s frozen evaluation requires batch size 1" % guide_name
+        )
+    return batch_size
+
+
+def shared_transform():
+    """Backward-compatible name for the I-JEPA/DINO evaluation transform."""
+
+    return guide_transform("ijepa")
+
+
+def build_dataset(root, split, wnid_manifest, guide_name="ijepa"):
     return ImageNetSubsetDataset(
         root=root,
         split=split,
         wnid_manifest=wnid_manifest,
-        transform=shared_transform(),
+        transform=guide_transform(guide_name),
         strict=True,
     )
 
@@ -176,12 +238,15 @@ _FEATURE_IDENTITY_KEYS = {
 }
 
 
-def feature_guide_identity(guide_values):
+def feature_guide_identity(guide_values, guide_name=None):
     """Keep cache identity limited to fields that can change frozen features."""
+    keys = set(_FEATURE_IDENTITY_KEYS)
+    if str(guide_name).lower() in _VLM_GUIDES:
+        keys.discard("input_size")
     return {
         key: _plain(value)
         for key, value in guide_values.items()
-        if key in _FEATURE_IDENTITY_KEYS
+        if key in keys
     }
 
 
@@ -189,8 +254,14 @@ def prepare_writers(args, config, guide_name, guide_values):
     dataset_id = str(config["dataset"]["id"])
     wnid_hash = wnid_manifest_sha256(args.wnid_manifest)
     prepared = {}
+    transform_profile = evaluation_transform_profile(guide_name)
     for split in ("train", "val"):
-        dataset = build_dataset(args.data_root, split, args.wnid_manifest)
+        dataset = build_dataset(
+            args.data_root,
+            split,
+            args.wnid_manifest,
+            guide_name=guide_name,
+        )
         snapshot_path = os.path.join(
             args.dataset_manifest_dir,
             dataset_id,
@@ -203,20 +274,18 @@ def prepare_writers(args, config, guide_name, guide_values):
         )
         sample_ids, labels = dataset_vectors(dataset)
         provenance = {
-            "schema_version": 1,
+            "schema_version": 2,
             "dataset_id": dataset_id,
             "split": split,
             "dataset_content_sha256": snapshot["content_sha256"],
             "wnid_manifest_sha256": wnid_hash,
             "guide": guide_name,
-            "guide_config": feature_guide_identity(guide_values),
-            "shared_input_transform": {
-                "resize_short_side": 256,
-                "center_crop": 224,
-                "interpolation": "bicubic",
-            },
+            "guide_config": feature_guide_identity(
+                guide_values, guide_name=guide_name
+            ),
+            "input_transform_profile": transform_profile,
             "feature_api": "encode_features",
-            "feature_contract_version": 1,
+            "feature_contract_version": 2,
         }
         writer = FeatureCacheWriter(
             cache_path(args.cache_dir, dataset_id, guide_name, split),
@@ -339,13 +408,16 @@ def run_extraction(args, config, names):
     for guide_name in names:
         values = dict(guide_config.get(guide_name, {}) or {})
         values.pop("enabled", None)
+        if guide_name in _VLM_GUIDES:
+            values.pop("input_size", None)
         batch_size = int(
             args.batch_size
             if args.batch_size is not None
             else values.pop("evaluation_batch_size", 1)
         )
-        if batch_size <= 0:
-            raise ValueError("batch size must be positive")
+        batch_size = validate_evaluation_batch_size(
+            guide_name, batch_size
+        )
         prepared = prepare_writers(
             args, config, guide_name, values
         )

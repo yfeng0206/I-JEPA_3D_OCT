@@ -2,11 +2,19 @@ import json
 import gc
 import os
 import tempfile
+from types import SimpleNamespace
 import unittest
 
 import numpy as np
 from PIL import Image
 
+from scripts.phase0_imagenet50_eval import (
+    evaluation_transform_profile,
+    feature_guide_identity,
+    guide_transform,
+    prepare_writers,
+    validate_evaluation_batch_size,
+)
 from src.datasets.imagenet_subset import ImageNetSubsetDataset
 from src.evaluation.feature_cache import (
     FeatureCacheWriter,
@@ -90,6 +98,101 @@ class FeatureCacheTests(unittest.TestCase):
                 handle.write(bytes([value[0] ^ 0xFF]))
             with self.assertRaises(RuntimeError):
                 load_feature_cache(output)
+
+    def test_frozen_transforms_are_guide_specific_and_aspect_preserving(self):
+        image = Image.new("RGB", (12, 4), color="blue")
+        qwen = guide_transform("qwen3_vl")(image)
+        molmo = guide_transform("molmo")(image)
+        ijepa = guide_transform("ijepa")(image)
+        dinov3 = guide_transform("dinov3")(image)
+        self.assertEqual(tuple(qwen.shape), (3, 4, 12))
+        self.assertEqual(tuple(molmo.shape), (3, 4, 12))
+        self.assertEqual(tuple(ijepa.shape), (3, 224, 224))
+        self.assertEqual(tuple(dinov3.shape), (3, 224, 224))
+        self.assertTrue(
+            evaluation_transform_profile("qwen3_vl")[
+                "preserves_source_aspect_ratio"
+            ]
+        )
+        self.assertEqual(
+            evaluation_transform_profile("molmo")["official_processor"],
+            "global_plus_up_to_24_local_crops",
+        )
+        self.assertEqual(
+            evaluation_transform_profile("dinov3")["name"],
+            "resize_256_center_crop_224",
+        )
+
+    def test_vlm_feature_identity_ignores_obsolete_square_input_size(self):
+        values = {
+            "model_id": "official/model",
+            "revision": "abc",
+            "input_size": 512,
+            "dtype": "bfloat16",
+        }
+        self.assertNotIn(
+            "input_size",
+            feature_guide_identity(values, guide_name="qwen3_vl"),
+        )
+        self.assertIn(
+            "input_size",
+            feature_guide_identity(values, guide_name="ijepa"),
+        )
+
+    def test_vlm_evaluation_requires_batch_one(self):
+        self.assertEqual(validate_evaluation_batch_size("qwen3_vl", 1), 1)
+        self.assertEqual(validate_evaluation_batch_size("ijepa", 8), 8)
+        for guide_name in ("qwen3_vl", "molmo"):
+            with self.subTest(guide=guide_name), self.assertRaises(ValueError):
+                validate_evaluation_batch_size(guide_name, 2)
+
+    def test_cache_provenance_records_full_source_vlm_profile(self):
+        with tempfile.TemporaryDirectory() as root:
+            wnids = os.path.join(root, "wnids.txt")
+            with open(wnids, "w", encoding="utf-8") as handle:
+                handle.write("n00000001\n")
+            for split in ("train", "val"):
+                class_dir = os.path.join(root, "data", split, "n00000001")
+                os.makedirs(class_dir)
+                Image.new("RGB", (12, 4), color="red").save(
+                    os.path.join(class_dir, "one.JPEG")
+                )
+            args = SimpleNamespace(
+                data_root=os.path.join(root, "data"),
+                wnid_manifest=wnids,
+                dataset_manifest_dir=os.path.join(root, "manifests"),
+                cache_dir=os.path.join(root, "cache"),
+                refresh_dataset_snapshot=False,
+                overwrite=False,
+            )
+            prepared = prepare_writers(
+                args,
+                {"dataset": {"id": "tiny"}},
+                "qwen3_vl",
+                {
+                    "model_id": "official/model",
+                    "revision": "abc",
+                    "input_size": 512,
+                },
+            )
+            for item in prepared.values():
+                provenance = item["writer"].provenance
+                profile = provenance["input_transform_profile"]
+                self.assertEqual(
+                    profile["name"],
+                    "full_source_to_tensor_qwen_dynamic_resolution",
+                )
+                self.assertEqual(
+                    profile["official_processor"],
+                    "aspect_preserving_dynamic_resolution",
+                )
+                self.assertTrue(profile["preserves_source_aspect_ratio"])
+                self.assertNotIn(
+                    "shared_input_transform", provenance
+                )
+                self.assertNotIn(
+                    "input_size", provenance["guide_config"]
+                )
 
 
 class DatasetSnapshotTests(unittest.TestCase):

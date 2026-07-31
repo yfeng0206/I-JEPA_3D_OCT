@@ -14,3 +14,4 @@
 - Locked ImageNet-50 class, model, checkpoint, license, and frozen-evaluation evidence manifests for local Phase-0 execution.
 - Resumable integrity-checked frozen-feature caches with weighted kNN and encoder-frozen linear-probe evaluation.
 - Phase-0 preliminary findings with real I-JEPA/Qwen3-VL/MolmoPoint integration evidence and explicit ImageNet/DINOv3 access blockers.
+- Ten-image Qwen3-VL concept-selection and SAM3 continuous-segmentation screen for candidate I-JEPA importance maps.

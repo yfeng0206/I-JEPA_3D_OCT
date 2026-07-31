@@ -51,6 +51,7 @@ import math
 import random
 from typing import List, Optional, Sequence, Tuple
 
+import numpy as np
 import torch
 import torch.distributed as dist
 
@@ -92,6 +93,79 @@ def _broadcast(tensor: torch.Tensor, src: int = 0) -> None:
 # ----------------------------------------------------------------------
 
 
+def _window_sums_numpy(grid: np.ndarray, block_h: int, block_w: int):
+    """Block sums for every (block_h, block_w) window via a summed-area table.
+
+    NumPy rather than torch: the mask grid is 16x16, where per-op dispatch
+    overhead dominates and torch is roughly an order of magnitude slower.
+    """
+    height, width = grid.shape
+    n_top, n_left = height - block_h + 1, width - block_w + 1
+    if n_top <= 0 or n_left <= 0:
+        return None
+    padded = np.zeros((height + 1, width + 1), dtype=np.float64)
+    padded[1:, 1:] = grid
+    sat = padded.cumsum(axis=0).cumsum(axis=1)
+    return (
+        sat[block_h:, block_w:]
+        - sat[:n_top, block_w:]
+        - sat[block_h:, :n_left]
+        + sat[:n_top, :n_left]
+    )
+
+
+class MirageMaskCollator:
+    """Generate I-JEPA masks inside DataLoader workers for ``mirage_envelope``.
+
+    Finding target rectangles that satisfy the fill and retina-visibility rules
+    is rejection sampling and costs more CPU time than the GPU step itself.  Run
+    inline it leaves the GPU idle; run as a ``collate_fn`` it executes in the
+    worker processes and overlaps with compute, so the search becomes free.
+
+    This is safe only because ``mirage_envelope`` masks depend on nothing the
+    model produces -- unlike ``cluster_foreground``, which needs the teacher's
+    features and must therefore stay in the training loop.
+
+    ``set_epoch`` must be called BEFORE the epoch's iterator is created: workers
+    receive a pickled copy of this object at that moment, which is how the ramp
+    value reaches them.
+    """
+
+    def __init__(self, **generator_kwargs):
+        self._kwargs = generator_kwargs
+        self._generator: Optional["CurriculumMaskGenerator"] = None
+        self.epoch = 0
+        self.total_epochs: Optional[int] = None
+
+    def set_epoch(self, epoch: int, total_epochs: Optional[int] = None) -> None:
+        self.epoch = int(epoch)
+        self.total_epochs = total_epochs
+
+    def __getstate__(self):
+        # torch.Generator does not pickle; rebuild the generator per worker.
+        state = self.__dict__.copy()
+        state["_generator"] = None
+        return state
+
+    def _get_generator(self) -> "CurriculumMaskGenerator":
+        if self._generator is None:
+            self._generator = CurriculumMaskGenerator(**self._kwargs)
+        self._generator.set_epoch(self.epoch, self.total_epochs)
+        return self._generator
+
+    def __call__(self, batch):
+        images = torch.stack([item[0] for item in batch], dim=0)
+        guides = torch.stack([item[1] for item in batch], dim=0)
+        valid = torch.stack([item[2] for item in batch], dim=0)
+        generator = self._get_generator()
+        masks_enc, masks_pred = generator.generate(
+            batch_size=images.size(0),
+            guide_grids=guides,
+            guide_valid=valid,
+        )
+        return images, masks_enc, masks_pred, generator.mirage_stats
+
+
 class CurriculumMaskGenerator:
     """Stateful mask generator with optional curriculum biasing."""
 
@@ -100,6 +174,7 @@ class CurriculumMaskGenerator:
         "intensity_foreground",
         "cluster_foreground",
         "anatomical_prior",
+        "mirage_envelope",
     )
 
     def __init__(
@@ -250,6 +325,43 @@ class CurriculumMaskGenerator:
         # Numerical floor for sampling weights so we never have all-zero rows.
         self.weight_eps = float(cfg.get("weight_eps", 1e-6))
 
+        # MIRAGE envelope mode.  Target blocks keep the standard geometry; a
+        # block is only admissible when at least ``mirage_min_block_fill`` of
+        # its patches lie on the MIRAGE retinal region, and a placement is
+        # preferred when at least ``mirage_min_retina_visible`` of the region
+        # survives outside the targets so the encoder retains anatomy to reason
+        # from.
+        #
+        # Fallback semantics, which differ per rule -- do not conflate them:
+        #   * invalid guide            -> uniform random placement (all blocks)
+        #   * no admissible window for
+        #     a block (infeasible)     -> uniform random placement, THAT BLOCK
+        #                                 only, and the retry loop stops early
+        #                                 because admissibility cannot change
+        #   * visibility never reached -> NO fallback.  After
+        #                                 ``mirage_max_attempts`` the attempt
+        #                                 that left the most retina visible is
+        #                                 returned and every block stays guided.
+        #
+        # So ``mirage_min_retina_visible`` is a best-effort retry preference,
+        # not a guarantee: measured over 1,000 volumes it is met outright on
+        # ~47% of images.  Falling back to uniform there would inject
+        # random-baseline behaviour into the guided arm and weaken the very
+        # contrast being tested, so it is deliberately not done.  The 0.25
+        # threshold policy was calibrated with these exact semantics in force.
+        self.mirage_min_block_fill = float(cfg.get("mirage_min_block_fill", 0.40))
+        self.mirage_min_retina_visible = float(
+            cfg.get("mirage_min_retina_visible", 0.25)
+        )
+        self.mirage_max_attempts = int(cfg.get("mirage_max_attempts", 30))
+        self.mirage_occupancy_threshold = float(
+            cfg.get("mirage_occupancy_threshold", 0.5)
+        )
+        self.mirage_spread = bool(cfg.get("mirage_spread", True))
+        self.mirage_overlap_tolerance = float(
+            cfg.get("mirage_overlap_tolerance", 0.25)
+        )
+
         # --- State ---
         self._r_t = 0.0
         self._epoch = 0
@@ -315,6 +427,9 @@ class CurriculumMaskGenerator:
         # Diagnostic counters — read by trainer logger; never reset.
         self._bias_attempt_count = 0
         self._bias_success_count = 0
+
+        # MIRAGE batch statistics, overwritten by every ``generate`` call.
+        self._mirage_stats = {}
 
     # ------------------------------------------------------------------
     # set_epoch
@@ -414,6 +529,179 @@ class CurriculumMaskGenerator:
         top = idx // n_left
         left = idx % n_left
         return top, left
+
+    def _window_sums(self, grid: torch.Tensor, block_h: int, block_w: int):
+        """Block sums for every (block_h, block_w) window via a summed-area table."""
+        H, W = self.height, self.width
+        n_top, n_left = H - block_h + 1, W - block_w + 1
+        if n_top <= 0 or n_left <= 0:
+            return None
+        padded = torch.zeros(H + 1, W + 1, dtype=torch.float32)
+        padded[1:, 1:] = grid
+        sat = padded.cumsum(dim=0).cumsum(dim=1)
+        return (
+            sat[block_h:, block_w:]
+            - sat[:n_top, block_w:]
+            - sat[block_h:, :n_left]
+            + sat[:n_top, :n_left]
+        )
+
+    def _sample_mirage_blocks(
+        self,
+        pred_sizes: List[Tuple[int, int]],
+        occupancy: torch.Tensor,
+        placement: torch.Tensor,
+        biased_flags: List[bool],
+        fixed_uniform: List[Optional[List[int]]],
+    ) -> Tuple[List[List[int]], dict]:
+        """Place target blocks on the MIRAGE retinal region.
+
+        ``placement`` is the dilated admissibility mask -- it grants blocks
+        tolerance for MIRAGE's boundary error.  ``occupancy`` is the *true*
+        segmentation and is what retina-visibility is measured against, so
+        dilation can never inflate the metric that protects encoder context.
+
+        Blocks whose Bernoulli flag is False keep the pre-drawn uniform
+        locations in ``fixed_uniform`` across every retry.  Re-drawing them per
+        attempt would let the accept test select uniform placements that happen
+        to spare retina, quietly biasing blocks the ramp says must be random.
+
+        Implemented in NumPy on the 16x16 grid: torch op overhead dominates at
+        this size, and the admissibility of every window depends only on the
+        region and the block size, so it is computed once and reused across all
+        retries rather than rebuilt per attempt.
+
+        Returns the per-block index lists plus statistics for logging.
+        """
+        region = np.asarray(
+            (placement > 0).to(dtype=torch.float32).cpu().numpy(), dtype=np.float64
+        )
+        truth = np.asarray(
+            (occupancy >= self.mirage_occupancy_threshold)
+            .to(dtype=torch.float32)
+            .cpu()
+            .numpy(),
+            dtype=bool,
+        )
+        region_cells = int(region.sum())
+        truth_flat = truth.reshape(-1)
+        truth_cells = int(truth.sum())
+        rng = np.random.default_rng(random.randrange(2 ** 31))
+
+        # Invariant across retries: which windows are admissible for each block.
+        candidate_cache: List[Optional[Tuple[np.ndarray, np.ndarray]]] = []
+        for index, (bh, bw) in enumerate(pred_sizes):
+            if not biased_flags[index] or region_cells == 0:
+                candidate_cache.append(None)
+                continue
+            counts = _window_sums_numpy(region, bh, bw)
+            if counts is None:
+                candidate_cache.append(None)
+                continue
+            fill = counts / float(bh * bw)
+            candidate_cache.append((fill, fill >= self.mirage_min_block_fill))
+
+        occupied_cols = np.flatnonzero(region.any(axis=0)) if region_cells else np.empty(0)
+        best: Optional[Tuple[List[List[int]], dict]] = None
+
+        for attempt in range(max(1, self.mirage_max_attempts)):
+            claimed = np.zeros_like(region)
+            segments: List[Tuple[int, int]] = []
+            if self.mirage_spread and occupied_cols.size:
+                edges = np.linspace(
+                    float(occupied_cols.min()),
+                    float(occupied_cols.max()) + 1.0,
+                    len(pred_sizes) + 1,
+                )
+                segments = [
+                    (int(math.floor(edges[i])), int(math.ceil(edges[i + 1])))
+                    for i in range(len(pred_sizes))
+                ]
+                segments = [segments[i] for i in rng.permutation(len(segments))]
+
+            per_image_pred: List[List[int]] = []
+            fills: List[float] = []
+            guided_used = 0
+            feasible = True
+            for index, (bh, bw) in enumerate(pred_sizes):
+                if not biased_flags[index]:
+                    indices = fixed_uniform[index]
+                    per_image_pred.append(indices)
+                    top = indices[0] // self.width
+                    left = indices[0] % self.width
+                    claimed[top : top + bh, left : left + bw] = 1.0
+                    continue
+                cached = candidate_cache[index]
+                if cached is None:
+                    feasible = False
+                    top, left = self._sample_uniform_location(
+                        bh, bw, self.height, self.width
+                    )
+                else:
+                    fill, candidates = cached
+                    if segments and candidates.any():
+                        low, high = segments[index]
+                        centres = np.arange(candidates.shape[1]) + bw / 2.0
+                        inside = (centres >= low) & (centres < high)
+                        banded = np.zeros_like(candidates)
+                        banded[:, inside] = candidates[:, inside]
+                        if banded.any():
+                            candidates = banded
+                    if candidates.any():
+                        overlap = _window_sums_numpy(claimed, bh, bw)
+                        if overlap is not None:
+                            free = candidates & (
+                                overlap <= self.mirage_overlap_tolerance * bh * bw
+                            )
+                            if free.any():
+                                candidates = free
+                        rows, cols = np.nonzero(candidates)
+                        pick = int(rng.integers(rows.size))
+                        top, left = int(rows[pick]), int(cols[pick])
+                        fills.append(float(fill[top, left]))
+                        guided_used += 1
+                    else:
+                        # No window anywhere reaches the fill threshold: this is
+                        # an infeasible guide, not a successful guided mask.
+                        feasible = False
+                        top, left = self._sample_uniform_location(
+                            bh, bw, self.height, self.width
+                        )
+                indices = self._block_to_indices(top, left, bh, bw)
+                per_image_pred.append(indices)
+                claimed[top : top + bh, left : left + bw] = 1.0
+
+            union = set()
+            for indices in per_image_pred:
+                union.update(indices)
+            masked_truth = int(truth_flat[list(union)].sum()) if union else 0
+            visible = (
+                (truth_cells - masked_truth) / truth_cells if truth_cells > 0 else 1.0
+            )
+            stats = {
+                "region_cells": region_cells,
+                "truth_cells": truth_cells,
+                "guided_blocks": guided_used,
+                "mean_block_fill": float(np.mean(fills)) if fills else 0.0,
+                "retina_visible": visible,
+                "attempts": attempt + 1,
+                "feasible": feasible,
+                "accepted": feasible and visible >= self.mirage_min_retina_visible,
+            }
+            if (
+                best is None
+                # Prefer feasible attempts; among equals prefer more visible retina.
+                or (stats["feasible"], stats["retina_visible"])
+                > (best[1]["feasible"], best[1]["retina_visible"])
+            ):
+                best = (per_image_pred, stats)
+            if stats["accepted"]:
+                return per_image_pred, stats
+            if not feasible:
+                # Admissibility does not change between retries, so a guide that
+                # cannot host the blocks will never succeed -- stop early.
+                break
+        return best  # type: ignore[return-value]
 
     def _block_to_indices(
         self, top: int, left: int, block_h: int, block_w: int
@@ -668,6 +956,8 @@ class CurriculumMaskGenerator:
         batch_size: int,
         imgs_cpu: Optional[torch.Tensor] = None,
         h_for_cluster: Optional[torch.Tensor] = None,
+        guide_grids: Optional[torch.Tensor] = None,
+        guide_valid: Optional[torch.Tensor] = None,
     ) -> Tuple[List[torch.Tensor], List[torch.Tensor]]:
         """Produce (masks_enc, masks_pred) with the MaskCollator contract.
 
@@ -678,6 +968,10 @@ class CurriculumMaskGenerator:
             h_for_cluster: (B, N, D) target-encoder full output.  REQUIRED
                 for ``cluster_foreground`` mode (caller must compute the
                 target forward BEFORE calling ``generate``).
+            guide_grids: (B, H, W) per-patch retinal occupancy.  REQUIRED for
+                ``mirage_envelope`` mode.
+            guide_valid: (B,) bool flags; images whose guide failed quality
+                control fall back to uniform random placement.
         """
         B = int(batch_size)
 
@@ -712,6 +1006,8 @@ class CurriculumMaskGenerator:
                 bias_active = imgs_cpu is not None
             elif self.mode == "anatomical_prior":
                 bias_active = imgs_cpu is not None
+            elif self.mode == "mirage_envelope":
+                bias_active = guide_grids is not None
 
         # Pre-compute cluster assignments per image (R3b) so update_after_iter
         # can reuse them without re-clustering.
@@ -731,6 +1027,21 @@ class CurriculumMaskGenerator:
         # ------------------------------------------------------------------
         masks_enc = [[] for _ in range(self.nenc)]
         masks_pred = [[] for _ in range(self.npred)]
+        mirage_batch = {
+            "images": 0,
+            "guided_images": 0,
+            "accepted": 0,
+            "infeasible": 0,
+            "fallback_invalid": 0,
+            "unbiased_by_ramp": 0,
+            "block_fill_sum": 0.0,
+            "retina_visible_sum": 0.0,
+            "target_on_region_sum": 0.0,
+            "attempts_sum": 0,
+            "patches_per_block_sum": 0,
+            "unique_target_sum": 0,
+            "context_patch_sum": 0,
+        }
 
         for b in range(B):
             # Build the weight grid once per image (intensity / cluster need
@@ -752,22 +1063,103 @@ class CurriculumMaskGenerator:
                     weight_grid = self._cluster_weight_grid_for_image(
                         per_image_cluster_assignment[b]
                     )
+                elif self.mode == "mirage_envelope":
+                    weight_grid = guide_grids[b].detach().to(
+                        device="cpu", dtype=torch.float32
+                    )
 
             # --- Pred blocks ---
             pred_indices_union = set()
             per_image_pred = []
-            for p in range(self.npred):
-                bh, bw = pred_sizes[p]
-                # Bernoulli(r_t) per block (P1 fix — never round to 0).
-                if bias_active and weight_grid is not None and random.random() < self._r_t:
-                    top, left = self._sample_biased_location(bh, bw, weight_grid)
-                else:
-                    top, left = self._sample_uniform_location(
-                        bh, bw, self.height, self.width
+            if self.mode == "mirage_envelope":
+                # Statistics must be measurable even when the ramp is off, so
+                # the guide is read independently of ``bias_active``.
+                guide = None
+                if guide_grids is not None:
+                    guide = guide_grids[b].detach().to(
+                        device="cpu", dtype=torch.float32
                     )
-                indices = self._block_to_indices(top, left, bh, bw)
-                per_image_pred.append(indices)
-                pred_indices_union.update(indices)
+                    if guide.dim() == 2:  # occupancy only; no dilated channel
+                        guide = torch.stack([guide, guide], dim=0)
+                occupancy = guide[0] if guide is not None else None
+                placement = guide[1] if guide is not None else None
+                usable = bias_active and guide is not None
+                if usable and guide_valid is not None:
+                    usable = bool(guide_valid[b])
+                # Bernoulli(r_t) per block, matching every other mode: the ramp
+                # decides how many of the four blocks follow the guide.
+                biased_flags = [
+                    bool(usable and random.random() < self._r_t)
+                    for _ in range(self.npred)
+                ]
+                # Draw the non-guided block locations ONCE so retries cannot
+                # quietly bias blocks the ramp designated as random.
+                fixed_uniform: List[Optional[List[int]]] = []
+                for p in range(self.npred):
+                    if biased_flags[p]:
+                        fixed_uniform.append(None)
+                    else:
+                        bh, bw = pred_sizes[p]
+                        top, left = self._sample_uniform_location(
+                            bh, bw, self.height, self.width
+                        )
+                        fixed_uniform.append(
+                            self._block_to_indices(top, left, bh, bw)
+                        )
+                if usable and any(biased_flags):
+                    per_image_pred, stats = self._sample_mirage_blocks(
+                        pred_sizes, occupancy, placement, biased_flags, fixed_uniform
+                    )
+                    mirage_batch["guided_images"] += 1
+                    mirage_batch["accepted"] += int(stats["accepted"])
+                    mirage_batch["infeasible"] += int(not stats["feasible"])
+                    mirage_batch["block_fill_sum"] += stats["mean_block_fill"]
+                    mirage_batch["retina_visible_sum"] += stats["retina_visible"]
+                    mirage_batch["attempts_sum"] += stats["attempts"]
+                else:
+                    if guide is None or (
+                        guide_valid is not None and not bool(guide_valid[b])
+                    ):
+                        mirage_batch["fallback_invalid"] += 1
+                    else:
+                        mirage_batch["unbiased_by_ramp"] += 1
+                    per_image_pred = [
+                        indices for indices in fixed_uniform if indices is not None
+                    ]
+                for indices in per_image_pred:
+                    pred_indices_union.update(indices)
+                if occupancy is not None and pred_indices_union:
+                    flat = occupancy.flatten()
+                    on_region = sum(
+                        1
+                        for i in pred_indices_union
+                        if float(flat[i]) >= self.mirage_occupancy_threshold
+                    )
+                    mirage_batch["target_on_region_sum"] += on_region / len(
+                        pred_indices_union
+                    )
+                mirage_batch["images"] += 1
+                mirage_batch["patches_per_block_sum"] += sum(
+                    len(indices) for indices in per_image_pred
+                )
+                mirage_batch["unique_target_sum"] += len(pred_indices_union)
+            else:
+                for p in range(self.npred):
+                    bh, bw = pred_sizes[p]
+                    # Bernoulli(r_t) per block (P1 fix — never round to 0).
+                    if (
+                        bias_active
+                        and weight_grid is not None
+                        and random.random() < self._r_t
+                    ):
+                        top, left = self._sample_biased_location(bh, bw, weight_grid)
+                    else:
+                        top, left = self._sample_uniform_location(
+                            bh, bw, self.height, self.width
+                        )
+                    indices = self._block_to_indices(top, left, bh, bw)
+                    per_image_pred.append(indices)
+                    pred_indices_union.update(indices)
 
             # --- Enc blocks (BIT-IDENTICAL to multiblock) ---
             for e in range(self.nenc):
@@ -800,6 +1192,8 @@ class CurriculumMaskGenerator:
                 masks_enc[e].append(
                     torch.tensor(sorted(best_indices), dtype=torch.long)
                 )
+                if self.mode == "mirage_envelope":
+                    mirage_batch["context_patch_sum"] += len(best_indices)
 
             for p in range(self.npred):
                 masks_pred[p].append(
@@ -823,6 +1217,32 @@ class CurriculumMaskGenerator:
             collated_masks_pred.append(
                 torch.stack([t[:global_min_pred] for t in group], dim=0)
             )
+
+        if self.mode == "mirage_envelope":
+            images = max(mirage_batch["images"], 1)
+            guided = max(mirage_batch["guided_images"], 1)
+            self._mirage_stats = {
+                "images": mirage_batch["images"],
+                "guided_images": mirage_batch["guided_images"],
+                # Guides that could not be used at all: QC-invalid or missing.
+                "fallbacks": mirage_batch["fallback_invalid"],
+                # Guided attempts where some block found no admissible window.
+                "infeasible": mirage_batch["infeasible"],
+                # Images the ramp deliberately left fully random (r_t < 1).
+                "unbiased_by_ramp": mirage_batch["unbiased_by_ramp"],
+                "accept_rate": mirage_batch["accepted"] / guided,
+                "mean_block_fill": mirage_batch["block_fill_sum"] / guided,
+                "retina_visible": mirage_batch["retina_visible_sum"] / guided,
+                "target_on_region": mirage_batch["target_on_region_sum"] / images,
+                "target_background": 1.0
+                - mirage_batch["target_on_region_sum"] / images,
+                "patches_per_block": mirage_batch["patches_per_block_sum"]
+                / (images * self.npred),
+                "unique_target_patches": mirage_batch["unique_target_sum"] / images,
+                "context_patches": mirage_batch["context_patch_sum"] / images,
+                "mean_attempts": mirage_batch["attempts_sum"] / guided,
+                "truncated_target_patches": global_min_pred,
+            }
 
         return collated_masks_enc, collated_masks_pred
 
@@ -1199,6 +1619,11 @@ class CurriculumMaskGenerator:
     # ------------------------------------------------------------------
     # Stateless DataLoader collate (used in place of the collator object)
     # ------------------------------------------------------------------
+
+    @property
+    def mirage_stats(self) -> dict:
+        """Per-batch MIRAGE masking statistics from the last ``generate`` call."""
+        return dict(self._mirage_stats)
 
     @staticmethod
     def stack_collate(batch):

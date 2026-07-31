@@ -89,16 +89,25 @@ models:
 
   dinov3:
     role: primary_dense_vision_guide
-    model_id: facebook/dinov3-vitl16-pretrain-lvd1689m
-    revision: ea8dc2863c51be0a264bab82070e3e8836b02d51
-    official_parameters: 300000000
-    artifact_parameters: 303129600
+    model_id: facebook/dinov3-vit7b16-pretrain-lvd1689m
+    local_path: 'D:\jepa_phase0\models\dinov3'
+    revision: b80367753773648a6793235ab9c65cdbb029506f
+    official_parameters: 6716000000
+    artifact_parameters: 6716035072
+    tensor_count: 687
+    artifact_bytes: 26864283632
+    shard_hash_manifest:
+      path: 'D:\jepa_phase0\models\dinov3\sha256.json'
+      sha256: 0f4e85c0eac28b2023da1227b49e9efc177f86aa905c361f287d1f40d4d1f294
     input_size: 224
     patch_size: 16
+    embed_dim: 4096
+    num_heads: 32
     frozen_readout: final normalized CLS token
-    inference_dtype: float32
-    inference_batch_size: 64
-    access: manual Hugging Face approval required
+    inference_dtype: bfloat16
+    inference_batch_size: 1
+    access: approved and authenticated on 2026-07-16
+    comparison_role: total-system-size-matched control for 8B VLM guides
     license: DINOv3 License
     license_url: https://ai.meta.com/resources/models-and-libraries/dinov3-license/
 
@@ -110,11 +119,15 @@ models:
     official_size: 8B
     artifact_parameters: 8767123696
     artifact_visual_parameters: 576388336
-    input_area: 512x512
+    input_area: aspect-preserving dynamic resolution from full source
     frozen_readout: mean final post-merger image tokens
     inference_dtype: bfloat16
     inference_batch_size: 1
     grounding: generated bbox_2d and point_2d coordinates in [0, 1000]
+    primary_grounding: matched single-point mode
+    auxiliary_grounding:
+      - plural points
+      - boxes as a separate Qwen-only capability
     license: Apache-2.0
     license_url: https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct
 
@@ -132,8 +145,30 @@ models:
     inference_batch_size: 1
     trust_remote_code: true
     grounding: generated native points; no official box API
+    preprocessing: full source, global view plus up to 24 local 378x378 crops
+    primary_grounding: matched single-point mode
+    auxiliary_grounding: plural points
     license: Apache-2.0
     license_url: https://huggingface.co/allenai/MolmoPoint-8B
+
+  sam3:
+    role: experimental_dense_segmenter
+    model_id: facebook/sam3
+    local_path: 'D:\jepa_phase0\models\sam3'
+    revision: 3c879f39826c281e95690f02c7821c4de09afae7
+    artifact_parameters: 859922360
+    tensor_count: 1797
+    safetensors:
+      bytes: 3439938512
+      sha256: 6d06f0a5f84e435071fe6603e61d0b4cc7b40e0d39d487cfd4d67d8cc11cc14a
+    official_checkpoint:
+      filename: sam3.pt
+      bytes: 3450062241
+      sha256: 9999e2341ceef5e136daa386eecb55cb414446a00ac2b55eb2dfd2f7c3cf8c9e
+    inference_dtype: bfloat16
+    runtime: isolated Transformers 5.14.1 on Windows
+    license: SAM License
+    license_url: https://huggingface.co/facebook/sam3/blob/3c879f39826c281e95690f02c7821c4de09afae7/LICENSE
 
 environment:
   python: "3.11"

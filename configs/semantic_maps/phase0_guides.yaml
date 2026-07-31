@@ -24,15 +24,14 @@ guides:
 
   dinov3:
     enabled: true
-    official_model_id: facebook/dinov3-vitl16-pretrain-lvd1689m
-    model_id: facebook/dinov3-vitl16-pretrain-lvd1689m
-    revision: ea8dc2863c51be0a264bab82070e3e8836b02d51
-    cache_dir: 'D:\jepa_phase0\models\dinov3'
+    official_model_id: facebook/dinov3-vit7b16-pretrain-lvd1689m
+    model_id: 'D:\jepa_phase0\models\dinov3'
+    revision: b80367753773648a6793235ab9c65cdbb029506f
     input_size: 224
-    dtype: float32
-    published_parameters: 300000000
-    evaluation_batch_size: 64
-    atlas_batch_size: 4
+    dtype: bfloat16
+    published_parameters: 6716000000
+    evaluation_batch_size: 1
+    atlas_batch_size: 1
     local_files_only: true
 
   qwen3_vl:
@@ -40,15 +39,17 @@ guides:
     official_model_id: Qwen/Qwen3-VL-8B-Instruct
     model_id: 'D:\jepa_phase0\models\qwen3_vl'
     revision: 0c351dd01ed87e9c1b53cbc748cba10e6187ff3b
-    input_size: 512
     dtype: bfloat16
     published_parameters: 8767123696
     published_visual_parameters: 576388336
     evaluation_batch_size: 1
     atlas_batch_size: 1
     local_files_only: true
-    caption_max_new_tokens: 48
-    grounding_max_new_tokens: 96
+    grounding_mode: single_point
+    caption_max_new_tokens: 512
+    single_point_max_new_tokens: 96
+    plural_points_max_new_tokens: 512
+    boxes_max_new_tokens: 256
 
   molmo:
     enabled: true
@@ -61,8 +62,10 @@ guides:
     evaluation_batch_size: 1
     atlas_batch_size: 1
     local_files_only: true
-    caption_max_new_tokens: 48
+    grounding_mode: single_point
+    caption_max_new_tokens: 512
     point_max_new_tokens: 64
+    plural_point_max_new_tokens: 200
 
   siglip2:
     enabled: false
@@ -84,7 +87,17 @@ maps:
   pca:
     components: 3
     whiten: true
-    source: DINOv3 official PCA visualization, adapted without foreground fit
+    diagnostic: per-image all-patch PCA at the standard 224 evaluation crop
+    paper_style:
+      script: scripts/dinov3_pca_atlas.py
+      image_height: 768
+      source_commit: 6876159a11b4df116f30f667f8c9888617df0751
+      foreground: supervised nine-mask logistic classifier, retrained for ViT-7B
+      color_transfer: sigmoid(2*z), background black
+      orientation_policy: retain all 48 sign/RGB variants
+    unsupervised:
+      method: DINOv2-style two-stage per-image PCA adaptation
+      polarity_policy: retain both unresolved PC1 polarities
   tokencut:
     enabled: true
     root: 'D:\jepa_phase0\official\TokenCut'

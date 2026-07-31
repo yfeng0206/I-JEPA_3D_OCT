@@ -290,13 +290,30 @@ The exact lock is stored in
 ### DINOv3
 
 ```text
-facebook/dinov3-vitl16-pretrain-lvd1689m
-revision ea8dc2863c51be0a264bab82070e3e8836b02d51
-official size: 300M
-artifact parameters: 303,129,600
+facebook/dinov3-vit7b16-pretrain-lvd1689m
+revision b80367753773648a6793235ab9c65cdbb029506f
+official size: 6,716M
+artifact parameters: 6,716,035,072
+artifact bytes: 26,864,283,632
+tensor count: 687
 ```
 
-Manual Hugging Face approval and the custom DINOv3 license are required.
+Hugging Face access was approved and authenticated on 2026-07-16. The custom
+DINOv3 license still applies. ViT-7B is the from-scratch teacher in the official
+release; ViT-S/S+/B/L/H+ are distilled from it.
+
+This primary control matches the deployed system scale of the two 8B VLMs:
+
+| Guide | Total parameters | Visual parameters used for frozen features |
+|---|---:|---:|
+| DINOv3 ViT-7B/16 | 6.716B | 6.716B |
+| Qwen3-VL-8B | 8.767B | 576M |
+| MolmoPoint-8B | 8.678B | 469M vision plus connector |
+
+The total systems are within 1.31x. The visual encoders are not matched, so
+results must not be described as isolating language supervision. ViT-B (86M)
+and ViT-L (300M) are excluded from the primary result table to avoid an
+obviously smaller DINO control.
 
 ### Qwen3-VL
 
@@ -386,22 +403,40 @@ Source:
 
 ### Three-component PCA
 
-Use the official DINOv3 notebook procedure as the source for visualization:
+The former 224-pixel all-patch panel is retained only as a diagnostic. It is
+not the paper visualization: it has 196 patches, no foreground mask, and
+per-channel min-max display scaling.
+
+The paper-style ViT-7B adaptation follows the released DINOv3 notebook:
 
 - final normalized patch features;
+- aspect-preserving 768-pixel input aligned to patch size 16;
+- supervised foreground classifier retrained on the nine released image/mask
+  pairs for the ViT-7B 4,096-dimensional feature space;
+- 3x3 median filtering and foreground threshold 0.5;
 - `PCA(n_components=3, whiten=True)`;
-- transform patches to three display channels;
-- fit on all patches because the official foreground helper is supervised;
-- label this as an all-patch adaptation, not the official foreground-PCA
-  reproduction.
+- PCA fit on foreground patches only;
+- `sigmoid(2*z)` color transfer and black background;
+- all 48 sign/component-to-RGB orientations retained, with no automatic
+  aesthetic selection.
+
+This is labeled **DINOv3 notebook-style ViT-7B adaptation with supervised
+foreground mask**. The foreground helper is supervised even though the rainbow
+part colors are PCA-derived.
+
+An unsupervised companion uses DINOv2-style two-stage PCA and retains both PC1
+foreground polarities because sign selection is otherwise subjective.
 
 Sources:
 
 - [DINOv3 PCA notebook](https://github.com/facebookresearch/dinov3/blob/6876159a11b4df116f30f667f8c9888617df0751/notebooks/pca.ipynb)
 - [DINOv3 foreground notebook](https://github.com/facebookresearch/dinov3/blob/6876159a11b4df116f30f667f8c9888617df0751/notebooks/foreground_segmentation.ipynb)
 
-The existing local one-PC signed map is only a diagnostic and must not be
-presented as the official DINOv3 visualization.
+The DINOv3 paper's page-2 maps use unspecified high-resolution inputs. Figure 13
+uses 1280x960 ViT-7B features (80x60 tokens), while Section 6.1.1 inspects all
+eight sign choices and six RGB permutations and publishes the visually most
+compelling one. Those choices explain why a paper panel should not be compared
+directly with an automatic 224-pixel first-three-PC plot.
 
 ### TokenCut-style NCut
 
@@ -432,25 +467,34 @@ Prompts:
 
 ```text
 Caption:
-Describe this image in one factual sentence of at most 20 words.
+Describe this image.
 
-Qwen box:
-Return one JSON item with bbox_2d and label for the most prominent named
-class instance.
+Matched Qwen point:
+Identify and locate the single most visually prominent visible object.
+Return exactly one point JSON object with a specific noun label.
 
-Qwen point:
-Return one JSON item with point_2d and label for the most prominent named
-class instance.
+Matched Molmo point:
+Point to the single most visually prominent object.
 
-Molmo:
-Point to the most prominent object in the image.
+Plural coverage:
+Each model locates all visually prominent objects with native points.
+
+Qwen-only capability:
+Locate visually prominent objects using bounding boxes.
 ```
 
 Use deterministic/greedy decoding for the locked comparison. Preserve raw
 text, parsed output, coordinates, latency, memory, and failures.
 Neither VLM receives the ImageNet class label. Molmo's extracted point is
-therefore labeled `prominent object`, not retrospectively assigned the
-ground-truth class.
+therefore generically labeled, not retrospectively assigned the ground-truth
+class. Qwen must return concrete object labels but is free to select a person
+instead of the ImageNet class object; that is a measured salience failure, not
+repaired with class conditioning.
+
+Qwen receives the full source through dynamic native resolution. Molmo receives
+the full source through its global-plus-local-crop processor. Results produced
+from the earlier hidden 224 crop are superseded and cannot be used for the
+grounding decision.
 
 Pass requirements:
 

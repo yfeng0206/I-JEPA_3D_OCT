@@ -39,10 +39,12 @@ the best grounded VLM-guided target policy
 - DINOv3 is the primary dense vision guide.
 - Qwen3-VL and Molmo are the two VLMs evaluated in Phase 0.
 - Use official paper/model-card checkpoints and published parameter counts.
-  Do not create custom model scales merely to force parameter equality.
-- Use a standard DINOv3 checkpoint recommended by its official release. Report
-  architecture differences rather than claiming that language supervision is
-  isolated by parameter matching.
+- The primary system-size comparison is DINOv3 ViT-7B/16 (6.716B) against
+  Qwen3-VL-8B (8.767B) and MolmoPoint-8B (8.678B). Do not add smaller DINO
+  variants to the primary Phase-0 table.
+- Report both total and visual-stack parameter counts. Total-size matching does
+  not isolate language supervision because the VLM visual stacks contain only
+  576M (Qwen) and 469M (Molmo vision plus connector) parameters.
 - The dataset supplies images only. Any caption or fixed generic instruction is
   internal training-time supervision.
 - Every VLM atlas panel includes the generated text beside the shaded regions.
@@ -81,7 +83,7 @@ Legend: DONE / IN PROGRESS / TODO / DEFERRED
 | P0-A | Common frozen-guide tensor API | DONE | Dense tokens map to a validated spatial grid |
 | P0-B | Audit online I-JEPA checkpoints/results | IN PROGRESS | Official assets and published ImageNet-1K/50/100 results recorded |
 | P0-C | Choose reproducible ImageNet-50 definition | IN PROGRESS | Published class manifest and legitimate data source pinned |
-| P0-D | DINOv3 adapter/checkpoint | DONE, access pending | Approved checkpoint loads and produces stable maps |
+| P0-D | DINOv3-7B adapter/checkpoint | IN PROGRESS | Approved checkpoint loads in BF16 and produces stable maps |
 | P0-E | Qwen3-VL and Molmo grounding smoke | TODO | Captions and native grounding work on 20 images |
 | P0-F | Frozen ImageNet-50 kNN/linear evaluation | TODO | Comparable fixed protocol for all available encoders |
 | P0-G | Generate a 100-200 image atlas | TODO | DINO and VLM maps are spatially meaningful and stable |
@@ -186,6 +188,15 @@ PCA measures dominant variation. It does not prove semantic importance. It may
 highlight foreground/background, texture, color, illumination, or boundaries.
 For this reason PCA remains a visual diagnostic rather than the primary guide.
 
+The publication-style PCA panel is separate from the 224-pixel diagnostic. It
+uses ViT-7B final normalized patch features at 768-pixel, aspect-preserving
+resolution. The released DINOv3 notebook protocol is reproduced as an explicit
+adaptation: a foreground classifier trained on the nine released masks,
+3x3 median filtering, foreground-only whitened PCA, `sigmoid(2*z)` colors, and
+black background. All 48 PCA sign/RGB permutations are retained rather than
+silently selecting the most attractive one. A DINOv2-style unsupervised
+two-stage PCA is reported separately with both unresolved PC1 polarities.
+
 ## 1.2 Grounded-VLM score maps
 
 The desired VLM path is:
@@ -220,8 +231,11 @@ relation:
   dog drinking water
 ```
 
-Grounded outputs are rasterized onto the 14x14 patch grid. A variable number
-of valid entities is fused into one map; target block count remains fixed.
+Native grounded points are the matched Qwen/Molmo endpoint. A point-only
+Gaussian map may be derived on a declared common grid for candidate-target
+illustration, but it is named `derived_grounding_raster`, not a native
+confidence or feature map. Qwen boxes are displayed as a separate capability
+and are not merged into the matched point comparison.
 
 Raw decoder attention is not accepted as grounding without validation. The
 selected VLM must expose native boxes, pointing, or another demonstrably
@@ -243,6 +257,18 @@ Qwen3-VL and Molmo papers/model cards. Record, rather than recalculate:
 The full VLM is needed to produce generated text and native grounding. It
 remains frozen and is used only for batched inference. No VLM weights are
 trained in Phase 0.
+
+Both VLMs receive the complete source image. Qwen uses its official
+aspect-preserving dynamic-resolution processor. Molmo uses its official global
+view plus up to 24 local 378x378 crops. The 224 center crop is reserved for the
+I-JEPA/DINO frozen-classification protocol and is not applied before either
+VLM processor.
+
+Primary grounding is a class-label-free, matched single-point task. A separate
+plural-point run measures multi-object coverage. Qwen multi-box grounding is
+run separately because MolmoPoint has no native box decoder. Raw points/boxes
+remain the primary qualitative output; all coordinate rasters are declared
+analyst post-processing.
 
 Run a 20-image smoke test on images containing:
 
@@ -532,7 +558,16 @@ too strongly on important visible patches can specialize the encoder.
 ### Other required references
 
 - DSeq-JEPA: endogenous attention-based regions and sequential JEPA prediction.
-- Mask What Matters: text-guided medical ROI masking with an external stack.
+- Mask What Matters (arXiv:2509.23054): the closest broad pipeline. It uses an
+  LLM to generate task/category prompts, BiomedCLIP plus M2IB saliency, K-means
+  binarization, connected components, SAM refinement, expanded ROI boxes, and
+  differentiated ROI/background masking in SparK/MAE-style medical pretraining.
+  It already occupies VLM+SAM-guided semantic masking for medical SSL.
+- OA-VCD / Mask What Matters (arXiv:2602.11737): partially overlapping only at
+  the external saliency-selector level. It thresholds DINO CLS attention to
+  remove salient pixels from an auxiliary image for inference-time MLLM logit
+  contrast; it has no SAM, MIM/JEPA training, entity grounding, or target-budget
+  matching.
 - AttMask: teacher-attention masking.
 - SemMAE: semantic parts and part-level masking.
 - TC-JEPA: caption-conditioned JEPA and patch-word relations.
@@ -547,6 +582,8 @@ Only after evidence:
 Do not claim:
 
 - first VLM-guided masking;
+- first VLM+SAM semantic masking for medical self-supervised learning;
+- first text-guided high-ROI/low-background masking;
 - first prompt-free CLIP masking;
 - first caption-conditioned JEPA;
 - first patch-text grounding in JEPA;

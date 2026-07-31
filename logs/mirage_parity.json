@@ -1,0 +1,28 @@
+{
+  "geometry": {
+    "random": {
+      "patches_per_block": 37.0,
+      "unique_target_patches": 103.140625,
+      "context_patches": 73.5,
+      "target_on_region": 0.30883918643993435
+    },
+    "oracle": {
+      "patches_per_block": 37.0,
+      "unique_target_patches": 99.0390625,
+      "context_patches": 82.5,
+      "target_on_region": 0.33707112262582944
+    },
+    "mirage": {
+      "patches_per_block": 37.0,
+      "unique_target_patches": 117.1875,
+      "context_patches": 66.25,
+      "target_on_region": 0.3128606582005478
+    }
+  },
+  "lift_vs_random": 1.013021248394577,
+  "failures": [
+    "unique_target_patches spread 17.0% > 6%",
+    "context_patches spread 21.9% > 10%",
+    "MIRAGE lift over random is only 1.01x"
+  ]
+}

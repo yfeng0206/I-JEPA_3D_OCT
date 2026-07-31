@@ -53,7 +53,9 @@ class DINOv3Guide(_FixedImageGuide):
             from transformers import AutoModel
 
             pretrained_kwargs = self._pretrained_kwargs()
-            pretrained_kwargs["attn_implementation"] = "eager"
+            pretrained_kwargs["attn_implementation"] = self.kwargs.get(
+                "attn_implementation", "eager"
+            )
             self.model = AutoModel.from_pretrained(
                 self.model_id, **pretrained_kwargs
             ).to(self.device).eval()
@@ -110,7 +112,9 @@ class DINOv3Guide(_FixedImageGuide):
             },
             model_metadata={
                 "guide": self.name,
-                "official_model_id": self.model_id,
+                "official_model_id": self.kwargs.get(
+                    "official_model_id", self.model_id
+                ),
                 "dtype": str(self.dtype).replace("torch.", ""),
                 "device": str(self.device),
                 "frozen": True,
@@ -148,7 +152,9 @@ class DINOv3Guide(_FixedImageGuide):
             },
             model_metadata={
                 "guide": self.name,
-                "official_model_id": self.model_id,
+                "official_model_id": self.kwargs.get(
+                    "official_model_id", self.model_id
+                ),
                 "dtype": str(self.dtype).replace("torch.", ""),
                 "device": str(self.device),
                 "frozen": True,

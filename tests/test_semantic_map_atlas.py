@@ -3,14 +3,24 @@ import os
 import tempfile
 import unittest
 
+import numpy as np
+from PIL import Image
+import torch
+
 from scripts.semantic_map_atlas import (
     commit_output_dir,
+    guide_input_tensors,
+    guide_input_transform_profile,
     image_id,
+    load_images,
     load_input_manifest,
     prepare_output_dir,
     safe_model_id,
+    save_guide_npz,
     sanitize_error,
     sanitize_metadata,
+    select_primary_map,
+    validate_atlas_batch_size,
 )
 
 
@@ -100,10 +110,61 @@ class AtlasUtilityTests(unittest.TestCase):
                 load_input_manifest(manifest_path, 1)
 
     def test_metadata_sanitization_converts_tensors(self):
-        import torch
-
         value = sanitize_metadata({"tensor": torch.tensor([1, 2])})
         self.assertEqual(value, {"tensor": [1, 2]})
+
+    def test_full_source_is_preserved_for_display_and_vlm_inputs(self):
+        with tempfile.TemporaryDirectory() as root:
+            image_path = os.path.join(root, "wide.png")
+            Image.new("RGB", (12, 4), color="red").save(image_path)
+            originals, tensors = load_images(
+                [{"path": image_path}], crop_size=224
+            )
+            self.assertEqual(originals[0].size, (12, 4))
+            self.assertEqual(tuple(tensors[0].shape), (3, 4, 12))
+            for guide_name in ("qwen3_vl", "molmo"):
+                prepared = guide_input_tensors(
+                    tensors, guide_name, crop_size=224
+                )
+                self.assertEqual(tuple(prepared[0].shape), (3, 4, 12))
+                self.assertTrue(
+                    guide_input_transform_profile(guide_name)[
+                        "preserves_source_aspect_ratio"
+                    ]
+                )
+
+    def test_patch_guides_keep_deterministic_256_center_crop_224(self):
+        tensor = torch.zeros(3, 100, 300)
+        prepared = guide_input_tensors([tensor], "dinov3", crop_size=224)
+        self.assertEqual(tuple(prepared[0].shape), (3, 224, 224))
+        profile = guide_input_transform_profile("ijepa", crop_size=224)
+        self.assertEqual(profile["resize_short_side"], 256)
+        self.assertEqual(profile["center_crop"], 224)
+        self.assertEqual(validate_atlas_batch_size("dinov3", 4), 4)
+        for guide_name in ("qwen3_vl", "molmo"):
+            with self.subTest(guide=guide_name), self.assertRaises(ValueError):
+                validate_atlas_batch_size(guide_name, 2)
+
+    def test_grounding_raster_is_explicitly_derived_in_maps_and_npz(self):
+        raster = torch.ones(2, 3)
+        name, selected = select_primary_map({}, raster)
+        self.assertEqual(name, "derived_grounding_raster")
+        self.assertIs(selected, raster)
+        with tempfile.TemporaryDirectory() as root:
+            save_guide_npz(
+                root,
+                "image",
+                "qwen3_vl",
+                {},
+                None,
+                raster,
+                None,
+                None,
+            )
+            path = os.path.join(root, "maps", "image__qwen3_vl.npz")
+            with np.load(path) as payload:
+                self.assertIn("derived_grounding_raster", payload.files)
+                self.assertNotIn("grounded_native_raster", payload.files)
 
 
 if __name__ == "__main__":

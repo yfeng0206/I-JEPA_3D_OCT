@@ -1,7 +1,7 @@
 # Phase-0 ImageNet-50 Preliminary Findings
 
-**Status:** implementation and ImageNet-50 materialization complete; full
-experiment awaits a free GPU window and DINOv3 access.
+**Status:** implementation and ImageNet-50 materialization complete; DINOv3-7B
+access is approved and the size-matched checkpoint is being validated locally.
 
 This document separates completed research/tooling evidence from results that
 cannot yet be produced. The locked plan remains
@@ -14,15 +14,15 @@ cannot yet be produced. The locked plan remains
 - Meta published no I-JEPA ImageNet-50/100 kNN or linear result. Its official
   ViT-H/14 ImageNet-1K frozen-linear result is 79.3%; it is context, not a local
   baseline.
-- The local comparison uses official standard checkpoints rather than inventing
-  parameter-matched variants:
+- The local comparison uses official standard checkpoints and matches the
+  primary deployed guide systems at the 7B/8B scale:
 
-| Model | Frozen parameters relevant to comparison |
-|---|---:|
-| I-JEPA ViT-H/14 | 630,762,240 |
-| DINOv3 ViT-L/16 | 303,129,600 artifact / 300M official |
-| Qwen3-VL visual tower | 576,388,336 |
-| Molmo vision backbone + connector | 469,115,216 |
+| Model | Total parameters | Visual-stack parameters |
+|---|---:|---:|
+| I-JEPA ViT-H/14 | 630,762,240 | 630,762,240 |
+| DINOv3 ViT-7B/16 | 6.716B | 6.716B |
+| Qwen3-VL-8B | 8.767B | 576,388,336 |
+| MolmoPoint-8B | 8.678B | 469,115,216 |
 
 - The three literature-backed visualization paths are final CLS attention
   adapted to DINOv3, all-patch three-component PCA adapted from the official
@@ -44,10 +44,10 @@ ready, but the required ImageNet experiment has not run.
 | Obtain an I-JEPA checkpoint usable for ImageNet-50 | Complete | Official ImageNet-1K-pretrained ViT-H/14 `target_encoder`; no ImageNet-50-specific checkpoint is needed for frozen evaluation |
 | Pin a reproducible ImageNet-50 definition | Research complete | CMC-derived 50-WNID manifest and expected 63,747/2,500 counts are pinned |
 | Materialize and verify ImageNet-50 files | Complete | 63,747 train + 2,500 validation images; every file SHA-256-recorded and decode-verified |
-| Download all four checkpoints | Partial | I-JEPA, Qwen3-VL, and MolmoPoint are local; DINOv3 remains access-gated |
+| Download all four checkpoints | In progress | I-JEPA, Qwen3-VL, and MolmoPoint are local; approved DINOv3-7B is downloading |
 | Run 20-image Qwen/Molmo grounding gate | Ready, not run | Deterministic first-20-WNID manifest exists; GPU is currently reserved by the user |
-| Run frozen ImageNet-50 kNN/linear for all encoders | Partial blocker | Data/code are ready; GPU run has not started and DINOv3 remains gated |
-| Generate 100-200-image atlas and manually review 30-50 | Partial blocker | Deterministic 150-image manifest exists; GPU run and DINO panels remain |
+| Run frozen ImageNet-50 kNN/linear for all encoders | Ready, not run | Data/code and access are ready; size-matched DINOv3-7B BF16 smoke runs first |
+| Generate 100-200-image atlas and manually review 30-50 | Ready, not run | Deterministic 150-image manifest exists; DINOv3-7B and VLM panels remain |
 | Report grounding/stability/coverage/hallucination diagnostics | Blocked | Requires the manifest-locked ImageNet sample and annotations/manual review |
 | Lock one readout/guide and decide Phase 1 | Blocked | DINO versus VLM comparison has not run |
 
@@ -145,10 +145,10 @@ The following are not available and must not be inferred:
 - DINOv3 attention, PCA, TokenCut, or DINO-VLM difference results;
 - a Phase-1 guide selection.
 
-Official ImageNet-50 files are now present and verified. DINOv3 still requires
-approved access. Unauthorized mirrors were not used.
+Official ImageNet-50 files and approved DINOv3-7B access are now present.
+Unauthorized mirrors were not used.
 
 **Current decision:** the implementation is ready, but the scientific decision
-is **WAIT FOR THE GPU WINDOW AND DINO ACCESS**. Qwen and Molmo both pass
-one-image API/memory checks; neither has passed the reliability gate, and
-DINOv3 has not yet been compared.
+is **RUN THE SIZE-MATCHED PHASE-0 TESTS**. Qwen and Molmo both pass one-image
+API/memory checks; neither has passed the reliability gate, and DINOv3-7B has
+not yet been compared.

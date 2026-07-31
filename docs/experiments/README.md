@@ -5,7 +5,7 @@ Three sections: pretraining (the SSL runs), frozen (probe-only evaluation with e
 Research direction plans:
 
 - [`curriculum_masking.md`](curriculum_masking.md) — retinal/anatomy-guided target allocation.
-- [`mirage_guided_masking.md`](mirage_guided_masking.md) — **active direction.** Rung 1b: MIRAGE-Large segmentation as the target-block prior, replacing the hand-crafted oracle band. Policy sweep, two silent bugs found pre-launch, and the rejected alternatives.
+- [`mirage_guided_masking.md`](mirage_guided_masking.md) — **active direction.** Rung 1b: MIRAGE-Large segmentation as the target-block prior, replacing the hand-crafted oracle band. Policy sweep, where the oracle band fails, and the rejected alternatives.
 
 Archived direction:
 

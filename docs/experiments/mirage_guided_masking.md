@@ -80,6 +80,56 @@ Regenerate both figures with `python scripts/mirage_doc_figures.py`.
 
 ---
 
+## Where the oracle band fails
+
+The oracle prior
+(`curriculum.py:_anatomical_prior_weight_grid_for_image`) is a good
+hand-crafted approximation: a fixed-height ribbon whose vertical centre follows
+the **per-column intensity centroid**, so it tracks retinal curvature and tilt
+rather than being a flat rectangle. It is drawn across the central
+`oracle_lateral_frac = 0.6` of the width and sized to
+`oracle_region_frac = 0.28` of the frame.
+
+It is still a *shape* prior, and that leaves two structural blind spots:
+
+1. **Lateral window.** Columns outside the central ~60% are never in the band.
+   Retina there is unreachable regardless of how well the centroid tracks.
+2. **Intensity centroid.** The centre is the brightness centroid of each
+   column. Any other bright structure — a strong choroidal signal, an artefact,
+   a steeply tilted scan where the retina leaves the frame — drags the band off
+   the tissue.
+
+Measured over 2,339 slices from 400 volumes (`scripts/oracle_failure_cases.py`):
+
+| quantity | value |
+|---|---|
+| band area | 0.273 of frame (config asks 0.28 — the band is built as specified) |
+| **band purity** (band cells that are on retina) | **0.653** |
+| slices with band purity below 0.50 | 13.8% |
+| targets on retina — oracle | 0.458 |
+| targets on retina — MIRAGE | 0.506 |
+| slices where MIRAGE places more targets on retina | 63.1% |
+
+Note that low *coverage* of the retina is **not** a fault: the band is
+deliberately area-limited, so it cannot cover everything. The meaningful
+quantity is purity — of the cells the band claims, how many are actually
+tissue.
+
+![Oracle failure cases](../../results/masking/oracle_failure_cases.png)
+
+*The four slices with the largest MIRAGE-over-oracle gain in target-on-retina
+purity, one per eye, found by scanning rather than hand-picking. Pink marks
+cells the band claims that are not retina. In each case the retina sits high
+and to one side, outside the band's lateral window, so the oracle places its
+target blocks almost entirely on vitreous (0.03–0.08 on retina) while MIRAGE
+places them on tissue (0.52–0.62).*
+
+This is the argument for replacing the oracle: not that the hand-crafted band
+is bad on average — it is respectable, and it beats random — but that its
+failures are **systematic** rather than random. They occur wherever the anatomy
+violates the shape assumption, and those are exactly the eyes where anatomy is
+unusual. A segmentation model has no shape assumption to violate.
+
 ## Selected policy: occupancy threshold 0.25, dilation 0
 
 MIRAGE gives a *fractional* retina occupancy per 16×16 patch. The threshold
@@ -117,10 +167,7 @@ original envelope.
 
 ---
 
-## Bug: blocks were placed from one grid and scored against another
-
-Found in pre-launch review. **This is the most important thing in this
-document** because it was completely silent.
+## Threshold wiring: placement region vs scoring truth
 
 Two independent places turn the fractional occupancy into a boolean:
 
@@ -135,7 +182,6 @@ so the dataset kept its `0.5` default. Blocks were drawn from the *smaller* 0.5
 region and scored against the *larger* 0.25 truth.
 
 Nothing crashed and no logged metric looked obviously wrong.
-
 Paired A/B, 2,560 images at full guidance (`scripts/threshold_fix_masks.py --aggregate`):
 
 | metric | 0.50 (bug) | 0.25 (fixed) | change |
@@ -164,7 +210,7 @@ the encoder's context and each of the four target blocks separately.
 
 ---
 
-## Bug: 200× read amplification made training disk-bound
+## Slice I/O: read amplification
 
 The first launch ran at **7.6 img/s with the GPU idle at 0–1% and 30 W** —
 about 68 days for the run.
@@ -367,7 +413,9 @@ Analysis entry points:
 |---|---|
 | `mirage_method_sweep.py` | the 1,000-volume policy sweep; caches masks so re-scoring under a new tissue truth takes seconds |
 | `mirage_method_panels.py` | per-method visual panels |
-| `masking_explained.py` | the threshold bug and the predictor's view |
+| `mirage_doc_figures.py` | the guide-pipeline and three-arms figures in this document |
+| `oracle_failure_cases.py` | scans for and renders slices where the oracle band sits off tissue and MIRAGE does not |
+| `masking_explained.py` | the threshold wiring and the predictor's view |
 | `threshold_fix_masks.py` | threshold A/B, `--aggregate` measures at true batch size |
 | `context_keep_eval.py` | `keep_TRUE` (retina visible after context *and* target masking) |
 | `compare_mirage_vs_oracle.py` | parity check against the oracle arm |

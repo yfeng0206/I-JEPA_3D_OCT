@@ -46,16 +46,37 @@ region, so `src/guides/mirage_envelope.py` repairs each slice into a single
 connected retinal envelope: drop small/short components, close column gaps,
 fill holes, enforce boundary continuity.
 
+![MIRAGE guide pipeline](../../results/masking/mirage_guide_pipeline.png)
+
+*Left to right: the B-scan; MIRAGE's raw three-class output (red RNFL, amber
+GCIPL, blue choroid); the raw union, visibly three separate bands; the repaired
+envelope as one connected structure; the fractional 16×16 patch occupancy; and
+the boolean placement region at threshold 0.25. `runs/col` is the mean number of
+separate vertical runs per occupied column — the repair drives it to ≈1.00,
+i.e. every column becomes a single unbroken band.*
+
 Repair parameters are frozen and fingerprinted (`9a25a2cdb36f9cba`). Every
 cached guide stores its fingerprint and the dataset refuses to load a guide
 built with different parameters — a stale cache fails loudly instead of
 silently training on the wrong anatomy.
 
-Effect of the repair: mean vertical runs per column **2.133 → 1.002**
-(i.e. genuinely one connected band), area 13.3% → 20.3%.
+Effect of the repair over the corpus: mean vertical runs per column
+**2.133 → 1.002**, area 13.3% → 20.3%.
 
 Guides are precomputed by `scripts/mirage_precompute_guides.py`; all 6,000
 training volumes are covered.
+
+## The three arms
+
+![The three arms](../../results/masking/mirage_masking_arms.png)
+
+*Same slice, same crop, same RNG seed, so the four block sizes are identical
+across arms and only placement moves. Dimmed = withheld from the encoder;
+the four colours are the four target blocks the predictor must reconstruct.
+The per-slice on-retina numbers are a three-slice sample and are noisy — only
+the 1,000-volume aggregate below is meaningful.*
+
+Regenerate both figures with `python scripts/mirage_doc_figures.py`.
 
 ---
 
@@ -132,10 +153,14 @@ Pinned by `tests/test_mirage_config_wiring.py`, which asserts the kwarg is
 wired, that it reads `mirage_occupancy_threshold`, and that the shipped config
 still carries the selected policy.
 
-Figures: `scripts/masking_explained.py` renders `bug.png` (the two regions, the
-disagreeing cells, and before/after masks from an identical RNG seed so only
-placement moves) and `predictor.png` (the encoder's context and each of the four
-target blocks the predictor must reconstruct).
+![The threshold bug](../../results/masking/mirage_threshold_bug.png)
+
+*Columns 2–3 are the two regions; column 4 shows in magenta the cells only the
+0.25 threshold admits. Columns 5–6 are the resulting masks from an identical
+RNG seed, so the four block sizes match and only placement moved.*
+
+Figures: `scripts/masking_explained.py` also renders `predictor.png`, showing
+the encoder's context and each of the four target blocks separately.
 
 ---
 

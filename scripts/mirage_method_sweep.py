@@ -44,7 +44,6 @@ _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
-from src.guides.combined_guide import combined_envelope  # noqa: E402
 from src.guides.mirage_envelope import (  # noqa: E402
     build_union,
     dilate_patch_grid,
@@ -93,9 +92,6 @@ class Method:
     dilate: int = 0
     pred_scale: tuple = (0.15, 0.20)
     spread: bool = False
-    guide: str = "mirage"   # "mirage" (segmentation only) | "combined" (+salience)
-    min_retina_visible: float = 0.25
-    salience_k: float = DEFAULT_K
 
 
 METHODS = (
@@ -118,50 +114,19 @@ METHODS = (
     Method("center", "centre-anchored", "center", 0.50, 0),
     Method("region_only", "region-only small blocks", "region", 0.50, 0,
            pred_scale=(0.04, 0.05), spread=True),
-    # Combined guide: MIRAGE union salience, repaired as one structure.
-    Method("comb75", "COMBINED thr 0.75", "mirage", 0.75, 0, guide="combined"),
-    Method("comb50", "COMBINED thr 0.50", "mirage", 0.50, 0, guide="combined"),
-    Method("comb25", "COMBINED thr 0.25", "mirage", 0.25, 0, guide="combined"),
-    Method("comb10", "COMBINED thr 0.10", "mirage", 0.10, 0, guide="combined"),
-    Method("comb_center", "COMBINED centre-anchored", "center", 0.50, 0,
-           guide="combined"),
-    Method("comb_region", "COMBINED region-only", "region", 0.50, 0,
-           pred_scale=(0.04, 0.05), spread=True, guide="combined"),
-    # Centre-anchored with a hard floor on retinal context: retry, then trim
-    # rows/columns off the blocks if retries cannot satisfy the floor.
-    Method("comb_center_k25", "COMBINED centre >=25% retina left",
-           "center_constrained", 0.50, 0, guide="combined",
-           min_retina_visible=0.25),
-    Method("comb_center_k35", "COMBINED centre >=35% retina left",
-           "center_constrained", 0.50, 0, guide="combined",
-           min_retina_visible=0.35),
-    Method("mir_center_k20", "MIRAGE centre >=20% retina left",
-           "center_constrained", 0.50, 0, min_retina_visible=0.20),
-    Method("mir_center_k25", "MIRAGE centre >=25% retina left",
-           "center_constrained", 0.50, 0, min_retina_visible=0.25),
-    Method("mir_center_k35", "MIRAGE centre >=35% retina left",
-           "center_constrained", 0.50, 0, min_retina_visible=0.35),
-    # Salience is generous by design (k=1.5 was calibrated to catch all tissue
-    # for scoring).  As a *guide* that is too permissive -- it swallows MIRAGE
-    # and inflates masked area -- so these tighten it.
-    Method("comb_s3", "COMBINED salience k=3.0 thr 0.50", "mirage", 0.50, 0,
-           guide="combined", salience_k=3.0),
-    Method("comb_s4", "COMBINED salience k=4.0 thr 0.50", "mirage", 0.50, 0,
-           guide="combined", salience_k=4.0),
-    Method("comb_s5", "COMBINED salience k=5.0 thr 0.50", "mirage", 0.50, 0,
-           guide="combined", salience_k=5.0),
-    Method("comb_s4_center_k25", "COMBINED k=4.0 centre >=25% left",
-           "center_constrained", 0.50, 0, guide="combined", salience_k=4.0,
-           min_retina_visible=0.25),
+    # Removed after the sweep concluded, results in
+    # docs/experiments/mirage_guided_masking.md:
+    #   * COMBINED (MIRAGE union salience) -- salience alone covers 37.0% of the
+    #     frame and the union 37.1%, so MIRAGE contributed 0.1% and the guide
+    #     stopped being MIRAGE-guided.  Tightening salience to k=3/4/5 did not
+    #     rescue it.
+    #   * center_constrained (retry then trim to a retina-visible floor) --
+    #     reached the floor on only 37% of slices, and trimming changes block
+    #     size and aspect ratio, so it is no longer a location-only change.
+    # Both are recoverable from git history (see commit that added this file).
 )
 
 ALL_METHODS = METHODS
-
-# Building the combined guide costs a repair pass per slice, so it is skipped
-# entirely unless some selected method actually needs it, and only the salience
-# strengths actually requested are built.
-NEEDS_COMBINED = any(m.guide == "combined" for m in METHODS)
-COMBINED_KS = sorted({m.salience_k for m in METHODS if m.guide == "combined"})
 
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
@@ -324,17 +289,11 @@ def sample_method(method: Method, generator, occupancy, seed, image_crop=None):
         return targets, context, stats
 
     module = preview_module()
-    if method.kind == "center_constrained":
-        result = module.sample_center_anchored_constrained(
-            generator, occupancy, seed,
-            min_retina_visible=method.min_retina_visible,
-        )
-    else:
-        sampler = (
-            module.sample_center_anchored if method.kind == "center"
-            else module.sample_region_only
-        )
-        result = sampler(generator, occupancy, seed)
+    sampler = (
+        module.sample_center_anchored if method.kind == "center"
+        else module.sample_region_only
+    )
+    result = sampler(generator, occupancy, seed)
     kept, _block = module.context_patches(generator, result["union"], seed)
     return set(result["union"]), set(kept), {
         "accept_rate": float("nan"),
@@ -352,10 +311,8 @@ def _select_methods(keys):
     Windows spawns workers by re-importing the module, so a filter applied in
     the parent does not reach them; each worker must be told explicitly.
     """
-    global METHODS, NEEDS_COMBINED, COMBINED_KS
+    global METHODS
     METHODS = tuple(m for m in ALL_METHODS if m.key in keys)
-    NEEDS_COMBINED = any(m.guide == "combined" for m in METHODS)
-    COMBINED_KS = sorted({m.salience_k for m in METHODS if m.guide == "combined"})
 
 
 def evaluate_volume(task):
@@ -401,28 +358,12 @@ def evaluate_volume(task):
         raw_union = build_union(hard_masks[slot])
         image = volume[int(slice_indices[slot])]
 
-        # Combined guide is built at native resolution, exactly as a precompute
-        # would, then carried through the same crop as the MIRAGE-only guide.
-        extra_masks, extra_keys = [], []
-        for salience_k in COMBINED_KS:
-            combined, _valid, _stats = combined_envelope(
-                hard_masks[slot], image, k=salience_k
-            )
-            extra_masks.append(combined)
-            extra_keys.append(salience_k)
-
         rng = np.random.default_rng(seed + slot)
         image_crop, cropped, box = paired_crop(
-            image, [envelope, raw_union] + extra_masks, rng
+            image, [envelope, raw_union], rng
         )
         guide_crop, raw_crop = cropped[0], cropped[1]
-        occupancy = {
-            ("mirage", None): patch_occupancy(guide_crop, patch_size=PATCH),
-        }
-        for salience_k, mask in zip(extra_keys, cropped[2:]):
-            occupancy[("combined", salience_k)] = patch_occupancy(
-                mask, patch_size=PATCH
-            )
+        occupancy = patch_occupancy(guide_crop, patch_size=PATCH)
 
         band = tissue_pixels_noise_band(image_crop)
         grids = {
@@ -435,17 +376,13 @@ def evaluate_volume(task):
             continue
         keep[row] = True
         crop_boxes[row] = box
-        guide_grids[row] = (occupancy[("mirage", None)] >= 0.5).reshape(-1)
+        guide_grids[row] = (occupancy >= 0.5).reshape(-1)
         for name, grid in grids.items():
             truth_grids[name][row] = grid.reshape(-1)
 
         for index, method in enumerate(METHODS):
-            key = (
-                ("combined", method.salience_k) if method.guide == "combined"
-                else ("mirage", None)
-            )
             target_set, context_set, stats = sample_method(
-                method, generators[method.key], occupancy[key],
+                method, generators[method.key], occupancy,
                 seed + slot, image_crop=image_crop,
             )
             if target_set:

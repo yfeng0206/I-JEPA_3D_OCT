@@ -1,10 +1,20 @@
 #!/usr/bin/env python
-"""Preview region-only MIRAGE masking: every target patch inside the envelope.
+"""Alternative target-block samplers, and a preview renderer for them.
 
-The repaired retinal envelope is expanded outward by 5%, then four target
-blocks are shrunk until a window exists that lies *entirely* within that region.
-Several shrink levels are rendered side by side so the trade-off between target
-purity and total masked area can be judged before training.
+Despite the name this is a LIBRARY as well as a script: `mirage_method_sweep.py`
+loads it by path (`preview_module()`) to get `sample_center_anchored` and
+`sample_region_only`, which back the sweep's `center` and `region_only` rows.
+Do not delete it without also removing those methods.
+
+The samplers here are the ones the sweep compares *against* the shipped policy;
+all of them were rejected, with the numbers recorded in
+`docs/experiments/mirage_guided_masking.md`. They are kept because the sweep
+still needs to be able to reproduce those comparison rows.
+
+Preview mode: the repaired retinal envelope is expanded outward by 5%, then four
+target blocks are shrunk until a window exists that lies *entirely* within that
+region. Several shrink levels are rendered side by side so the trade-off between
+target purity and total masked area can be judged.
 
 Example:
     python scripts/mirage_region_only_preview.py --volumes 3

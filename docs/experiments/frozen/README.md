@@ -26,6 +26,10 @@ All rows share identical hyperparameters (bs=256, lr=4e-4, wd=0.05, dropout=0.2,
 
 MeanPool sweep over the oracle-masked checkpoints vs random — [oracle_meanpool_sweep.md](oracle_meanpool_sweep.md). Oracle is +0.010 Test AUC (≈1 point) over random at every epoch (paired bootstrap p<0.0005, all 95% CIs exclude 0). Sanity gate passed. Fine-tune comparison next.
 
+## MIRAGE-guided (Rung 1b)
+
+MeanPool sweep over the MIRAGE-masked checkpoints vs oracle and random — [mirage_meanpool_sweep.md](mirage_meanpool_sweep.md). MIRAGE beats random (+0.0062 at ep100, p=0.022) but loses to the oracle (−0.0047, 95% CI excludes 0) **despite masking the retina more purely**. Better segmentation did not produce better representations; the region-split and placement-entropy measurements that explain where the purity went are in that doc.
+
 ## Sweep plots
 
 Per-pretraining-epoch Val/Test AUC from d=1 sweep ([d1_sweep.md](d1_sweep.md)):

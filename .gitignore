@@ -16,8 +16,9 @@ configs/aml_*.yml
 results/**/eval_stdout.log
 results/**/torchrun_stdout.log
 
-# Exclude large pretraining logs (per-iteration CSVs, 6-23MB)
+# Exclude large pretraining logs (per-iteration CSVs, 6-23MB; MIRAGE arm is 104MB)
 results/pretraining/*/jepa_patch-log.csv
+results/pretraining/*/jepa_patch_*-log.csv
 results/phase0_local_examples/
 
 # Local-only working artifacts (not for PR)

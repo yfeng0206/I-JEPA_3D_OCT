@@ -1,0 +1,48 @@
+# Frozen MeanPool probe on the MIRAGE-guided encoder.
+#
+# Every hyperparameter here is copied from the oracle arm's frozen sweep
+# (docs/experiments/frozen/oracle_meanpool_sweep.md), which itself matched
+# mean_pool.md / d1_sweep.md.  The ONLY difference from that run is
+# encoder_checkpoint.  Do not tune anything below: the comparison is only
+# meaningful if the probe protocol is byte-identical across arms.
+#
+# Reference numbers to beat, Test AUC on the shared 3,000-volume Test split:
+#   random ep100  0.8746
+#   oracle ep100  0.8855   (+0.0109 over random, p < 0.0005)
+#
+# MeanPool is the zero-parameter ablation floor -- mean over slices straight
+# into a 2.3K linear head -- so it reads encoder quality almost directly
+# rather than letting a large probe compensate for weaker features.
+mode: patch
+data:
+  data_dir: D:\jepa_phase0\fairvision-glaucoma\data
+  num_slices: 100
+  slice_size: 256
+  batch_size: 256
+  num_workers: 4
+  # Volumes encoded per chunk during the one-time feature pre-computation.
+  # Features are cached under <output_dir>/feature_cache, so the frozen
+  # encoder runs once and the 50 probe epochs train on cached tensors.
+  encode_chunk_size: 50
+model:
+  encoder_checkpoint: D:\jepa_phase0\runs\patch_mirage_envelope\jepa_patch_mirage-ep75.pth.tar
+  encoder_name: vit_base
+  patch_size: 16
+  crop_size: 256
+  freeze_encoder: true
+  probe_type: mean_pool
+  head_type: linear
+training:
+  # MeanPool has no trainable parameters, so lr_probe is inert; lr_head is the
+  # 4e-4 used by every frozen run in docs/experiments/frozen/.
+  lr_probe: 0.0004
+  lr_head: 0.0004
+  weight_decay: 0.05
+  dropout: 0.2
+  epochs: 50
+  patience: 15
+  warmup_epochs: 5
+  seed: 42
+logging:
+  output_dir: D:\jepa_phase0\runs\frozen_meanpool_mirage_ep75
+

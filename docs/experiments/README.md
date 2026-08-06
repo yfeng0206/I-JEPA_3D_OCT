@@ -24,6 +24,13 @@ All results use FairVision glaucoma held-out Test split (3000 volumes). Encoder:
 | Frozen | MeanPool + Linear | 2.3K | 0.8746 | [frozen/mean_pool.md](frozen/mean_pool.md) |
 | Frozen | AttentiveProbe d=1 + Linear | 7.17M | 0.8706 | [frozen/d1_sweep.md](frozen/d1_sweep.md) |
 
+Masking ladder, frozen MeanPool on ep100 (same probe, three pretraining arms):
+random 0.8746 → oracle **0.8855** ([frozen/oracle_meanpool_sweep.md](frozen/oracle_meanpool_sweep.md))
+→ MIRAGE 0.8807 ([frozen/mirage_meanpool_sweep.md](frozen/mirage_meanpool_sweep.md)).
+**Rung 1b falsified the program's working assumption**: MIRAGE masks the retina
+more purely than the hand-crafted oracle band and still yields the weaker
+encoder, so masking purity does not predict downstream AUC.
+
 Best overall: **fine-tune with MAE-style LLRD at Test AUC 0.8878**. +0.017 over the frozen d=1 baseline.
 
 Primary ablation finding: **under fine-tune, the probe architecture is irrelevant.** All three probes land within 0.001 AUC of each other (pairwise p > 0.6). MeanPool (0 probe params) matches AttentiveProbe d=1 (7.17M probe params) when the encoder is unfrozen.
@@ -37,12 +44,16 @@ docs/experiments/
   pretraining/
     README.md
     random_100ep.md      random-init ViT-B/16, 100 ep SSL
+    oracle_100ep.md      warm-start ep25, anatomical_prior masking (Rung 1)
+    mirage_100ep.md      warm-start ep25, mirage_envelope masking (Rung 1b)
   frozen/
     README.md
     d1_sweep.md          AttentiveProbe d=1 sweep across ep25/50/75/100
     cross_attn_pool.md   minimal cross-attention (277K params) on ep100
     mean_pool.md         mean-pool + linear (ablation floor) on ep100
     ablation_analysis.md paired-bootstrap stats on all 6 runs
+    oracle_meanpool_sweep.md  frozen MeanPool, oracle vs random (Rung 1)
+    mirage_meanpool_sweep.md  frozen MeanPool, MIRAGE vs oracle vs random (Rung 1b)
   finetune/
     README.md
     llrd.md              unfrozen encoder + LLRD γ=0.5 on ep100 (3 probes)

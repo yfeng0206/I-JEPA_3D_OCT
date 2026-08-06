@@ -153,6 +153,19 @@ arm on every axis. Higher thresholds score better on purity but mask
 progressively **less** of the image, which makes the pretext task easier and
 would make any downstream AUC gain unattributable to the masking policy.
 
+> **Caveat found after the run finished.** Every MIRAGE row above was measured
+> with `mirage_spread` **disabled** (`mirage_method_sweep.py` declares
+> `spread: bool = False` on its `Method` dataclass), but
+> `configs/patch_mirage_envelope.yaml` sets `mirage_spread: true`, so the run
+> trained with it **enabled**. Spread pushes the four blocks into disjoint
+> lateral segments and inflates their union, so the "within 0.5%" area match
+> above does not hold for the config that actually trained: measured on the same
+> slices with the same seeds, unique target patches are 100.9 (oracle) vs 108.8
+> (MIRAGE, +7.8%) with spread on, against 100.6 vs 100.9 with spread off
+> (`scripts/mirage_vs_oracle_region_split.py`). Purity and masked area are
+> therefore confounded in Rung 1b. See
+> [`frozen/mirage_meanpool_sweep.md`](frozen/mirage_meanpool_sweep.md).
+
 ### Dilation is monotonically harmful
 
 Tested at every threshold. `+1` costs 6–8 purity points, `+2` costs 12–14. The
@@ -415,6 +428,7 @@ Analysis entry points:
 | `mirage_method_panels.py` | per-method visual panels |
 | `mirage_doc_figures.py` | the guide-pipeline and three-arms figures in this document |
 | `oracle_failure_cases.py` | scans for and renders slices where the oracle band sits off tissue and MIRAGE does not |
+| `mirage_vs_oracle_region_split.py` | splits both arms' placements into inner retina vs choroid and measures placement entropy |
 | `masking_explained.py` | the threshold wiring and the predictor's view |
 | `threshold_fix_masks.py` | threshold A/B, `--aggregate` measures at true batch size |
 | `context_keep_eval.py` | `keep_TRUE` (retina visible after context *and* target masking) |

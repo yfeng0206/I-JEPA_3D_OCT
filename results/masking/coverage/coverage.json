@@ -1,0 +1,40 @@
+{
+  "random_default": {
+    "hidden_per_slice": 109.965,
+    "predicted_per_slice": 154.688,
+    "cells_never_hidden_pct": 0.0,
+    "cells_never_predicted_pct": 0.0,
+    "gini_predicted": 0.4111302367507499,
+    "corr_with_anatomy": 0.6635088425713139,
+    "fallback_pct": 0.0
+  },
+  "random_matched": {
+    "hidden_per_slice": 51.714,
+    "predicted_per_slice": 57.856,
+    "cells_never_hidden_pct": 0.0,
+    "cells_never_predicted_pct": 0.0,
+    "gini_predicted": 0.28943627281526546,
+    "corr_with_anatomy": 0.5703969958489022,
+    "fallback_pct": 0.0
+  },
+  "envelope_default": {
+    "hidden_per_slice": 97.727,
+    "predicted_per_slice": 164.16,
+    "cells_never_hidden_pct": 0.0,
+    "cells_never_predicted_pct": 0.0,
+    "gini_predicted": 0.40376528615375246,
+    "corr_with_anatomy": 0.8326797398676914,
+    "fallback_pct": 0.0
+  },
+  "anatomy": {
+    "hidden_per_slice": 55.631,
+    "predicted_per_slice": 51.515,
+    "cells_never_hidden_pct": 0.0,
+    "cells_never_predicted_pct": 0.0,
+    "gini_predicted": 0.3316935146316607,
+    "corr_with_anatomy": 0.9963129546679271,
+    "fallback_pct": 1.9
+  },
+  "ratio_min": 0.2,
+  "ratio_max": 4.818181818181818
+}

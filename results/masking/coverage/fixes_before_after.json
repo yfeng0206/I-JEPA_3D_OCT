@@ -1,0 +1,30 @@
+[
+  {
+    "arm": "random_default",
+    "hidden_per_slice": 109.965,
+    "overlap_pct": 28.91174493173355,
+    "centre_edge_ratio": 10.675192519251924,
+    "corr_anatomy": 0.6635088425713139
+  },
+  {
+    "arm": "envelope_default",
+    "hidden_per_slice": 104.955,
+    "overlap_pct": 36.06542397660819,
+    "centre_edge_ratio": 6.275553319919517,
+    "corr_anatomy": 0.8399222252297756
+  },
+  {
+    "arm": "envelope_matched",
+    "hidden_per_slice": 54.038,
+    "overlap_pct": 7.973433242506811,
+    "centre_edge_ratio": 4.793478260869565,
+    "corr_anatomy": 0.9025671788260493
+  },
+  {
+    "arm": "anatomy",
+    "hidden_per_slice": 55.631,
+    "overlap_pct": 0.0,
+    "centre_edge_ratio": 2.5494236489836384,
+    "corr_anatomy": 0.9963129546679271
+  }
+]

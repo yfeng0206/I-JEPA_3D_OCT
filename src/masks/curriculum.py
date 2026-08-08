@@ -665,6 +665,22 @@ class CurriculumMaskGenerator:
                             )
                             if free.any():
                                 candidates = free
+                            else:
+                                # No admissible window clears the tolerance --
+                                # common, because the retinal band is thinner
+                                # than the block and mirage_min_block_fill
+                                # already restricts placement to a narrow strip.
+                                # This used to fall through with NO overlap
+                                # constraint and pick uniformly, which is how
+                                # measured overlap reached 40.5% against a 0.25
+                                # tolerance -- worse than unguided random's
+                                # 28.9%. Fall back to the LEAST-overlapping
+                                # admissible window instead of an arbitrary one.
+                                worst = np.where(candidates, overlap,
+                                                 np.inf).min()
+                                least = candidates & (overlap <= worst)
+                                if least.any():
+                                    candidates = least
                         rows, cols = np.nonzero(candidates)
                         pick = int(rng.integers(rows.size))
                         top, left = int(rows[pick]), int(cols[pick])

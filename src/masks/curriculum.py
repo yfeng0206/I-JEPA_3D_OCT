@@ -55,6 +55,8 @@ import numpy as np
 import torch
 import torch.distributed as dist
 
+from src.masks.utils import resample_to_k
+
 
 # ----------------------------------------------------------------------
 # Helpers
@@ -188,6 +190,7 @@ class CurriculumMaskGenerator:
         npred: int = 4,
         min_keep: int = 10,
         allow_overlap: bool = False,
+        pred_target_k: Optional[int] = None,
         *,
         curriculum_cfg: dict,
         world_size: int = 1,
@@ -198,6 +201,13 @@ class CurriculumMaskGenerator:
         self.patch_size = patch_size
         self.height = input_size[0] // patch_size
         self.width = input_size[1] // patch_size
+        # When set, every predictor target is resampled to exactly this many
+        # indices instead of the whole batch being front-sliced to its
+        # minimum.  Off by default: rectangular targets are all the same size,
+        # so the min-truncate is harmless there and the old behaviour stays
+        # bit-identical.  Irregular anatomy targets are NOT the same size and
+        # lose 92.8% of their cells without this.
+        self.pred_target_k = pred_target_k
         self.num_patches = self.height * self.width
 
         self.enc_mask_scale = enc_mask_scale
@@ -1209,14 +1219,28 @@ class CurriculumMaskGenerator:
             )
 
         # --- GLOBAL pred min-truncate (across all groups AND batch) ---
-        global_min_pred = max(
-            1, min(t.numel() for group in masks_pred for t in group)
-        )
+        # With irregular anatomy targets this is destructive: one small target
+        # anywhere in the microbatch front-slices every other target down to
+        # its length.  `pred_target_k` replaces it with a per-target resample
+        # that keeps the length uniform without discarding anyone's cells.
         collated_masks_pred = []
-        for group in masks_pred:
-            collated_masks_pred.append(
-                torch.stack([t[:global_min_pred] for t in group], dim=0)
+        if self.pred_target_k is not None:
+            k = int(self.pred_target_k)
+            for group in masks_pred:
+                collated_masks_pred.append(torch.stack(
+                    [resample_to_k(t, k) for t in group], dim=0
+                ))
+            # Reported as the per-target length that actually reached the
+            # predictor, which under this policy is K by construction.
+            global_min_pred = k
+        else:
+            global_min_pred = max(
+                1, min(t.numel() for group in masks_pred for t in group)
             )
+            for group in masks_pred:
+                collated_masks_pred.append(
+                    torch.stack([t[:global_min_pred] for t in group], dim=0)
+                )
 
         if self.mode == "mirage_envelope":
             images = max(mirage_batch["images"], 1)

@@ -240,7 +240,7 @@ def main():
     ap.add_argument('--dump', type=pathlib.Path)
     ap.add_argument('--plot-from', type=pathlib.Path)
     ap.add_argument('--out')
-    ap.add_argument('--mass-cap', type=float, default=0.80)
+    ap.add_argument('--mass-cap', type=float, default=0.90)
     ap.add_argument('--tau', type=float, default=0.10)
     ap.add_argument('--seed', type=int, default=3)
     ap.add_argument('--picks', nargs='*',

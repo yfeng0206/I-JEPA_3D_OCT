@@ -27,3 +27,9 @@ results/phase0_local_examples/
 .vscode/
 _tmp_*
 MASKING_PLAN.md
+
+# Node OOM crash dumps
+report.*.json
+
+# Regenerable sweep intermediates (adapter_sweep.py --sweep re-creates)
+results/**/*.npz

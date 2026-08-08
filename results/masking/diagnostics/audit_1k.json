@@ -1,0 +1,28 @@
+{
+  "n": 1000,
+  "baseline": {
+    "ctx": 106.898,
+    "ctx_p05": 76.0,
+    "union": 113.25,
+    "anat_mass": 0.3589254835128121,
+    "ctx_anat": 25.709,
+    "zero_retina_pct": 1.0
+  },
+  "ours": {
+    "ctx": 88.344,
+    "ctx_p05": 59.0,
+    "ctx_min": 40,
+    "below_minkeep_pct": 0.0,
+    "union": 52.641,
+    "vis_mass": 0.1573152095079422,
+    "vis_ext": 0.279423103498977,
+    "ctx_anat": 7.155,
+    "zero_retina_pct": 3.0,
+    "connected": 0.986,
+    "min_target": 10.432,
+    "min_target_p05": 5.0,
+    "tiny_target_pct": 2.3,
+    "ratio": 1.6681804420338862,
+    "holes": 0.374
+  }
+}

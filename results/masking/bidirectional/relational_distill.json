@@ -1,0 +1,51 @@
+{
+  "n_slices": 40,
+  "steps": 400,
+  "L_rel_at_init": 0.2825981080532074,
+  "gram_cosine_MIRAGE_vs_JEPA_at_init": 0.7721582055091858,
+  "note": "L_seg proxied by agreement with frozen MIRAGE logits",
+  "cos_grad_anchor_vs_rel": 0.006361593492329121,
+  "grad_norm_anchor": 0.014240131713449955,
+  "grad_norm_rel": 0.006018448155373335,
+  "lambda_sweep": {
+    "0.0": {
+      "L_anchor": 0.0,
+      "L_rel": 0.2825981080532074,
+      "L_rel_reduction_pct": 0.0,
+      "argmax_agreement_with_frozen": 1.0,
+      "relative_feature_drift": 0.0,
+      "anatomy_mean_abs_shift": 0.0
+    },
+    "0.1": {
+      "L_anchor": 0.00036852326593361795,
+      "L_rel": 0.11991367489099503,
+      "L_rel_reduction_pct": 57.56741765998739,
+      "argmax_agreement_with_frozen": 0.999707043170929,
+      "relative_feature_drift": 0.8140305876731873,
+      "anatomy_mean_abs_shift": 0.00018814270151779056
+    },
+    "1.0": {
+      "L_anchor": 0.017294513061642647,
+      "L_rel": 0.04630117490887642,
+      "L_rel_reduction_pct": 83.61589352885588,
+      "argmax_agreement_with_frozen": 0.999316394329071,
+      "relative_feature_drift": 1.2862083911895752,
+      "anatomy_mean_abs_shift": 0.0007378064328804612
+    },
+    "10.0": {
+      "L_anchor": 0.024345096200704575,
+      "L_rel": 0.030307278037071228,
+      "L_rel_reduction_pct": 89.27548445180497,
+      "argmax_agreement_with_frozen": 0.9991210699081421,
+      "relative_feature_drift": 1.8656269311904907,
+      "anatomy_mean_abs_shift": 0.0009602297795936465
+    }
+  },
+  "no_anchor_control": {
+    "L_anchor": 72.5299301147461,
+    "L_rel": 0.017773080617189407,
+    "L_rel_reduction_pct": 93.71082816526037,
+    "argmax_agreement_with_frozen": 0.3753906190395355,
+    "relative_feature_drift": 1.0280861854553223
+  }
+}

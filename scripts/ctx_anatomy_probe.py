@@ -31,7 +31,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 
 TAU_SUPPORT = 0.10   # MIRAGE "meaningfully belongs to anatomy"
 TAU_CONF = 0.50      # confident anatomy
-MASS_CAP = 0.80      # sampler default
+MASS_CAP = 0.90      # sampler default
 
 
 def sample_arm(coll, pred_sizes, enc_sizes, target_union, seed):

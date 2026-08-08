@@ -89,7 +89,7 @@ def n_components(m):
 
 
 # ------------------------------------------------------------ region ------
-def grow_region(score, mass_cap=0.80, tau=0.10, rho_extent=None):
+def grow_region(score, mass_cap=0.90, tau=0.10, rho_extent=None):
     """One connected region inside the anatomy support S = {score > tau}.
 
     Growth is CONFINED to S.  Letting it leave S was measured to be a real bug:
@@ -97,48 +97,54 @@ def grow_region(score, mass_cap=0.80, tau=0.10, rho_extent=None):
     because near-zero-score background cells cost almost no mass, so the mass
     cap never tripped and ~145 of those cells were outside the anatomy entirely.
 
-    `mass_cap` is the single stopping rule; 0.80 is the calibrated default.
+    `mass_cap` is the single stopping rule; 0.90 is the calibrated default.
 
-    The previous 0.90 default was calibrated on the WRONG criterion: "the
-    context never starves -- 0.0% of slices fall below the collator's
-    min_keep=10, even at cap 0.99".  That test counts TOKENS, not CONTENT, and
-    is satisfied by 176 tokens of black vitreous.  Recalibrated on what the
-    encoder can actually SEE (300 slices, production MaskCollator context
-    policy, confident cell := score > 0.5):
+    HISTORY, because the right value changed twice for different reasons.
 
-        cap   union    ctx   confident cells   slices whose CONTEXT
-                             left in context   keeps >=1 confident cell
-        0.70   36.9   188.5        10.2                97.7%
-        0.75   40.0   185.8         7.8                96.0%
-        0.80   43.5   182.8         5.5                92.0%   <- default
-        0.85   47.3   179.4         3.5                69.7%
-        0.90   52.1   175.3         2.4                35.7%
-        0.95   58.4   169.6         2.2                22.3%
+    (1) An early 0.90 was calibrated on the WRONG criterion: "the context never
+    starves -- 0.0% of slices fall below the collator's min_keep=10, even at cap
+    0.99".  That test counts TOKENS, not CONTENT, and is satisfied by 176 tokens
+    of black vitreous.  It was cut to 0.80 after recalibrating on what the
+    encoder can actually SEE.
 
-    The knee is a cliff between 0.80 and 0.825.  Past it the encoder is
-    increasingly asked to predict the confident core of the retina from a view
-    holding none of it -- the K=105 failure reached from the other side.
-    Going 0.90 -> 0.80 costs only 8.6 target cells and 7.5 context tokens but
-    lifts the safe fraction from 35.7% to 92.0%; the trade is very lopsided.
-    Random rectangles keep >=1 confident cell in 98.3% of slices at any cap.
+    (2) 0.90 was then restored once `grow_components` fixed single-component
+    growth.  Before that fix the cap was mostly decorative -- it only ever bound
+    on 18.9% of class-regions, the other 81.1% stopping early because growth
+    exhausted the seed's connected component.  With every component reachable
+    the cap binds properly, so a higher value is both meaningful and safe.
+
+    Measured with multi-component growth, 500 slices, production collator:
+
+        cap    cells   mass   dead%  inner masked   ctx   retina-in-ctx  0-ret
+        RANDOM 122.0   0.556  2.40      0.516      107.7      25.1       1.00%
+        0.80    46.1   0.758  0.46      0.725      181.3      25.6       0.80%
+        0.85    50.5   0.808  0.46      0.774      177.4      21.7       0.80%
+        0.90    55.9   0.858  0.46      0.825      172.7      17.0       0.80%  <- default
+        0.95    63.3   0.909  0.46      0.875      166.1      10.4       1.00%
+
+    At 0.90 the sampler hides 82.5% of the inner retina against random's 51.6%,
+    spends less than half the cells (55.9 vs 122.0), leaves the encoder 60% more
+    context (172.7 vs 107.7), and still holds the zero-retina-context rate below
+    random.  0.95 is defensible but retina-in-context falls to 10.4 tokens, and
+    0.99 breaks outright (21% of slices leave the encoder no retina at all).
 
     The headline is threshold-sensitive and should be quoted with its cutoff:
-    at cap 0.90 the unsafe fraction is 6.0% at score>0.3, 31.3% at >0.4,
-    64.3% at >0.5, 75.7% at >0.6.  The ORDERING across caps is stable at every
-    cutoff; the magnitude is not.
+    the fraction of slices whose context holds no cell above `score > x` rises
+    steeply with the cap, and the ORDERING across caps is stable at every
+    cutoff while the magnitude is not.
 
     A per-slice floor (stop early if fewer than N confident cells would remain
-    visible) dominates any fixed cap, since failures concentrate on slices with
-    little anatomy.  Not yet implemented.
+    visible) would dominate any fixed cap, since failures concentrate on slices
+    with little anatomy.  Not yet implemented.
 
     An additional extent budget was tried in three formulations and is INERT:
     raising the extent goal from 0.70 to 0.90 moved coverage by 0.001-0.011,
     because the mass cap always binds first.  `rho_extent` is kept for
     ablations only and defaults to off.
 
-    Note the budget is quoted in MASS, not area.  At cap 0.80 the region holds
-    80% of the anatomy probability mass but covers a smaller share of the
-    support cells, because the confident core carries most of the mass.
+    Note the budget is quoted in MASS, not area, and the confident core carries
+    most of the mass, so the region covers a smaller share of the support cells
+    than the cap number suggests.
     """
     h, w = score.shape
     S = score > tau
@@ -164,6 +170,248 @@ def grow_region(score, mass_cap=0.80, tau=0.10, rho_extent=None):
             break
         best = max(frontier, key=frontier.get)
         if mass + float(score[best]) > mass_cap * total_mass:
+            break
+        U[best] = True
+        mass += float(score[best])
+        ext += 1
+    return U
+
+
+def grow_components_fixed_cells(score, n_cells, tau=0.10, max_hole=2,
+                                max_regions=None):
+    """Grow to an EXACT total cell budget, taken from a reference score.
+
+    Budget lock for the JEPA->MIRAGE feedback loop.  When the adapter is
+    allowed to set both WHERE the targets go and HOW MANY cells they cover, a
+    downstream JEPA gain is confounded: it could come from better placement or
+    simply from a larger masking task.  Measured, the adapter does widen the
+    guide -- mean union 37.1 -> 43.8 cells, +18%.
+
+    So take `n_cells` from the FROZEN score and let the ADAPTED score decide
+    only ranking, location and shape.  Cells are shared across components in
+    proportion to their support mass, with the remainder going to the largest.
+    """
+    from scipy import ndimage
+
+    score = np.asarray(score)
+    S = score > tau
+    if n_cells <= 0 or not S.any():
+        return []
+    lab, k = ndimage.label(S, structure=np.ones((3, 3)))
+    comps = [lab == j for j in range(1, k + 1)]
+    comps.sort(key=lambda c: -float(score[c].sum()))
+    if max_regions is not None:
+        comps = comps[:max_regions]
+    if not comps:
+        return []
+    masses = np.array([float(score[c].sum()) for c in comps])
+    sizes = np.array([int(c.sum()) for c in comps])
+    n_cells = int(min(n_cells, int(sizes.sum())))
+
+    quota = np.minimum(np.floor(masses / max(masses.sum(), 1e-12) * n_cells),
+                       sizes).astype(int)
+    quota = np.maximum(quota, (sizes > 0).astype(int))
+    while quota.sum() > n_cells:
+        quota[int(np.argmax(quota))] -= 1
+    while quota.sum() < n_cells:
+        room = sizes - quota
+        if not (room > 0).any():
+            break
+        cand = np.where(room > 0, masses, -np.inf)
+        quota[int(np.argmax(cand))] += 1
+
+    out = []
+    for comp, q in zip(comps, quota):
+        if q <= 0:
+            continue
+        U = _grow_cells_within(score, comp, int(q))
+        if U.any():
+            out.append(fill_small_holes(U, score, max_hole))
+    out.sort(key=lambda m: -float(score[m].sum()))
+    return out
+
+
+def _grow_cells_within(score, comp, n_cells):
+    """Greedy 8-connected growth confined to one component, exactly n_cells."""
+    h, w = score.shape
+    U = np.zeros((h, w), bool)
+    idx = [tuple(x) for x in np.argwhere(comp)]
+    if not idx or n_cells <= 0:
+        return U
+    seed = max(idx, key=lambda rc: score[rc])
+    U[seed] = True
+    while int(U.sum()) < n_cells:
+        frontier = {}
+        for (rr, cc) in np.argwhere(U):
+            for nr, nc in _neighbours(rr, cc, h, w):
+                if comp[nr, nc] and not U[nr, nc]:
+                    frontier[(nr, nc)] = score[nr, nc]
+        if not frontier:
+            break
+        U[max(frontier, key=frontier.get)] = True
+    return U
+
+
+def build_targets_fixed_cells(class_scores, n_cells_per_class, n=4, tau=0.10,
+                              max_hole=2, max_ratio=1.25):
+    """`build_targets` with the cell budget supplied instead of derived.
+
+    Applies the same component cap as `build_targets`: more components than
+    targets means the surplus is orphaned and its cells leave the union.
+    """
+    shape = np.asarray(class_scores[0]).shape
+
+    def grow_all(caps):
+        regs, ms = [], []
+        for score, nc, cap in zip(class_scores, n_cells_per_class, caps):
+            comps = grow_components_fixed_cells(score, nc, tau, max_hole)
+            if cap is not None:
+                comps = comps[:cap]
+            for U in comps:
+                regs.append(U)
+                ms.append(float(np.asarray(score)[U].sum()))
+        return regs, ms
+
+    regions, masses = grow_all([None] * len(class_scores))
+    if len(regions) > n:
+        counts = [len(grow_components_fixed_cells(s, nc, tau, max_hole))
+                  for s, nc in zip(class_scores, n_cells_per_class)]
+        keep, bounds, off = [0] * len(class_scores), [], 0
+        for cnt in counts:
+            bounds.append((off, off + cnt))
+            off += cnt
+        for r in np.argsort([-m for m in masses])[:n]:
+            for ci, (lo, hi) in enumerate(bounds):
+                if lo <= r < hi:
+                    keep[ci] += 1
+        # respend the whole budget on the components that keep a target
+        regions, masses = [], []
+        for score, nc, k in zip(class_scores, n_cells_per_class, keep):
+            for U in grow_components_fixed_cells(score, nc, tau, max_hole,
+                                                 max_regions=k):
+                regions.append(U)
+                masses.append(float(np.asarray(score)[U].sum()))
+
+    ks = allocate(masses, n, [int(U.sum()) for U in regions])
+    parts = []
+    for U, k in zip(regions, ks):
+        if k == 0:
+            continue
+        parts.extend(rebalance(geodesic_partition(U, k), max_ratio))
+    while len(parts) < n:
+        parts.append(np.zeros(shape, bool))
+    return parts[:n], regions
+
+
+def _grow_class_regions(score, mass_cap, tau, max_hole, rho_extent, max_regions):
+    """Components of one class, capped at `max_regions` with budget REDISTRIBUTED.
+
+    `build_targets` makes exactly `n` masks, so if the support has more than `n`
+    components the surplus receives no target and its grown cells vanish from
+    the union.  Measured over 1000 slices at cap 0.90: 8.4% of slices have >4
+    components, orphaning a mean of 1.50 components and DISCARDING 28.6% of the
+    grown capacity (worst case 93.1%).
+
+    So keep the `max_regions` heaviest components and recompute the mass shares
+    over only those, which spends the whole budget on regions that will actually
+    receive a target instead of silently dropping it.
+    """
+    from scipy import ndimage
+
+    score = np.asarray(score)
+    S = score > tau
+    total = float(score.sum())
+    if total <= 0 or not S.any() or max_regions <= 0:
+        return []
+    lab, k = ndimage.label(S, structure=np.ones((3, 3)))
+    comps = [lab == j for j in range(1, k + 1)]
+    comps.sort(key=lambda c: -float(score[c].sum()))
+    comps = comps[:max_regions]
+    kept_mass = sum(float(score[c].sum()) for c in comps)
+    out = []
+    for comp in comps:
+        share = float(score[comp].sum()) / max(kept_mass, 1e-12)
+        U = _grow_within(score, comp, mass_cap * total * share, rho_extent)
+        if U.any():
+            out.append(fill_small_holes(U, score, max_hole))
+    out.sort(key=lambda m: -float(score[m].sum()))
+    return out
+
+
+def grow_components(score, mass_cap=0.90, tau=0.10, max_hole=2, rho_extent=None,
+                    max_regions=None):
+    """Grow EVERY connected component of the support, not just the seed's.
+
+    `grow_region` seeds once at the global maximum and can only ever fill the
+    component containing that seed.  Measured over 1982 class-regions, that is
+    the dominant reason coverage falls short of the budget:
+
+        mass the sampler captures      74.9%   (cap asked for 80%)
+        mass below tau                  1.6%   genuinely excluded
+        mass in OTHER components        5.8%   STRANDED by single-seed growth
+        cap actually reached           18.9%   of regions
+        growth exhausted the component 81.1%   <- the cap rarely binds
+
+    19.9% of class-regions have a split support, and on those an average 29.2%
+    of the class mass sits in a component the sampler could never reach.  The
+    common cause is anatomical: at the optic nerve head the retinal band is
+    interrupted, so InnerRetina arrives as two segments.
+
+    Budget is split across components in proportion to their share of the
+    support mass, so the total mass target is unchanged; it is simply reachable
+    now.  Each returned mask is connected, which is what `geodesic_partition`
+    requires.
+
+    `max_regions` caps how many components are grown and redistributes the
+    budget over the ones kept; see `_grow_class_regions` for why that matters.
+    """
+    from scipy import ndimage
+
+    score = np.asarray(score)
+    S = score > tau
+    total = float(score.sum())
+    if total <= 0 or not S.any():
+        return []
+    if max_regions is not None:
+        return _grow_class_regions(score, mass_cap, tau, max_hole, rho_extent,
+                                   max_regions)
+    lab, k = ndimage.label(S, structure=np.ones((3, 3)))
+    supp_mass = float(score[S].sum())
+    out = []
+    for j in range(1, k + 1):
+        comp = lab == j
+        share = float(score[comp].sum()) / max(supp_mass, 1e-12)
+        budget = mass_cap * total * share
+        U = _grow_within(score, comp, budget, rho_extent)
+        if U.any():
+            out.append(fill_small_holes(U, score, max_hole))
+    out.sort(key=lambda m: -float(score[m].sum()))
+    return out
+
+
+def _grow_within(score, comp, budget, rho_extent=None):
+    """Greedy 8-connected growth confined to one component, up to `budget` mass."""
+    h, w = score.shape
+    U = np.zeros((h, w), bool)
+    idx = [tuple(x) for x in np.argwhere(comp)]
+    if not idx:
+        return U
+    seed = max(idx, key=lambda rc: score[rc])
+    U[seed] = True
+    mass = float(score[seed])
+    ext, total_ext = 1, len(idx)
+    while mass < budget:
+        if rho_extent is not None and ext >= rho_extent * total_ext:
+            break
+        frontier = {}
+        for (rr, cc) in np.argwhere(U):
+            for nr, nc in _neighbours(rr, cc, h, w):
+                if comp[nr, nc] and not U[nr, nc]:
+                    frontier[(nr, nc)] = score[nr, nc]
+        if not frontier:
+            break
+        best = max(frontier, key=frontier.get)
+        if mass + float(score[best]) > budget:
             break
         U[best] = True
         mass += float(score[best])
@@ -368,7 +616,7 @@ def allocate(masses, n=4, capacities=None):
     return k.tolist()
 
 
-def build_targets(class_scores, n=4, mass_cap=0.80, tau=0.10,
+def build_targets(class_scores, n=4, mass_cap=0.90, tau=0.10,
                   overlap=0.0, max_hole=2, max_ratio=1.25, rho_extent=None):
     """Class-aware anatomy targets.
 
@@ -385,29 +633,45 @@ def build_targets(class_scores, n=4, mass_cap=0.80, tau=0.10,
     `n` empty masks and the CALLER must fall back (see `has_anatomy`).
     """
     shape = class_scores[0].shape
-    grown, masses, caps = [], [], []
+    regions, masses = [], []
     for score in class_scores:
-        if not (score > tau).any():
-            grown.append(None)
-            masses.append(0.0)
-            caps.append(0)
-            continue
-        U = grow_region(score, mass_cap, tau, rho_extent)
-        U = fill_small_holes(U, score, max_hole)
-        grown.append(U)
-        masses.append(float(score.sum()))
-        caps.append(int(U.sum()))
+        for U in grow_components(score, mass_cap, tau, max_hole, rho_extent):
+            regions.append(U)
+            masses.append(float(np.asarray(score)[U].sum()))
 
+    # More components than targets means the surplus gets NO target and its
+    # cells silently leave the union (8.4% of slices, 28.6% of capacity lost).
+    # Re-grow with a per-class cap so the whole budget lands on regions that
+    # will actually receive one.
+    if len(regions) > n:
+        order = np.argsort([-m for m in masses])
+        keep_per_class = [0] * len(class_scores)
+        bounds, off = [], 0
+        for score in class_scores:
+            cnt = len(grow_components(score, mass_cap, tau, max_hole, rho_extent))
+            bounds.append((off, off + cnt))
+            off += cnt
+        for r in order[:n]:
+            for ci, (lo, hi) in enumerate(bounds):
+                if lo <= r < hi:
+                    keep_per_class[ci] += 1
+        regions, masses = [], []
+        for score, keep in zip(class_scores, keep_per_class):
+            for U in grow_components(score, mass_cap, tau, max_hole, rho_extent,
+                                     max_regions=keep):
+                regions.append(U)
+                masses.append(float(np.asarray(score)[U].sum()))
+
+    caps = [int(U.sum()) for U in regions]
     ks = allocate(masses, n, caps)
 
-    parts, regions = [], []
-    for score, U, k in zip(class_scores, grown, ks):
-        if k == 0 or U is None:
+    parts = []
+    for U, k in zip(regions, ks):
+        if k == 0:
             continue
-        regions.append(U)
         cp = geodesic_partition(U, k)
         cp = rebalance(cp, max_ratio)
-        cp = expand_overlap(cp, U, score, overlap)
+        cp = expand_overlap(cp, U, np.ones(shape), overlap)
         parts.extend(cp)
 
     while len(parts) < n:
@@ -415,27 +679,20 @@ def build_targets(class_scores, n=4, mass_cap=0.80, tau=0.10,
     return parts[:n], regions
 
 
-def region_capacity(class_scores, mass_cap=0.80, tau=0.10, max_hole=2,
+def region_capacity(class_scores, mass_cap=0.90, tau=0.10, max_hole=2,
                     rho_extent=None):
     """Cells the sampler could actually place targets in, per class.
 
-    This is the real feasibility quantity.  Support alone is not enough: the
-    grown region is what gets partitioned, so capacity is what limits how many
-    non-empty targets exist.
+    Counts EVERY grown component, matching `build_targets`.
     """
     caps = []
     for score in class_scores:
-        score = np.asarray(score)
-        if not (score > tau).any():
-            caps.append(0)
-            continue
-        U = grow_region(score, mass_cap, tau, rho_extent)
-        U = fill_small_holes(U, score, max_hole)
-        caps.append(int(U.sum()))
+        comps = grow_components(score, mass_cap, tau, max_hole, rho_extent)
+        caps.append(int(sum(int(U.sum()) for U in comps)))
     return caps
 
 
-def is_viable(class_scores, n=4, min_cells=4, mass_cap=0.80, tau=0.10,
+def is_viable(class_scores, n=4, min_cells=4, mass_cap=0.90, tau=0.10,
               max_hole=2, rho_extent=None):
     """Can this image support `n` targets of at least `min_cells` each?
 

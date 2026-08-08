@@ -172,7 +172,7 @@ def build_anatomy_targets(P_inner, P_choroid):
         union = grid > np.percentile(grid, 50)
     else:
         parts, _regions = build_targets([P_inner, P_choroid], 4,
-                                        mass_cap=0.80, tau=0.10, overlap=0.0)
+                                        mass_cap=0.90, tau=0.10, overlap=0.0)
         union = np.logical_or.reduce(parts)
 
     # np.argwhere returns (row, col) PAIRS; flattening them interleaves

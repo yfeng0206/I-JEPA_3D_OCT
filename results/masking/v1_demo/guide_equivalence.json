@@ -1,0 +1,15 @@
+{
+  "n_slices": 48,
+  "shipped_area_mean": 0.21525178849697113,
+  "soft_area_mean": 0.17897050082683563,
+  "corr_global": 0.7050828764493273,
+  "corr_per_slice_mean": 0.7126936223272979,
+  "mean_abs_diff": 0.12502939999103546,
+  "iou_shipped0.25_soft0.1": 0.6968359172005814,
+  "cells_shipped0.25": 63.75,
+  "cells_soft0.1": 75.9375,
+  "iou_shipped0.25_soft0.25": 0.6517724425726485,
+  "cells_soft0.25": 62.458333333333336,
+  "iou_shipped0.5_soft0.1": 0.6026092736454937,
+  "cells_shipped0.5": 55.270833333333336
+}

@@ -1,0 +1,125 @@
+{
+  "rho": 0.7,
+  "batch": 8,
+  "device": "cuda",
+  "collate_truncate": {
+    "min": 8,
+    "max": 23,
+    "mean": 12.6875,
+    "kept": 256,
+    "delivered_unique": 8.0,
+    "n_tensors": 4,
+    "tensor_shape": [
+      8,
+      8
+    ]
+  },
+  "collate_pad_pool": {
+    "min": 8,
+    "max": 23,
+    "mean": 12.6875,
+    "kept": 406,
+    "delivered_unique": 12.6875,
+    "n_tensors": 4,
+    "tensor_shape": [
+      8,
+      23
+    ]
+  },
+  "per_target_cells": {
+    "mean": 12.6875,
+    "min": 8,
+    "max": 23
+  },
+  "truncation_loss_frac": 0.3694581280788177,
+  "runs": {
+    "truncate": {
+      "n_masks_pred": 4,
+      "masks_pred_shape": [
+        8,
+        8
+      ],
+      "context_shape": [
+        8,
+        200,
+        768
+      ],
+      "target_encoder_sees_all_256": true,
+      "context_excludes_all_targets": true,
+      "pred_shape": [
+        32,
+        8,
+        768
+      ],
+      "target_shape": [
+        32,
+        8,
+        768
+      ],
+      "shapes_match": true,
+      "grad_encoder": 187.33787536621094,
+      "grad_predictor": 486.13018798828125,
+      "grad_target_encoder": 0.0,
+      "loss_first": 0.46215519309043884,
+      "loss_last": 0.0087877307087183,
+      "loss_finite": true,
+      "loss_decreased": true,
+      "collate": {
+        "min": 8,
+        "max": 23,
+        "mean": 12.6875,
+        "kept": 256,
+        "delivered_unique": 8.0,
+        "n_tensors": 4,
+        "tensor_shape": [
+          8,
+          8
+        ]
+      }
+    },
+    "pad_pool": {
+      "n_masks_pred": 4,
+      "masks_pred_shape": [
+        8,
+        23
+      ],
+      "context_shape": [
+        8,
+        200,
+        768
+      ],
+      "target_encoder_sees_all_256": true,
+      "context_excludes_all_targets": true,
+      "pred_shape": [
+        32,
+        23,
+        768
+      ],
+      "target_shape": [
+        32,
+        23,
+        768
+      ],
+      "shapes_match": true,
+      "grad_encoder": 172.45123291015625,
+      "grad_predictor": 478.19189453125,
+      "grad_target_encoder": 0.0,
+      "loss_first": 0.4620887041091919,
+      "loss_last": 0.016985313966870308,
+      "loss_finite": true,
+      "loss_decreased": true,
+      "collate": {
+        "min": 8,
+        "max": 23,
+        "mean": 12.6875,
+        "kept": 406,
+        "delivered_unique": 12.6875,
+        "n_tensors": 4,
+        "tensor_shape": [
+          8,
+          23
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "slices": 2374,
+  "volumes": 400,
+  "occupancy_threshold": 0.25,
+  "dilate_patches": 0,
+  "min_block_fill": 0.4,
+  "mirage_spread": true,
+  "oracle": {
+    "region_inner": 0.17823834664282276,
+    "region_choroid": 0.2085297428720855,
+    "region_area": 0.2734375,
+    "target_inner": 0.11637596984621502,
+    "target_choroid": 0.15257793940836317,
+    "target_area": 0.394216972935973,
+    "windows": 61.80497051390059,
+    "bits": 5.9295228052652265,
+    "target_inner_share_of_tissue": 0.4326985622509001,
+    "region_inner_share_of_tissue": 0.46084036267410944
+  },
+  "mirage": {
+    "region_inner": 0.2529162769320984,
+    "region_choroid": 0.32144512572163353,
+    "region_area": 0.2899576137320977,
+    "target_inner": 0.1171350382790704,
+    "target_choroid": 0.17570472942426307,
+    "target_area": 0.4250934604043808,
+    "windows": 48.8133951137321,
+    "bits": 5.3434177241407195,
+    "target_inner_share_of_tissue": 0.39999703318210567,
+    "region_inner_share_of_tissue": 0.44034344188788616
+  },
+  "oracle_true_placement_bits": 6.4121861656399455,
+  "paired": {
+    "slices_mirage_less_inner": 0.4696714406065712,
+    "slices_mirage_more_choroid": 0.6705981465880371
+  }
+}

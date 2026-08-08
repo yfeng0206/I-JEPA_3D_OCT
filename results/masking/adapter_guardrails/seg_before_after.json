@@ -1,0 +1,16 @@
+{
+  "n_images": 192,
+  "pct_pixels_changed": 2.946345011393229,
+  "mean_margin_where_changed": 0.5573099255561829,
+  "mean_margin_where_unchanged": 0.9836853742599487,
+  "inner_area_change_pp": 0.26156107584635413,
+  "choroid_area_change_pp": 0.30110677083333337,
+  "transitions": {
+    "Elsewhere->InnerRetina": 3239,
+    "Elsewhere->Choroid": 10412,
+    "InnerRetina->Elsewhere": 1442,
+    "InnerRetina->Choroid": 17,
+    "Choroid->Elsewhere": 7784,
+    "Choroid->InnerRetina": 277
+  }
+}

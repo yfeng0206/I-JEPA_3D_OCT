@@ -1,0 +1,79 @@
+{
+  "n_slices": 30,
+  "meta": {
+    "large_1024": {
+      "size": "large",
+      "res": 1024,
+      "checkpoint": "D:\\jepa_phase0\\mirage-goals\\outputs\\mergedv3\\MergedV3\\MIRAGE-Large_frozen_convnext_CEGDice-ignore\\checkpoint-34.pth",
+      "pos_emb_interpolated": false,
+      "params_M": 315.51386,
+      "model_vram_mb": 1204.34033203125,
+      "decoder_out": [
+        128,
+        128
+      ],
+      "pool_factor": 8,
+      "bench": {
+        "bs1": {
+          "sec_per_batch": 0.07393553000001703,
+          "img_per_sec": 13.525296971561165,
+          "peak_vram_mb": 1488.78564453125
+        },
+        "bs8": {
+          "sec_per_batch": 0.5247789699999885,
+          "img_per_sec": 15.24451332339056,
+          "peak_vram_mb": 3422.59033203125
+        },
+        "bs16": {
+          "sec_per_batch": 1.0443026799999644,
+          "img_per_sec": 15.321228515855715,
+          "peak_vram_mb": 5632.65283203125
+        }
+      }
+    },
+    "base_512": {
+      "size": "base",
+      "res": 512,
+      "checkpoint": "D:\\jepa_phase0\\mirage-goals\\outputs\\mergedv3-base-512\\MergedV3\\MIRAGE-Base_frozen_convnext_CEGDice-ignore\\checkpoint-best.pth",
+      "pos_emb_interpolated": false,
+      "params_M": 95.57146,
+      "model_vram_mb": 364.57666015625,
+      "decoder_out": [
+        64,
+        64
+      ],
+      "pool_factor": 4,
+      "bench": {
+        "bs1": {
+          "sec_per_batch": 0.013168885000004594,
+          "img_per_sec": 75.93657321782757,
+          "peak_vram_mb": 441.28564453125
+        },
+        "bs8": {
+          "sec_per_batch": 0.05560154500003591,
+          "img_per_sec": 143.8808939570804,
+          "peak_vram_mb": 921.26416015625
+        },
+        "bs16": {
+          "sec_per_batch": 0.10756412999999157,
+          "img_per_sec": 148.7484721905086,
+          "peak_vram_mb": 1469.81103515625
+        }
+      }
+    }
+  },
+  "grid_equivalence": {
+    "mean_large": 0.1842993050813675,
+    "mean_base": 0.14578895270824432,
+    "corr_global": 0.8496483495175913,
+    "corr_per_slice_mean": 0.8567695497983696,
+    "mean_abs_diff": 0.06107185035943985,
+    "iou_L0.10_B0.10": 0.7835505641414701,
+    "cells_L0.10": 78.46666666666667,
+    "cells_B0.10": 64.0,
+    "iou_L0.10_B0.15": 0.7533048344220331,
+    "cells_B0.15": 60.4,
+    "iou_L0.10_B0.20": 0.7170380047677479,
+    "cells_B0.20": 57.3
+  }
+}

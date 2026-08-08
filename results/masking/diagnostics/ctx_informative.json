@@ -1,0 +1,349 @@
+{
+  "crops_note": "Images reproduced using RNG seed=7 with RandomResizedCrop.get_params in same order",
+  "grids_match": "Positional match: image[i] paired with grids[i]",
+  "thresholds": {
+    "threshold_mean_0p15": 0.15,
+    "threshold_var_median": 0.004028289578855038,
+    "threshold_mean_image_median": 0.17428769916296005,
+    "ctx_mean_min": 0.13065257668495178,
+    "ctx_mean_max": 0.5750613212585449,
+    "ctx_var_min": 0.0015445381868630648,
+    "ctx_var_max": 0.0405622199177742
+  },
+  "rect": {
+    "total_tokens_mean": 105.621,
+    "total_tokens_std": 17.162964749716174,
+    "informative_def_a_mean": 61.138,
+    "informative_def_b_mean": 46.253,
+    "informative_def_c_mean": 45.492,
+    "variance_retained_mean": 0.38081351680853903,
+    "mean_retained_mean": 0.3918251767653082,
+    "frac_informative_def_a": 0.5788432224652295,
+    "frac_informative_def_b": 0.43791480860813664,
+    "frac_informative_def_c": 0.4307098020280058
+  },
+  "anatomy": {
+    "total_tokens_mean": 169.227,
+    "total_tokens_std": 10.110859063403069,
+    "informative_def_a_mean": 99.384,
+    "informative_def_b_mean": 74.824,
+    "informative_def_c_mean": 74.794,
+    "variance_retained_mean": 0.5842066966668394,
+    "mean_retained_mean": 0.6213118994535292,
+    "frac_informative_def_a": 0.587282171284724,
+    "frac_informative_def_b": 0.4421516661052905,
+    "frac_informative_def_c": 0.4419743894295827
+  },
+  "per_slice": [
+    {
+      "rect": {
+        "total_tokens": 126,
+        "informative": {
+          "def_a": 96,
+          "def_b": 64,
+          "def_c": 63
+        },
+        "variance_retained": 0.4658850549725421,
+        "mean_retained": 0.48542772767114994
+      },
+      "anatomy": {
+        "total_tokens": 159,
+        "informative": {
+          "def_a": 119,
+          "def_b": 64,
+          "def_c": 64
+        },
+        "variance_retained": 0.4507068012973891,
+        "mean_retained": 0.5340377079601207
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.004028289578855038,
+        "threshold_mean_image_median": 0.17428769916296005,
+        "ctx_mean_min": 0.13065257668495178,
+        "ctx_mean_max": 0.5750613212585449,
+        "ctx_var_min": 0.0015445381868630648,
+        "ctx_var_max": 0.0405622199177742
+      }
+    },
+    {
+      "rect": {
+        "total_tokens": 84,
+        "informative": {
+          "def_a": 70,
+          "def_b": 25,
+          "def_c": 20
+        },
+        "variance_retained": 0.17637263384225177,
+        "mean_retained": 0.24129999161694396
+      },
+      "anatomy": {
+        "total_tokens": 181,
+        "informative": {
+          "def_a": 158,
+          "def_b": 87,
+          "def_c": 84
+        },
+        "variance_retained": 0.6405027561739454,
+        "mean_retained": 0.6772341817581913
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.003300154348835349,
+        "threshold_mean_image_median": 0.1699218973517418,
+        "ctx_mean_min": 0.13655024766921997,
+        "ctx_mean_max": 0.40528491139411926,
+        "ctx_var_min": 0.001276911934837699,
+        "ctx_var_max": 0.04309187829494476
+      }
+    },
+    {
+      "rect": {
+        "total_tokens": 110,
+        "informative": {
+          "def_a": 97,
+          "def_b": 57,
+          "def_c": 59
+        },
+        "variance_retained": 0.42402389627236997,
+        "mean_retained": 0.430110368828457
+      },
+      "anatomy": {
+        "total_tokens": 169,
+        "informative": {
+          "def_a": 139,
+          "def_b": 78,
+          "def_c": 83
+        },
+        "variance_retained": 0.6452083891267179,
+        "mean_retained": 0.6609690557799063
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.0034997581969946623,
+        "threshold_mean_image_median": 0.1645910143852234,
+        "ctx_mean_min": 0.1313725709915161,
+        "ctx_mean_max": 0.36001840233802795,
+        "ctx_var_min": 0.001233577379025519,
+        "ctx_var_max": 0.009194117039442062
+      }
+    },
+    {
+      "rect": {
+        "total_tokens": 113,
+        "informative": {
+          "def_a": 38,
+          "def_b": 51,
+          "def_c": 54
+        },
+        "variance_retained": 0.5415085935639546,
+        "mean_retained": 0.4964097949520423
+      },
+      "anatomy": {
+        "total_tokens": 161,
+        "informative": {
+          "def_a": 48,
+          "def_b": 70,
+          "def_c": 71
+        },
+        "variance_retained": 0.6717266758287398,
+        "mean_retained": 0.6530383169843933
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.0025381456362083554,
+        "threshold_mean_image_median": 0.13952207565307617,
+        "ctx_mean_min": 0.1109221950173378,
+        "ctx_mean_max": 0.5861825942993164,
+        "ctx_var_min": 0.000823947018943727,
+        "ctx_var_max": 0.03182640299201012
+      }
+    },
+    {
+      "rect": {
+        "total_tokens": 124,
+        "informative": {
+          "def_a": 113,
+          "def_b": 45,
+          "def_c": 43
+        },
+        "variance_retained": 0.35649699983964683,
+        "mean_retained": 0.43535682414128096
+      },
+      "anatomy": {
+        "total_tokens": 173,
+        "informative": {
+          "def_a": 162,
+          "def_b": 72,
+          "def_c": 71
+        },
+        "variance_retained": 0.605393164626965,
+        "mean_retained": 0.6328357812739142
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.004141232697293162,
+        "threshold_mean_image_median": 0.17604168504476547,
+        "ctx_mean_min": 0.14027267694473267,
+        "ctx_mean_max": 0.5284314155578613,
+        "ctx_var_min": 0.0018796516815200448,
+        "ctx_var_max": 0.03498831391334534
+      }
+    },
+    {
+      "rect": {
+        "total_tokens": 77,
+        "informative": {
+          "def_a": 29,
+          "def_b": 40,
+          "def_c": 34
+        },
+        "variance_retained": 0.23588678791609052,
+        "mean_retained": 0.2633275271232008
+      },
+      "anatomy": {
+        "total_tokens": 160,
+        "informative": {
+          "def_a": 62,
+          "def_b": 76,
+          "def_c": 77
+        },
+        "variance_retained": 0.5233294547605858,
+        "mean_retained": 0.6029551282119775
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.003134841681458056,
+        "threshold_mean_image_median": 0.14172029495239258,
+        "ctx_mean_min": 0.08036152273416519,
+        "ctx_mean_max": 0.4748162031173706,
+        "ctx_var_min": 0.0017164888558909297,
+        "ctx_var_max": 0.04509034752845764
+      }
+    },
+    {
+      "rect": {
+        "total_tokens": 89,
+        "informative": {
+          "def_a": 34,
+          "def_b": 18,
+          "def_c": 17
+        },
+        "variance_retained": 0.13868465318731138,
+        "mean_retained": 0.22062412337849974
+      },
+      "anatomy": {
+        "total_tokens": 175,
+        "informative": {
+          "def_a": 104,
+          "def_b": 78,
+          "def_c": 80
+        },
+        "variance_retained": 0.6254361483967148,
+        "mean_retained": 0.6533159761078259
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.0034337888937443495,
+        "threshold_mean_image_median": 0.16458334773778915,
+        "ctx_mean_min": 0.11502758413553238,
+        "ctx_mean_max": 0.28066790103912354,
+        "ctx_var_min": 0.0010450755944475532,
+        "ctx_var_max": 0.028570547699928284
+      }
+    },
+    {
+      "rect": {
+        "total_tokens": 91,
+        "informative": {
+          "def_a": 56,
+          "def_b": 61,
+          "def_c": 61
+        },
+        "variance_retained": 0.4904522976953253,
+        "mean_retained": 0.4181462976615119
+      },
+      "anatomy": {
+        "total_tokens": 164,
+        "informative": {
+          "def_a": 49,
+          "def_b": 61,
+          "def_c": 63
+        },
+        "variance_retained": 0.5339344518907789,
+        "mean_retained": 0.5829055866399755
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.002464488963596523,
+        "threshold_mean_image_median": 0.14398744702339172,
+        "ctx_mean_min": 0.11672794818878174,
+        "ctx_mean_max": 0.5613664388656616,
+        "ctx_var_min": 0.0011536871315911412,
+        "ctx_var_max": 0.05925848335027695
+      }
+    },
+    {
+      "rect": {
+        "total_tokens": 98,
+        "informative": {
+          "def_a": 87,
+          "def_b": 77,
+          "def_c": 74
+        },
+        "variance_retained": 0.5850594800630436,
+        "mean_retained": 0.47251083591623533
+      },
+      "anatomy": {
+        "total_tokens": 163,
+        "informative": {
+          "def_a": 124,
+          "def_b": 70,
+          "def_c": 69
+        },
+        "variance_retained": 0.5517218815065518,
+        "mean_retained": 0.58183696336024
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.0038235788233578205,
+        "threshold_mean_image_median": 0.17156097292900085,
+        "ctx_mean_min": 0.13105086982250214,
+        "ctx_mean_max": 0.4859834909439087,
+        "ctx_var_min": 0.001619595568627119,
+        "ctx_var_max": 0.03996613621711731
+      }
+    },
+    {
+      "rect": {
+        "total_tokens": 111,
+        "informative": {
+          "def_a": 26,
+          "def_b": 40,
+          "def_c": 35
+        },
+        "variance_retained": 0.33855923217785416,
+        "mean_retained": 0.3906467063462728
+      },
+      "anatomy": {
+        "total_tokens": 157,
+        "informative": {
+          "def_a": 43,
+          "def_b": 64,
+          "def_c": 60
+        },
+        "variance_retained": 0.5190551735169233,
+        "mean_retained": 0.5796326570547059
+      },
+      "thresholds": {
+        "threshold_mean_0p15": 0.15,
+        "threshold_var_median": 0.002596055157482624,
+        "threshold_mean_image_median": 0.13520988821983337,
+        "ctx_mean_min": 0.1121017262339592,
+        "ctx_mean_max": 0.5165747404098511,
+        "ctx_var_min": 0.0012191140558570623,
+        "ctx_var_max": 0.03942182660102844
+      }
+    }
+  ]
+}

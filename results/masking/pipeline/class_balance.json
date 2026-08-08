@@ -1,0 +1,26 @@
+{
+  "random": {
+    "inner_masked": 0.5162996053695679,
+    "choroid_masked": 0.5745489597320557,
+    "cells": 122.606,
+    "inner_per_cell": 0.0042110468114902036,
+    "choroid_per_cell": 0.004686140643459991,
+    "inner_over_choroid": 0.8986172676086426
+  },
+  "oracle": {
+    "inner_masked": 0.6247007846832275,
+    "choroid_masked": 0.6021897196769714,
+    "cells": 70.0,
+    "inner_per_cell": 0.008924296924046107,
+    "choroid_per_cell": 0.008602710281099593,
+    "inner_over_choroid": 1.0373820066452026
+  },
+  "anatomy": {
+    "inner_masked": 0.7263951301574707,
+    "choroid_masked": 0.7519048452377319,
+    "cells": 46.616,
+    "inner_per_cell": 0.015582528105317288,
+    "choroid_per_cell": 0.016129758993429978,
+    "inner_over_choroid": 0.966073215007782
+  }
+}

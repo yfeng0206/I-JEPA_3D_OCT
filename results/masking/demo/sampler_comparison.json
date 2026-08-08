@@ -1,0 +1,198 @@
+[
+  {
+    "slice": "data_07050:4",
+    "anatomy_mass": 61.882049560546875,
+    "v1": {
+      "sizes": [
+        25,
+        25,
+        25,
+        24
+      ],
+      "spread": 1,
+      "union_cells": 50,
+      "union_components": 2,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.2923350930213928,
+      "overlap_pct": 32.996632996633
+    },
+    "v2": {
+      "sizes": [
+        14,
+        14,
+        14,
+        14
+      ],
+      "spread": 0,
+      "union_cells": 50,
+      "union_components": 2,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.29211515188217163,
+      "overlap_pct": 7.142857142857143
+    },
+    "v3": {
+      "sizes": [
+        20,
+        20,
+        21,
+        21
+      ],
+      "spread": 1,
+      "union_cells": 54,
+      "union_components": 1,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.30116236209869385,
+      "overlap_pct": 26.829268292682926
+    }
+  },
+  {
+    "slice": "data_07225:24",
+    "anatomy_mass": 28.59006690979004,
+    "v1": {
+      "sizes": [
+        26,
+        25,
+        25,
+        25
+      ],
+      "spread": 1,
+      "union_cells": 26,
+      "union_components": 1,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.286737322807312,
+      "overlap_pct": 99.00990099009901
+    },
+    "v2": {
+      "sizes": [
+        11,
+        10,
+        10,
+        10
+      ],
+      "spread": 1,
+      "union_cells": 27,
+      "union_components": 1,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.2745441198348999,
+      "overlap_pct": 22.764227642276424
+    },
+    "v3": {
+      "sizes": [
+        10,
+        9,
+        9,
+        9
+      ],
+      "spread": 1,
+      "union_cells": 25,
+      "union_components": 1,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.3010721206665039,
+      "overlap_pct": 30.630630630630627
+    }
+  },
+  {
+    "slice": "data_08508:64",
+    "anatomy_mass": 69.04605865478516,
+    "v1": {
+      "sizes": [
+        27,
+        26,
+        26,
+        26
+      ],
+      "spread": 1,
+      "union_cells": 53,
+      "union_components": 2,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.2984321117401123,
+      "overlap_pct": 49.523809523809526
+    },
+    "v2": {
+      "sizes": [
+        23,
+        22,
+        22,
+        22
+      ],
+      "spread": 1,
+      "union_cells": 59,
+      "union_components": 2,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.2915858030319214,
+      "overlap_pct": 26.96629213483146
+    },
+    "v3": {
+      "sizes": [
+        21,
+        22,
+        20,
+        23
+      ],
+      "spread": 3,
+      "union_cells": 62,
+      "union_components": 1,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.3019377589225769,
+      "overlap_pct": 24.03100775193798
+    }
+  },
+  {
+    "slice": "data_09186:144",
+    "anatomy_mass": 44.20058822631836,
+    "v1": {
+      "sizes": [
+        39,
+        38,
+        38,
+        38
+      ],
+      "spread": 1,
+      "union_cells": 39,
+      "union_components": 1,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.2923322916030884,
+      "overlap_pct": 99.34640522875817
+    },
+    "v2": {
+      "sizes": [
+        14,
+        14,
+        14,
+        14
+      ],
+      "spread": 0,
+      "union_cells": 41,
+      "union_components": 1,
+      "union_holes": 1,
+      "targets_connected": true,
+      "visible": 0.2910294532775879,
+      "overlap_pct": 17.857142857142858
+    },
+    "v3": {
+      "sizes": [
+        16,
+        15,
+        14,
+        13
+      ],
+      "spread": 3,
+      "union_cells": 38,
+      "union_components": 1,
+      "union_holes": 0,
+      "targets_connected": true,
+      "visible": 0.302532434463501,
+      "overlap_pct": 29.885057471264368
+    }
+  }
+]

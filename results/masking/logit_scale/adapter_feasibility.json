@@ -1,0 +1,107 @@
+{
+  "n_slices": 20,
+  "cell_type_frac": {
+    "interior-background": 0.649609375,
+    "boundary/mixed": 0.2958984375,
+    "interior-anatomy": 0.0544921875
+  },
+  "authority_by_cell_type": {
+    "0.5": {
+      "interior-background": {
+        "mean": 0.0019384442130103707,
+        "dead_frac": 0.94167167769092
+      },
+      "boundary/mixed": {
+        "mean": 0.08891095221042633,
+        "dead_frac": 0.034323432343234324
+      },
+      "interior-anatomy": {
+        "mean": 0.02255692332983017,
+        "dead_frac": 0.3906810035842294
+      }
+    },
+    "1.0": {
+      "interior-background": {
+        "mean": 0.004331670235842466,
+        "dead_frac": 0.9158147925435959
+      },
+      "boundary/mixed": {
+        "mean": 0.17501120269298553,
+        "dead_frac": 0.007920792079207921
+      },
+      "interior-anatomy": {
+        "mean": 0.05338668078184128,
+        "dead_frac": 0.2078853046594982
+      }
+    },
+    "2.0": {
+      "interior-background": {
+        "mean": 0.012135597877204418,
+        "dead_frac": 0.8818400481058328
+      },
+      "boundary/mixed": {
+        "mean": 0.3293556869029999,
+        "dead_frac": 0.0006600660066006601
+      },
+      "interior-anatomy": {
+        "mean": 0.16414348781108856,
+        "dead_frac": 0.035842293906810034
+      }
+    },
+    "5.0": {
+      "interior-background": {
+        "mean": 0.08041594922542572,
+        "dead_frac": 0.608538785327721
+      },
+      "boundary/mixed": {
+        "mean": 0.651096522808075,
+        "dead_frac": 0.0
+      },
+      "interior-anatomy": {
+        "mean": 0.7713226079940796,
+        "dead_frac": 0.0
+      }
+    },
+    "10.0": {
+      "interior-background": {
+        "mean": 0.8064562082290649,
+        "dead_frac": 0.0
+      },
+      "boundary/mixed": {
+        "mean": 0.9755934476852417,
+        "dead_frac": 0.0
+      },
+      "interior-anatomy": {
+        "mean": 0.9971284866333008,
+        "dead_frac": 0.0
+      }
+    }
+  },
+  "authority_vs_soft_corr": 0.6063302366377332,
+  "grad_analytic_vs_numeric_maxabs": 0.00022855401039123535,
+  "grad_pixel": {
+    "mean": 0.02880837954580784,
+    "p50": 4.6790404439889244e-07,
+    "p90": 0.05837986245751381,
+    "p99": 0.4852616488933563
+  },
+  "cells_with_any_soft_pixel_frac": 0.41171875,
+  "soft_pixel_frac": 0.1309906005859375,
+  "grad_cell_by_type": {
+    "interior-background": 0.0018614943837746978,
+    "boundary/mixed": 0.08938117325305939,
+    "interior-anatomy": 0.021129431203007698
+  },
+  "grad_share_from_boundary_cells": 0.9180575013160706,
+  "midretina_gap": {
+    "columns_with_gap_frac": 0.989453125,
+    "mean_gap_height_frac": 0.09772256217923411,
+    "gap_M_mean": 0.04941737279295921,
+    "gap_M_p50": 2.6419606001581997e-05,
+    "gap_M_p90": 0.21905311942100525,
+    "gap_saturated_frac": 0.7380696881706855,
+    "gap_grad_mean": 0.06835586577653885,
+    "gap_grad_p50": 5.283781501930207e-05,
+    "gap_grad_vs_boundary_ratio": 0.3169829845428467
+  }
+}

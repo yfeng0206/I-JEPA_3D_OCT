@@ -1,0 +1,59 @@
+[
+  {
+    "slice": "data_07050:4",
+    "logit_min": -21.262502670288086,
+    "logit_max": 30.06248664855957,
+    "M_mean": 0.24172675609588623,
+    "anatomy_mass_16": 61.882049560546875,
+    "argmax_class_frac": {
+      "0 Elsewhere": 0.75634765625,
+      "1 InnerRetina": 0.0849609375,
+      "2 Choroid": 0.15869140625,
+      "3 Background": 0.0
+    },
+    "target_cells": [
+      20,
+      20,
+      21,
+      21
+    ]
+  },
+  {
+    "slice": "data_08508:64",
+    "logit_min": -21.33554458618164,
+    "logit_max": 33.14084243774414,
+    "M_mean": 0.19346003234386444,
+    "anatomy_mass_16": 49.5257682800293,
+    "argmax_class_frac": {
+      "0 Elsewhere": 0.804931640625,
+      "1 InnerRetina": 0.083984375,
+      "2 Choroid": 0.111083984375,
+      "3 Background": 0.0
+    },
+    "target_cells": [
+      18,
+      17,
+      16,
+      15
+    ]
+  },
+  {
+    "slice": "data_09186:144",
+    "logit_min": -20.117389678955078,
+    "logit_max": 29.588817596435547,
+    "M_mean": 0.21932002902030945,
+    "anatomy_mass_16": 56.14592742919922,
+    "argmax_class_frac": {
+      "0 Elsewhere": 0.7783203125,
+      "1 InnerRetina": 0.087890625,
+      "2 Choroid": 0.1337890625,
+      "3 Background": 0.0
+    },
+    "target_cells": [
+      17,
+      18,
+      18,
+      18
+    ]
+  }
+]

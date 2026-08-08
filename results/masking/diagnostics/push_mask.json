@@ -1,0 +1,52 @@
+{
+  "cap0.75": {
+    "union": 40.04,
+    "vis_mass": 0.28657200932502747,
+    "vis_extent": 0.4443529813631231,
+    "ctx": 92.45,
+    "ctx_p05": 68.0,
+    "ctx_below10_pct": 0.0,
+    "anat_mass_in_ctx": 0.10484309037543425,
+    "connected": 0.985
+  },
+  "cap0.85": {
+    "union": 47.455,
+    "vis_mass": 0.19538597762584686,
+    "vis_extent": 0.3400888873065795,
+    "ctx": 89.6,
+    "ctx_p05": 65.0,
+    "ctx_below10_pct": 0.0,
+    "anat_mass_in_ctx": 0.07030651242603199,
+    "connected": 0.985
+  },
+  "cap0.90": {
+    "union": 52.285,
+    "vis_mass": 0.15091213583946228,
+    "vis_extent": 0.2742197645778606,
+    "ctx": 87.895,
+    "ctx_p05": 63.0,
+    "ctx_below10_pct": 0.0,
+    "anat_mass_in_ctx": 0.05461364530041465,
+    "connected": 0.985
+  },
+  "cap0.95": {
+    "union": 58.74,
+    "vis_mass": 0.10613502562046051,
+    "vis_extent": 0.18589191143662526,
+    "ctx": 85.785,
+    "ctx_p05": 61.0,
+    "ctx_below10_pct": 0.0,
+    "anat_mass_in_ctx": 0.039436145543650145,
+    "connected": 0.985
+  },
+  "cap0.99": {
+    "union": 66.775,
+    "vis_mass": 0.07128823548555374,
+    "vis_extent": 0.07502557551844521,
+    "ctx": 82.88,
+    "ctx_p05": 57.0,
+    "ctx_below10_pct": 0.0,
+    "anat_mass_in_ctx": 0.02691869309535834,
+    "connected": 0.985
+  }
+}

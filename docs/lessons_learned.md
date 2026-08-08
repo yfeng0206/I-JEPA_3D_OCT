@@ -81,6 +81,15 @@ Mistakes, debug-traps, and invariants we've paid to learn. Keep these visible so
 - **What happens:** the val loader was created with `num_workers=data_cfg['num_workers']` (6) and re-spawned every epoch while the training loader's 6 were still alive. On Windows this exhausted the system commit limit and killed the run mid-validation with `RuntimeError: Couldn't open shared file mapping ... error code: 1455`.
 - **Rule:** Give validation its own small worker count (`val_num_workers: 2`) — it is a small fraction of wall time. Never run heavy analysis jobs on the training box. And keep `save_every` small (5, not 25): a crash at epoch 32 with 25-epoch saves could only fall back to epoch 27.
 
+### 20. Masking purity does not predict downstream AUC
+- **What happens:** the MIRAGE-guided arm masks the retina *more purely* than the hand-crafted oracle band (target purity 0.632 vs 0.560; targets-on-retina 0.506 vs 0.458; better on 63% of slices) and still lands **below** it on the frozen MeanPool probe at ep100 (0.8807 vs 0.8855, paired-bootstrap 95% CI [−0.0091, −0.0002]). Every offline masking-quality metric the program built pointed the wrong way.
+- **Why it hides:** purity merges all segmentation classes. Re-scored per class (`scripts/mirage_vs_oracle_region_split.py`, 2,374 slices), **96.8% of MIRAGE's extra on-tissue masking is choroid** while inner-retina coverage is unchanged (ratio 1.007) — the purity gain was real and diagnostically inert.
+- **Rule:** A masking prior is only ever validated by downstream AUC (general rule 2). Never select a policy on a proxy metric that has not itself been shown to correlate with AUC. If a proxy must be used, make it *region-specific* (inner-retina coverage), not whole-envelope purity.
+
+### 21. An offline policy sweep must run the config that will train
+- **What happens:** the threshold-0.25 policy was chosen because it matched the oracle arm's masked area to within 0.5% (unique targets 101.7 vs 101.9). `scripts/mirage_method_sweep.py` measured every MIRAGE row with `mirage_spread=False` (its `Method` dataclass defaults `spread: bool = False`), but `configs/patch_mirage_envelope.yaml` sets `mirage_spread: true` — and so does `CurriculumMaskGenerator`'s own default. Re-measured on the same slices with the same seeds: 100.9 vs 108.8 unique targets, **+7.8%**, not +0.2%. The trained comparison therefore varies masked area and placement entropy as well as target location, which is exactly what the sweep existed to prevent.
+- **Rule:** Same class as #17 — a policy sweep must construct its samplers **from the shipped config file**, not from a hand-written dict that silently re-defaults keys. Assert in a test that the sweep's effective curriculum config equals the training config for every key it does not deliberately vary.
+
 ---
 
 ## Fine-tuning
@@ -103,7 +112,7 @@ Intentional, not bugs:
 | Target path AMP | Under autocast | fp32 (no autocast) | Slightly more precise targets |
 | LayerNorm epsilon | 1e-6 | 1e-5 (PyTorch default) | Minor |
 | CLS token | Interpolation code present | No CLS, direct pos_embed add | Cleaner, avoids the no-CLS interpolation bug |
-| Target block sizes | **One `p_size` shared by all `npred` blocks** | 4 independently sampled sizes | **Not benign.** The collator truncates every target in a batch to the shortest, and indices are row-major sorted, so truncation shears the bottom row off a block. Official's truncation is a no-op (0.00% loss); ours discards ~10% of target patches and leaves ~37.5% of delivered blocks non-rectangular. Shared by all arms and by the ep25 checkpoint, so it is left alone rather than introducing a second variable — but fix it in a v2. See `docs/experiments/mirage_guided_masking.md`. |
+| Target block sizes | **One `p_size` shared by all `npred` blocks** | 4 independently sampled sizes | **Not benign.** The collator truncates every target in a batch to the shortest, and indices are row-major sorted, so truncation shears the bottom row off a block. Official's truncation is a no-op (0.00% loss); ours discards ~10% of target patches and leaves ~37.5% of delivered blocks non-rectangular. Shared by all arms and by the ep25 checkpoint, so it is left alone rather than introducing a second variable — but fix it in a v2. See [`docs/experiments/masking/ablations.md`](experiments/masking/ablations.md#open-blockers-before-training). |
 
 ---
 

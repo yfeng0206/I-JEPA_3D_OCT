@@ -1,0 +1,94 @@
+[
+  {
+    "slice": "data_07050:4",
+    "anatomy_mass": 61.882049560546875,
+    "part_cells": [
+      20,
+      20,
+      21,
+      21
+    ],
+    "target_spread": 1,
+    "union_cells": 54,
+    "union_components": 1,
+    "retina_visible": 0.30116236209869385,
+    "purity": 0.8008427090115018,
+    "parts_connected": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "union_holes": 0,
+    "context_cells": 202
+  },
+  {
+    "slice": "data_07225:24",
+    "anatomy_mass": 28.59006690979004,
+    "part_cells": [
+      10,
+      9,
+      9,
+      9
+    ],
+    "target_spread": 1,
+    "union_cells": 25,
+    "union_components": 1,
+    "retina_visible": 0.3010721206665039,
+    "purity": 0.7992958068847656,
+    "parts_connected": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "union_holes": 0,
+    "context_cells": 231
+  },
+  {
+    "slice": "data_08508:64",
+    "anatomy_mass": 69.04605865478516,
+    "part_cells": [
+      21,
+      22,
+      20,
+      23
+    ],
+    "target_spread": 3,
+    "union_cells": 62,
+    "union_components": 1,
+    "retina_visible": 0.3019377589225769,
+    "purity": 0.7773943255024571,
+    "parts_connected": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "union_holes": 0,
+    "context_cells": 194
+  },
+  {
+    "slice": "data_09186:144",
+    "anatomy_mass": 44.20058822631836,
+    "part_cells": [
+      16,
+      15,
+      14,
+      13
+    ],
+    "target_spread": 3,
+    "union_cells": 38,
+    "union_components": 1,
+    "retina_visible": 0.302532434463501,
+    "purity": 0.8112756829512747,
+    "parts_connected": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "union_holes": 0,
+    "context_cells": 218
+  }
+]

@@ -1,0 +1,191 @@
+[
+  {
+    "i": 250,
+    "name": "data_00251:46",
+    "label": "BAD: MIRAGE found ZERO anatomy",
+    "anat_mass": 42.288936614990234,
+    "rect_sizes": [
+      48,
+      42,
+      40,
+      49
+    ],
+    "anat_sizes": [
+      20,
+      10,
+      10,
+      11
+    ],
+    "holes": 1,
+    "ctx_rect": 101,
+    "ctx_anat": 177
+  },
+  {
+    "i": 451,
+    "name": "data_00452:19",
+    "label": "BAD: MIRAGE found ZERO anatomy",
+    "anat_mass": 1.0360875129699707,
+    "rect_sizes": [
+      42,
+      48,
+      49,
+      49
+    ],
+    "anat_sizes": [
+      1,
+      1,
+      0,
+      0
+    ],
+    "holes": 0,
+    "ctx_rect": 118,
+    "ctx_anat": 206
+  },
+  {
+    "i": 900,
+    "name": "data_00901:30",
+    "label": "BAD: MIRAGE found ZERO anatomy",
+    "anat_mass": 37.231624603271484,
+    "rect_sizes": [
+      35,
+      49,
+      42,
+      42
+    ],
+    "anat_sizes": [
+      9,
+      10,
+      10,
+      12
+    ],
+    "holes": 0,
+    "ctx_rect": 75,
+    "ctx_anat": 176
+  },
+  {
+    "i": 224,
+    "name": "data_00225:199",
+    "label": "UGLY: 4 holes in union",
+    "anat_mass": 13.878395080566406,
+    "rect_sizes": [
+      42,
+      48,
+      49,
+      42
+    ],
+    "anat_sizes": [
+      5,
+      5,
+      5,
+      6
+    ],
+    "holes": 1,
+    "ctx_rect": 117,
+    "ctx_anat": 203
+  },
+  {
+    "i": 766,
+    "name": "data_00767:196",
+    "label": "UGLY: 4 holes in union",
+    "anat_mass": 41.066837310791016,
+    "rect_sizes": [
+      42,
+      48,
+      48,
+      48
+    ],
+    "anat_sizes": [
+      17,
+      13,
+      13,
+      16
+    ],
+    "holes": 3,
+    "ctx_rect": 117,
+    "ctx_anat": 169
+  },
+  {
+    "i": 802,
+    "name": "data_00803:168",
+    "label": "UGLY: 4 holes in union",
+    "anat_mass": 35.537601470947266,
+    "rect_sizes": [
+      42,
+      49,
+      40,
+      48
+    ],
+    "anat_sizes": [
+      11,
+      10,
+      13,
+      15
+    ],
+    "holes": 4,
+    "ctx_rect": 108,
+    "ctx_anat": 194
+  },
+  {
+    "i": 426,
+    "name": "data_00427:60",
+    "label": "GOOD (typical)",
+    "anat_mass": 70.23737335205078,
+    "rect_sizes": [
+      48,
+      48,
+      49,
+      49
+    ],
+    "anat_sizes": [
+      13,
+      16,
+      21,
+      24
+    ],
+    "holes": 0,
+    "ctx_rect": 68,
+    "ctx_anat": 149
+  },
+  {
+    "i": 356,
+    "name": "data_00357:179",
+    "label": "GOOD (typical)",
+    "anat_mass": 53.58689880371094,
+    "rect_sizes": [
+      36,
+      48,
+      48,
+      49
+    ],
+    "anat_sizes": [
+      11,
+      10,
+      21,
+      19
+    ],
+    "holes": 0,
+    "ctx_rect": 135,
+    "ctx_anat": 170
+  },
+  {
+    "i": 743,
+    "name": "data_00744:22",
+    "label": "GOOD (typical)",
+    "anat_mass": 50.30672836303711,
+    "rect_sizes": [
+      48,
+      36,
+      42,
+      36
+    ],
+    "anat_sizes": [
+      11,
+      9,
+      16,
+      19
+    ],
+    "holes": 0,
+    "ctx_rect": 106,
+    "ctx_anat": 160
+  }
+]

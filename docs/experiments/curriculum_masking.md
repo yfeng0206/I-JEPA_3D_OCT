@@ -2,7 +2,13 @@
 
 Branch: `ijepa-mask`. Code: [`src/masks/curriculum.py`](../../src/masks/curriculum.py).
 
-> **This is a living plan.** The status tracker (§0) is the source of truth for "where are we." After a context reset: read §0, then the section referenced by the first TODO row.
+> **Historical plan.** The current MIRAGE-guided anatomy sampler, adapter
+> ablations, guardrails, and blockers are documented in
+> [`masking/ablations.md`](masking/ablations.md). This file is retained because
+> it covers the distinct oracle → self-guided → curriculum experiment program.
+
+> The status tracker below is preserved as the plan’s historical state; use the
+> current ablation record for implementation decisions.
 
 ## Approach
 

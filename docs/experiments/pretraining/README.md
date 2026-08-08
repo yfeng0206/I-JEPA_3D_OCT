@@ -8,6 +8,7 @@ Self-supervised I-JEPA pretraining on 600K OCT slices (FairVision Training split
 |---|---|---|---|---|---|---|
 | [Random-init 100ep](random_100ep.md) | Random | 0.00025 | 100 | 5 | 0.996→1.0 | **completed** — current baseline |
 | [Oracle anatomical 100ep](oracle_100ep.md) | Warm-start random ep25 | 0.00025 | 100 | 5 | 0.996→1.0 | **completed** — Rung 1 (anatomical_prior masking) |
+| [MIRAGE-guided 100ep](mirage_100ep.md) | Warm-start random ep25 | 0.00025 | 100 | 5 | 0.996→1.0 | **completed** — Rung 1b (mirage_envelope masking) |
 | DINO-init continuation | DINOv2 or DINOv3 ViT-B/16 | TBD | 100 | TBD | 0.996→1.0 | planned (Phase 3) |
 
 Shared config: ViT-B/16, batch 64×4 GPUs × 2 accum = 512 effective, weight_decay 0.04→0.4 cosine, no early stopping.
@@ -32,3 +33,4 @@ Regenerate: `python scripts/plot_pretraining.py --csv <log.csv> --stdout <stdout
 3. **I-JEPA loss goes up with training.** Monitor `rep_diversity` and `cos_sim` instead.
 4. **No early stopping.** Literature standard (RETFound, V-JEPA) is fixed-epoch. We run full 100 epochs and save checkpoints every 25.
 5. **Downstream AUC is the quality signal.** The d=1 linear probe sweep across ep25/50/75/100 picks the best encoder. See [frozen/d1_sweep.md](../frozen/d1_sweep.md).
+6. **Masking purity is not a proxy for downstream AUC.** The MIRAGE arm masks the retina more purely than the oracle band (0.632 vs 0.560) and still lands below it at ep100 (0.8807 vs 0.8855). Judge a masking prior on AUC only. See [frozen/mirage_meanpool_sweep.md](../frozen/mirage_meanpool_sweep.md).

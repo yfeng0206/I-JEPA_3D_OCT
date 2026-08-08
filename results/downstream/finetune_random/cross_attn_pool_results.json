@@ -1,0 +1,54 @@
+{
+  "mode": "patch_finetune",
+  "head_type": "linear",
+  "num_slices": 64,
+  "probe_depth": 1,
+  "best_epoch": 5,
+  "best_val_auc": 0.8729064867395819,
+  "test_auc": 0.8871778122448689,
+  "test_loss": 0.42768121751149496,
+  "sensitivity": 0.8219645293315143,
+  "specificity": 0.7790091264667536,
+  "lr_encoder": 1e-05,
+  "accum_steps": 4,
+  "effective_batch": 16,
+  "config": {
+    "mode": "patch",
+    "data": {
+      "data_dir": "/tmp/fairvision_data/data",
+      "num_slices": 64,
+      "slice_size": 256,
+      "batch_size": 1,
+      "num_workers": 2,
+      "encode_chunk_size": 16
+    },
+    "model": {
+      "encoder_checkpoint": "/tmp/ijepa_checkpoints/jepa_patch-ep100.pth.tar",
+      "encoder_name": "vit_base",
+      "patch_size": 16,
+      "crop_size": 256,
+      "freeze_encoder": false,
+      "probe_type": "cross_attn_pool",
+      "probe_num_heads": 12,
+      "probe_depth": 1,
+      "probe_head_dim": 64,
+      "head_type": "linear"
+    },
+    "training": {
+      "lr_probe": 0.0002,
+      "lr_encoder": 1e-05,
+      "lr_head": 0.0002,
+      "layer_decay": 0.5,
+      "weight_decay": 0.05,
+      "dropout": 0.2,
+      "epochs": 50,
+      "patience": 15,
+      "warmup_epochs": 10,
+      "accum_steps": 4,
+      "seed": 42
+    },
+    "logging": {
+      "output_dir": "/tmp/ijepa_outputs/downstream_patch_s64_ep50_bs1_linear_20260418_192249"
+    }
+  }
+}

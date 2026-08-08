@@ -1,0 +1,33 @@
+mode: patch
+data:
+  data_dir: /tmp/fairvision_data/data
+  num_slices: 64
+  slice_size: 256
+  batch_size: 1
+  num_workers: 2
+  encode_chunk_size: 16
+model:
+  encoder_checkpoint: /tmp/ijepa_checkpoints/jepa_patch_oracle-ep100.pth.tar
+  encoder_name: vit_base
+  patch_size: 16
+  crop_size: 256
+  freeze_encoder: false
+  probe_type: mean_pool
+  probe_num_heads: 12
+  probe_depth: 1
+  probe_head_dim: 64
+  head_type: linear
+training:
+  lr_probe: 0.0002
+  lr_encoder: 0.00001
+  lr_head: 0.0002
+  layer_decay: 0.5
+  weight_decay: 0.05
+  dropout: 0.2
+  epochs: 50
+  patience: 15
+  warmup_epochs: 10
+  accum_steps: 4
+  seed: 42
+logging:
+  output_dir: /tmp/ijepa_outputs/downstream_patch_s64_ep50_bs1_linear_20260607_200606

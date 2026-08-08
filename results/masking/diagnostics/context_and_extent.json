@@ -1,0 +1,40 @@
+{
+  "d1_context": {
+    "real_context_tokens_mean": 84.22,
+    "real_context_tokens_min": 38,
+    "real_context_tokens_max": 119,
+    "real_target_union_mean": 113.47625,
+    "complement_would_be": 142.52375,
+    "ratio_complement_over_real": 1.6922791498456424
+  },
+  "d2_mass_vs_extent": {
+    "tau0.05": {
+      "mass_covered": 0.6949989512562752,
+      "extent_covered": 0.5242471516539472,
+      "support_cells": 79.155,
+      "union_cells": 41.865,
+      "gap_mass_minus_extent": 0.170751799602328
+    },
+    "tau0.10": {
+      "mass_covered": 0.6949989512562752,
+      "extent_covered": 0.559051837160547,
+      "support_cells": 73.825,
+      "union_cells": 41.865,
+      "gap_mass_minus_extent": 0.13594711409572824
+    },
+    "tau0.25": {
+      "mass_covered": 0.6949989512562752,
+      "extent_covered": 0.644825095658191,
+      "support_cells": 62.565,
+      "union_cells": 41.865,
+      "gap_mass_minus_extent": 0.05017385559808418
+    },
+    "tau0.50": {
+      "mass_covered": 0.6949989512562752,
+      "extent_covered": 0.774214603461052,
+      "support_cells": 46.245,
+      "union_cells": 41.865,
+      "gap_mass_minus_extent": -0.07921565220477678
+    }
+  }
+}

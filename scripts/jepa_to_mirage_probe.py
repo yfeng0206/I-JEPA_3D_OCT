@@ -78,6 +78,23 @@ def build_mirage(device):
                                           weights_only=False)['model']), strict=True)
     finally:
         os.chdir(cwd)
+
+    # MIRAGE is a frozen teacher.  Freezing it structurally rather than relying
+    # on every call site remembering `torch.no_grad()`: 99.8% of these 95.6M
+    # params ship with requires_grad=True, so a forward outside no_grad would
+    # build a graph into the teacher and a stray optimiser would train it.
+    for p in m.parameters():
+        p.requires_grad_(False)
+
+    # The model is built with drop_path_rate=0.1.  In eval that is inert, but a
+    # blanket .train() makes it stochastic: two identical forwards were measured
+    # to differ by 1.428e+01 in logits, and train-vs-eval by 1.545e+01.  The
+    # guide has to be reproducible, so kill stochastic depth at the source
+    # instead of depending on the model never being switched to train mode.
+    for mod in m.modules():
+        if hasattr(mod, 'drop_prob'):
+            mod.drop_prob = 0.0
+
     return m.to(device).eval()
 
 

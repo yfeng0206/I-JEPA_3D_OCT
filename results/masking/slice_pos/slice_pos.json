@@ -1,0 +1,21 @@
+{
+  "middle": {
+    "rel_before": 0.33483659505844116,
+    "rel_after": 0.23470728139082592,
+    "reduction_pct": 29.903933783026027,
+    "drift": 0.1810706134637197,
+    "n_train": 4800,
+    "n_eval": 1200,
+    "seconds": 55.7
+  },
+  "stratified": {
+    "rel_before": 0.3527506530284882,
+    "rel_after": 0.2603844823439916,
+    "reduction_pct": 26.18454987722931,
+    "drift": 0.17454382479190828,
+    "n_train": 4800,
+    "n_eval": 1200,
+    "seconds": 27.9
+  },
+  "delta_reduction_pp": -3.719383905796718
+}

@@ -14,7 +14,7 @@ not an artefact of the band having been hand-fitted to this dataset.
 
 Masking policy selection, the guide construction, and where the oracle band
 fails are documented in
-[`../mirage_guided_masking.md`](../mirage_guided_masking.md).
+[`../masking/ablations.md`](../masking/ablations.md#completed-mirage-envelope-arm).
 
 ## Lineage (why the comparison is clean)
 

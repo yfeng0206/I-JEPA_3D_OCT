@@ -4,8 +4,12 @@ Three sections: pretraining (the SSL runs), frozen (probe-only evaluation with e
 
 Research direction plans:
 
-- [`curriculum_masking.md`](curriculum_masking.md) — retinal/anatomy-guided target allocation.
-- [`mirage_guided_masking.md`](mirage_guided_masking.md) — **active direction.** Rung 1b: MIRAGE-Large segmentation as the target-block prior, replacing the hand-crafted oracle band. Policy sweep, where the oracle band fails, and the rejected alternatives.
+- [`masking/README.md`](masking/README.md) — masking-documentation index.
+- [`masking/ablations.md`](masking/ablations.md) — **authoritative active
+  record:** MIRAGE-guided anatomy sampler, mask-budget ablations, adapter sweep,
+  guardrails, bug fixes, rejected designs, blockers, and reproduction.
+- [`curriculum_masking.md`](curriculum_masking.md) — retained historical plan
+  for the distinct oracle → self-guided → curriculum experiment program.
 
 Archived direction:
 
@@ -57,9 +61,12 @@ docs/experiments/
   finetune/
     README.md
     llrd.md              unfrozen encoder + LLRD γ=0.5 on ep100 (3 probes)
+  masking/
+    README.md            masking-documentation index
+    ablations.md         authoritative MIRAGE-guided anatomy-masking record
   interpretability.md    occlusion attribution: 3 probes converge on disc-rim
-  curriculum_masking.md  anatomy-guided masking research plan
-  mirage_guided_masking.md  MIRAGE segmentation-guided masking (Rung 1b, ACTIVE)
+  curriculum_masking.md  historical oracle/self-guided/curriculum plan
+  mirage_guided_masking.md  compatibility pointer to masking/ablations.md
 ```
 
 The semantic-teacher research plan and its Phase-0 docs moved to

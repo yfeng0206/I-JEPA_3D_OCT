@@ -112,7 +112,7 @@ Intentional, not bugs:
 | Target path AMP | Under autocast | fp32 (no autocast) | Slightly more precise targets |
 | LayerNorm epsilon | 1e-6 | 1e-5 (PyTorch default) | Minor |
 | CLS token | Interpolation code present | No CLS, direct pos_embed add | Cleaner, avoids the no-CLS interpolation bug |
-| Target block sizes | **One `p_size` shared by all `npred` blocks** | 4 independently sampled sizes | **Not benign.** The collator truncates every target in a batch to the shortest, and indices are row-major sorted, so truncation shears the bottom row off a block. Official's truncation is a no-op (0.00% loss); ours discards ~10% of target patches and leaves ~37.5% of delivered blocks non-rectangular. Shared by all arms and by the ep25 checkpoint, so it is left alone rather than introducing a second variable — but fix it in a v2. See `docs/experiments/mirage_guided_masking.md`. |
+| Target block sizes | **One `p_size` shared by all `npred` blocks** | 4 independently sampled sizes | **Not benign.** The collator truncates every target in a batch to the shortest, and indices are row-major sorted, so truncation shears the bottom row off a block. Official's truncation is a no-op (0.00% loss); ours discards ~10% of target patches and leaves ~37.5% of delivered blocks non-rectangular. Shared by all arms and by the ep25 checkpoint, so it is left alone rather than introducing a second variable — but fix it in a v2. See [`docs/experiments/masking/ablations.md`](experiments/masking/ablations.md#open-blockers-before-training). |
 
 ---
 

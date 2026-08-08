@@ -104,7 +104,7 @@ that a real segmentation model would match or beat the hand-crafted band.
 
 | quantity | ORACLE | MIRAGE thr 0.25 | who wins |
 |---|---|---|---|
-| target-block purity (1,000 vols, [`../mirage_guided_masking.md`](../mirage_guided_masking.md)) | 0.5602 | **0.6320** | MIRAGE by 13% |
+| target-block purity (1,000 vols, [`../masking/ablations.md`](../masking/ablations.md#completed-mirage-envelope-arm)) | 0.5602 | **0.6320** | MIRAGE by 13% |
 | targets on retina (2,339 slices, `scripts/oracle_failure_cases.py`) | 0.458 | **0.506** | MIRAGE |
 | slices where MIRAGE puts more targets on retina | — | 63.1% | MIRAGE |
 | oracle band purity against pixel tissue truth (same 2,339 slices) | 0.653 | not measured | (oracle is <0.50 pure on 13.8% of slices) |
@@ -248,7 +248,7 @@ The MIRAGE arm's own training log agrees on direction and is higher still:
 `D:\jepa_phase0\runs\patch_mirage_envelope\train.log` average
 `unique_targets=120.2`, `context=111.4`, `on_region=0.462`. (Per-image offline
 statistics do not extrapolate exactly to the batched training protocol — see
-the warning at the end of [`../mirage_guided_masking.md`](../mirage_guided_masking.md)
+the blocker discussion in [`../masking/ablations.md`](../masking/ablations.md#open-blockers-before-training)
 — so the *paired* offline comparison above is the load-bearing number and the
 log is corroboration, not a second estimate of the same quantity.)
 

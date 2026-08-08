@@ -1,0 +1,16 @@
+{
+  "n_slices": 981,
+  "targets_raster_ordered": 3924,
+  "targets_total": 3924,
+  "smallest_target": {
+    "mean": 9.675840978593271,
+    "median": 11.0,
+    "min": 1,
+    "pct_le_1": 8.868501529051988
+  },
+  "mean_row": {
+    "all": 6.1777493138151875,
+    "old": 4.503312945973496,
+    "new": 6.125131712360087
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "measurement_date": "2026-08-09",
+  "gpu": "RTX 3090 24GB",
+  "precision": "fp32 (TF32 disabled)",
+  "safety_threshold_mb": 20000,
+  "tf32_numerical_impact": {
+    "max_abs_diff": 0.305,
+    "mean_abs_diff": 0.000281,
+    "max_relative_diff": 0.031,
+    "verdict": "3% relative error — unacceptable for strict fp32; TF32 disabled"
+  },
+  "frozen_probe_encoding": {
+    "note": "Encoder frozen, no_grad. Feature precomputation is volume-by-volume (batch=1). chunk_size only affects how many slices are batched per forward pass.",
+    "measurements": [
+      {"chunk_size": 25, "slices_per_sec": 299.7, "peak_mb": 658},
+      {"chunk_size": 50, "slices_per_sec": 305.5, "peak_mb": 994},
+      {"chunk_size": 100, "slices_per_sec": 306.5, "peak_mb": 1653}
+    ],
+    "recommendation": {
+      "chunk_size": 100,
+      "num_slices": 100,
+      "batch_size_for_probe_training": 256,
+      "reason": "chunk_size=100 maximizes throughput at only 1653 MB; batch_size=256 is for cached feature training (75 MB), not encoding"
+    }
+  },
+  "partial_freeze": {
+    "note": "batch_size=1 volume. frozen_blocks = number of first N blocks frozen (of 12 total). Memory scales with num_slices × trainable_blocks.",
+    "measurements": [
+      {"frozen_blocks": 12, "num_slices": 100, "peak_mb": 1690, "slices_per_sec": 309.0, "sec_per_vol": 0.32},
+      {"frozen_blocks": 9, "num_slices": 100, "peak_mb": 5453, "slices_per_sec": 218.6, "sec_per_vol": 0.46},
+      {"frozen_blocks": 6, "num_slices": 100, "peak_mb": 9961, "slices_per_sec": 168.3, "sec_per_vol": 0.59},
+      {"frozen_blocks": 3, "num_slices": 100, "peak_mb": 14468, "slices_per_sec": 136.7, "sec_per_vol": 0.73},
+      {"frozen_blocks": 0, "num_slices": 100, "peak_mb": 18975, "slices_per_sec": 114.9, "sec_per_vol": 0.87}
+    ],
+    "recommendations": {
+      "full_finetune": {
+        "frozen_blocks": 0,
+        "num_slices": 100,
+        "batch_size": 1,
+        "encode_chunk_size": 100,
+        "peak_mb": 18975,
+        "sec_per_vol": 0.87,
+        "note": "Fits in 24GB with 5GB headroom. Use accum_steps=4 for effective batch=4."
+      },
+      "partial_finetune_fast": {
+        "frozen_blocks": 6,
+        "num_slices": 100,
+        "batch_size": 1,
+        "encode_chunk_size": 100,
+        "peak_mb": 9961,
+        "sec_per_vol": 0.59,
+        "note": "46% faster than full FT, 50% memory. Sweet spot for speed vs adaptation."
+      }
+    }
+  },
+  "existing_config_safety": {
+    "frozen_meanpool_mirage_ep*.yaml": {
+      "batch_size": 256,
+      "num_slices": 100,
+      "encode_chunk_size": 50,
+      "verdict": "SAFE. batch_size=256 applies only to probe training on cached features (~75 MB). Encoding is always batch_size=1 volume with chunk_size=50 slices (994 MB peak). No OOM risk.",
+      "uses_autocast": true,
+      "autocast_location": "precompute_features() line ~362 uses autocast() during encoding"
+    }
+  },
+  "gradient_checkpointing": "NOT SUPPORTED. src/models/vision_transformer.py has no checkpoint/grad_checkpointing flag."
+}

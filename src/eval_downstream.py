@@ -32,6 +32,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from contextlib import nullcontext
 from torch.cuda.amp import GradScaler, autocast
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.metrics import roc_auc_score
@@ -318,7 +319,7 @@ def evaluate(probe, head, loader, criterion, device, return_predictions=False):
 # ---------------------------------------------------------------------------
 
 def precompute_features(encoder, data_dir, split, num_slices, slice_size,
-                        device, chunk_size=50, cache_dir=None):
+                        device, chunk_size=50, cache_dir=None, use_amp=True):
     """Encode all volumes in a split with the frozen ViT and cache to disk.
 
     Returns:
@@ -354,7 +355,7 @@ def precompute_features(encoder, data_dir, split, num_slices, slice_size,
             for j in range(0, flat.size(0), chunk_size):
                 chunk = flat[j:j + chunk_size]
                 chunk = imagenet_normalize(chunk)  # match pretraining distribution
-                with autocast():
+                with (autocast() if use_amp else nullcontext()):
                     out = encoder(chunk)      # (chunk, patches, D)
                 parts.append(out.mean(dim=1).cpu())  # (chunk, D)
 
@@ -506,17 +507,18 @@ def run_patch_downstream(config, device):
     print('\n--- Pre-computing features with frozen encoder ---')
     slice_size = data_cfg.get('slice_size', 256)
     chunk_size = data_cfg.get('encode_chunk_size', 50)
+    use_amp = data_cfg.get('use_amp', True)
     cache_dir = os.path.join(output_dir, 'feature_cache')
 
     train_feats, train_labels = precompute_features(
         encoder, data_cfg['data_dir'], 'Training',
-        num_slices, slice_size, device, chunk_size, cache_dir)
+        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp)
     val_feats, val_labels = precompute_features(
         encoder, data_cfg['data_dir'], 'Validation',
-        num_slices, slice_size, device, chunk_size, cache_dir)
+        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp)
     test_feats, test_labels = precompute_features(
         encoder, data_cfg['data_dir'], 'Test',
-        num_slices, slice_size, device, chunk_size, cache_dir)
+        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp)
 
     # Free encoder from GPU after feature extraction
     encoder.cpu()

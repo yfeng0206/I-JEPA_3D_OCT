@@ -23,7 +23,10 @@ data:
   # Volumes encoded per chunk during the one-time feature pre-computation.
   # Features are cached under <output_dir>/feature_cache, so the frozen
   # encoder runs once and the 50 probe epochs train on cached tensors.
-  encode_chunk_size: 50
+  # chunk_size=100: measured 306.5 sl/sec @ 1653 MB (vs 305.5 @ 994 for 50).
+  encode_chunk_size: 100
+  # Disable AMP/autocast for strict fp32 numerical accuracy.
+  use_amp: false
 model:
   encoder_checkpoint: D:\jepa_phase0\runs\patch_mirage_envelope\jepa_patch_mirage-ep50.pth.tar
   encoder_name: vit_base

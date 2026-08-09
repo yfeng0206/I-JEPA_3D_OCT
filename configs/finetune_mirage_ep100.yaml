@@ -1,0 +1,40 @@
+# Full fine-tune config for I-JEPA downstream glaucoma classification.
+# fp32 only (no AMP/autocast). Measured on RTX 3090 24 GB.
+#
+# Peak VRAM: 18,975 MB (batch=1, num_slices=100, all 12 blocks trainable).
+# Throughput: 114.9 slices/sec = 0.87 sec/vol.
+# Effective batch size: 1 × 1 GPU × 4 accum = 4 volumes.
+mode: patch
+data:
+  data_dir: D:\jepa_phase0\fairvision-glaucoma\data
+  num_slices: 100
+  slice_size: 256
+  # batch_size=1 volume per step; gradient accumulation gives eff_batch=4.
+  # 1 vol × 100 slices = 18,975 MB peak (measured fp32). Safe with 5 GB headroom.
+  batch_size: 1
+  num_workers: 4
+  # encode_chunk_size controls how many slices are forwarded at once.
+  # 100 = all slices in one pass; slightly faster, same memory as chunked.
+  encode_chunk_size: 100
+  use_amp: false
+model:
+  encoder_checkpoint: D:\jepa_phase0\runs\patch_mirage_envelope\jepa_patch_mirage-ep100.pth.tar
+  encoder_name: vit_base
+  patch_size: 16
+  crop_size: 256
+  freeze_encoder: false
+  probe_type: mean_pool
+  head_type: linear
+training:
+  lr_encoder: 5.0e-6
+  lr_probe: 0.0004
+  lr_head: 0.0004
+  weight_decay: 0.05
+  dropout: 0.2
+  epochs: 30
+  patience: 5
+  warmup_epochs: 3
+  accum_steps: 4
+  seed: 42
+logging:
+  output_dir: D:\jepa_phase0\runs\finetune_mirage_ep100

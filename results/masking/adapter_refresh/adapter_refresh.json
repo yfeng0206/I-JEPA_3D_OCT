@@ -1,0 +1,14 @@
+{
+  "n": 192,
+  "viable": 192,
+  "adapter_A_teacher": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep100.pth.tar",
+  "adapter_B_teacher": "D:\\jepa_phase0\\runs\\patch_mirage_anatomy\\jepa_patch_mirage-ep30.pth.tar",
+  "feature_rel_l2": 0.07895386405289173,
+  "score_abs_diff": 0.0009444211706674347,
+  "seg_argmax_agreement": 0.9977912902832031,
+  "mask_jaccard": 0.9825705075015808,
+  "mask_jaccard_min": 0.8688524590163934,
+  "identical_masks_pct": 53.645833333333336,
+  "cells_A": 53.354166666666664,
+  "cells_B": 52.979166666666664
+}

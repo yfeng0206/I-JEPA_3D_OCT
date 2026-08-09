@@ -1,0 +1,94 @@
+{
+  "n_images": 30,
+  "images": [
+    "GOALS__0071.png",
+    "GOALS__0072.png",
+    "GOALS__0073.png",
+    "GOALS__0074.png",
+    "GOALS__0075.png",
+    "GOALS__0076.png",
+    "GOALS__0077.png",
+    "GOALS__0078.png",
+    "GOALS__0079.png",
+    "GOALS__0080.png",
+    "GOALS__0081.png",
+    "GOALS__0082.png",
+    "GOALS__0083.png",
+    "GOALS__0084.png",
+    "GOALS__0085.png",
+    "GOALS__0086.png",
+    "GOALS__0087.png",
+    "GOALS__0088.png",
+    "GOALS__0089.png",
+    "GOALS__0090.png",
+    "GOALS__0091.png",
+    "GOALS__0092.png",
+    "GOALS__0093.png",
+    "GOALS__0094.png",
+    "GOALS__0095.png",
+    "GOALS__0096.png",
+    "GOALS__0097.png",
+    "GOALS__0098.png",
+    "GOALS__0099.png",
+    "GOALS__0100.png"
+  ],
+  "results": {
+    "frozen MIRAGE": {
+      "Elsewhere": {
+        "dice": 0.9946036452149732,
+        "iou": 0.9892703834298658,
+        "n": 30
+      },
+      "InnerRetina": {
+        "dice": 0.9585856136294304,
+        "iou": 0.9209657937285236,
+        "n": 30
+      },
+      "Choroid": {
+        "dice": 0.9328602005674829,
+        "iou": 0.8761786542825227,
+        "n": 30
+      },
+      "anatomy_mean_dice": 0.9457229070984566,
+      "pixel_acc": 0.9902325948079427
+    },
+    "adapter_cfg7": {
+      "Elsewhere": {
+        "dice": 0.9941593001300265,
+        "iou": 0.9883927885161852,
+        "n": 30
+      },
+      "InnerRetina": {
+        "dice": 0.9565408517300342,
+        "iou": 0.9170485321333566,
+        "n": 30
+      },
+      "Choroid": {
+        "dice": 0.9284236993106059,
+        "iou": 0.8684724323320115,
+        "n": 30
+      },
+      "anatomy_mean_dice": 0.94248227552032,
+      "pixel_acc": 0.9894467671712239
+    },
+    "adapter_cfg7_ep30teacher": {
+      "Elsewhere": {
+        "dice": 0.9941853572912236,
+        "iou": 0.9884439977306342,
+        "n": 30
+      },
+      "InnerRetina": {
+        "dice": 0.9562374585218331,
+        "iou": 0.9165102769561534,
+        "n": 30
+      },
+      "Choroid": {
+        "dice": 0.9293847616101534,
+        "iou": 0.8700307405590608,
+        "n": 30
+      },
+      "anatomy_mean_dice": 0.9428111100659933,
+      "pixel_acc": 0.9894943237304688
+    }
+  }
+}

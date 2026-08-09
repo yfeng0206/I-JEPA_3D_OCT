@@ -81,4 +81,4 @@ The semantic-teacher research plan and its Phase-0 docs moved to
 
 - [research_log.md](../research_log.md) — chronological problem/solution log + paper bibliography + backlog
 - [lessons_learned.md](../lessons_learned.md) — mistakes, fixes, invariants
-- [architecture.md](../architecture.md) — model architecture spec
+- [architecture/](../architecture/) — model architecture spec

@@ -108,7 +108,7 @@ I-JEPA applied to sequences of ConvNeXt slice features per volume. Collapsed wit
 
 ### Why It Failed
 
-Adjacent OCT slices produce nearly identical ConvNeXt features (cosine similarity >0.98). With only 32 tokens and high inter-token similarity, the prediction task is trivially solvable and the encoder collapses to constant outputs. See [lessons learned](lessons_learned.md) for details.
+Adjacent OCT slices produce nearly identical ConvNeXt features (cosine similarity >0.98). With only 32 tokens and high inter-token similarity, the prediction task is trivially solvable and the encoder collapses to constant outputs. See [lessons learned](../lessons_learned.md) for details.
 
 ## 3. Downstream Classifier Architecture
 

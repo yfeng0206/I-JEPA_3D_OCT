@@ -1,60 +1,13 @@
-# MIRAGE-guided run — warm-start from random ep25, hard-switch to
-# mirage_envelope masking.
-#
-# Same experimental contract as configs/patch_oracle_anatomical.yaml: the ONLY
-# variable versus the random baseline is where the four target blocks land.
-# Block count, block scales, aspect ratio, context construction, predictor,
-# Smooth-L1 loss, optimizer and every schedule are unchanged.
-#
-# The guide is the MIRAGE-derived repaired retinal envelope (RNFL + GCIPL +
-# choroid, with the unlabelled mid-retina filled in), precomputed by
-# scripts/mirage_precompute_guides.py.  Placement rules:
-#   * no dilation        — measured harmful at every threshold (see below)
-#   * occupancy >= 0.25  — the patch grid a target block may be drawn from
-#   * block fill >= 0.40 — each target must be at least 40% retina
-#   * retina visible >= 0.25 — BEST EFFORT, NOT A GUARANTEE.  The sampler
-#     retries up to mirage_max_attempts and, if no attempt clears the bar, it
-#     keeps the attempt that left the most retina visible rather than falling
-#     back to random.  Measured on 1,000 volumes: ~47% of images clear it
-#     outright and only ~6.2% contain a block placed uniformly (the
-#     "infeasible guide" path).  Blocks stay guided either way.  The masking
-#     policy below was selected WITH this behaviour in force, so it must not
-#     be changed without re-running the sweep.
 data:
-  # Microbatch 64 exactly matches the original per-GPU batch, so every
-  # microbatch is statistically identical to the four-T4 run; accumulation 8
-  # restores the effective batch of 512.  Benchmarked on one RTX 3090:
-  #   64 x 8 -> 6.38 s/step, 10.88 GiB reserved
-  #  128 x 4 -> 6.23 s/step, 18.64 GiB reserved (only 2% faster, 71% more VRAM)
   batch_size: 64
   crop_size: 256
-  crop_scale: [0.3, 1.0]
-  # MIRAGE target-block placement is rejection sampling and costs more CPU
-  # than the GPU step.  It runs in the workers via MirageMaskCollator, so the
-  # loader must out-run the GPU (188 img/s measured).  Benchmarked delivery:
-  # 0 workers 52 img/s (GPU starved), 4 -> 199, 6 -> 217, 8 -> 302.
-  # 6 gives margin over the GPU without the RAM pressure that 8 workers caused
-  # during the MIRAGE GOALS run.
+  crop_scale:
+  - 0.3
+  - 1.0
   num_workers: 6
-  # Validation spawns its own workers on top of the training loader's each
-  # epoch.  6 + 6 exhausted the Windows commit limit (error 1455) and killed a
-  # run mid-validation; validation is a small fraction of wall time, so 2 is
-  # plenty.
   val_num_workers: 2
   pin_mem: true
-  # Local single-3090 run.  Training = 6,000 volumes, Validation = the real
-  # FairVision Validation split (data_06001-data_07000), the same 1,000 volumes
-  # the random and oracle runs used, so val_loss is directly comparable to
-  # docs/experiments/pretraining/oracle_100ep.md.
   data_dir: D:\jepa_phase0\fairvision-glaucoma\data
-  # Prebuilt slice cache (scripts/build_slice_cache.py).  Reading a slice from
-  # the .npz decodes the whole 8 MB volume to obtain 40 KB, a 200x read
-  # amplification.  On this box the data lives on a 7200 rpm SATA disk, and
-  # that amplification pinned the disk at its 51 MB/s ceiling and starved the
-  # GPU to 7.6 img/s (~68 days for the run) while the GPU itself can sustain
-  # 177.7 img/s (~2.9 days).  The cache stores exactly the sampled slices, so
-  # the bytes fed to the transform are unchanged -- tests/test_slice_cache.py
-  # asserts bit-equality against the .npz path.
   slice_cache_dir: D:\jepa_phase0\fairvision-glaucoma\slice_cache
   num_slices: 100
   color_jitter_strength: 0.0
@@ -65,91 +18,57 @@ mask:
   patch_size: 16
   num_enc_masks: 1
   num_pred_masks: 4
-  enc_mask_scale: [0.85, 1.0]
-  pred_mask_scale: [0.15, 0.2]
-  aspect_ratio: [0.75, 1.5]
+  enc_mask_scale:
+  - 0.85
+  - 1.0
+  pred_mask_scale:
+  - 0.15
+  - 0.2
+  aspect_ratio:
+  - 0.75
+  - 1.5
   allow_overlap: false
-  # Anatomy targets are ragged; K fixes the per-target length. K=16 keeps
-  # 92.0% of the target cells versus 7.2% under global-min truncation.
   pred_target_k: 16
   min_keep: 10
   curriculum:
     enabled: true
     mode: mirage_anatomy
-    # Warm-start point = 25 (R1 did random ep0-25).  Epoch 25 is the zero-bias
-    # bootstrap epoch; guidance ramps linearly to full strength by epoch 30 and
-    # stays there through epoch 100 — identical to the oracle protocol.
     T_warm: 25
     T_total: 30
     r_max: 1.0
     ramp_shape: linear
-    mirage_guide_dir: D:\jepa_phase0\fairvision-glaucoma\mirage_guides
-    # No dilation.  Measured over 1,000 volumes / 20,000 slices against a
-    # MIRAGE-free pixel-level tissue reference, dilation is monotonically
-    # harmful at every threshold: +1 costs 6-8 purity points and +2 costs
-    # 12-14, and the best dilated variant (thr 0.90 +1, 0.7725) still loses to
-    # the worst undilated one (thr 0.10, 0.7976).  The dilated ring is ~94%
-    # void, so it hands the min_retina_visible rule off-anatomy places to
-    # satisfy itself.
+    mirage_guide_dir: D:\jepa_phase0\fairvision-glaucoma\mirage_soft_guides\base512_cfg7_3186b1fa278bc97f
     mirage_dilate_patches: 0
-    # Each target block must be at least this much retina.  35/40/45 performed
-    # equivalently on acceptance; 0.40 kept masked area closest to the random
-    # baseline (0.412 vs 0.432).
-    mirage_min_block_fill: 0.40
-    # Best-effort guard against the degenerate case where four full-size blocks
-    # blanket the whole retina.  See the header: this is a retry preference,
-    # not a hard constraint — a failed accept still returns guided blocks.
+    mirage_min_block_fill: 0.4
     mirage_min_retina_visible: 0.25
     mirage_max_attempts: 30
-    # 0.25 rather than 0.50/0.75.  Higher thresholds score marginally better on
-    # purity but shrink the masked area, and the experimental contract is that
-    # target *location* is the only variable.  At 0.25 the masking geometry
-    # matches the oracle arm to within 0.5% on all three axes -- image masked
-    # 0.397 vs 0.398, unique targets 101.7 vs 101.9, context tokens 117.2 vs
-    # 116.6 -- while purity rises from 0.7397 to 0.8077.
     mirage_occupancy_threshold: 0.25
     mirage_spread: true
     mirage_overlap_tolerance: 0.25
-    # mirage_anatomy: connected anatomy-shaped targets instead of rectangles.
-    anatomy_mass_cap: 0.90
-    anatomy_tau: 0.10
+    anatomy_mass_cap: 0.9
+    anatomy_tau: 0.1
 meta:
   model_name: vit_base
   pred_depth: 6
   pred_emb_dim: 384
   use_bfloat16: false
   load_checkpoint: true
-  # RESUMED after an out-of-memory crash at epoch 32 (Windows commit limit,
-  # error 1455 — see val_num_workers above).  Only `best` (epoch 27) had been
-  # saved, because periodic saves were every 25 epochs, so epochs 28-32 were
-  # lost; save_every is now 5.  This file is a copy of that ep27 `best`, which
-  # itself descends from the verified ep25 fork point
-  # (SHA-256 e5ad5b0c...e7b, HF yfeng0206/I-JEPA-OCT-random-posfix-ep25).
-  # To start the run from scratch again, point this back at:
-  #   D:\jepa_phase0\fairvision-glaucoma\checkpoint-ep25\jepa_patch-random_posfix-ep25.pth.tar
-  read_checkpoint: null
+  read_checkpoint: D:\jepa_phase0\runs\patch_mirage_envelope\resume-ep27.pth.tar
 optimization:
   epochs: 100
   lr: 0.00025
   start_lr: 0.0001
-  final_lr: 0.000001
+  final_lr: 1.0e-06
   warmup: 5
   weight_decay: 0.04
   final_weight_decay: 0.4
-  ema: [0.996, 1.0]
+  ema:
+  - 0.996
+  - 1.0
   ipe_scale: 1.0
-  # Single RTX 3090: 64 x 1 GPU x 8 accumulation = 512, matching the original
-  # 64 x 4 T4s x 2.  iterations_per_epoch = len(loader) // accum_steps, so the
-  # LR/WD/EMA schedules keep exactly the same number of optimizer steps as the
-  # four-GPU run and the learning rate stays at 2.5e-4 unscaled.
   accum_steps: 8
-  # Periodic checkpoints.  The default of 25 meant a crash at epoch 32 could
-  # only fall back to `best` (epoch 27) and threw away 5 epochs of compute.
   save_every: 5
   patience: 9999
 logging:
   folder: D:\jepa_phase0\runs\patch_mirage_anatomy
   write_tag: jepa_patch_mirage
-
-
-

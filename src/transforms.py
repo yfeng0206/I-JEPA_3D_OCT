@@ -126,18 +126,36 @@ class PairedRandomResizedCrop(object):
             else 0
         )
 
-    def __call__(self, image, guide=None):
+    def __call__(self, image, guide=None, soft_guide=None):
         """Return ``(image_tensor, guide_image)`` sharing one crop rectangle.
 
         Args:
             image: PIL image of the OCT slice.
             guide: optional single-channel PIL image of the aligned guide, at
                 the same resolution as ``image``.
+            soft_guide: optional RGB PIL image carrying continuous per-class
+                scores in its R and G channels.  It shares the SAME crop
+                rectangle as ``image`` and ``guide`` -- it must be passed in
+                this call rather than cropped separately, because the crop is
+                drawn here and a second call would draw a different one and
+                silently misalign the guide from the image.  Resampled
+                bilinearly, since these are continuous scores rather than hard
+                labels.
+
+        Returns:
+            ``(tensor, guide_image)`` normally, or
+            ``(tensor, guide_image, soft_guide_image)`` when ``soft_guide`` is
+            given.
         """
         if guide is not None and guide.size != image.size:
             raise ValueError(
                 "Guide size %s must match image size %s before the paired crop"
                 % (guide.size, image.size)
+            )
+        if soft_guide is not None and soft_guide.size != image.size:
+            raise ValueError(
+                "Soft guide size %s must match image size %s before the paired"
+                " crop" % (soft_guide.size, image.size)
             )
         top, left, height, width = T.RandomResizedCrop.get_params(
             image, list(self.crop_scale), list(self.ratio)
@@ -156,8 +174,20 @@ class PairedRandomResizedCrop(object):
             mean=list(self.normalize_mean),
             std=list(self.normalize_std),
         )
+        cropped_soft = None
+        if soft_guide is not None:
+            cropped_soft = TF.resized_crop(
+                soft_guide,
+                top,
+                left,
+                height,
+                width,
+                [self.crop_size, self.crop_size],
+                self._interpolation,
+            )
         if guide is None:
-            return tensor, None
+            return (tensor, None) if cropped_soft is None else (
+                tensor, None, cropped_soft)
         cropped_guide = TF.resized_crop(
             guide,
             top,
@@ -167,7 +197,9 @@ class PairedRandomResizedCrop(object):
             [self.crop_size, self.crop_size],
             self._guide_interpolation,
         )
-        return tensor, cropped_guide
+        if cropped_soft is None:
+            return tensor, cropped_guide
+        return tensor, cropped_guide, cropped_soft
 
 
 def make_paired_transforms(

@@ -118,6 +118,44 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
 
     # ------------------------------------------------------------------
 
+    def _load_soft_guide(self, file_index, slice_within):
+        # type: (int, int) -> Optional[np.ndarray]
+        """Return (2, NATIVE, NATIVE) float32 class scores, or None.
+
+        Schema 2 caches P_inner and P_choroid POST-softmax at native
+        resolution, which is the only form that survives the paired random
+        crop: the guide is cropped with the image and pooled to the token grid
+        afterwards, so the softmax must already have happened.  Schema 1 stored
+        a single 1-bit envelope, which merges inner retina and choroid into one
+        class; `build_targets` was validated on the two-class form.
+        """
+        name = os.path.basename(self.file_paths[file_index])
+        path = os.path.join(self.guide_dir, name)
+        if not os.path.isfile(path):
+            return None
+        with np.load(path, allow_pickle=False) as cache:
+            if "soft_scores" not in cache:
+                return None
+            source = str(cache["source_filename"].item())
+            if source != name:
+                raise RuntimeError("Guide %s was built from %s" % (path, source))
+            if int(cache["schema_version"]) != 2:
+                raise RuntimeError(
+                    "Guide %s has schema %d, expected 2"
+                    % (path, int(cache["schema_version"]))
+                )
+            if not np.array_equal(cache["slice_indices"], self.slice_indices):
+                raise RuntimeError(
+                    "Guide %s slice indices do not match the dataset" % path
+                )
+            soft = cache["soft_scores"][slice_within]
+        if soft.shape != (2, NATIVE_SIZE, NATIVE_SIZE):
+            raise RuntimeError(
+                "Guide %s has soft shape %s, expected %s"
+                % (path, soft.shape, (2, NATIVE_SIZE, NATIVE_SIZE))
+            )
+        return soft.astype(np.float32) / 255.0
+
     def _load_guide(self, file_index, slice_within):
         # type: (int, int) -> Tuple[Optional[np.ndarray], bool]
         """Return the native-resolution envelope for one slice."""
@@ -125,6 +163,13 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
         guide_path = os.path.join(self.guide_dir, name)
         if not os.path.isfile(guide_path):
             return None, False
+        soft = self._load_soft_guide(file_index, slice_within)
+        if soft is not None:
+            # A schema-2 cache has no packed envelope and no repair
+            # fingerprint; the envelope is simply where the summed class score
+            # says anatomy.  Validity is still re-checked after cropping by the
+            # caller, which is the check that actually matters.
+            return (soft.sum(axis=0) >= 0.5), True
         with np.load(guide_path, allow_pickle=False) as cache:
             # The guide must describe the same volume, the same slice ordering
             # and the same repair logic as the image, otherwise the mask points
@@ -189,6 +234,20 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
             envelope = np.zeros((NATIVE_SIZE, NATIVE_SIZE), dtype=bool)
             valid = False
 
+        # Schema 2 additionally carries per-class soft scores.  They must go
+        # through the SAME crop as the image, so they ride along in the R and G
+        # channels of an RGB image and are split out afterwards.  Bilinear here,
+        # unlike the envelope's nearest, because these are continuous scores.
+        soft = self._load_soft_guide(file_idx, slice_within)
+        soft_image = None
+        if soft is not None:
+            rgb = np.zeros((NATIVE_SIZE, NATIVE_SIZE, 3), np.uint8)
+            rgb[..., 0] = np.clip(soft[0] * 255, 0, 255).astype(np.uint8)
+            rgb[..., 1] = np.clip(soft[1] * 255, 0, 255).astype(np.uint8)
+            soft_image = Image.fromarray(rgb, mode="RGB").resize(
+                (self.slice_size, self.slice_size), Image.BILINEAR
+            )
+
         # Nearest resize keeps the hard envelope hard; the paired transform then
         # applies the SAME crop to image and guide.
         guide_image = Image.fromarray(
@@ -200,8 +259,18 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
                 np.asarray(image, dtype=np.float32) / 255.0
             ).permute(2, 0, 1)
             cropped_guide = guide_image
+            cropped_soft = soft_image
+        elif soft_image is not None:
+            # One call, one crop draw: the soft scores MUST ride along with the
+            # image and envelope. Cropping them in a second call would draw a
+            # different rectangle and silently point the guide at the wrong
+            # anatomy.
+            tensor, cropped_guide, cropped_soft = self.transform(
+                image, guide_image, soft_image
+            )
         else:
             tensor, cropped_guide = self.transform(image, guide_image)
+            cropped_soft = None
 
         guide_mask = np.asarray(cropped_guide) > 127
         grid = patch_occupancy(guide_mask, patch_size=self.patch_size)
@@ -211,9 +280,16 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
         placement = grid >= self.occupancy_threshold
         if self.dilate_patches > 0:
             placement = dilate_patch_grid(placement, self.dilate_patches)
-        guide = np.stack(
-            [grid.astype(np.float32), placement.astype(np.float32)], axis=0
-        )
+        channels = [grid.astype(np.float32), placement.astype(np.float32)]
+        if cropped_soft is not None:
+            arr = np.asarray(cropped_soft, np.float32) / 255.0
+            p = self.patch_size
+            g = self.grid_size
+            for c in (0, 1):
+                channels.append(
+                    arr[..., c].reshape(g, p, g, p).mean(axis=(1, 3))
+                )
+        guide = np.stack(channels, axis=0)
         return (
             tensor,
             torch.from_numpy(np.ascontiguousarray(guide)),

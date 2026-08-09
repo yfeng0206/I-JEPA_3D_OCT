@@ -1147,26 +1147,38 @@ class CurriculumMaskGenerator:
                 # mixed anatomy shapes with random rectangles would not be a
                 # coherent partition of the retina.
                 use_anatomy = bool(usable and random.random() < self._r_t)
-                score = occupancy.numpy() if occupancy is not None else None
+                # A schema-2 guide carries P_inner and P_choroid in channels
+                # 2 and 3.  Class-aware growth is what the adapter sweep
+                # validated; channel 0 alone merges inner retina and choroid
+                # into a single band, which still works but is the degraded
+                # form.
+                if guide is not None and guide.shape[0] >= 4:
+                    class_scores = [guide[2].numpy(), guide[3].numpy()]
+                elif occupancy is not None:
+                    class_scores = [occupancy.numpy()]
+                else:
+                    class_scores = None
                 # `is_viable` is not optional: roughly 1.7% of slices cannot
                 # fill four targets because the guide finds too little
                 # anatomy, and those must fall back rather than emit an empty
                 # target.
-                if use_anatomy and score is not None and anatomy_is_viable(
-                    [score], n=self.npred, mass_cap=self.anatomy_mass_cap,
+                if use_anatomy and class_scores is not None and anatomy_is_viable(
+                    class_scores, n=self.npred, mass_cap=self.anatomy_mass_cap,
                     tau=self.anatomy_tau
                 ):
                     parts, _ = anatomy_build_targets(
-                        [score], n=self.npred, mass_cap=self.anatomy_mass_cap,
-                        tau=self.anatomy_tau,
+                        class_scores, n=self.npred,
+                        mass_cap=self.anatomy_mass_cap, tau=self.anatomy_tau,
                     )
                     if self.pred_target_k is not None:
                         # Shrink CONNECTEDLY here rather than letting
                         # resample_to_k subsample uniformly at collation,
                         # which was measured to leave only 231/256 targets
                         # as a single component.
+                        ref = class_scores[0] if len(class_scores) == 1 else (
+                            class_scores[0] + class_scores[1])
                         parts = [
-                            anatomy_shrink_to_k(p, int(self.pred_target_k), score)
+                            anatomy_shrink_to_k(p, int(self.pred_target_k), ref)
                             for p in parts
                         ]
                     per_image_pred = [
@@ -1180,9 +1192,20 @@ class CurriculumMaskGenerator:
                         top, left = self._sample_uniform_location(
                             bh, bw, self.height, self.width
                         )
-                        per_image_pred.append(
-                            self._block_to_indices(top, left, bh, bw)
-                        )
+                        idx = self._block_to_indices(top, left, bh, bw)
+                        if self.pred_target_k is not None and len(idx) > self.pred_target_k:
+                            # The fallback rectangle is larger than K, and
+                            # resample_to_k would subsample it UNIFORMLY at
+                            # collation, shattering a connected block into
+                            # scattered cells. Measured: this alone accounted
+                            # for all the disconnected targets on real guides
+                            # (233/256 connected). Shrink it connectedly here,
+                            # exactly as the anatomy branch does.
+                            m = np.zeros((self.height, self.width), bool)
+                            m.ravel()[np.asarray(idx)] = True
+                            m = anatomy_shrink_to_k(m, int(self.pred_target_k))
+                            idx = np.flatnonzero(m.ravel()).tolist()
+                        per_image_pred.append(idx)
                 for indices in per_image_pred:
                     pred_indices_union.update(indices)
                 if occupancy is not None and pred_indices_union:

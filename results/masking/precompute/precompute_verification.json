@@ -1,0 +1,32 @@
+{
+  "cache": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_soft_guides\\base512_cfg7_3186b1fa278bc97f\\Training",
+  "schema_version": 2,
+  "adapter_sha": "3186b1fa278bc97f",
+  "mirage_sha": "82e5a0dd09b6bd58",
+  "adapter_taught_by": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep100.pth.tar",
+  "volumes": 6000,
+  "slices_total": 600000,
+  "shape_per_volume": [100, 2, 200, 200],
+  "dtype": "uint8",
+  "channels": ["P_inner", "P_choroid"],
+  "ordering": "softmax BEFORE any pooling or cropping",
+  "build_seconds": 3941,
+  "size_gib_compressed": 3.85,
+  "size_gib_raw_uint8": 45.0,
+  "size_tib_if_caching_H0_feature_instead": 1.72,
+  "verification": {
+    "filename_match_1to1": true,
+    "duplicate_keys": 0,
+    "volumes_checked": 40,
+    "integrity_failures": 0,
+    "nan_or_inf": false,
+    "value_range": [0, 255],
+    "anatomy_pixel_fraction_mean": 0.149,
+    "anatomy_pixel_fraction_min": 0.113,
+    "anatomy_pixel_fraction_max": 0.168,
+    "spot_checks_vs_live": 15,
+    "max_abs_diff_uint8_levels_vs_live": 1
+  },
+  "why_this_matters": "One MIRAGE pass instead of 75. ~66 min once versus ~45 h of live forward across the schedule, and MIRAGE's 95.6M params never need to be resident during JEPA training, fine-tuning or downstream evaluation.",
+  "not_yet_done": "The training dataset still reads the OLD 1-bit envelope cache at mirage_guides. Wiring GuidedOCTSliceDataset to read schema-2 soft_scores is the next step; until then the anatomy mode runs on the binary envelope's per-patch occupancy, which works but merges inner retina and choroid into one class."
+}

@@ -163,6 +163,27 @@ def main():
                      % (m.group(1), m.group(2), m.group(3),
                         '  val %s' % m.group(4) if m.group(4) else ''))
 
+    # ---- validation trend ----
+    # The val split is UNGUIDED (random rectangles), so train and val measure
+    # DIFFERENT tasks and a rising val loss is not overfitting in the usual
+    # sense: an encoder specialising toward anatomy targets is expected to get
+    # worse at predicting random background. Tracked because it cannot be
+    # distinguished from genuine degradation without downstream AUC.
+    vals = [(int(m.group(1)), float(m.group(4)))
+            for m in ep_done if m.group(4)]
+    if len(vals) >= 3:
+        rises = sum(1 for a, b in zip(vals, vals[1:]) if b[1] > a[1])
+        notes.append('val trend: %s  (%d/%d consecutive rises)'
+                     % (' -> '.join('%.4f' % v for _, v in vals[-5:]),
+                        rises, len(vals) - 1))
+        if rises == len(vals) - 1 and len(vals) >= 5:
+            growth = vals[-1][1] / vals[0][1]
+            if growth > 1.5:
+                flags.append('val loss up %.0f%% over %d epochs while train '
+                             'falls — specialisation or degradation, only '
+                             'downstream AUC can tell'
+                             % (100 * (growth - 1), len(vals) - 1))
+
     # ---- checkpoints ----
     cks = sorted(RUN.glob('*.pth.tar'))
     notes.append('checkpoints: %d saved%s'

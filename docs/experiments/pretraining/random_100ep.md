@@ -27,7 +27,7 @@ Current baseline: random-init I-JEPA ViT-B/16, 100 epochs, fixed 2D sinusoidal p
 | Plot | Description |
 |------|-------------|
 | ![Loss](../../../results/pretraining/pretrain_random_posfix/train_val_loss.png) | Train & val loss. Monotonically increases — expected I-JEPA behavior as EMA target learns harder representations. |
-| ![Rep Diversity](../../../results/pretraining/pretrain_random_posfix/rep_diversity.png) | Representation diversity. Stable at 0.20-0.27 throughout training (healthy). |
+| ![Rep Diversity](../../../results/pretraining/pretrain_random_posfix/rep_diversity.png) | Representation diversity. Stable at 0.20-0.27 throughout training. *(Caveat: this metric is background-dominated for OCT — see findings.md §2 — and cannot rule out retina-specific collapse.)* |
 | ![Cos Sim](../../../results/pretraining/pretrain_random_posfix/cos_sim.png) | Predictor-target cosine similarity. Stable at 0.78-0.87 (healthy predictor tracking). |
 
 ## Training Summary
@@ -62,6 +62,6 @@ Current baseline: random-init I-JEPA ViT-B/16, 100 epochs, fixed 2D sinusoidal p
 
 ## Observations
 
-- **Healthy diagnostics throughout**: rep_diversity stable 0.20-0.27, cos_sim stable 0.78-0.87. No collapse, no divergence.
+- **Healthy diagnostics throughout**: rep_diversity stable 0.20-0.27, cos_sim stable 0.78-0.87. No divergence. (Note: rep_diversity is background-dominated for OCT and does not conclusively rule out retina-specific collapse — see `docs/experiments/masking/findings.md` §2.)
 - **Loss increase is expected**: I-JEPA loss increases as EMA target learns harder representations. Train loss decreased in late epochs (0.1445 → 0.1357) while val loss stayed in 0.14-0.15.
 - **Downstream sweep picked ep100 as winner**: Val AUC 0.8597, Test AUC 0.8706. See [frozen/d1_sweep.md](../frozen/d1_sweep.md).

@@ -281,3 +281,20 @@ Found `is_viable()` is required: without it, empty targets raise within 40 steps
    versus the merged single-class 0.907 with 55.4 cells, both 256/256 connected.
    What is NOT yet done is a training run that USES it — every arm reported in
    this document ran on the merged single-class envelope.
+
+### On-region values across this document (disambiguation)
+
+Three different on-region scores appear; they are NOT from the same measurement:
+
+| on-region | Guide | Collator version | Source |
+|-----------|-------|------------------|--------|
+| **0.983** | merged single-class (adapted) | pre-connectivity-fix, three-arm comparison | commit `144b938`, `results/masking/arms/arms.json` |
+| **0.907** | merged single-class (schema 1) | post-connectivity-fix, r_t=1, batch 64 | commit `a904bfd` end-to-end measurement |
+| **0.925** | two-class soft (schema 2) | post-connectivity-fix, r_t=1, batch 64 | commit `a904bfd` end-to-end measurement |
+
+The drop from 0.983 → 0.907 for the merged guide is due to the collator
+connectivity fix in `a904bfd` (fallback targets previously boosted on-region
+because `shrink_to_k` was only applied in the anatomy branch; after the fix,
+oversized fallback rectangles are also shrunk, changing the cell allocation).
+The 0.925 vs 0.907 comparison (same collator, same run) shows two-class is
+more efficient: slightly higher on-region with fewer cells (50.1 vs 55.4).

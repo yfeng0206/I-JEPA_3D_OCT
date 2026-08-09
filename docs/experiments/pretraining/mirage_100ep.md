@@ -61,7 +61,7 @@ despite the different GPU count.
 | Plot | Description |
 |------|-------------|
 | ![Loss](../../../results/pretraining/pretrain_mirage_envelope/train_val_loss.png) | Train & val loss. Same shape as oracle and random — rises into a mid-run peak (~ep70–75) then eases — but sits **below** the oracle on train at every matched epoch. |
-| ![Rep Diversity](../../../results/pretraining/pretrain_mirage_envelope/rep_diversity.png) | Representation diversity. 0.12–0.34 throughout (healthy; **no collapse**). ep100 = 0.236. |
+| ![Rep Diversity](../../../results/pretraining/pretrain_mirage_envelope/rep_diversity.png) | Representation diversity. 0.12–0.34 throughout. ep100 = 0.236. *(Caveat: this metric is background-dominated for OCT — see findings.md §2 — and cannot rule out retina-specific collapse.)* |
 | ![Cos Sim](../../../results/pretraining/pretrain_mirage_envelope/cos_sim.png) | Predictor–target cosine. 0.755–0.901; the mid-run dip is **milder than the oracle's** (0.755 vs 0.69). |
 
 ## Training Summary
@@ -102,9 +102,12 @@ is the quality signal — downstream AUC is.
 
 ## Problem check
 
-1. **No collapse.** rep_diversity stays 0.12–0.34 across all 75 epochs (1.0 =
+1. **No collapse (by conventional metric).** rep_diversity stays 0.12–0.34 across all 75 epochs (1.0 =
    collapsed); ep100 = 0.236, comparable to oracle's 0.210 and random's 0.229.
    The dips near 0.12 (ep93/94) are *more* diversity, not less.
+   *Caveat:* rep_diversity is background-dominated for OCT (retina is 17.6% of
+   tiles; see `docs/experiments/masking/findings.md` §2) and should not be
+   interpreted as proof of representation quality.
 2. **Curriculum executed as designed.** r_t = 0.0(ep25) → 0.2 → 0.4 → 0.6 → 0.8
    → **1.0(ep30)**, held at 1.0 through ep100.
 3. **Masking behaved as calibrated.** At full guidance the collator reported

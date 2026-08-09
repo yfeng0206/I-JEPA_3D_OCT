@@ -41,3 +41,17 @@ Navigation hub for the I-JEPA 3D OCT project documentation.
 | Document | Description |
 |----------|-------------|
 | [`reference/citations.md`](reference/citations.md) | Full bibliography with BibTeX, usage context, and related-work positioning |
+
+## Unreferenced Legacy Artifacts
+
+The following `results/` directories contain PNGs that are **not cited by any
+documentation** as of this audit. They were reviewed and deliberately not
+included in the current write-up:
+
+| Path | Contents |
+|------|----------|
+| `results/archive/` | 13 PNGs — early pretraining, frozen-probe, and normfix plots from before the current three-arm design |
+| `results/phase0_local_examples/` | 14 PNGs — phase-0 VLM/DINOv3 exploration (snake_frog demos, heatmaps, token visualisations) |
+| `results/unfrozen_*.png` | 3 PNGs — unfrozen training curves from the abandoned full-finetune experiment |
+
+These are retained for provenance but are not expected to appear in the paper.

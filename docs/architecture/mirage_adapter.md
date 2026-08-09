@@ -1,7 +1,13 @@
 # MIRAGE Adapter Architecture
 
-> All claims verified by instantiating models via `scripts/jepa_to_mirage_probe.py::build_mirage()`
-> and running forward passes on 2026-08-09.
+> Architecture, parameter counts and tensor shapes verified by model instantiation
+> and forward passes via `scripts/jepa_to_mirage_probe.py::build_mirage()` (2026-08-09).
+> Training metrics (L_rel reduction percentages) are from the cited adapter probes
+> (`scripts/adapter_stage.py`, `scripts/adapter_sweep.py`).
+>
+> **Scope:** This document covers only MIRAGE↔JEPA representation adaptation.
+> Target collation and batching are handled by the anatomy masking pipeline and
+> documented separately (`docs/experiments/masking/findings.md` section 4).
 
 ---
 
@@ -78,40 +84,35 @@ H0 is (B, 384, 64, 64). Pooling 64→16 maps exactly onto the ViT patch grid.
 ## B. Data Path and Freeze Map
 
 ```
-                            ┌─────────────────────────────────────────────┐
-                            │               MIRAGE  (ALL FROZEN)           │
-                            │   95,571,460 params, 0 trainable             │
-   image 512×512 ──────────┤                                              │
-     │                      │  PatchedInputAdapter                         │
-     │  Conv2d(1,768,32×32) │    → (B, 256+1, 768)                        │
-     │                      │                                              │
-     │  ViT encoder ×12     │    → (B, 257, 768)                           │
-     │                      │                                              │
-     │  proj_dec + reshape  │    → (B, 384, 64, 64)                        │
-     │                      │                                              │
-     │  ConvNeXtBlocks ×4   │    → H0 (B, 384, 64, 64)                    │
-     │                      │                                              │
-     └──────────────────────┼──────────────────┐                           │
-                            │                  │                           │
-                            │    ┌─────────────▼──────────────┐            │
-                            │    │  cfg-7 Adapter (TRAINABLE)  │            │
-                            │    │  689,664 params             │            │
-                            │    │  H = H0 + 0.5·tanh(A(H0))  │            │
-                            │    └─────────────┬──────────────┘            │
-                            │                  │                           │
-                            │    ┌─────────────▼──────────────┐            │
-                            │    │  FROZEN final_layer         │            │
-                            │    │  Conv2d(384, 4, 1×1)        │            │
-                            │    │  1,540 params, grad=False    │            │
-                            │    └─────────────┬──────────────┘            │
-                            │                  │                           │
-                            └──────────────────┼───────────────────────────┘
-                                               ▼
-                              logits (B, 4, 64, 64)
-                                               │
-                              softmax → P_inner + P_choroid
-                                               │
-                              pool 64×64 → 16×16 → masking targets
+    +--------- ORIGINAL MIRAGE — ALL FROZEN -----------+
+    |  95,571,460 params, 0 trainable                  |
+    |                                                  |
+    |  image 512×512                                   |
+    |    → PatchedInputAdapter  → (B, 256+1, 768)     |
+    |    → ViT encoder ×12     → (B, 257, 768)        |
+    |    → proj_dec + reshape  → (B, 384, 64, 64)     |
+    |    → ConvNeXtBlocks ×4   → H0 (B, 384, 64, 64) |
+    +----------------------+---------------------------+
+                           |
+                           v
+              +-------------------------+
+              |  cfg-7 ADAPTER          |
+              |  TRAINABLE  689,664 p   |
+              |  H = H0 + 0.5·tanh(A)  |
+              +------------+------------+
+                           |
+                           v  H
+    +--------- ORIGINAL MIRAGE — FROZEN ---------------+
+    |  final_layer  Conv2d(384, 4, 1×1)  1,540 p       |
+    |  (grad=False, reads the ADAPTED feature H)       |
+    +----------------------+---------------------------+
+                           |
+                           v
+              logits (B, 4, 64, 64)
+                           |
+              softmax → P_inner + P_choroid
+                           |
+              pool 64×64 → 16×16 → masking targets
 ```
 
 **Key wiring fact:** The FROZEN `final_layer` reads the ADAPTED feature `H`.
@@ -187,8 +188,21 @@ The pipeline asserts this: feature drift = 0, seg agreement = 1.0 exactly.
 
 - Loss: `L_rel = MSE(Gram(pool(H)), sg(Gram(Z_ema)))` — only the adapter's 689,664 params receive gradient
 - Optimizer: AdamW, lr=1e-3, weight_decay=1e-4, OneCycleLR
-- Run ONCE for ~300 steps (4,800 images), achieving 26.18% L_rel reduction
-- Saturates quickly: 27.7% at 2.4k images, 30.7% at 4.8k, 32.5% at 19.2k
+- Run ONCE for ~300 steps (4,800 images)
+- **Saturation results** (two different evaluation caches — percentages are NOT directly
+  comparable across them, but both support the same conclusion: adaptation saturates quickly):
+  - *Slice-stratified* cache (`D:\jepa_phase0\mirage-goals\outputs\slice_pos`, one random
+    depth per volume via `np.linspace(0,199,100)`; used by `scripts/adapter_stage.py`):
+    **26.18% L_rel reduction** at 4,800 images (see `results/masking/slice_pos/slice_pos.json`)
+  - *Middle-slice* cache (`d = len(vol)//2`, single most favourable B-scan per volume;
+    used by `scripts/adapter_sweep.py`):
+    **27.7%** at 2.4k images, **30.7%** at 4.8k, **32.5%** at 19.2k
+  - Note: the 6,000-image sweep (`ablations.md`) reports **29.9%** for cfg-7, also from
+    the middle-slice cache but at different N (6,000 vs 4,800); the small difference is
+    not explained and the two should not be quoted as if identical.
+  - The middle-vs-stratified gap is a consistent ~3.7 pp (29.90% middle vs 26.18% stratified;
+    depth-band spread only 3.52 pp — see `docs/experiments/masking/findings.md` section 8
+    and `results/masking/slice_pos/*.json`)
 
 ---
 
@@ -232,6 +246,32 @@ Trains: ONLY the cfg-7 adapter (689,664 params).
 The Gram matrices are in the same (B, 256, 256) space despite the feature
 dimensions differing (384 vs 768), because Gram computes token-to-token
 similarity after L2 normalisation.
+
+---
+
+## E. Final Training Schedule
+
+The cfg-7 adapter does **not** train continuously alongside JEPA. The full
+pipeline is strictly sequential:
+
+```
+1. JEPA warmup  →  pick an EMA checkpoint
+2. Train cfg-7 ONCE with L_rel
+      ~300 steps, ~4,800 FairVision images  (scripts/adapter_stage.py)
+3. FREEZE cfg-7 permanently
+4. ONE MIRAGE + cfg-7 forward pass over all 600,000 slices
+      (scripts/precompute_soft_guides.py)
+5. Cache P_inner, P_choroid to disk
+6. All remaining JEPA epochs read the cached guide
+      — no MIRAGE forward per epoch
+      — no further adapter updates
+```
+
+**Cost:** The cache build (step 4-5) takes **3,941 s once** for 6,000 volumes /
+600,000 slices, producing **3.85 GiB compressed** (`np.savez_compressed`).
+This replaces live MIRAGE inference across 75 epochs, which would cost
+~75 × 36 min ≈ **45 h** and require MIRAGE's 95.6 M parameters to be GPU-resident
+every epoch.
 
 ---
 

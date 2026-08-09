@@ -114,7 +114,7 @@ Adjacent OCT slices produce nearly identical ConvNeXt features (cosine similarit
 
 ### Frozen Probe Pipeline
 
-![Downstream Classification Pipeline](../results/downstream_pipeline.svg)
+![Downstream Classification Pipeline](../../results/downstream_pipeline.svg)
 
 ### AttentiveProbe (default)
 
@@ -314,7 +314,7 @@ Important: EMA updates must be synchronized with the optimizer step, not with ev
 | Warmup | 15 epochs (pretraining) | 3 epochs | 3 epochs |
 | Schedule | Warmup cosine | Warmup cosine | Warmup cosine |
 
-For pretraining, 0.00025 is the proven peak LR for OCT data with ViT-B/16 and effective batch=512. The original I-JEPA paper uses 0.0005 for ImageNet, but OCT's lower diversity produces more correlated gradients, requiring a lower LR.
+For pretraining, 0.00025 is the empirically selected peak LR for OCT data with ViT-B/16 and effective batch=512 (stable across all three masking arms). The original I-JEPA paper uses 0.0005 for ImageNet, but OCT's lower diversity produces more correlated gradients, requiring a lower LR.
 
 ### Masking Strategy
 

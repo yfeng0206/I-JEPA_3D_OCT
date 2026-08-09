@@ -44,7 +44,7 @@ Oracle ep25 ≡ random ep25 (fork point, r_t=0). Real divergence is ep50/75/100,
 | Plot | Description |
 |------|-------------|
 | ![Loss](../../../results/pretraining/pretrain_oracle_anatomical/train_val_loss.png) | Train & val loss. Rises into a mid-run peak (~ep60–75) then eases — same shape as random, slightly lower in absolute terms. |
-| ![Rep Diversity](../../../results/pretraining/pretrain_oracle_anatomical/rep_diversity.png) | Representation diversity. 0.17–0.33 throughout (healthy; **no collapse**). ep100 = 0.210. |
+| ![Rep Diversity](../../../results/pretraining/pretrain_oracle_anatomical/rep_diversity.png) | Representation diversity. 0.17–0.33 throughout. ep100 = 0.210. *(Caveat: this metric is background-dominated for OCT — see findings.md §2 — and cannot rule out retina-specific collapse.)* |
 | ![Cos Sim](../../../results/pretraining/pretrain_oracle_anatomical/cos_sim.png) | Predictor-target cosine. 0.69–0.88; dips to 0.69 mid-run (hardest phase) then recovers to 0.84. |
 
 ## Training Summary
@@ -72,7 +72,7 @@ Oracle ep25 ≡ random ep25 (fork point, r_t=0). Real divergence is ep50/75/100,
 
 ## Problem check
 
-1. **No collapse.** rep_diversity stays 0.17–0.33 (1.0 = collapsed); ep100 = 0.210, marginally *better* than random's 0.229. cos_sim 0.69–0.88. Healthy throughout.
+1. **No collapse (by conventional metric).** rep_diversity stays 0.17–0.33 (1.0 = collapsed); ep100 = 0.210, marginally *better* than random's 0.229. cos_sim 0.69–0.88. Healthy throughout. *Caveat:* rep_diversity is background-dominated for OCT (retina is 17.6% of tiles; see `docs/experiments/masking/findings.md` §2) and should not be interpreted as proof of representation quality.
 2. **Curriculum executed exactly as designed.** r_t = 0.0(ep25) → 0.2 → 0.4 → 0.6 → 0.8 → **1.0(ep30)**, held at 1.0 through ep100. Confirms the `T_total=30` hard-switch fix held (loop's 100-epoch total did not override the config).
 3. **Loss is not "harder."** At matched epochs the oracle's train/val loss is slightly *lower* than random (ep100: 0.130/0.143 vs 0.135/0.142), not higher. My mid-run guess ("masking the retina is a harder task → higher loss") does **not** hold over the full run — predicting a contiguous anatomical band is, if anything, marginally easier in raw loss. Per `lessons_learned.md` #1, loss is not the quality signal anyway; downstream AUC is.
 4. **Mid-run stress phase (ep55–65), not a failure.** cos_sim dips to its min 0.69, l2_dist peaks 18.9, loss peaks — as the EMA target matures under full oracle masking. It **recovers** by ep88 (cos_sim 0.86, rep_div 0.23). Watch that downstream ep50 is not unusually weak because of it.

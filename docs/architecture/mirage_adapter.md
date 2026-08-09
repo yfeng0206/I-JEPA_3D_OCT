@@ -1,0 +1,245 @@
+# MIRAGE Adapter Architecture
+
+> All claims verified by instantiating models via `scripts/jepa_to_mirage_probe.py::build_mirage()`
+> and running forward passes on 2026-08-09.
+
+---
+
+## A. MIRAGE Model Structure
+
+| Property | Value |
+|----------|-------|
+| Total parameters | **95,571,460** |
+| Trainable parameters | **0** (all frozen) |
+| Input adapter (`PatchedInputAdapter`) | 983,808 params |
+| ViT encoder (`Sequential` of `Block`) | 85,054,464 params |
+| Output adapter (`ConvNeXtAdapter`, semseg) | 9,532,420 params |
+
+### Input Adapter
+
+```
+PatchedInputAdapter
+  proj: Conv2d(1, 768, kernel_size=32×32, stride=32)   # grayscale OCT
+  + learnable_pos_emb=False (sinusoidal)
+```
+
+Patch size 32 on 512×512 input → **16×16 = 256 spatial tokens** + 1 global token.
+
+### ViT Encoder
+
+| Property | Value |
+|----------|-------|
+| Type | Sequential of `Block` |
+| Depth | 12 |
+| Embed dim | 768 |
+| Attention heads | 12 |
+| Global tokens | 1 (shape `[1, 1, 768]`) |
+| Drop path rate | 0.1 at build time, **disabled to 0.0 post-load** |
+
+### Semseg Output Adapter (ConvNeXtAdapter)
+
+| Property | Value |
+|----------|-------|
+| `depth` | 4 |
+| `preds_per_patch` | 16 |
+| `embed_dim` | 6144 |
+| `num_classes` | 4 |
+| `patch_size` | [32, 32] |
+| `image_size` | [512, 512] |
+
+Children:
+
+```
+proj_dec:    Linear(768 → 6144, bias=True)              4,724,736 params
+blocks:      Sequential of 4 × ConvNeXtBlock            4,806,144 params
+  each block:
+    dwconv:  Conv2d(384, 384, 7×7, groups=384, pad=3)   # depthwise
+    norm:    LayerNorm(384)
+    pwconv1: Linear(384, 1536)
+    act:     GELU
+    pwconv2: Linear(1536, 384)
+    drop_path: Identity (disabled)
+final_layer: Conv2d(384, 4, kernel_size=1×1)            1,540 params
+```
+
+### Spatial geometry
+
+```
+proj_dec reshapes 256 tokens × 6144 → (B, 6144, 16, 16)
+  → view as (B, 384, 16×4, 16×4) = (B, 384, 64, 64)      # preds_per_patch=16=4×4
+  → ConvNeXtBlocks operate at 64×64
+  → final_layer: (B, 384, 64, 64) → (B, 4, 64, 64)       # logits
+```
+
+H0 is (B, 384, 64, 64). Pooling 64→16 maps exactly onto the ViT patch grid.
+
+---
+
+## B. Data Path and Freeze Map
+
+```
+                            ┌─────────────────────────────────────────────┐
+                            │               MIRAGE  (ALL FROZEN)           │
+                            │   95,571,460 params, 0 trainable             │
+   image 512×512 ──────────┤                                              │
+     │                      │  PatchedInputAdapter                         │
+     │  Conv2d(1,768,32×32) │    → (B, 256+1, 768)                        │
+     │                      │                                              │
+     │  ViT encoder ×12     │    → (B, 257, 768)                           │
+     │                      │                                              │
+     │  proj_dec + reshape  │    → (B, 384, 64, 64)                        │
+     │                      │                                              │
+     │  ConvNeXtBlocks ×4   │    → H0 (B, 384, 64, 64)                    │
+     │                      │                                              │
+     └──────────────────────┼──────────────────┐                           │
+                            │                  │                           │
+                            │    ┌─────────────▼──────────────┐            │
+                            │    │  cfg-7 Adapter (TRAINABLE)  │            │
+                            │    │  689,664 params             │            │
+                            │    │  H = H0 + 0.5·tanh(A(H0))  │            │
+                            │    └─────────────┬──────────────┘            │
+                            │                  │                           │
+                            │    ┌─────────────▼──────────────┐            │
+                            │    │  FROZEN final_layer         │            │
+                            │    │  Conv2d(384, 4, 1×1)        │            │
+                            │    │  1,540 params, grad=False    │            │
+                            │    └─────────────┬──────────────┘            │
+                            │                  │                           │
+                            └──────────────────┼───────────────────────────┘
+                                               ▼
+                              logits (B, 4, 64, 64)
+                                               │
+                              softmax → P_inner + P_choroid
+                                               │
+                              pool 64×64 → 16×16 → masking targets
+```
+
+**Key wiring fact:** The FROZEN `final_layer` reads the ADAPTED feature `H`.
+The adapter's output conv is zero-initialised, so at step 0 `H = H0` exactly
+(identity property). After training, `H ≠ H0`, and the frozen head's output
+changes — this is the signal path that makes `L_rel` effective without any
+segmentation labels.
+
+### Dead-end: separate residual head
+
+Routing the adapter into a SEPARATE logit head while the frozen head still
+reads unadapted `H0` is a structural dead end:
+- The frozen head receives exactly **0.000e+00 gradient** without a labelled segmentation loss
+- Segmentation agreement = **1.000000** (guide never changes)
+- Mask Jaccard = **1.000000**
+
+The frozen head **must** read the adapted feature.
+
+### Frozen-ness guarantees
+
+1. `build_mirage()` sets `p.requires_grad_(False)` on every MIRAGE parameter (0 of 95,571,460 trainable)
+2. `drop_path_rate=0.1` was making the model stochastic: two identical forwards differed by **1.428e+01** in logits after `.train()`. Now disabled at source (`mod.drop_prob = 0.0` for all modules with that attribute). Train and eval modes are bitwise identical (diff = 0.000e+00).
+
+---
+
+## C. The cfg-7 Adapter
+
+```python
+class Adapter(nn.Module):
+    """cfg 7: depth 2, width 128, alpha 0.5. Zero-init => identity at step 0."""
+```
+
+| Property | Value |
+|----------|-------|
+| Depth (ResBlocks) | 2 |
+| Width | 128 |
+| Alpha | 0.5 |
+| Dropout | 0 |
+| Output init | zeros (weight and bias) |
+| Total params | **689,664** |
+
+### Module structure (verified)
+
+```
+Adapter(
+  trunk: Sequential(
+    Conv2d(384, 128, 1×1)
+    GELU
+    ResBlock(
+      b: Conv2d(128,128,3×3,pad=1) → GELU → Conv2d(128,128,3×3,pad=1)
+      n: GroupNorm(8, 128)
+    )
+    ResBlock(
+      b: Conv2d(128,128,3×3,pad=1) → GELU → Conv2d(128,128,3×3,pad=1)
+      n: GroupNorm(8, 128)
+    )
+  )
+  out: Conv2d(128, 384, 1×1)       # zero-initialised
+)
+```
+
+### Step-0 identity property
+
+```
+H = H0 + alpha * tanh(out(trunk(H0)))
+    = H0 + 0.5 * tanh(0)       # because out.weight=0, out.bias=0
+    = H0
+```
+
+The pipeline asserts this: feature drift = 0, seg agreement = 1.0 exactly.
+
+### Training
+
+- Loss: `L_rel = MSE(Gram(pool(H)), sg(Gram(Z_ema)))` — only the adapter's 689,664 params receive gradient
+- Optimizer: AdamW, lr=1e-3, weight_decay=1e-4, OneCycleLR
+- Run ONCE for ~300 steps (4,800 images), achieving 26.18% L_rel reduction
+- Saturates quickly: 27.7% at 2.4k images, 30.7% at 4.8k, 32.5% at 19.2k
+
+---
+
+## D. The Losses
+
+### L_JEPA (pretraining)
+
+```
+L_JEPA = smooth_l1(predictor_output, sg(EMA_target_features))
+```
+
+Trains: JEPA encoder + predictor. The EMA target encoder is updated by momentum, not gradient.
+
+### L_rel (adapter stage)
+
+```
+H       = Adapter(H0)                           # (B, 384, 64, 64)
+U       = pool(H, 16×16).flatten(2).T           # (B, 256, 384)
+R_M     = Gram(L2_normalize(U))                 # (B, 256, 256)
+
+Z_ema   = JEPA_target_encoder(image_256)        # (B, 256, 768)
+Z_ema   = LayerNorm(Z_ema)
+R_J     = Gram(L2_normalize(Z_ema))             # (B, 256, 256)
+
+L_rel   = MSE(R_M, sg(R_J))
+```
+
+Trains: ONLY the cfg-7 adapter (689,664 params).
+
+### Verified shapes (from forward pass)
+
+| Tensor | Shape | Notes |
+|--------|-------|-------|
+| H0 | (B, 384, 64, 64) | MIRAGE decoder feature before final_layer |
+| Logits | (B, 4, 64, 64) | Output of final_layer(H) |
+| Pooled MIRAGE U | (B, 256, 384) | pool 64→16, flatten, transpose |
+| JEPA EMA Z | (B, 256, 768) | ViT-B/16 on 256×256, 16×16=256 tokens |
+| Gram R_M | (B, 256, 256) | Normalised self-similarity |
+| Gram R_J | (B, 256, 256) | Normalised self-similarity |
+
+The Gram matrices are in the same (B, 256, 256) space despite the feature
+dimensions differing (384 vs 768), because Gram computes token-to-token
+similarity after L2 normalisation.
+
+---
+
+## Source files
+
+| File | Role |
+|------|------|
+| `scripts/jepa_to_mirage_probe.py` | `build_mirage()`, `build_jepa()` |
+| `scripts/adapter_stage.py` | `Adapter` class, training loop, L_rel |
+| `scripts/precompute_soft_guides.py` | Guide cache builder |
+| `src/masks/anatomy.py` | Production anatomy sampler |

@@ -5,6 +5,9 @@ The authoritative record for MIRAGE-guided anatomy masking is:
 - **[`ablations.md`](ablations.md)** — method, mask-budget and sampler
   ablations, adapter sweep, guardrails, bug fixes, rejected designs, blockers,
   corrections, and reproduction paths.
+- **[`findings.md`](findings.md)** — consolidated quantitative findings from
+  all masking experiments: three-arm comparison, collation fix, timing, guide
+  cache, VRAM, slice-depth validation, and open questions.
 
 Related documents retained because they cover distinct experiment lines:
 

@@ -8,6 +8,11 @@ Research direction plans:
 - [`masking/ablations.md`](masking/ablations.md) — **authoritative active
   record:** MIRAGE-guided anatomy sampler, mask-budget ablations, adapter sweep,
   guardrails, bug fixes, rejected designs, blockers, and reproduction.
+- [`masking/findings.md`](masking/findings.md) — consolidated quantitative
+  findings from all masking experiments.
+- [`../architecture/mirage_adapter.md`](../architecture/mirage_adapter.md) —
+  MIRAGE + cfg-7 adapter architecture (verified model structure, freeze map,
+  data path, losses).
 - [`curriculum_masking.md`](curriculum_masking.md) — retained historical plan
   for the distinct oracle → self-guided → curriculum experiment program.
 

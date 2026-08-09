@@ -56,6 +56,11 @@ import torch
 import torch.distributed as dist
 
 from src.masks.utils import resample_to_k
+from src.masks.anatomy import (
+    build_targets as anatomy_build_targets,
+    is_viable as anatomy_is_viable,
+    shrink_to_k as anatomy_shrink_to_k,
+)
 
 
 # ----------------------------------------------------------------------
@@ -177,6 +182,7 @@ class CurriculumMaskGenerator:
         "cluster_foreground",
         "anatomical_prior",
         "mirage_envelope",
+        "mirage_anatomy",
     )
 
     def __init__(
@@ -371,6 +377,26 @@ class CurriculumMaskGenerator:
         self.mirage_overlap_tolerance = float(
             cfg.get("mirage_overlap_tolerance", 0.25)
         )
+        # --- mirage_anatomy mode ---
+        # mass_cap is how much of the guide's total anatomy score the targets
+        # must cover; tau is the floor below which a patch is not considered
+        # to support anatomy at all.  0.90/0.10 are the swept defaults.
+        self.anatomy_mass_cap = float(cfg.get("anatomy_mass_cap", 0.90))
+        self.anatomy_tau = float(cfg.get("anatomy_tau", 0.10))
+
+        if self.mode == "mirage_anatomy" and self.pred_target_k is None:
+            # Anatomy targets are ragged by construction (p05 = 6 cells) and
+            # the fallback rectangles are ~21, so the global-min truncation
+            # would collapse every target in the microbatch to the smallest
+            # one.  Measured at batch 64 that retains 7.2% of target cells and
+            # hits K=1 in 99.8% of batches -- a silent, catastrophic
+            # degradation with no error raised.  Refuse rather than train
+            # something that only looks like anatomy masking.
+            raise ValueError(
+                "mode 'mirage_anatomy' requires pred_target_k to be set "
+                "(e.g. 16). Without it the collator falls back to global-min "
+                "truncation, which discards ~93% of the anatomy target cells."
+            )
 
         # --- State ---
         self._r_t = 0.0
@@ -1034,6 +1060,8 @@ class CurriculumMaskGenerator:
                 bias_active = imgs_cpu is not None
             elif self.mode == "mirage_envelope":
                 bias_active = guide_grids is not None
+            elif self.mode == "mirage_anatomy":
+                bias_active = guide_grids is not None
 
         # Pre-compute cluster assignments per image (R3b) so update_after_iter
         # can reuse them without re-clustering.
@@ -1097,7 +1125,82 @@ class CurriculumMaskGenerator:
             # --- Pred blocks ---
             pred_indices_union = set()
             per_image_pred = []
-            if self.mode == "mirage_envelope":
+            if self.mode == "mirage_anatomy":
+                # Connected, anatomy-shaped targets that follow the retinal
+                # band instead of rectangles aimed at it.  Channel 0 of the
+                # guide is per-patch occupancy -- the FRACTION of the patch
+                # covered by the envelope -- so it is already the soft score
+                # the sampler wants, no extra cache needed.
+                guide = None
+                if guide_grids is not None:
+                    guide = guide_grids[b].detach().to(
+                        device="cpu", dtype=torch.float32
+                    )
+                    if guide.dim() == 2:
+                        guide = torch.stack([guide, guide], dim=0)
+                occupancy = guide[0] if guide is not None else None
+                placement = guide[1] if guide is not None else None
+                usable = bias_active and guide is not None
+                if usable and guide_valid is not None:
+                    usable = bool(guide_valid[b])
+                # The ramp is per IMAGE here, not per block: a target set that
+                # mixed anatomy shapes with random rectangles would not be a
+                # coherent partition of the retina.
+                use_anatomy = bool(usable and random.random() < self._r_t)
+                score = occupancy.numpy() if occupancy is not None else None
+                # `is_viable` is not optional: roughly 1.7% of slices cannot
+                # fill four targets because the guide finds too little
+                # anatomy, and those must fall back rather than emit an empty
+                # target.
+                if use_anatomy and score is not None and anatomy_is_viable(
+                    [score], n=self.npred, mass_cap=self.anatomy_mass_cap,
+                    tau=self.anatomy_tau
+                ):
+                    parts, _ = anatomy_build_targets(
+                        [score], n=self.npred, mass_cap=self.anatomy_mass_cap,
+                        tau=self.anatomy_tau,
+                    )
+                    if self.pred_target_k is not None:
+                        # Shrink CONNECTEDLY here rather than letting
+                        # resample_to_k subsample uniformly at collation,
+                        # which was measured to leave only 231/256 targets
+                        # as a single component.
+                        parts = [
+                            anatomy_shrink_to_k(p, int(self.pred_target_k), score)
+                            for p in parts
+                        ]
+                    per_image_pred = [
+                        np.flatnonzero(np.asarray(p).ravel()).tolist()
+                        for p in parts
+                    ]
+                else:
+                    mirage_batch["fallback_invalid"] += 1
+                    for p in range(self.npred):
+                        bh, bw = pred_sizes[p]
+                        top, left = self._sample_uniform_location(
+                            bh, bw, self.height, self.width
+                        )
+                        per_image_pred.append(
+                            self._block_to_indices(top, left, bh, bw)
+                        )
+                for indices in per_image_pred:
+                    pred_indices_union.update(indices)
+                if occupancy is not None and pred_indices_union:
+                    flat = occupancy.flatten()
+                    on_region = sum(
+                        1 for i in pred_indices_union
+                        if float(flat[i]) >= self.mirage_occupancy_threshold
+                    )
+                    mirage_batch["target_on_region_sum"] += on_region / len(
+                        pred_indices_union
+                    )
+                mirage_batch["images"] += 1
+                mirage_batch["guided_images"] += int(use_anatomy)
+                mirage_batch["patches_per_block_sum"] += sum(
+                    len(indices) for indices in per_image_pred
+                )
+                mirage_batch["unique_target_sum"] += len(pred_indices_union)
+            elif self.mode == "mirage_envelope":
                 # Statistics must be measurable even when the ramp is off, so
                 # the guide is read independently of ``bias_active``.
                 guide = None
@@ -1218,7 +1321,7 @@ class CurriculumMaskGenerator:
                 masks_enc[e].append(
                     torch.tensor(sorted(best_indices), dtype=torch.long)
                 )
-                if self.mode == "mirage_envelope":
+                if self.mode in ("mirage_envelope", "mirage_anatomy"):
                     mirage_batch["context_patch_sum"] += len(best_indices)
 
             for p in range(self.npred):
@@ -1258,7 +1361,7 @@ class CurriculumMaskGenerator:
                     torch.stack([t[:global_min_pred] for t in group], dim=0)
                 )
 
-        if self.mode == "mirage_envelope":
+        if self.mode in ("mirage_envelope", "mirage_anatomy"):
             images = max(mirage_batch["images"], 1)
             guided = max(mirage_batch["guided_images"], 1)
             self._mirage_stats = {

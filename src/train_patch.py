@@ -246,6 +246,10 @@ def main(args):
             npred=mask_cfg['num_pred_masks'],
             min_keep=mask_cfg['min_keep'],
             allow_overlap=mask_cfg['allow_overlap'],
+            # Required by mirage_anatomy: irregular anatomy targets are ragged,
+            # so each is resampled to exactly K indices rather than the whole
+            # microbatch being front-sliced down to its smallest target.
+            pred_target_k=mask_cfg.get('pred_target_k'),
             curriculum_cfg=curr_cfg,
             world_size=world_size,
             rank=rank,
@@ -274,13 +278,15 @@ def main(args):
     # MIRAGE-guided training needs the image and its retinal envelope to share
     # one random crop, so it uses a paired transform + guided dataset.  Every
     # other path is untouched.
-    use_mirage = use_curriculum and curr_cfg.get('mode') == 'mirage_envelope'
+    use_mirage = use_curriculum and curr_cfg.get('mode') in (
+        'mirage_envelope', 'mirage_anatomy'
+    )
     guide_dir = curr_cfg.get('mirage_guide_dir')
     if use_mirage:
         if not guide_dir:
             raise ValueError(
-                "curriculum.mode='mirage_envelope' requires "
-                "curriculum.mirage_guide_dir"
+                "curriculum.mode=%r requires curriculum.mirage_guide_dir"
+                % curr_cfg.get('mode')
             )
         paired_transform = make_paired_transforms(
             crop_size=crop_size,
@@ -368,6 +374,10 @@ def main(args):
             npred=mask_cfg['num_pred_masks'],
             min_keep=mask_cfg['min_keep'],
             allow_overlap=mask_cfg['allow_overlap'],
+            # Required by mirage_anatomy: irregular anatomy targets are ragged,
+            # so each is resampled to exactly K indices rather than the whole
+            # microbatch being front-sliced down to its smallest target.
+            pred_target_k=mask_cfg.get('pred_target_k'),
             curriculum_cfg=curr_cfg,
         )
 

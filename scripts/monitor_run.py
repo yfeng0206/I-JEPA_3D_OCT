@@ -120,19 +120,29 @@ def main():
         blk = sum(float(m.group(1)) for m in k) / len(k)
         notes.append('mask: targets %.1f cells, union %.1f, context %.1f, '
                      'on-region %.3f, fallback %.0f/64' % (blk, uni, ctx, onr, fb))
-        # r_t ramps 0->1 between T_warm=25 and T_total=30
-        r_t = 0.0 if epoch <= 25 else min(1.0, (epoch - 25) / 5.0)
-        if epoch >= 31 and fb > 16:
+        # train_patch.py calls set_epoch(epoch) with the 0-INDEXED epoch but
+        # logs epoch+1, so displayed "Epoch 30" is internally epoch 29 and
+        # r_t = (29-25)/5 = 0.80, not 1.00. Getting this wrong makes the
+        # ramp's own designed fallback rate look like a guide failure.
+        internal_epoch = epoch - 1
+        r_t = 0.0 if internal_epoch <= 25 else min(1.0, (internal_epoch - 25) / 5.0)
+        expected_fb = 64 * (1.0 - r_t)
+        if epoch >= 32 and fb > 16:
             flags.append('fallback %.0f/64 at epoch %d — guide failing too often'
                          % (fb, epoch))
-        if epoch >= 31 and onr < 0.75:
+        elif fb > expected_fb + 12:
+            flags.append('fallback %.0f/64 exceeds the %.0f/64 the ramp alone '
+                         'explains at r_t=%.2f' % (fb, expected_fb, r_t))
+        if epoch >= 32 and onr < 0.75:
             flags.append('on-region %.3f at epoch %d — expected >0.9 under full '
                          'guidance' % (onr, epoch))
         if ctx < 60:
             flags.append('context collapsed to %.1f tokens' % ctx)
-        notes.append('ramp: epoch %d -> r_t=%.2f (%s)'
-                     % (epoch, r_t,
-                        'anatomy active' if r_t > 0 else 'random bootstrap'))
+        notes.append('ramp: displayed epoch %d = internal %d -> r_t=%.2f  '
+                     '(%s; ramp alone explains %.0f/64 fallback)'
+                     % (epoch, internal_epoch, r_t,
+                        'anatomy active' if r_t > 0 else 'random bootstrap',
+                        expected_fb))
 
     # ---- progress / ETA ----
     done_ep = epoch - 1 - START_EPOCH

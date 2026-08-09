@@ -34,6 +34,26 @@ import torch.nn as nn
 import torch.nn.functional as F
 from contextlib import nullcontext
 from torch.cuda.amp import GradScaler, autocast
+
+# Downstream precision switch.
+#
+# `autocast()` was called unconditionally at six sites, so setting
+# `data.use_amp: false` in a config silently had no effect outside
+# precompute_features and every evaluation ran in fp16. That matters when the
+# stated requirement is fp32 for numerical accuracy. This module-level flag is
+# set once from the config and honoured everywhere via `amp_ctx()`.
+_USE_AMP = True
+
+
+def set_amp(enabled):
+    """Set the global downstream precision mode. Call once from the config."""
+    global _USE_AMP
+    _USE_AMP = bool(enabled)
+
+
+def amp_ctx():
+    """autocast when AMP is enabled, otherwise a no-op context (true fp32)."""
+    return autocast() if _USE_AMP else nullcontext()
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.metrics import roc_auc_score
 
@@ -293,7 +313,7 @@ def evaluate(probe, head, loader, criterion, device, return_predictions=False):
         features = features.to(device, non_blocking=True)
         labels = labels.to(device, non_blocking=True).float()
 
-        with autocast():
+        with amp_ctx():
             pooled = probe(features)             # (B, D)
             logits = head(pooled).squeeze(-1)    # (B,)
         loss = criterion(logits, labels)
@@ -355,7 +375,7 @@ def precompute_features(encoder, data_dir, split, num_slices, slice_size,
             for j in range(0, flat.size(0), chunk_size):
                 chunk = flat[j:j + chunk_size]
                 chunk = imagenet_normalize(chunk)  # match pretraining distribution
-                with (autocast() if use_amp else nullcontext()):
+                with amp_ctx():
                     out = encoder(chunk)      # (chunk, patches, D)
                 parts.append(out.mean(dim=1).cpu())  # (chunk, D)
 
@@ -508,6 +528,10 @@ def run_patch_downstream(config, device):
     slice_size = data_cfg.get('slice_size', 256)
     chunk_size = data_cfg.get('encode_chunk_size', 50)
     use_amp = data_cfg.get('use_amp', True)
+    # Apply it globally, not just to feature precompute: probe training, test
+    # evaluation and the finetune paths all used autocast unconditionally.
+    set_amp(use_amp)
+    print('  precision: %s' % ('AMP fp16' if use_amp else 'fp32 (AMP disabled)'))
     cache_dir = os.path.join(output_dir, 'feature_cache')
 
     train_feats, train_labels = precompute_features(
@@ -606,7 +630,7 @@ def run_patch_downstream(config, device):
             features = features.to(device, non_blocking=True)
             labels = labels.to(device, non_blocking=True)
 
-            with autocast():
+            with amp_ctx():
                 pooled = probe(features)         # (B, D)
                 logits = head(pooled).squeeze(-1)
                 loss = criterion(logits, labels)
@@ -882,7 +906,7 @@ def run_slice_downstream(config, device):
             volumes = volumes.to(device, non_blocking=True)
             labels = labels.to(device, non_blocking=True).float()
 
-            with autocast():
+            with amp_ctx():
                 features = encode_fn(volumes)
                 logits = head(features).squeeze(-1)
                 loss = criterion(logits, labels)
@@ -1002,7 +1026,7 @@ def evaluate_finetune(model, loader, criterion, device, return_predictions=False
     for volumes, labels in loader:
         volumes = volumes.to(device, non_blocking=True)
         labels = labels.to(device, non_blocking=True).float()
-        with autocast():
+        with amp_ctx():
             logits = model(volumes)
         loss = criterion(logits, labels)
         probs = torch.sigmoid(logits)
@@ -1201,7 +1225,7 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
             volumes = volumes.to(device, non_blocking=True)
             labels = labels.to(device, non_blocking=True).float()
 
-            with autocast():
+            with amp_ctx():
                 logits = model(volumes)
                 loss = criterion(logits, labels) / accum_steps
 
@@ -1410,3 +1434,4 @@ if __name__ == '__main__':
                         help='Path to YAML config file')
     args = parser.parse_args()
     main(args)
+

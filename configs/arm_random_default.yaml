@@ -67,7 +67,7 @@ optimization:
   - 1.0
   ipe_scale: 1.0
   accum_steps: 8
-  save_every: 5
+  save_every: 1
   patience: 9999
 logging:
   folder: D:\jepa_phase0\runs\arm_random_default

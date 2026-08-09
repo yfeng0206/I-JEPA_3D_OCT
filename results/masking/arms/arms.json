@@ -1,0 +1,39 @@
+{
+  "random_default": {
+    "patches_per_block": 42.0,
+    "unique_targets": 116.8,
+    "context": 112.2,
+    "on_region": 0.349,
+    "fallbacks": 64.0,
+    "cos_sim": 0.9752,
+    "l2": 4.575,
+    "rep_diversity": 0.6727,
+    "train_loss": 0.0246,
+    "val_loss": 0.0293,
+    "iters": 9375
+  },
+  "random_matched": {
+    "patches_per_block": 16.192198581560284,
+    "unique_targets": 57.448226950354616,
+    "context": 167.8418439716312,
+    "on_region": 0.32747517730496456,
+    "fallbacks": 64.0,
+    "cos_sim": 0.9962,
+    "l2": 1.9514,
+    "rep_diversity": 0.9404,
+    "iters": 9375
+  },
+  "anatomy": {
+    "patches_per_block": 14.867375886524824,
+    "unique_targets": 58.558865248226944,
+    "context": 169.55602836879433,
+    "on_region": 0.9827304964539006,
+    "fallbacks": 1.0851063829787233,
+    "cos_sim": 0.9459,
+    "l2": 7.6012,
+    "rep_diversity": 0.9521,
+    "train_loss": 0.0247,
+    "val_loss": 0.0445,
+    "iters": 9375
+  }
+}

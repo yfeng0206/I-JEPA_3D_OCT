@@ -21,6 +21,8 @@
     "cos_sim": 0.9962,
     "l2": 1.9514,
     "rep_diversity": 0.9404,
+    "train_loss": 0.013,
+    "val_loss": 0.0041,
     "iters": 9375
   },
   "anatomy": {

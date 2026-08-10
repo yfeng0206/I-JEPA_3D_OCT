@@ -6,10 +6,10 @@ No downstream AUC exists for any arm.
 
 **Branch:** `vlm-guided-masking` (merged to `main`).
 
-> **Claim boundary.** FairVision has no anatomy ground truth. An adapter output
-> that **changed** is not known to have **improved**. Only downstream AUC
-> against glaucoma labels can establish improvement. All claims below are limited
-> to targeting quality, efficiency, and mechanics.
+> **Claim boundary.** FairVision has no anatomy ground truth. Adapter-induced
+> changes are reported as drift, relocation, frozen-output agreement, or
+> representation alignment; they are not described as segmentation improvement.
+> All claims below are limited to targeting quality, efficiency, and mechanics.
 
 ---
 
@@ -29,6 +29,11 @@ No downstream AUC exists for any arm.
 - [Historical precursors](#historical-precursors)
 - [Rejected designs](#rejected-designs)
 - [Corrections to earlier claims](#corrections-to-earlier-claims)
+- [Adapter Saturation Curve](#adapter-saturation-curve)
+- [AMP vs FP32 Guide Generation](#amp-vs-fp32-guide-generation)
+- [Blockers and Recommendations](#blockers-and-recommendations)
+- [Main Paper vs Appendix Split](#main-paper-vs-appendix-split)
+- [Comparison-Image Inventory](#comparison-image-inventory)
 - [Reproduce](#reproduce)
 
 ---
@@ -743,6 +748,157 @@ shapes on identical slices.*
 ![Merged dataset verification](../../../results/masking/merged_verify.png)
 
 *Verification that the merged multi-dataset loader produces balanced sampling.*
+
+---
+
+## Adapter Saturation Curve
+
+Measured against a **fixed** JEPA EMA teacher (cfg-7 adapter, `adapter_sweep.py`,
+middle-slice cache at `d = len(vol)//2`):
+
+| Images | Fraction epoch | L_rel reduction | Drift |
+|---:|---:|---:|---:|
+| 480 | 0.08% | 3.1% | 0.028 |
+| 1,200 | 0.20% | 18.1% | 0.122 |
+| 2,400 | 0.40% | 27.7% | 0.179 |
+| 4,800 | 0.80% | 30.7% | 0.185 |
+| 9,600 | 1.60% | 31.9% | 0.188 |
+| 19,200 | 3.20% | 32.5% | 0.189 |
+
+**Conclusion:** saturates by ~2,400 images (0.4% of one epoch). Quadrupling
+data past 4,800 buys only +1.8 pp. This justifies training the adapter ONCE
+and generating the guide once, rather than rerunning MIRAGE every JEPA epoch.
+
+> **Comparability note.** These numbers come from the middle-slice cache and are
+> NOT directly comparable to the 26.18% stratified figure (§F), which uses a
+> depth-balanced sample. Middle-slice reports 29.90% at convergence vs 26.18%
+> stratified — the difference is the depth-selection bias documented above.
+
+**Figure needed:** L_rel reduction and drift vs images seen (does NOT exist on
+disk — needs generating from `scripts\adapter_sweep.py`).
+
+**Source:** user-provided specification (CVPR ablation plan); numbers from
+`adapter_sweep.py` run against frozen teacher.
+
+---
+
+## AMP vs FP32 Guide Generation
+
+Implementation ablation: is `autocast` safe for the one-time guide precompute?
+
+| Metric | Value |
+|---|---:|
+| Pixel argmax agreement | 0.999960 |
+| 16×16 score \|diff\| mean | 1.9e-05 |
+| 16×16 score \|diff\| max | 2.8e-03 |
+| Final mask Jaccard | 0.9984 (min 0.609) |
+| Identical masks | 254/256 |
+| Mean cells (AMP / FP32) | 50.41 / 50.42 |
+| Speed (ms/img) | 3.61 (AMP) vs 7.72 (FP32) |
+| Speedup | **2.14×** |
+
+**Conclusion:** the one-time preprocessing speedup does not meaningfully change
+the masking policy. AMP is safe for guide generation.
+
+**Separate note:** fp32 is retained for DOWNSTREAM evaluation by user
+requirement. Bug: `precompute_features()` previously called `autocast()`
+unconditionally, so all earlier downstream evaluations were computed in fp16,
+not fp32 (commit 376665d).
+
+**Figure needed:** AMP vs FP32 rare-disagreement examples (does NOT exist on
+disk — needs generating).
+
+**Source:** user-provided specification (CVPR ablation plan); guide cache
+verification in `results/masking/precompute/precompute_verification.json`
+(max 1 uint8 level diff); commit 7d0d7f9.
+
+---
+
+## Blockers and Recommendations
+
+**Recommended implementation order:**
+
+1. **Bucketing / fixed-K collation** — the global-min truncation destroys
+   anatomy targets (7.2% retained at batch 64). Bucketing recovers 66.0%;
+   fixed-K K=16 resampling recovers 92.0%. This is the top priority because
+   without it the entire anatomy-masking benefit is nullified in production.
+
+2. **Post-softmax two-channel guide caching** — the one-time precompute
+   (66 min, 3.85 GiB compressed) replaces live MIRAGE inference (~45 h across
+   the schedule) and removes 95.6M frozen params from JEPA training VRAM.
+
+**Rejected forward plan:** precomputing from frozen H0 features is NOT
+recommended. H0 at (384,64,64) fp16 = 1.72 TiB for 600K slices, features
+cannot be validly cropped post-encoding, and the pool-before-softmax
+approximation measured Jaccard 0.587 / 0 of 200 identical masks / −40% cells.
+This belongs exclusively in §Rejected Designs.
+
+---
+
+## Main Paper vs Appendix Split
+
+### Main paper (8-page body)
+
+| ID | Ablation | Key result |
+|---|---|---|
+| A1 | Random vs Oracle vs Anatomy targets | 3.7× efficiency per cell |
+| A2 | Target efficiency + context preservation | 53.4 vs 122.6 cells; 175.0 vs 107.4 context |
+| A3 | Mass-cap sweep | 0.90 operating point, 0.99 context collapse |
+| A4 | Adapter architecture (cfg-7 knee) | Depth 0→2: +9.3 pp; 2→4: +0.4 pp |
+| A5 | Held-out + slice-depth generalisation | 29.79% vs 29.59% (no gap); 3.52 pp spread |
+| A7 | Budget lock | 26% cells relocate under fixed budget |
+| A8 | Uncertainty localisation | 10.2× change ratio at uncertain vs sure cells |
+| — | Final downstream results | Pending — no AUC yet |
+
+### Appendix
+
+| Ablation | Section |
+|---|---|
+| Pixel gate (D1) | §Rejected |
+| STE / soft top-K (D2) | §Rejected |
+| JEPA-error confound (D3) | §Historical |
+| Projector absorption (D4) | §Rejected |
+| Multi-component growth bugs | §D2–D3 |
+| Direct intersection failure | §Rejected |
+| Rectangle aspect ratio | §Historical |
+| Adapter saturation curve | §Adapter Saturation |
+| AMP vs FP32 guide generation | §AMP vs FP32 |
+| Feature-cache rejection | §E Guide cache |
+| Variable-K batching / bucketing | §D1 |
+| Determinism / freezing | §D6 |
+| Separate residual head | §Rejected |
+
+---
+
+## Comparison-Image Inventory
+
+### Main-paper figures
+
+| Figure | Purpose | Exists on disk? | Path |
+|---|---|---|---|
+| Random vs Oracle vs Anatomy (same crop) | A1 method comparison | ✓ | `results/masking/explain/three_methods.png` |
+| Adapter behaviour: OCT \| frozen \| adapted \| delta \| uncertainty \| masks | A4 + A8 | ✓ | `results/masking/adapter_guardrails/seg_before_after.png` |
+| Sampler topology: single- vs multi-component | S1 | ✓ | `results/masking/split_fix/split_fix.png` |
+| Edge case: oracle miss vs anatomy target | Motivation | ✓ | `results/masking/oracle_failure_cases.png` |
+| 20-slice budget-locked before/after grid | A7 | ✓ | `results/masking/adapter_guardrails/before_after_20.png` |
+| Adapter sweep scatter | A4 | ✓ | `results/masking/adapter_sweep/adapter_sweep.png` |
+| Mass-cap trade-off plot | A3 | ✗ | NEEDS GENERATING |
+
+### Appendix figures
+
+| Figure | Purpose | Exists on disk? | Path |
+|---|---|---|---|
+| Depth profile (reduction vs B-scan depth) | A5 slice robustness | ✗ | NEEDS GENERATING from `results/masking/slice_pos/depth_profile.json` |
+| Adapter saturation curve | Schedule justification | ✗ | NEEDS GENERATING from `adapter_sweep.py` |
+| AMP vs FP32 rare disagreement | Implementation safety | ✗ | NEEDS GENERATING |
+| Wrong-cache vs correct-cache (pool-before-softmax) | Cache rejection | ✗ | NEEDS GENERATING |
+| Global-min vs bucketing comparison | Collation fix | ✓ | `results/masking/collation/collation_fix.png` |
+| Full pipeline trace | Method overview | ✓ | `results/masking/pipeline/full_pipeline.png` |
+| Class balance (random/oracle/anatomy) | A1 | ✓ | `results/masking/pipeline/class_balance.png` |
+| Coverage heatmaps | Spatial uniformity | ✓ | `results/masking/coverage/coverage.png` |
+| Element-wise gate probe | D1 rejection | ✓ | `results/masking/gate_real/elementwise_gate_probe.png` |
+| Error vs anatomy | D3 rejection | ✓ | `results/masking/error_vs_anatomy/error_vs_anatomy.png` |
+| Edge cases (demo) | Sampler robustness | ✓ | `results/masking/demo/edge_cases.png` |
 
 ---
 

@@ -1,0 +1,28 @@
+feat(eval): matched ep30 anatomy-vs-rectangle comparison
+
+First fair head-to-head. All prior downstream AUCs were ep100, so comparing
+the ep30 anatomy run against them measured training length, not masking.
+
+Both arms share identical weights through ep27 (anatomy warm-started from the
+envelope run) and differ only in the masking used for epochs 28-30. The two
+eval configs differ in exactly two keys: checkpoint and output_dir.
+
+  envelope ep30   test AUC 0.8528 +/- 0.0018  (5 seeds)
+  anatomy  ep30   test AUC 0.8582 +/- 0.0003  (5 seeds)
+  delta          +0.0054  Welch p=0.0022  Mann-Whitney p=0.0079  d=4.20
+  paired bootstrap over volumes: +0.0044  95% CI [+0.0010,+0.0077]  p=0.012
+
+Arms are fully separated: worst anatomy seed beats best envelope seed.
+Anatomy is also 6x more stable across probe seeds.
+
+Also fixes a latent cache bug: the feature cache key omitted precision, so an
+fp16 cache could be silently reused by an fp32 run. Key is now
+{split}_s{n}_{amp|fp32}. Existing caches were verified fp32-derived by
+recomputation (|cache-fp32|=1.9e-06 vs |cache-fp16|=2.3e-03) before renaming.
+
+Caveats recorded in the doc: 3 epochs of divergence only, single pretraining
+run per arm, and the anatomy guide used the alpha=0.50 adapter so this does
+not isolate the adapter from the anatomy shape.
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

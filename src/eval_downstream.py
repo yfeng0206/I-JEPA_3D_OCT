@@ -348,7 +348,13 @@ def precompute_features(encoder, data_dir, split, num_slices, slice_size,
     """
     cache_path = None
     if cache_dir:
-        cache_path = os.path.join(cache_dir, '%s_s%d.pt' % (split, num_slices))
+        # The cache key must include precision. Without it an fp16-computed
+        # cache is silently reused by an fp32 run (or vice versa), so
+        # `use_amp: false` would be honoured for the forward pass but the
+        # features would still come from a stale fp16 file.
+        suffix = 'amp' if use_amp else 'fp32'
+        cache_path = os.path.join(
+            cache_dir, '%s_s%d_%s.pt' % (split, num_slices, suffix))
         if os.path.exists(cache_path):
             print('  Loading cached %s features from %s' % (split, cache_path))
             data = torch.load(cache_path, map_location='cpu')

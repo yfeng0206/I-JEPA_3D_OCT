@@ -1,0 +1,36 @@
+{
+  "frozen": {
+    "goals_dice": 0.9457243807547048,
+    "within": 0.6672700643539429,
+    "between": 0.3036181926727295,
+    "delta": 0.3636518716812134,
+    "discrim_auc": 0.9772992060457479
+  },
+  "cfg": {
+    "alpha": 0.1,
+    "lam_sep": 10.0,
+    "epochs": 3,
+    "n_train": 4800,
+    "lr": 0.001,
+    "tap": "enc",
+    "cache": "D:\\jepa_phase0\\mirage-goals\\outputs\\slice_pos"
+  },
+  "runs": {
+    "ep100__struct(l=100)": {
+      "teacher": "ep100",
+      "teacher_path": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep100.pth.tar",
+      "loss": "struct(l=100)",
+      "lam_sep": 100.0,
+      "goals_dice": 0.9455375144277215,
+      "dice_delta": -0.00018686632698328154,
+      "dice_p": 0.6350764767260596,
+      "better_on": 14,
+      "sep_delta": 0.35510262846946716,
+      "sep_auc": 0.9883673331683948,
+      "sep_within": 0.7151641249656677,
+      "sep_between": 0.36006149649620056,
+      "mask_jaccard": 0.9778369291501839,
+      "final_loss": 0.38129929453134537
+    }
+  }
+}

@@ -1,20 +1,35 @@
-fix: encode full identity in adapter filenames
+feat: seed pretraining and make guide cache builds resumable
 
-Last instance of the incomplete-identity bug class. Filenames carried only
-alpha, so runs differing in epochs, lr, training size, depth or width silently
-overwrote each other -- and other scripts then consumed whichever file
-happened to survive.
+SEEDING
+train_patch.py set no seed, so two runs differing in one config field also
+differed in crop draws, mask draws and dropout. That is why the ep30
+comparison could not honestly claim the arms differ ONLY in masking, and why
+pretraining-seed variance was unmeasurable. meta.seed is now read and applied
+to random/numpy/torch with a rank offset for DDP.
 
-adapter_structural_loss:  adapter_{teacher}_{loss}_a{NNN}_e{E}_lr{LR}_n{N}.pt
-adapter_placement_ablation: adapter_{tap}_a{NNN}_d{D}_w{W}_lr{LR}_n{N}.pt
-Both also store lr and n_train inside the checkpoint.
+Verified: identical seed reproduces target and context masks exactly; a
+different seed diverges. This is what makes replicated forks possible.
 
-Consumers (class_relation_probe, cadence_guide_diff, fairvision_before_after)
-now accept a unique prefix and fall back to a glob, so they keep working with
-both old and new names and fail loudly when nothing matches rather than
-silently producing a figure with no adapters in it.
+RESUMABLE CACHE BUILD
+A 600k-slice build takes ~1 hour and had no resume, so any interruption
+restarted from zero. Volumes are now skipped when an existing file opens,
+carries this schema, has the expected shape, AND records the same adapter sha
+-- a truncated or foreign file is rewritten rather than trusted. Progress and
+cache_meta.json record how many were reused.
 
-117 tests pass.
+This mattered immediately: a build was killed at 1750/6000 by a
+Select-Object -First in the invoking pipeline, and the retry reused 1800.
+
+LOCKED ADAPTER (final, for the ep25 restart)
+adapter_ep100_structl100_a010_e3_lr0.001_n4800.pt
+  encoder tap, structural loss lambda_sep=100, alpha=0.10, 3 passes over 4800
+  stratified slices, teacher = envelope ep100
+  GOALS Dice -0.00019 (neutral), separation 0.3551 vs frozen 0.3637 (97.6%%
+  preserved), discrimination AUC 0.9884 vs frozen 0.9773
+
+configs/patch_anatomy_v2.yaml differs from the previous anatomy config in
+exactly four fields: read_checkpoint (random ep25), guide dir (new
+encoder-tap cache), output folder, and seed.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

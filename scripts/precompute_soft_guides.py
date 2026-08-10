@@ -185,8 +185,26 @@ def main():
 
     t0 = time.perf_counter()
     written = 0
+    skipped = 0
     for vi, vp in enumerate(vols):
         dst = out / vp.name
+        # Resume: a 600k-slice build takes ~1 hour, so an interrupted run must
+        # not start from zero. A previously written volume is trusted only if
+        # it opens, carries this schema, and has the expected shape -- a
+        # truncated file from a kill mid-write is rewritten.
+        if dst.exists():
+            try:
+                with np.load(dst, allow_pickle=False) as chk:
+                    ok = (int(chk['schema_version']) == SCHEMA
+                          and chk['soft_scores'].shape
+                          == (len(idxs), 2, NATIVE, NATIVE)
+                          and str(chk['adapter_sha'].item()) == adapter_sha)
+            except Exception:
+                ok = False
+            if ok:
+                skipped += 1
+                written += 1
+                continue
         with np.load(vp, allow_pickle=True) as z:
             vol = z['oct_bscans']
         buf = np.zeros((len(idxs), 2, NATIVE, NATIVE), np.uint8)
@@ -220,12 +238,15 @@ def main():
         written += 1
         if written % 100 == 0:
             el = time.perf_counter() - t0
-            print('   %d/%d volumes  %.0fs  eta %.0fs'
-                  % (written, len(vols), el, el / written * (len(vols) - written)),
-                  flush=True)
+            done_new = max(written - skipped, 1)
+            eta = el / done_new * (len(vols) - written)
+            print('   %d/%d volumes (%d reused)  %.0fs  eta %.0fs'
+                  % (written, len(vols), skipped, el, eta), flush=True)
     meta['seconds'] = time.perf_counter() - t0
+    meta['reused_from_previous_run'] = skipped
     (out.parent / 'cache_meta.json').write_text(json.dumps(meta, indent=2))
-    print('done: %d volumes in %.0fs -> %s' % (written, meta['seconds'], out))
+    print('done: %d volumes (%d reused) in %.0fs -> %s'
+          % (written, skipped, meta['seconds'], out))
 
 
 if __name__ == '__main__':

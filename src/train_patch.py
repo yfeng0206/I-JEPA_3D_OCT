@@ -15,9 +15,11 @@ import argparse
 import copy
 import math
 import os
+import random
 import sys
 import time
 
+import numpy as np
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
@@ -137,6 +139,19 @@ def main(args):
         device = torch.device('cpu')
 
     is_main = (rank == 0)
+
+    # ---- Seeding -----------------------------------------------------------
+    # Pretraining was previously unseeded, which meant two runs differing in
+    # one config field also differed in crop draws, mask draws and dropout.
+    # That made "the arms differ only in masking" untrue and made
+    # pretraining-seed variance impossible to estimate. Rank offset keeps
+    # workers from drawing identical streams under DDP.
+    seed = int(meta_cfg.get('seed', 0))
+    run_seed = seed + rank
+    random.seed(run_seed)
+    np.random.seed(run_seed)
+    torch.manual_seed(run_seed)
+    torch.cuda.manual_seed_all(run_seed)
 
     # ---- Output directory --------------------------------------------------
     output_dir = log_cfg['folder']

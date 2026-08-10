@@ -68,6 +68,10 @@ def arm(mode, scale, epoch, per, guides, occ, batch, k, seed=0):
     gen.set_epoch(epoch, 100)
     n = len(per)
     ctx, hid, on_anat, conn, dead, comps = [], [], [], [], [], []
+    # Raw cell counts flatter whichever arm spends its budget on background:
+    # hiding 117 cells of which 70% is black is not a harder task than hiding
+    # 54 cells of pure tissue.  These track the anatomy actually removed.
+    anat_hid, inner_hid, chor_hid, bg_hid, anat_ctx, anat_frac = [], [], [], [], [], []
     for s in range(0, n, batch):
         b = min(batch, n - s)
         random.seed(seed + s); torch.manual_seed(seed + s); np.random.seed(seed + s)
@@ -77,6 +81,8 @@ def arm(mode, scale, epoch, per, guides, occ, batch, k, seed=0):
         ctx.extend([int(enc[0].shape[1])] * b)
         for j in range(b):
             o = occ[s + j].ravel()
+            pi = per[s + j, 0].ravel()
+            pc = per[s + j, 1].ravel()
             u = set()
             for p in pred:
                 idx = p[j].numpy()
@@ -90,13 +96,28 @@ def arm(mode, scale, epoch, per, guides, occ, batch, k, seed=0):
             idx = np.array(sorted(u))
             hid.append(len(idx))
             on_anat.append(float(o[idx].mean()))
+            a = float(o[idx].sum())
+            anat_hid.append(a)
+            bg_hid.append(len(idx) - a)
+            inner_hid.append(float(pi[idx].sum()))
+            chor_hid.append(float(pc[idx].sum()))
+            total = float(o.sum())
+            anat_frac.append(a / total if total > 0 else 0.0)
+            cidx = enc[0][j].numpy()
+            anat_ctx.append(float(o[cidx].sum()))
     return {'mode': mode, 'scale': list(scale), 'epoch': epoch,
             'context_tokens': float(np.mean(ctx)),
             'hidden_cells': float(np.mean(hid)),
             'on_anatomy_pct': 100 * float(np.mean(on_anat)),
             'connected_pct': 100 * float(np.mean(conn)),
             'dead_target_pct': 100 * float(np.mean(dead)),
-            'mean_components': float(np.mean(comps))}
+            'mean_components': float(np.mean(comps)),
+            'anatomy_cells_hidden': float(np.mean(anat_hid)),
+            'background_cells_hidden': float(np.mean(bg_hid)),
+            'inner_cells_hidden': float(np.mean(inner_hid)),
+            'choroid_cells_hidden': float(np.mean(chor_hid)),
+            'anatomy_frac_hidden': 100 * float(np.mean(anat_frac)),
+            'anatomy_cells_in_context': float(np.mean(anat_ctx))}
 
 
 def main():
@@ -131,6 +152,18 @@ def main():
         print('%-18s %9.1f %9.1f %10.1f%% %10.1f%% %9.2f%%'
               % (tag, r['context_tokens'], r['hidden_cells'],
                  r['on_anatomy_pct'], r['connected_pct'], r['dead_target_pct']))
+
+    print()
+    print('ANATOMY-NORMALISED  (raw cell counts flatter whoever masks background)')
+    h2 = ('%-18s %10s %10s %9s %9s %11s %11s' %
+          ('arm', 'anat hid', 'bkgd hid', 'inner', 'choroid', '% anat hid', 'anat ctx'))
+    print(h2); print('-' * len(h2))
+    for tag, _, _, _ in arms:
+        r = res[tag]
+        print('%-18s %10.1f %10.1f %9.1f %9.1f %10.1f%% %11.1f'
+              % (tag, r['anatomy_cells_hidden'], r['background_cells_hidden'],
+                 r['inner_cells_hidden'], r['choroid_cells_hidden'],
+                 r['anatomy_frac_hidden'], r['anatomy_cells_in_context']))
 
     an, rm, rd = res['anatomy'], res['random_matched'], res['random_default']
     print()

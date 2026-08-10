@@ -1,28 +1,29 @@
-feat(eval): matched ep30 anatomy-vs-rectangle comparison
+fix(masking): normalise mask budget by anatomy, not raw cells
 
-First fair head-to-head. All prior downstream AUCs were ep100, so comparing
-the ep30 anatomy run against them measured training length, not masking.
+Raw cell counts flatter whichever arm spends its budget on background, and
+they led to a wrong conclusion that the ep30 arms were confounded.
 
-Both arms share identical weights through ep27 (anatomy warm-started from the
-envelope run) and differ only in the masking used for epochs 28-30. The two
-eval configs differ in exactly two keys: checkpoint and output_dir.
+Decomposing the budget over 1,000 slices through the production collator:
 
-  envelope ep30   test AUC 0.8528 +/- 0.0018  (5 seeds)
-  anatomy  ep30   test AUC 0.8582 +/- 0.0003  (5 seeds)
-  delta          +0.0054  Welch p=0.0022  Mann-Whitney p=0.0079  d=4.20
-  paired bootstrap over volumes: +0.0044  95% CI [+0.0010,+0.0077]  p=0.012
+  arm               total  anatomy  background  anat-ctx  %%retina-hidden
+  envelope_default  117.5     36.2   81.3 (69%%)       6.0          77.3%%
+  anatomy            54.3     39.3   15.0 (28%%)       5.7          84.5%%
 
-Arms are fully separated: worst anatomy seed beats best envelope seed.
-Anatomy is also 6x more stable across probe seeds.
+Envelope spends 69%% of its masking budget on black background. On the axis
+that matters the arms are closely matched, and where they differ it is against
+us: anatomy hides 8.6%% MORE retina, leaves 5%% LESS retinal context, and covers
+a larger fraction of the retina.
 
-Also fixes a latent cache bug: the feature cache key omitted precision, so an
-fp16 cache could be silently reused by an fp32 run. Key is now
-{split}_s{n}_{amp|fp32}. Existing caches were verified fp32-derived by
-recomputation (|cache-fp32|=1.9e-06 vs |cache-fp16|=2.3e-03) before renaming.
+Tissue-context per tissue-cell predicted is 0.145 (anatomy) vs 0.166
+(envelope) -- our task is marginally harder, not 4.3x easier. The earlier
+ratio counted background tokens, which are trivially predictable.
 
-Caveats recorded in the doc: 3 epochs of divergence only, single pretraining
-run per arm, and the anatomy guide used the alpha=0.50 adapter so this does
-not isolate the adapter from the anatomy shape.
+This strengthens the +0.0054 result rather than confounding it, and shows
+envelope_matched is NOT a valid control: matching total cells leaves it hiding
+only 48%% of the retina with 3.2x more tissue context.
+
+Real finding: to hide comparable retina, rectangles waste 5.4x more budget on
+background (81.3 vs 15.0 cells). That is what the anatomy shape buys.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

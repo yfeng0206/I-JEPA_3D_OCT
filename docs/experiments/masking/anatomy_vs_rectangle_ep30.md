@@ -100,10 +100,43 @@ one.
 
 ## What this does and does not establish
 
-**Does:** three epochs of anatomy-shaped masking, applied to weights otherwise
-identical to the baseline, produce a measurably better frozen representation
-for glaucoma classification. The effect survives both test-set resampling and
-probe-seed variation, and the arms are fully separated.
+### Correction: the arms are matched on anatomy, not on raw cells
+
+An earlier version of this document treated the arms as confounded, on the
+grounds that anatomy hides fewer cells (54.3 vs 117.5) and sees more context
+(158.2 vs 71.4 tokens). Those are raw cell counts, and they are the wrong
+denominator: background is trivially predictable, so masking it is close to
+free. Decomposing the budget (`scripts/fair_compare.py`, 1,000 slices through
+the production collator):
+
+| arm | total hidden | anatomy hidden | background hidden | anatomy context | % retina hidden |
+|---|---|---|---|---|---|
+| envelope_default | 117.5 | 36.2 | **81.3 (69%)** | 6.0 | 77.3% |
+| anatomy | 54.3 | **39.3** | 15.0 (28%) | 5.7 | **84.5%** |
+
+On the axis that matters the two arms are closely matched, and where they
+differ it is **against** us: anatomy hides 8.6% *more* retina, leaves 5% *less*
+retinal context, and covers a larger fraction of the retina. Tissue-context per
+tissue-cell predicted is **0.145 (anatomy) vs 0.166 (envelope)** — anatomy's
+task is marginally harder.
+
+The earlier "4.3x more context per predicted token" figure counted all tokens
+including background and should not be used.
+
+The real difference is budget efficiency: to hide a comparable amount of
+retina, rectangles must waste **5.4x more budget on background** (81.3 vs 15.0
+cells). Concentrating the mask on tissue is what the anatomy shape buys.
+
+Note this also means `envelope_matched` (rectangles shrunk to anatomy's *total*
+cell count) is **not** a valid control: it hides only 21.8 tissue cells (48% of
+the retina) and leaves 18.4 tissue context, making it a substantially easier
+task than either arm above.
+
+**Does establish:** three epochs of anatomy-shaped masking, applied to weights
+otherwise identical to the baseline and at matched anatomical difficulty,
+produce a measurably better frozen representation for glaucoma classification.
+The effect survives both test-set resampling and probe-seed variation, and the
+arms are fully separated.
 
 **Does not:**
 

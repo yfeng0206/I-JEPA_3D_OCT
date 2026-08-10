@@ -11,7 +11,13 @@
     "on_anatomy_pct": 21.75712875842402,
     "connected_pct": 100.0,
     "dead_target_pct": 28.675,
-    "mean_components": 1.0
+    "mean_components": 1.0,
+    "anatomy_cells_hidden": 24.714891596630398,
+    "background_cells_hidden": 89.3741084033696,
+    "inner_cells_hidden": 8.923342792923355,
+    "choroid_cells_hidden": 15.791548811495067,
+    "anatomy_frac_hidden": 52.48613188390959,
+    "anatomy_cells_in_context": 12.476529170592853
   },
   "random_matched": {
     "mode": "mirage_envelope",
@@ -25,7 +31,13 @@
     "on_anatomy_pct": 20.621051063131528,
     "connected_pct": 100.0,
     "dead_target_pct": 46.35,
-    "mean_components": 1.0
+    "mean_components": 1.0,
+    "anatomy_cells_hidden": 10.079330410554487,
+    "background_cells_hidden": 38.774669589445516,
+    "inner_cells_hidden": 3.7394127810693356,
+    "choroid_cells_hidden": 6.339917628552986,
+    "anatomy_frac_hidden": 21.552906702114928,
+    "anatomy_cells_in_context": 30.242362665759867
   },
   "envelope_default": {
     "mode": "mirage_envelope",
@@ -39,7 +51,13 @@
     "on_anatomy_pct": 30.741224193698947,
     "connected_pct": 100.0,
     "dead_target_pct": 3.5749999999999997,
-    "mean_components": 1.0
+    "mean_components": 1.0,
+    "anatomy_cells_hidden": 36.21926570408229,
+    "background_cells_hidden": 81.29373429591772,
+    "inner_cells_hidden": 12.764155877633334,
+    "choroid_cells_hidden": 23.455109817326196,
+    "anatomy_frac_hidden": 77.32657587107953,
+    "anatomy_cells_in_context": 5.983800847173351
   },
   "envelope_matched": {
     "mode": "mirage_envelope",
@@ -53,7 +71,13 @@
     "on_anatomy_pct": 42.25137285566446,
     "connected_pct": 100.0,
     "dead_target_pct": 2.025,
-    "mean_components": 1.0
+    "mean_components": 1.0,
+    "anatomy_cells_hidden": 21.829094658535535,
+    "background_cells_hidden": 29.744905341464467,
+    "inner_cells_hidden": 7.2913542444097,
+    "choroid_cells_hidden": 14.537740373564196,
+    "anatomy_frac_hidden": 48.202592537835166,
+    "anatomy_cells_in_context": 18.412541833295684
   },
   "anatomy": {
     "mode": "mirage_anatomy",
@@ -67,6 +91,12 @@
     "on_anatomy_pct": 72.10868137383562,
     "connected_pct": 100.0,
     "dead_target_pct": 2.0500000000000003,
-    "mean_components": 1.0
+    "mean_components": 1.0,
+    "anatomy_cells_hidden": 39.291764467157726,
+    "background_cells_hidden": 15.01223553284227,
+    "inner_cells_hidden": 14.45986165209789,
+    "choroid_cells_hidden": 24.831902718596382,
+    "anatomy_frac_hidden": 84.48086861246578,
+    "anatomy_cells_in_context": 5.749780066297623
   }
 }

@@ -887,6 +887,27 @@ def main(args):
 
         # Save periodic + best checkpoints (main process only)
         if is_main:
+            # Rolling resume point, written EVERY epoch.
+            #
+            # `-best` tracks validation loss, but validation uses a plain
+            # MaskCollator (42-cell rectangles) while curriculum runs train on
+            # 16-cell anatomy blobs, so val loss rises as the ramp engages and
+            # `-best` sticks at an early epoch. With save_every=5 that left up
+            # to five epochs (~15 h here) with no usable resume point, and a
+            # crash at the epoch 29->30 boundary cost exactly that. A 1.4 GB
+            # write per epoch is ~15 s against ~3 h of compute -- cheap
+            # insurance. Written to a temp file and moved into place so a crash
+            # mid-write cannot corrupt the only good resume point.
+            last_path = os.path.join(output_dir, '%s-last.pth.tar' % write_tag)
+            tmp_path = last_path + '.tmp'
+            save_checkpoint(
+                tmp_path, encoder, predictor, target_encoder, optimizer,
+                scaler, epoch + 1, loss_meter.avg, data_cfg['batch_size'],
+                world_size, lr_val,
+                mask_gen=mask_gen,
+            )
+            os.replace(tmp_path, last_path)
+
             save_every = int(opt_cfg.get('save_every', 25))
             if (epoch + 1) % save_every == 0:
                 ep_path = os.path.join(output_dir, '%s-ep%d.pth.tar' % (write_tag, epoch + 1))

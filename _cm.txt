@@ -1,27 +1,46 @@
-feat(analysis): scale-free separation metrics for class relations
+feat(adapter): class-conditioned structural loss + separation barrier
 
-Block means are not comparable across models -- each has its own similarity
-scale, so a model with globally higher cosine values appears to have stronger
-within-class similarity without separating anything. Adds Cohen's d and a
-discrimination AUC: P(random same-tissue pair more similar than random
-different-tissue pair), where 0.5 is chance.
+Implements transfer-strengths/preserve-strengths objective: I-JEPA teaches
+only safe blocks {I-I, C-C, I-B, C-B}, the I-C block it gets wrong is excluded,
+both sides z-scored per image, and a one-sided barrier
+L_sep = relu(delta_frozen - delta_adapted)^2 protects MIRAGE's separation.
+Pseudo-classes come from frozen MIRAGE itself - no external labels.
 
-  model              within  between  Cohen d  discrim AUC
-  MIRAGE H0           0.937   -0.523    20.20       1.0000
-  MIRAGE enc          0.667    0.304     2.82       0.9773
-  JEPA ep100          0.800    0.718     0.65       0.6945
-  JEPA ep30           0.875    0.803     0.84       0.7714
-  JEPA untrained      0.730    0.526     1.38       0.8288
+PREREQUISITE FINDING: every prior adapter experiment trained on slice 100 ONLY
+(one depth of 200). A stratified cache spanning 100 depths is strictly better
+(cross-depth generalisation 21.84%% vs 21.18%%, Dice +0.0001 vs -0.00035).
+Saturation is real regardless: 1200/2400/4800 -> 20.1/23.2/24.3%%, so one pass
+over 4800 stratified slices is the right budget.
 
-MIRAGE at H0 never confuses the two tissues (AUC 1.0000); I-JEPA is barely
-above chance (0.6945). Effect size gap 4.3x.
+RESULT 1 - the barrier works exactly as designed. At alpha=0.50 Gram-MSE
+destroys 61%% of the inner/choroid separation (+0.3637 -> +0.1434); structural
+preserves 104%% (+0.3785). lambda=0 ablation confirms the barrier is the active
+ingredient.
 
-Critically this shows the absolute numbers mislead: I-JEPA's within-class
-similarity (0.800) is HIGHER than MIRAGE's (0.667), but 0.800 vs 0.718 is
-almost no gap while 0.667 vs 0.304 is a large one.
+RESULT 2 - it does NOT remove the Dice damage, refuting the premise that
+separation collapse CAUSES it:
+  alpha   Gram-MSE   structural
+  0.05    +0.00010   +0.00028
+  0.10    -0.00072   -0.00062
+  0.25    -0.00324   -0.00970
+  0.50    -0.00609   -0.02042
+At alpha=0.50 structural holds separation ABOVE frozen and still loses 0.0204
+Dice. Class geometry and segmentation damage are INDEPENDENT axes: the barrier
+controls the first, alpha (drift magnitude) controls the second.
 
-The untrained control beats both trained models on every scale-free measure,
-confirming the collapse is caused by pretraining, not by scale.
+Honest positive: at matched (neutral) Dice, structural preserves 97%% of the
+separation vs Gram-MSE's 84%% -- 17%% better. Use structural lam=100, alpha=0.10.
+
+RESULT 3 - teacher maturity dominates. An early (ep27) teacher is 3.8x more
+damaging than ep100 under Gram-MSE (-0.0229 vs -0.0061). Bears directly on
+refresh cadence: adapting against an immature JEPA is expensive.
+
+RESULT 4 - the change is not diffuse noise. It concentrates at the deep
+choroid boundary and is almost entirely GAINED cells: the adapter
+systematically extends the retina downward. GOALS says that is wrong.
+
+Also fixes a real bug: saved adapter filenames omitted alpha, so an alpha
+sweep silently overwrote earlier checkpoints.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

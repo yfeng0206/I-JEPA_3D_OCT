@@ -1,0 +1,14 @@
+{
+  "late_ep100\nGram-MSE_a050": {
+    "pixels_changed_pct": 2.5399208068847656,
+    "guide_jaccard": 0.8984709758266635
+  },
+  "late_ep100\nstructural lam=100_a050": {
+    "pixels_changed_pct": 4.609584808349609,
+    "guide_jaccard": 0.8091400071547589
+  },
+  "early_ep27\nstructural lam=100_a050": {
+    "pixels_changed_pct": 5.391979217529297,
+    "guide_jaccard": 0.7756323222596694
+  }
+}

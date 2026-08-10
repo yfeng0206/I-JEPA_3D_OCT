@@ -1,0 +1,80 @@
+{
+  "frozen": {
+    "goals_dice": 0.9457243807547048,
+    "within": 0.6672700643539429,
+    "between": 0.3036181926727295,
+    "delta": 0.3636518716812134,
+    "discrim_auc": 0.9772992060457479
+  },
+  "cfg": {
+    "alpha": 0.5,
+    "lam_sep": 10.0,
+    "epochs": 1,
+    "n_train": 320,
+    "lr": 0.001,
+    "tap": "enc",
+    "cache": "D:\\jepa_phase0\\mirage-goals\\outputs\\slice_pos"
+  },
+  "runs": {
+    "early_ep27__gram_mse": {
+      "teacher": "early_ep27",
+      "teacher_path": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\resume-ep27.pth.tar",
+      "loss": "gram_mse",
+      "goals_dice": 0.9333894661888452,
+      "dice_delta": -0.012334914565859556,
+      "dice_p": 1.6553818467683667e-09,
+      "better_on": 0,
+      "sep_delta": 0.16047316789627075,
+      "sep_auc": 0.9261386383572119,
+      "sep_within": 0.8352006077766418,
+      "sep_between": 0.6747274398803711,
+      "mask_jaccard": 0.9451407754879092,
+      "final_loss": 0.04771636202931404
+    },
+    "early_ep27__structural": {
+      "teacher": "early_ep27",
+      "teacher_path": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\resume-ep27.pth.tar",
+      "loss": "structural",
+      "goals_dice": 0.9363385844197633,
+      "dice_delta": -0.00938579633494152,
+      "dice_p": 3.0824736595215585e-09,
+      "better_on": 1,
+      "sep_delta": 0.20171493291854858,
+      "sep_auc": 0.9133544004858191,
+      "sep_within": 0.7956421971321106,
+      "sep_between": 0.593927264213562,
+      "mask_jaccard": 0.946735946543203,
+      "final_loss": 0.6188165724277497
+    },
+    "late_ep100__gram_mse": {
+      "teacher": "late_ep100",
+      "teacher_path": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep100.pth.tar",
+      "loss": "gram_mse",
+      "goals_dice": 0.9399496785810476,
+      "dice_delta": -0.005774702173657165,
+      "dice_p": 1.1370530792231954e-07,
+      "better_on": 3,
+      "sep_delta": 0.17742908000946045,
+      "sep_auc": 0.934260363014777,
+      "sep_within": 0.819602370262146,
+      "sep_between": 0.6421732902526855,
+      "mask_jaccard": 0.9575656595998243,
+      "final_loss": 0.03269440466538072
+    },
+    "late_ep100__structural": {
+      "teacher": "late_ep100",
+      "teacher_path": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep100.pth.tar",
+      "loss": "structural",
+      "goals_dice": 0.9395496620131811,
+      "dice_delta": -0.006174718741523644,
+      "dice_p": 1.235501878699428e-06,
+      "better_on": 3,
+      "sep_delta": 0.21103817224502563,
+      "sep_auc": 0.911360518206968,
+      "sep_within": 0.7881640791893005,
+      "sep_between": 0.5771259069442749,
+      "mask_jaccard": 0.9481833569246737,
+      "final_loss": 0.5570207938551903
+    }
+  }
+}

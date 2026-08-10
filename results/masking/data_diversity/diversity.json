@@ -1,0 +1,55 @@
+{
+  "frozen_dice": 0.9457243807547048,
+  "alpha": 0.05,
+  "tap": "enc",
+  "runs": {
+    "middle_n1200": {
+      "train_cache": "middle",
+      "images": 1200,
+      "rel_red_own_pct": 20.75958202181565,
+      "rel_red_other_pct": 17.938303216127142,
+      "goals_dice": 0.9451715385826895,
+      "dice_delta": -0.0005528421720152332
+    },
+    "middle_n2400": {
+      "train_cache": "middle",
+      "images": 2400,
+      "rel_red_own_pct": 23.493184137159883,
+      "rel_red_other_pct": 20.412459573899923,
+      "goals_dice": 0.9452902707934306,
+      "dice_delta": -0.0004341099612741317
+    },
+    "middle_n4800": {
+      "train_cache": "middle",
+      "images": 4800,
+      "rel_red_own_pct": 24.496456476680752,
+      "rel_red_other_pct": 21.181269810221867,
+      "goals_dice": 0.9453709511385698,
+      "dice_delta": -0.00035342961613493706
+    },
+    "stratified_n1200": {
+      "train_cache": "stratified",
+      "images": 1200,
+      "rel_red_own_pct": 20.08026436460848,
+      "rel_red_other_pct": 18.313237284408405,
+      "goals_dice": 0.9460144761081944,
+      "dice_delta": 0.0002900953534896722
+    },
+    "stratified_n2400": {
+      "train_cache": "stratified",
+      "images": 2400,
+      "rel_red_own_pct": 23.225412067111968,
+      "rel_red_other_pct": 20.845000763446258,
+      "goals_dice": 0.9459458750948316,
+      "dice_delta": 0.00022149434012685987
+    },
+    "stratified_n4800": {
+      "train_cache": "stratified",
+      "images": 4800,
+      "rel_red_own_pct": 24.281893944738844,
+      "rel_red_other_pct": 21.839363819411403,
+      "goals_dice": 0.9458247336794832,
+      "dice_delta": 0.00010035292477839075
+    }
+  }
+}

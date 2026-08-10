@@ -24,7 +24,15 @@
     "choroid_bg": 0.35694750579040574,
     "bg_bg": 0.4607663263357038,
     "contrast_inner_vs_choroid": 0.36208606137088123,
-    "contrast_tissue_vs_bg": 0.33295843043209417
+    "contrast_tissue_vs_bg": 0.33295843043209417,
+    "within_mean": 0.6672700643539429,
+    "within_sd": 0.142560213804245,
+    "between_mean": 0.3036181926727295,
+    "between_sd": 0.11122631281614304,
+    "cohens_d": 2.8148586750030518,
+    "discrim_auc": 0.9772992060457479,
+    "n_within": 1028.0,
+    "n_between": 865.0
   },
   "MIRAGE H0": {
     "block": [
@@ -51,7 +59,15 @@
     "choroid_bg": -0.20899683366477473,
     "bg_bg": 0.965835429761716,
     "contrast_inner_vs_choroid": 1.460834495552552,
-    "contrast_tissue_vs_bg": 1.1234444706602966
+    "contrast_tissue_vs_bg": 1.1234444706602966,
+    "within_mean": 0.9368687272071838,
+    "within_sd": 0.05522015318274498,
+    "between_mean": -0.5225106477737427,
+    "between_sd": 0.08832128345966339,
+    "cohens_d": 20.198801040649414,
+    "discrim_auc": 1.0,
+    "n_within": 1028.0,
+    "n_between": 865.0
   },
   "MIRAGE enc +adapt a0.05": {
     "block": [
@@ -78,7 +94,15 @@
     "choroid_bg": 0.3583488523656579,
     "bg_bg": 0.45530816307795957,
     "contrast_inner_vs_choroid": 0.33564355548446534,
-    "contrast_tissue_vs_bg": 0.3517857096182469
+    "contrast_tissue_vs_bg": 0.3517857096182469,
+    "within_mean": 0.6934930682182312,
+    "within_sd": 0.13031743466854095,
+    "between_mean": 0.35569363832473755,
+    "between_sd": 0.09714217483997345,
+    "cohens_d": 2.9035701751708984,
+    "discrim_auc": 0.9808438856525943,
+    "n_within": 1028.0,
+    "n_between": 865.0
   },
   "MIRAGE enc +adapt a0.50": {
     "block": [
@@ -105,7 +129,15 @@
     "choroid_bg": 0.32632647923060826,
     "bg_bg": 0.4069270812139203,
     "contrast_inner_vs_choroid": 0.163021570460263,
-    "contrast_tissue_vs_bg": 0.5189422851123033
+    "contrast_tissue_vs_bg": 0.5189422851123033,
+    "within_mean": 0.8350916504859924,
+    "within_sd": 0.07094321399927139,
+    "between_mean": 0.6718543767929077,
+    "between_sd": 0.056117888540029526,
+    "cohens_d": 2.5271639823913574,
+    "discrim_auc": 0.9653662760621669,
+    "n_within": 1028.0,
+    "n_between": 865.0
   },
   "JEPA ep100 (envelope)": {
     "block": [
@@ -132,7 +164,15 @@
     "choroid_bg": 0.3066631309981641,
     "bg_bg": 0.3460093365644443,
     "contrast_inner_vs_choroid": 0.09211893636332635,
-    "contrast_tissue_vs_bg": 0.5057913236801768
+    "contrast_tissue_vs_bg": 0.5057913236801768,
+    "within_mean": 0.7999118566513062,
+    "within_sd": 0.13175362348556519,
+    "between_mean": 0.7182574272155762,
+    "between_sd": 0.11599676311016083,
+    "cohens_d": 0.654275119304657,
+    "discrim_auc": 0.6944580643710219,
+    "n_within": 1028.0,
+    "n_between": 865.0
   },
   "JEPA ep30 (anatomy)": {
     "block": [
@@ -159,7 +199,15 @@
     "choroid_bg": 0.3770392336879905,
     "bg_bg": 0.44348336477446054,
     "contrast_inner_vs_choroid": 0.07850306160277043,
-    "contrast_tissue_vs_bg": 0.5166144126072695
+    "contrast_tissue_vs_bg": 0.5166144126072695,
+    "within_mean": 0.8750799298286438,
+    "within_sd": 0.09052470326423645,
+    "between_mean": 0.8028119802474976,
+    "between_sd": 0.08129727840423584,
+    "cohens_d": 0.8361346125602722,
+    "discrim_auc": 0.7713794111693394,
+    "n_within": 1028.0,
+    "n_between": 865.0
   },
   "JEPA untrained (control)": {
     "block": [
@@ -186,6 +234,14 @@
     "choroid_bg": 0.3836999405999185,
     "bg_bg": 0.7842189359236829,
     "contrast_inner_vs_choroid": 0.19393030182696447,
-    "contrast_tissue_vs_bg": 0.4350317314709551
+    "contrast_tissue_vs_bg": 0.4350317314709551,
+    "within_mean": 0.7298974990844727,
+    "within_sd": 0.13137489557266235,
+    "between_mean": 0.5258183479309082,
+    "between_sd": 0.16532298922538757,
+    "cohens_d": 1.3802553415298462,
+    "discrim_auc": 0.8287589123051663,
+    "n_within": 1028.0,
+    "n_between": 865.0
   }
 }

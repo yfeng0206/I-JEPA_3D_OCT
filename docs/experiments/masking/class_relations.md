@@ -65,6 +65,37 @@ Predicting masked regions rewards knowing *where the retina is*. Nothing in the
 objective rewards knowing *which layer* — so that distinction is free to
 collapse, and it does.
 
+### Scale-free confirmation
+
+Block means are **not** comparable across models — each has its own similarity
+scale, so a model with globally higher cosine values appears to have stronger
+within-class similarity without separating anything. These metrics remove that:
+
+| model | within | between | Cohen's d | discrimination AUC |
+|---|---|---|---|---|
+| MIRAGE H0 | 0.937 | −0.523 | 20.20 | **1.0000** |
+| MIRAGE enc | 0.667 | 0.304 | 2.82 | **0.9773** |
+| MIRAGE enc + α=0.05 | 0.694 | 0.356 | 2.90 | 0.9808 |
+| MIRAGE enc + α=0.50 | 0.835 | 0.672 | 2.53 | 0.9654 |
+| JEPA ep100 (envelope) | 0.800 | 0.718 | **0.65** | **0.6945** |
+| JEPA ep30 (anatomy) | 0.875 | 0.803 | 0.84 | 0.7714 |
+| JEPA untrained (control) | 0.730 | 0.526 | **1.38** | **0.8288** |
+
+*discrimination AUC = P(a random same-tissue pair is more similar than a random
+different-tissue pair); 0.5 is chance.*
+
+MIRAGE at H0 **never** confuses the two tissues (AUC 1.0000). I-JEPA is barely
+above chance (0.6945). The effect size gap is 4.3× (2.82 vs 0.65).
+
+Note that I-JEPA's raw within-class similarity (0.800) is *higher* than
+MIRAGE's (0.667) — which is exactly why the absolute numbers mislead. What
+matters is that 0.800 vs 0.718 is almost no gap, whereas 0.667 vs 0.304 is a
+large one.
+
+The untrained control outperforms both trained models on every scale-free
+measure, confirming the collapse is caused by pretraining and is not an
+artifact of scale.
+
 ## The damage mechanism, observed directly
 
 Applying the encoder adapter and re-measuring shows MIRAGE being pulled toward

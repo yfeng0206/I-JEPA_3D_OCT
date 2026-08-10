@@ -1,44 +1,27 @@
-feat(analysis): I-JEPA does not separate inner retina from choroid
+feat(analysis): scale-free separation metrics for class relations
 
-Tests the assumption L_rel rests on -- that MIRAGE and I-JEPA should agree
-about patch similarity -- decomposed BY TISSUE CLASS using GOALS labels.
-30 held-out images, 16x16 grid, cells >=70%% pure (120 inner, 174 choroid).
+Block means are not comparable across models -- each has its own similarity
+scale, so a model with globally higher cosine values appears to have stronger
+within-class similarity without separating anything. Adds Cohen's d and a
+discrimination AUC: P(random same-tissue pair more similar than random
+different-tissue pair), where 0.5 is chance.
 
-Mean cosine similarity by class pair:
+  model              within  between  Cohen d  discrim AUC
+  MIRAGE H0           0.937   -0.523    20.20       1.0000
+  MIRAGE enc          0.667    0.304     2.82       0.9773
+  JEPA ep100          0.800    0.718     0.65       0.6945
+  JEPA ep30           0.875    0.803     0.84       0.7714
+  JEPA untrained      0.730    0.526     1.38       0.8288
 
-  model                  in-in   ch-ch   in-ch   contrast
-  MIRAGE H0              0.942   0.935  -0.523    +1.461
-  MIRAGE enc             0.664   0.669   0.304    +0.362
-  JEPA ep100             0.837   0.785   0.719    +0.092
-  JEPA ep30              0.897   0.866   0.803    +0.079
-  JEPA untrained         0.696   0.744   0.526    +0.194
+MIRAGE at H0 never confuses the two tissues (AUC 1.0000); I-JEPA is barely
+above chance (0.6945). Effect size gap 4.3x.
 
-MIRAGE holds the classes apart (anti-correlated at H0). I-JEPA does not: its
-cross-class similarity is nearly as high as within-class, so an inner-retina
-patch and a choroid patch look almost the same.
+Critically this shows the absolute numbers mislead: I-JEPA's within-class
+similarity (0.800) is HIGHER than MIRAGE's (0.667), but 0.800 vs 0.718 is
+almost no gap while 0.667 vs 0.304 is a large one.
 
-I-JEPA is WORSE than an untrained network at this (+0.079/+0.092 vs +0.194).
-Pretraining halved the relational separation of the two tissues. What it did
-learn is tissue-vs-background (+0.435 untrained -> +0.517 trained) -- exactly
-what predicting masked regions rewards.
-
-The damage mechanism observed directly: applying the encoder adapter pulls
-MIRAGE toward I-JEPA's geometry. inner-chor 0.304 -> 0.356 (a=0.05) -> 0.672
-(a=0.50), i.e. 83%% of the way to I-JEPA's 0.719, with contrast collapsing 55%%
-and Dice falling 0.9457 -> 0.9328. The Dice loss IS this collapse.
-
-Corroborating: UNTRAINED JEPA agrees more with MIRAGE's block structure
-(r=0.738) than either trained one (r=0.663).
-
-Implication: no placement/width/depth/lr can fix this, because the target
-itself lacks the information. Explains the monotone alpha damage, the
-neutral-at-best ceiling, and why the 11x more efficient encoder tap still
-cannot help.
-
-Figures: class_blocks.png, class_contrast.png, segmentation_before_after.png
-(a=0.05 visually identical to frozen; a=0.50 visibly blurs the boundary).
-
-Caveat: oracle ep100 is no longer on disk; envelope ep100 used instead.
+The untrained control beats both trained models on every scale-free measure,
+confirming the collapse is caused by pretraining, not by scale.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

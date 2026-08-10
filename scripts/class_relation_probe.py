@@ -112,6 +112,44 @@ def block_matrix(feats, labels, purity):
     return np.where(cnt > 0, acc / np.maximum(cnt, 1), np.nan)
 
 
+def pair_separation(feats, labels, purity):
+    """Scale-free separation of inner-retina from choroid.
+
+    Block means are not comparable across models: each model has its own
+    similarity scale, so a model with globally higher cosine values looks
+    'better' on within-class similarity without separating anything.
+
+    This collects the raw pair-level distributions and reports:
+      d      Cohen's d between within-class and cross-class similarities
+      auc    P(a random within-class pair is more similar than a random
+             cross-class pair) -- fully scale-free, 0.5 = no separation
+    """
+    win, btw = [], []
+    for z, lab, pur in zip(feats, labels, purity):
+        keep = (pur >= PURITY) & np.isin(lab, (1, 2))
+        if keep.sum() < 4:
+            continue
+        v = F.normalize(torch.from_numpy(z[keep]).float(), dim=-1)
+        s = (v @ v.T).numpy()
+        li = lab[keep]
+        iu = np.triu_indices(len(li), k=1)
+        same = (li[:, None] == li[None, :])[iu]
+        vals = s[iu]
+        win.extend(vals[same]); btw.extend(vals[~same])
+    win, btw = np.array(win), np.array(btw)
+    sd = np.sqrt(((len(win) - 1) * win.var(ddof=1)
+                  + (len(btw) - 1) * btw.var(ddof=1))
+                 / (len(win) + len(btw) - 2))
+    d = (win.mean() - btw.mean()) / sd
+    from sklearn.metrics import roc_auc_score
+    y = np.r_[np.ones(len(win)), np.zeros(len(btw))]
+    auc = roc_auc_score(y, np.r_[win, btw])
+    return {'within_mean': float(win.mean()), 'within_sd': float(win.std(ddof=1)),
+            'between_mean': float(btw.mean()), 'between_sd': float(btw.std(ddof=1)),
+            'cohens_d': float(d), 'discrim_auc': float(auc),
+            'n_within': int(len(win)), 'n_between': int(len(btw))}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--jepa-ep100', default=str(
@@ -225,6 +263,19 @@ def main():
         print('%-26s %+14.4f %+14.4f %10s'
               % (nm, r['contrast_inner_vs_choroid'], r['contrast_tissue_vs_bg'],
                  'yes' if r['within_choroid'] > r['within_inner'] else 'no'))
+
+    print()
+    print('SCALE-FREE SEPARATION OF INNER RETINA vs CHOROID')
+    print('(block means are not comparable across models; these are)')
+    print('%-26s %9s %9s %9s %9s' %
+          ('model', 'within', 'between', "Cohen's d", 'discrim AUC'))
+    print('-' * 68)
+    for nm in order:
+        s = pair_separation(feats[nm], labels, purity)
+        res[nm].update(s)
+        print('%-26s %9.4f %9.4f %9.3f %9.4f'
+              % (nm, s['within_mean'], s['between_mean'],
+                 s['cohens_d'], s['discrim_auc']))
 
     # Does each JEPA agree with MIRAGE about the SHAPE of the block matrix?
     print()

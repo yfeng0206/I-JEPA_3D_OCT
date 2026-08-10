@@ -89,6 +89,11 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
             slice_cache=slice_cache,
         )
         self.guide_dir = guide_dir
+        # Set by the first guide read; every later guide must match it.
+        # Workers each hold their own copy, so this catches a mixed cache
+        # directory per-worker rather than globally -- still sufficient, since
+        # any worker touching a mismatched volume aborts the run.
+        self._guide_stamp = None
         self.patch_size = patch_size
         self.dilate_patches = int(dilate_patches)
         self.occupancy_threshold = float(occupancy_threshold)
@@ -148,6 +153,28 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
                 raise RuntimeError(
                     "Guide %s slice indices do not match the dataset" % path
                 )
+            # Provenance. Schema/slice checks cannot catch a cache built from a
+            # DIFFERENT adapter or a different MIRAGE checkpoint -- the arrays
+            # are shaped identically and load without complaint. Every guide
+            # records the hashes that produced it; the first one read fixes the
+            # expectation for the run, so a mixed directory fails loudly on the
+            # first mismatched volume instead of silently training on two
+            # different guides.
+            stamp = (str(cache["mirage_sha"].item())
+                     if "mirage_sha" in cache else None,
+                     str(cache["adapter_sha"].item())
+                     if "adapter_sha" in cache else None)
+            if stamp != (None, None):
+                if self._guide_stamp is None:
+                    self._guide_stamp = stamp
+                elif stamp != self._guide_stamp:
+                    raise RuntimeError(
+                        "Guide %s was built by mirage=%s adapter=%s but this "
+                        "run already loaded guides built by mirage=%s "
+                        "adapter=%s -- the cache directory is mixed"
+                        % (path, stamp[0], stamp[1],
+                           self._guide_stamp[0], self._guide_stamp[1])
+                    )
             soft = cache["soft_scores"][slice_within]
         if soft.shape != (2, NATIVE_SIZE, NATIVE_SIZE):
             raise RuntimeError(

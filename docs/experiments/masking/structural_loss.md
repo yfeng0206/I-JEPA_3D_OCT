@@ -120,7 +120,7 @@ At **matched Dice cost**, the structural loss preserves more class structure:
 Same (neutral) Dice, **17% more separation preserved**. That is the setting to
 use.
 
-## Result 3: teacher maturity dominates
+## Result 3: teacher maturity dominates at high α, and not at all at low α
 
 Both losses, α=0.50:
 
@@ -131,13 +131,34 @@ Both losses, α=0.50:
 | late ep100 | Gram-MSE | **−0.00609** | +0.1434 |
 | late ep100 | structural λ=100 | −0.02042 | +0.3785 |
 
-An early teacher is **3.8× more damaging** than a late one under Gram-MSE
-(−0.0229 vs −0.0061). This bears directly on refresh cadence: adapting against
-an immature I-JEPA costs far more segmentation quality than adapting against a
-converged one.
+At α=0.50 an early teacher is **3.8× more damaging** than a late one under
+Gram-MSE (−0.0229 vs −0.0061).
 
-Note ep25 does not exist on disk; `resume-ep27` is the earliest checkpoint
-(T_warm=25, so guidance had barely begun and masking was effectively random).
+At the recommended α=0.10, however, the effect vanishes. Adapters trained
+against ep30/50/75/100 teachers give GOALS Dice −0.00070/−0.00050/−0.00082/
+−0.00062 and separation 0.3561/0.3561/0.3544/0.3544 — flat to within noise.
+
+### Refresh cadence
+
+Measured on 600 stratified FairVision slices, comparing the **guide the sampler
+actually consumes** (`cadence_guide_diff.py`):
+
+| comparison | guide Jaccard | cells changed |
+|---|---|---|
+| ep30 → ep50 | 0.9846 | 0.34% |
+| ep50 → ep75 | 0.9817 | 0.38% |
+| ep75 → ep100 | 0.9829 | 0.38% |
+| ep30 → ep100 (whole span) | 0.9720 | — |
+| **adapter vs no adapter** | **0.9587** | — |
+
+A 25-epoch refresh moves roughly **0.36% of guide cells** and costs a 66-minute
+cache rebuild. The rate is **flat** across the run; an earlier version of this
+document reported a declining trend (0.34/0.38/0.16%), which was an artifact of
+a Jaccard bug that scored two empty guides as total disagreement.
+
+Note ep25 does not exist in the envelope run; `resume-ep27` is the earliest
+checkpoint (T_warm=25, so guidance had barely begun and masking was effectively
+random).
 
 ## Result 4: what actually changes, visually
 

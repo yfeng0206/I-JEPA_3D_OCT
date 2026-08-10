@@ -16,8 +16,34 @@ This experiment removes that confound.
 
 Both arms start from **identical weights**. The anatomy run was warm-started
 from the envelope run's `resume-ep27.pth.tar`, so the two arms share every
-weight up to epoch 27 and differ **only in the masking strategy applied during
-epochs 28–30**.
+weight up to epoch 27 and differ in the masking strategy applied during
+epochs 28–30.
+
+> **They do not differ *only* in target shape.** An adversarial audit
+> identified four further differences that are active during exactly those
+> three epochs. They are listed here rather than buried in the caveats because
+> they bound what this experiment can claim.
+>
+> 1. **Pretraining is not seeded.** `src/train_patch.py` sets no
+>    `manual_seed`, and checkpoints do not store RNG state. The arms therefore
+>    also differ in crop draws, mask draws and dropout — not only in target
+>    shape.
+> 2. **Look-ahead teacher.** The anatomy guide cache was produced by an adapter
+>    taught by the envelope run's **ep100** encoder
+>    (`results/masking/precompute/precompute_verification.json`). Information
+>    from 70 later epochs of the baseline therefore entered the guide used at
+>    ep28–30. Defensible if the adapter is presented as a fixed component of
+>    the method; **not** defensible as an online, causally-available signal.
+> 3. **Ramp granularity differs.** `mirage_anatomy` applies the Bernoulli ramp
+>    per **image** (`src/masks/curriculum.py:1146`); `mirage_envelope` applies
+>    it per **block** (`:1241`). Same mean, different distribution.
+> 4. **Target-count policy differs.** Anatomy forces exactly K=16 indices per
+>    target, sampling the shortfall with replacement; envelope truncates to the
+>    batch-global minimum.
+>
+> Additionally the ramp is **not at full strength** at the saved checkpoint:
+> `set_epoch` is zero-indexed, so displayed epochs 28/29/30 run at
+> r_t ≈ 0.4/0.6/0.8, reaching 1.0 only at displayed epoch 31.
 
 | | envelope (baseline) | anatomy (ours) |
 |---|---|---|
@@ -71,6 +97,17 @@ diff  +0.0044   95% CI [+0.0010, +0.0077]   p = 0.012
 The bootstrap above captures test-set sampling noise only. Because probe
 training is stochastic, the probe was re-trained with five seeds per arm on the
 same verified feature caches.
+
+> **These are technical replicates, not experimental replicates.** All five
+> seeds reuse the same two frozen encoders, so they estimate *probe*
+> instability. There is exactly **one pretraining trajectory per arm**, and
+> pretraining-seed variance — the scientifically relevant component — is not
+> estimated by this design and cannot be recovered from probe reruns. The
+> p-values below should be read as "the probe reliably ranks these two fixed
+> encoders in this order", **not** as "anatomy-shaped masking beats rectangles
+> with p=0.002". Establishing the latter requires ≥3 paired pretraining
+> continuations from the same checkpoint, analysed with the continuation as the
+> unit of replication.
 
 | seed | anatomy | envelope |
 |---|---|---|
@@ -133,24 +170,33 @@ the retina) and leaves 18.4 tissue context, making it a substantially easier
 task than either arm above.
 
 **Does establish:** three epochs of anatomy-shaped masking, applied to weights
-otherwise identical to the baseline and at matched anatomical difficulty,
-produce a measurably better frozen representation for glaucoma classification.
-The effect survives both test-set resampling and probe-seed variation, and the
-arms are fully separated.
+otherwise identical to the baseline and at comparable anatomical difficulty,
+produced a measurably better frozen representation for glaucoma classification
+in this single pair of runs. The effect survives test-set resampling and
+probe-seed variation, and the arms are fully separated across probe seeds.
 
 **Does not:**
 
 - The effect size is small in absolute terms (+0.0054 AUC).
+- **One pretraining run per arm.** Probe seeds are technical replicates; the
+  reported p-values do not estimate pretraining-seed variance. This is the
+  single largest weakness of the result.
+- **Shape is not isolated.** See the four confounds listed under *Design*:
+  unseeded pretraining, a look-ahead (ep100) teacher in the guide, per-image
+  vs per-block ramp granularity, and different target-count policies.
+- The budget table above was measured at **full ramp** (r_t=1.0), whereas the
+  saved ep30 checkpoint was trained at r_t ≈ 0.4/0.6/0.8. It characterises the
+  masking modes, not the exact ep28–30 training condition.
 - Only three epochs of divergence. Whether the gap widens, holds or closes by
-  ep100 is untested; ep50 is the next scheduled measurement.
-- Single pretraining run per arm. Pretraining-seed variance is not measured and
-  is the largest remaining uncertainty — it cannot be estimated from probe
-  reruns.
+  ep100 is untested.
 - The anatomy guide used the α=0.50 adapter. This experiment does **not**
   isolate the adapter's contribution from the anatomy shape's; see
-  `mirage_adapter.md` for the GOALS ground-truth evaluation showing the adapter
-  does not improve segmentation. The frozen-MIRAGE-guide ablation is still
-  outstanding.
+  `class_relations.md` and `structural_loss.md` for the GOALS ground-truth
+  evaluation showing the adapter does not improve segmentation. The
+  frozen-MIRAGE-guide ablation is still outstanding.
+- The test split has been consulted across many method and probe decisions, so
+  it now functions partly as a development set. Final claims should be
+  confirmed once on a split that has not been used for selection.
 
 ## Precision audit (bug found and fixed)
 

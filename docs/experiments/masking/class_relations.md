@@ -98,6 +98,17 @@ artifact of scale.
 
 ## The damage mechanism, observed directly
 
+> **Superseded — read this first.** The paragraph below was written before the
+> class-conditioned structural loss existed, and its causal claim does not
+> survive that experiment. `structural_loss.md` shows a configuration that
+> holds separation **above** frozen MIRAGE (Δ=+0.3785 vs +0.3637) and *still*
+> loses 0.0204 Dice. Separation collapse is therefore **not** the cause of the
+> segmentation damage. What Gram-MSE does is move separation and Dice in the
+> same harmful direction; class geometry and representational drift are
+> independent axes, and α controls the second. Treat what follows as a
+> description of *what Gram-MSE does to class geometry*, not as a mechanism for
+> the Dice loss.
+
 Applying the encoder adapter and re-measuring shows MIRAGE being pulled toward
 I-JEPA's class geometry:
 
@@ -108,9 +119,9 @@ I-JEPA's class geometry:
 | + adapter α=0.50 | **0.672** | **+0.163** | 0.9328 |
 | *(I-JEPA ep100 target)* | *0.719* | *+0.092* | — |
 
-At α=0.50 the inner/choroid similarity has moved **83% of the way** from
-MIRAGE's value to I-JEPA's, and the class contrast has collapsed by 55%. The
-Dice loss is not a side effect — it is this collapse, measured.
+At α=0.50 the inner/choroid similarity has moved **88.8%** of the way from
+MIRAGE's value to I-JEPA's `((0.672−0.304)/(0.719−0.304))`, and the class
+contrast has collapsed by **55.0%**.
 
 Corroborating: agreement with MIRAGE's block structure is *higher* for the
 **untrained** I-JEPA (r=0.738) than for either trained one (r=0.663, r=0.663).
@@ -120,20 +131,28 @@ Training moved I-JEPA away from MIRAGE's geometry.
 
 `L_rel` transfers I-JEPA's class geometry into MIRAGE. Since I-JEPA's geometry
 merges inner retina and choroid, the transfer necessarily degrades exactly the
-distinction the segmentation head exists to make. No adapter placement, width,
-depth or learning rate can fix this, because the target itself lacks the
-information.
+distinction the segmentation head exists to make.
 
-This explains every prior observation:
+This explains the *class-geometry* observations:
 
-- monotone Dice damage in α — more transfer means more collapse
-- best case is neutral, never beneficial — the teacher has nothing to add on
-  this axis
-- the encoder tap is 11× more efficient but still cannot help — better
-  placement transfers the same impoverished target more cheaply
+- monotone collapse of the inner/choroid contrast as α rises
+- the adapter's inability to add anything on this axis — the teacher does not
+  represent it
+
+It does **not**, on its own, explain the Dice damage: `structural_loss.md`
+demonstrates that separation can be fully protected while Dice still falls.
 
 If a relational signal is wanted, the target must come from a representation
 that *does* separate the tissues. I-JEPA's does not.
+
+## Terminology caveat
+
+Class 0 is **"Elsewhere"** in the GOALS/MergedV3 label set, not "background".
+It contains true background *and* retinal tissue that is neither inner retina
+nor choroid — outer retina in particular lies between the two labelled bands.
+Statements about "tissue vs background" in this document should be read as
+"inner-retina-plus-choroid vs everything else". The inner-vs-choroid results
+are unaffected, because both of those classes are labelled explicitly.
 
 ## Figures
 

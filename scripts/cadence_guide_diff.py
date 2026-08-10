@@ -81,8 +81,12 @@ def main():
 
     def jac(x, y):
         i = (x & y).reshape(len(x), -1).sum(1)
-        u = np.maximum((x | y).reshape(len(x), -1).sum(1), 1)
-        return float(np.mean(i / u))
+        u = (x | y).reshape(len(x), -1).sum(1)
+        # Two empty guides are in perfect agreement. Substituting 1 for an
+        # empty union while leaving the intersection at 0 scores them as total
+        # disagreement, which is why frozen-vs-itself came out at 0.9983
+        # instead of 1.0 and every reported Jaccard was slightly deflated.
+        return float(np.mean(np.where(u == 0, 1.0, i / np.maximum(u, 1))))
 
     names = [s.strip() for s in a.adapters.split(',')]
     G = {'frozen': guides(None)}

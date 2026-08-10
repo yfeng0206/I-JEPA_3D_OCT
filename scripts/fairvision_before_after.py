@@ -57,7 +57,8 @@ def main():
     ap.add_argument('--n', type=int, default=4, help='FairVision slices to show')
     ap.add_argument('--alpha', type=float, default=0.5)
     ap.add_argument('--adapters', default=(
-        'late_ep100_gram_mse,late_ep100_structl100,early_ep27_structl100'),
+        'late_ep100_gram_mse_a050,late_ep100_structl100_a050,'
+        'early_ep27_structl100_a050'),
         help='comma list of adapter stems under results/masking/structural_loss')
     a = ap.parse_args()
     dev = 'cuda'
@@ -114,6 +115,8 @@ def main():
         nm = (stem.strip().replace('_gram_mse', '\nGram-MSE')
               .replace('_structl', '\nstructural lam='))
         variants.append((nm, m))
+    if len(variants) == 1:
+        raise SystemExit('none of the requested adapters loaded: %s' % a.adapters)
     print('variants: %s' % ', '.join(n.replace('\n', ' ') for n, _ in variants))
 
     preds, guides = {}, {}

@@ -19,9 +19,14 @@ Three taps into the frozen MIRAGE segmentation path:
 
 | tap | site | shape | downstream of tap |
 |---|---|---|---|
-| `enc` | pre `proj_dec` | (B, 256, 768) | whole decoder (95.5M) |
+| `enc` | pre `proj_dec` | (B, 256, 768) | segmentation decoder, **9,532,420 params** |
 | `mid` | pre ConvNeXt blocks | (B, 384, 64, 64) | 4 blocks + head |
 | `h0` | pre `final_layer` | (B, 384, 64, 64) | **1,540 params** (current) |
+
+(An earlier version of this table said "whole decoder (95.5M)" downstream of the
+encoder tap. That is wrong: 95,571,460 is the parameter count of *all* of
+MIRAGE including its own ViT encoder, which sits **upstream** of every tap.
+Measured downstream of `proj_dec`: 9,532,420.)
 
 Everything else is held fixed: same EMA teacher (`envelope-ep100`), same 4,800
 train / 1,200 eval FairVision slices, same steps, same trunk shape
@@ -115,9 +120,25 @@ guide.
 
 ## Conclusion
 
-Explanation (1) — tap point — is a real and large effect, and the hypothesised
-ranking **encoder > mid-decoder > H0** is confirmed on the transfer/damage
-trade-off. Explanation (2) is not refuted: even at the encoder, agreement with
-JEPA starts at r=0.31, and buying high transfer still costs Dice.
+Explanation (1) — tap point — is a real and large effect. **`h0` is clearly the
+worst placement**: it saturates at 29.9% transfer for α≤0.5 and is dominated at
+every matched-transfer point.
+
+The ordering between `enc` and `mid`, however, **depends on the operating
+point** and is not a global ranking:
+
+- at low transfer (≤50%) only `enc` reaches it at all, and does so nearly free
+- at high transfer (~76%) `mid` is **3× cheaper** than `enc` (−0.0021 vs
+  −0.0062), and at ~86% it remains cheaper (−0.0075 vs −0.0130)
+
+An earlier version of this document claimed the hypothesised ranking
+`encoder > mid > H0` was "confirmed". The table above contradicts that at high
+transfer. The supported statement is: **H0 is worst; `enc` and `mid` trade off
+against each other as a function of how much transfer is demanded.** Since the
+recommended operating point is low-transfer (α=0.10), `enc` is the right choice
+*for this project* — but not universally.
+
+Explanation (2) is not refuted: even at the encoder, agreement with I-JEPA
+starts at r=0.31, and buying high transfer still costs Dice.
 
 Figure: `placement_tradeoff.png`. Raw data: `placement_sweep.json`.

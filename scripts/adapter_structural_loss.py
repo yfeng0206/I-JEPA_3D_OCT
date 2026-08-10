@@ -98,14 +98,17 @@ def zscore(v, eps=1e-6):
 
 
 def separation(R, m):
-    """delta = mean(within-tissue) - mean(inner-choroid); None if undefined."""
-    parts = []
-    for k in ('II', 'CC'):
-        if m[k].any():
-            parts.append(R[m[k]].mean())
-    if not parts or not m['IC'].any():
+    """delta = mean(within-tissue) - mean(inner-choroid); None if undefined.
+
+    BOTH within-class blocks are required. Substituting a single block's mean
+    for (mu_II + mu_CC)/2 when the other is empty evaluates a different
+    quantity than the barrier is defined on, and those images would be scored
+    against an incomparable reference.
+    """
+    if not (m['II'].any() and m['CC'].any() and m['IC'].any()):
         return None
-    return torch.stack(parts).mean() - R[m['IC']].mean()
+    return torch.stack([R[m['II']].mean(),
+                        R[m['CC']].mean()]).mean() - R[m['IC']].mean()
 
 
 def structural_loss(RM, RM0, RJ, labs, lam):

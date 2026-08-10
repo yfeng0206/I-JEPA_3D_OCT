@@ -135,7 +135,10 @@ def main():
         for p in adapter.parameters():
             p.requires_grad_(False)
         adapter_sha = sha(a.adapter)
-        tap = ck.get('tap', a.tap)
+        # Tap provenance: a checkpoint that records its own tap wins. Legacy
+        # cfg-7 checkpoints predate the field and are hard-wired to 384-channel
+        # H0, so they must NOT inherit the --tap default of 'enc'.
+        tap = ck.get('tap') or ('h0' if 'ch' not in cfg else a.tap)
         print('adapter          %s  (sha %s, tap %s, taught by %s)'
               % (a.adapter, adapter_sha, tap,
                  ck.get('jepa_ckpt') or ck.get('teacher')))
@@ -153,18 +156,21 @@ def main():
         tap = 'none'
         print('adapter          NONE - caching the frozen baseline guide')
 
-    # The tag must distinguish tap points: the same adapter weights applied at
-    # different taps produce different guides, and a stale cache is silent.
+    # The tag must distinguish tap points AND the MIRAGE checkpoint: the same
+    # adapter weights applied at a different tap, or on top of a different
+    # MIRAGE, produce different guides, and a stale cache is silent.
+    from jepa_to_mirage_probe import CK_MIRAGE
+    mir_sha = sha(CK_MIRAGE)
     if adapter:
-        tag = 'base512_%s_%s' % (tap, adapter_sha)
+        tag = 'base512_%s_a%s_m%s' % (tap, adapter_sha, mir_sha)
     else:
-        tag = 'base512_frozen'
+        tag = 'base512_frozen_m%s' % mir_sha
     out = pathlib.Path(a.out_root) / tag / a.split
     out.mkdir(parents=True, exist_ok=True)
 
     from jepa_to_mirage_probe import CK_MIRAGE
     meta = {'schema_version': SCHEMA, 'split': a.split,
-            'mirage_ckpt': str(CK_MIRAGE), 'mirage_sha': sha(CK_MIRAGE),
+            'mirage_ckpt': str(CK_MIRAGE), 'mirage_sha': mir_sha,
             'adapter_ckpt': str(a.adapter) if a.adapter else None,
             'adapter_sha': adapter_sha,
             'adapter_tap': tap,

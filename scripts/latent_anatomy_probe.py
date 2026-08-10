@@ -69,27 +69,39 @@ def gram(x):
     return x @ x.transpose(-2, -1)
 
 
-def separability(feats, labels, name):
-    """Cross-validated linear probe AUC + silhouette for inner vs choroid."""
+def separability(feats, labels, groups, name):
+    """Cross-validated linear probe AUC + silhouette for inner vs choroid.
+
+    Folds are grouped BY IMAGE. Splitting flattened tokens at random puts
+    patches from the same B-scan in both train and test, so the probe can
+    memorise an image rather than learn the tissue distinction -- which is what
+    produced a saturated AUC of 1.0000 for every representation. Scaling is
+    fitted inside each fold for the same reason.
+    """
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import roc_auc_score, silhouette_score
-    from sklearn.model_selection import StratifiedKFold
+    from sklearn.model_selection import StratifiedGroupKFold
+    from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import StandardScaler
 
     m = np.isin(labels, (INNER, CHOROID))
-    X, y = feats[m], (labels[m] == CHOROID).astype(int)
+    X, y, g = feats[m], (labels[m] == CHOROID).astype(int), groups[m]
     if len(np.unique(y)) < 2:
         return None
-    X = StandardScaler().fit_transform(X)
     aucs = []
-    for tr, te in StratifiedKFold(5, shuffle=True, random_state=0).split(X, y):
-        clf = LogisticRegression(max_iter=2000, C=1.0).fit(X[tr], y[tr])
+    for tr, te in StratifiedGroupKFold(5).split(X, y, groups=g):
+        if len(np.unique(y[te])) < 2:
+            continue
+        clf = make_pipeline(StandardScaler(),
+                            LogisticRegression(max_iter=2000, C=1.0))
+        clf.fit(X[tr], y[tr])
         aucs.append(roc_auc_score(y[te], clf.predict_proba(X[te])[:, 1]))
-    sil = silhouette_score(X, y, metric='cosine')
-    print('  %-34s probe AUC %.4f +/- %.4f   silhouette %+.4f   (n=%d)'
-          % (name, np.mean(aucs), np.std(aucs), sil, len(y)))
+    sil = silhouette_score(StandardScaler().fit_transform(X), y, metric='cosine')
+    print('  %-34s probe AUC %.4f +/- %.4f   silhouette %+.4f   (n=%d, %d images)'
+          % (name, np.mean(aucs), np.std(aucs), sil, len(y), len(np.unique(g))))
     return {'probe_auc': float(np.mean(aucs)), 'probe_auc_sd': float(np.std(aucs)),
-            'silhouette': float(sil), 'n_tokens': int(len(y))}
+            'silhouette': float(sil), 'n_tokens': int(len(y)),
+            'n_images': int(len(np.unique(g))), 'grouped_cv': True}
 
 
 def cka(X, Y):
@@ -150,18 +162,20 @@ def main():
 
     # Only trust cells that are mostly one tissue.
     keep = P.reshape(-1) >= 0.7
+    # Image id per token, so cross-validation can be grouped by B-scan.
+    img_id = np.repeat(np.arange(len(L)), L.shape[1]).reshape(-1)[keep]
     fe, fh, fj, fl = (M_enc.reshape(-1, M_enc.shape[-1])[keep],
                       M_h0.reshape(-1, M_h0.shape[-1])[keep],
                       J.reshape(-1, J.shape[-1])[keep],
                       L.reshape(-1)[keep])
 
     print('Q1  Can the latent tell INNER RETINA from CHOROID?')
-    print('    (linear probe, 5-fold CV, on cells >=70%% one tissue)')
+    print('    (linear probe, 5-fold CV GROUPED BY IMAGE, cells >=70%% one tissue)')
     res = {'jepa_ckpt': str(jepa_ckpt), 'n_images': len(imgs),
            'n_tokens_kept': int(keep.sum()), 'separability': {}}
-    res['separability']['mirage_encoder'] = separability(fe, fl, 'MIRAGE encoder  (256x768)')
-    res['separability']['mirage_h0'] = separability(fh, fl, 'MIRAGE H0 decoder (384) <-adapter')
-    res['separability']['jepa'] = separability(fj, fl, 'JEPA encoder     (256x768)')
+    res['separability']['mirage_encoder'] = separability(fe, fl, img_id, 'MIRAGE encoder  (256x768)')
+    res['separability']['mirage_h0'] = separability(fh, fl, img_id, 'MIRAGE H0 decoder (384) <-adapter')
+    res['separability']['jepa'] = separability(fj, fl, img_id, 'JEPA encoder     (256x768)')
 
     print()
     print('Q2  Do the two models AGREE about patch-to-patch similarity?')
@@ -195,3 +209,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

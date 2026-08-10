@@ -21,6 +21,7 @@ Compatible with PyTorch 1.13.1 and Python 3.8.
 """
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -339,7 +340,8 @@ def evaluate(probe, head, loader, criterion, device, return_predictions=False):
 # ---------------------------------------------------------------------------
 
 def precompute_features(encoder, data_dir, split, num_slices, slice_size,
-                        device, chunk_size=50, cache_dir=None, use_amp=True):
+                        device, chunk_size=50, cache_dir=None, use_amp=True,
+                        cache_key=''):
     """Encode all volumes in a split with the frozen ViT and cache to disk.
 
     Returns:
@@ -348,13 +350,16 @@ def precompute_features(encoder, data_dir, split, num_slices, slice_size,
     """
     cache_path = None
     if cache_dir:
-        # The cache key must include precision. Without it an fp16-computed
-        # cache is silently reused by an fp32 run (or vice versa), so
-        # `use_amp: false` would be honoured for the forward pass but the
-        # features would still come from a stale fp16 file.
+        # The key must contain everything that determines the features.
+        # Precision matters (an fp16 cache silently served an fp32 run), but so
+        # does the ENCODER: keeping output_dir while pointing at a different
+        # checkpoint would otherwise evaluate a stale encoder's features and
+        # report them as the new one's.
         suffix = 'amp' if use_amp else 'fp32'
-        cache_path = os.path.join(
-            cache_dir, '%s_s%d_%s.pt' % (split, num_slices, suffix))
+        parts = [split, 's%d' % num_slices, 'r%d' % slice_size, suffix]
+        if cache_key:
+            parts.append(cache_key)
+        cache_path = os.path.join(cache_dir, '%s.pt' % '_'.join(parts))
         if os.path.exists(cache_path):
             print('  Loading cached %s features from %s' % (split, cache_path))
             data = torch.load(cache_path, map_location='cpu')
@@ -539,16 +544,20 @@ def run_patch_downstream(config, device):
     set_amp(use_amp)
     print('  precision: %s' % ('AMP fp16' if use_amp else 'fp32 (AMP disabled)'))
     cache_dir = os.path.join(output_dir, 'feature_cache')
+    # Identify the cache by the encoder that produced it, so a config that
+    # swaps checkpoints but keeps output_dir cannot reuse stale features.
+    enc_key = hashlib.sha256(
+        open(ckpt_path, 'rb').read(1 << 20)).hexdigest()[:12]
 
     train_feats, train_labels = precompute_features(
         encoder, data_cfg['data_dir'], 'Training',
-        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp)
+        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp, cache_key=enc_key)
     val_feats, val_labels = precompute_features(
         encoder, data_cfg['data_dir'], 'Validation',
-        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp)
+        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp, cache_key=enc_key)
     test_feats, test_labels = precompute_features(
         encoder, data_cfg['data_dir'], 'Test',
-        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp)
+        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp, cache_key=enc_key)
 
     # Free encoder from GPU after feature extraction
     encoder.cpu()
@@ -608,7 +617,7 @@ def run_patch_downstream(config, device):
         train_cfg['epochs'], len(train_loader),
     )
     criterion = nn.BCEWithLogitsLoss()
-    scaler = GradScaler()
+    scaler = GradScaler(enabled=_USE_AMP)
 
     # ---- CSV logger --------------------------------------------------------
     csv_path = os.path.join(output_dir, 'train_log.csv')
@@ -895,7 +904,7 @@ def run_slice_downstream(config, device):
         steps_per_epoch=len(train_loader),
     )
     criterion = nn.BCEWithLogitsLoss()
-    scaler = GradScaler()
+    scaler = GradScaler(enabled=_USE_AMP)
 
     # ---- Training loop -----------------------------------------------------
     best_auc = 0.0
@@ -1200,7 +1209,7 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
         train_cfg['epochs'], max(steps_per_epoch, 1),
     )
     criterion = nn.BCEWithLogitsLoss()
-    scaler = GradScaler()
+    scaler = GradScaler(enabled=_USE_AMP)
 
     # ---- CSV logger --------------------------------------------------------
     csv_file = None
@@ -1410,6 +1419,11 @@ def main(args):
 
     freeze_encoder = config.get('model', {}).get('freeze_encoder', True)
 
+    # Set precision ONCE here, before any mode dispatches. Setting it inside
+    # run_patch_downstream only covered the frozen-probe path, so fine-tune and
+    # slice configs specifying `use_amp: false` silently still ran fp16.
+    set_amp(config.get('data', {}).get('use_amp', True))
+
     if not freeze_encoder:
         # DDP mode for fine-tuning
         world_size, rank = init_distributed()
@@ -1440,4 +1454,8 @@ if __name__ == '__main__':
                         help='Path to YAML config file')
     args = parser.parse_args()
     main(args)
+
+
+
+
 

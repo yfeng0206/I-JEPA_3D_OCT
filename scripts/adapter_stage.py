@@ -88,10 +88,22 @@ def gram(x):
     return x @ x.transpose(1, 2)
 
 
-def sha(path, n=1 << 20):
+def sha(path, n=None):
+    """SHA-256 of a file, streamed in full.
+
+    This used to hash only the first 1 MiB, which is not a safe identity for
+    multi-megabyte checkpoints: two adapters differing only after the first
+    mebibyte collide, and a colliding digest silently reuses a stale 3.85 GiB
+    guide cache. ``n`` is retained for callers that deliberately want a partial
+    digest, but the default is now the whole file.
+    """
     h = hashlib.sha256()
     with open(path, 'rb') as f:
-        h.update(f.read(n))
+        if n is not None:
+            h.update(f.read(n))
+        else:
+            for chunk in iter(lambda: f.read(1 << 22), b''):
+                h.update(chunk)
     return h.hexdigest()[:16]
 
 

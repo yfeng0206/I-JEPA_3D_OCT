@@ -1,4 +1,4 @@
-# Pretraining: MIRAGE anatomy-shaped targets (stopped at ep30)
+# Pretraining: MIRAGE anatomy-shaped targets (last checkpoint ep30)
 
 This document describes the current `mirage_anatomy` arm. MIRAGE supplies the tissue guide, and the target shape changes from rectangles to connected irregular anatomy-shaped blobs. This is the contribution being tested.
 
@@ -10,7 +10,7 @@ This is not the same as [envelope_100ep.md](envelope_100ep.md). The `mirage_enve
 |---|---|
 | Config | `configs/patch_mirage_anatomy.yaml` |
 | Run directory | `D:\jepa_phase0\runs\patch_mirage_anatomy\` |
-| Status | Stopped at epoch 30 |
+| Status | Halted during epoch 32; **ep30 is the last surviving periodic checkpoint** (epochs 31 and part of 32 ran but were not saved) |
 | Checkpoints on disk | `ep30.pth.tar` and `best.pth.tar` only |
 | Warm start | `D:\jepa_phase0\runs\patch_mirage_envelope\resume-ep27.pth.tar` |
 | Current fair comparator | `mirage_envelope` ep30 |
@@ -105,7 +105,7 @@ Frozen mean-pool probe, 100 slices/volume, true fp32, test n=3000.
 | anatomy − envelope | ep30 | +0.0054 | 5 per arm | Welch t p=0.00219; Mann-Whitney p=0.0079; Cohen's d 4.20; arms fully separated |
 | anatomy − envelope paired bootstrap | ep30 | +0.0044 | volume bootstrap | 95% CI [+0.0010,+0.0077]; p=0.012 |
 
-This is evidence that anatomy-shaped targets improve the ep30 encoder over the matched envelope-rectangle baseline. It does not establish the ep100 outcome because the anatomy run is stopped at ep30.
+This is evidence that anatomy-shaped targets improve the ep30 encoder over the matched envelope-rectangle baseline. It does not establish the ep100 outcome because the anatomy run has no checkpoint beyond ep30.
 
 Historic ep100 AUCs are random 0.8746, `mirage_envelope` 0.8807, and oracle 0.8855. Those are useful context but are not a fair head-to-head for the stopped anatomy arm.
 
@@ -139,3 +139,4 @@ Cannot establish:
 A fresh `mirage_anatomy` run is planned, not done. It will warm-start from the random ep25 checkpoint and use a new adapter design: encoder-tap placement with a class-conditioned structural loss. See [structural_loss.md](../masking/structural_loss.md) and [adapter_placement.md](../masking/adapter_placement.md).
 
 The adapter and guide cache will refresh at epochs 25/50/75/100 to match checkpoint boundaries. A guide-cache rebuild costs 66 minutes, measured. Caches are sha-tagged by adapter, so a new adapter writes a new cache directory and old results stay reproducible.
+

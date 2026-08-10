@@ -7,19 +7,25 @@
       "probe_auc": 1.0,
       "probe_auc_sd": 0.0,
       "silhouette": 0.30368098616600037,
-      "n_tokens": 294
+      "n_tokens": 294,
+      "n_images": 29,
+      "grouped_cv": true
     },
     "mirage_h0": {
       "probe_auc": 1.0,
       "probe_auc_sd": 0.0,
       "silhouette": 0.8206910490989685,
-      "n_tokens": 294
+      "n_tokens": 294,
+      "n_images": 29,
+      "grouped_cv": true
     },
     "jepa": {
       "probe_auc": 1.0,
       "probe_auc_sd": 0.0,
       "silhouette": 0.17900080978870392,
-      "n_tokens": 294
+      "n_tokens": 294,
+      "n_images": 29,
+      "grouped_cv": true
     }
   },
   "gram_agreement": {

@@ -1,0 +1,64 @@
+{
+  "frozen_dice": 0.9457243807547048,
+  "teacher": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep100.pth.tar",
+  "cfg": {
+    "depth": 2,
+    "width": 128,
+    "alpha": 0.5,
+    "lr": 0.001,
+    "n_train": 4800
+  },
+  "placements": {
+    "enc": {
+      "channels": 768,
+      "params": 788352,
+      "gram_r_before": 0.3131590908204932,
+      "rel_before": 0.04378439212838809,
+      "rel_after": 0.005703071920822064,
+      "rel_reduction_pct": 86.97464634406923,
+      "goals_dice": 0.9327593381670763,
+      "dice_delta": -0.012965042587628428,
+      "dice_p_paired_t": 3.0572780598516454e-10,
+      "better_on": 0,
+      "n_images": 30,
+      "amplification": 0.38980530141669534,
+      "delta_h0_rel": 0.2529301047325134,
+      "delta_tap_rel": 0.6488626599311829,
+      "mask_jaccard_vs_frozen": 0.9535046815872192
+    },
+    "mid": {
+      "channels": 384,
+      "params": 689664,
+      "gram_r_before": 0.3709054057838079,
+      "rel_before": 0.10064897030591964,
+      "rel_after": 0.014223334205647309,
+      "rel_reduction_pct": 85.86837583890238,
+      "goals_dice": 0.9382321407544497,
+      "dice_delta": -0.007492240000255057,
+      "dice_p_paired_t": 1.8253896230236382e-06,
+      "better_on": 3,
+      "n_images": 30,
+      "amplification": 0.5706072820383356,
+      "delta_h0_rel": 0.29773110151290894,
+      "delta_tap_rel": 0.5217793583869934,
+      "mask_jaccard_vs_frozen": 0.9609987139701843
+    },
+    "h0": {
+      "channels": 384,
+      "params": 689664,
+      "gram_r_before": 0.062119326295011844,
+      "rel_before": 0.33483659505844116,
+      "rel_after": 0.23470728139082592,
+      "rel_reduction_pct": 29.903933783026027,
+      "goals_dice": 0.9409574018541709,
+      "dice_delta": -0.0047669789005339025,
+      "dice_p_paired_t": 0.0002655952696325442,
+      "better_on": 7,
+      "n_images": 30,
+      "amplification": 1.0,
+      "delta_h0_rel": 0.16818763315677643,
+      "delta_tap_rel": 0.16818763315677643,
+      "mask_jaccard_vs_frozen": 0.9577099084854126
+    }
+  }
+}

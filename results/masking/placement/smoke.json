@@ -1,0 +1,64 @@
+{
+  "frozen_dice": 0.9457243807547048,
+  "teacher": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep100.pth.tar",
+  "cfg": {
+    "depth": 2,
+    "width": 128,
+    "alpha": 0.5,
+    "lr": 0.001,
+    "n_train": 320
+  },
+  "placements": {
+    "enc": {
+      "channels": 768,
+      "params": 788352,
+      "gram_r_before": 0.31438241565688824,
+      "rel_before": 0.04418955836445093,
+      "rel_after": 0.023317682091146708,
+      "rel_reduction_pct": 47.23259757693114,
+      "goals_dice": 0.9377908710534387,
+      "dice_delta": -0.00793350970126605,
+      "dice_p_paired_t": 6.028725454924508e-10,
+      "better_on": 0,
+      "n_images": 30,
+      "amplification": 0.45549645715289383,
+      "delta_h0_rel": 0.19538208842277527,
+      "delta_tap_rel": 0.4289431571960449,
+      "mask_jaccard_vs_frozen": 0.9633060693740845
+    },
+    "mid": {
+      "channels": 384,
+      "params": 689664,
+      "gram_r_before": 0.3731327136781272,
+      "rel_before": 0.10239988937973976,
+      "rel_after": 0.03751529660075903,
+      "rel_reduction_pct": 63.36392858625335,
+      "goals_dice": 0.945135720294598,
+      "dice_delta": -0.0005886604601067491,
+      "dice_p_paired_t": 0.01561492550418609,
+      "better_on": 9,
+      "n_images": 30,
+      "amplification": 0.5815277106782005,
+      "delta_h0_rel": 0.16332997381687164,
+      "delta_tap_rel": 0.28086361289024353,
+      "mask_jaccard_vs_frozen": 0.9930633306503296
+    },
+    "h0": {
+      "channels": 384,
+      "params": 689664,
+      "gram_r_before": 0.06829237471555102,
+      "rel_before": 0.33439262211322784,
+      "rel_after": 0.3068454712629318,
+      "rel_reduction_pct": 8.237966099912441,
+      "goals_dice": 0.943210911146691,
+      "dice_delta": -0.0025134696080137964,
+      "dice_p_paired_t": 0.00014937905980248755,
+      "better_on": 5,
+      "n_images": 30,
+      "amplification": 0.9374281035594544,
+      "delta_h0_rel": 0.06256141513586044,
+      "delta_tap_rel": 0.06673729419708252,
+      "mask_jaccard_vs_frozen": 0.9833776950836182
+    }
+  }
+}

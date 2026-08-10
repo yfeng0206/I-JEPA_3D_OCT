@@ -1,29 +1,38 @@
-fix(masking): normalise mask budget by anatomy, not raw cells
+feat(adapter): placement ablation - encoder tap dominates H0
 
-Raw cell counts flatter whichever arm spends its budget on background, and
-they led to a wrong conclusion that the ep30 arms were confounded.
+Tests whether the adapter's segmentation damage comes from the TAP POINT or
+from an irreconcilable objective mismatch between MultiMAE MIRAGE and I-JEPA.
 
-Decomposing the budget over 1,000 slices through the production collator:
+Three taps, everything else fixed (same teacher, images, steps, trunk, lr):
+  enc  pre proj_dec        (256,768)  whole 95.5M decoder downstream
+  mid  pre ConvNeXt blocks (384,64,64)
+  h0   pre final_layer     (384,64,64)  CURRENT - 1,540 params downstream
 
-  arm               total  anatomy  background  anat-ctx  %%retina-hidden
-  envelope_default  117.5     36.2   81.3 (69%%)       6.0          77.3%%
-  anatomy            54.3     39.3   15.0 (28%%)       5.7          84.5%%
+alpha is swept because the same alpha yields very different transfer at
+different taps, making matched-alpha comparison meaningless.
 
-Envelope spends 69%% of its masking budget on black background. On the axis
-that matters the arms are closely matched, and where they differ it is against
-us: anatomy hides 8.6%% MORE retina, leaves 5%% LESS retinal context, and covers
-a larger fraction of the retina.
+Cost to achieve MATCHED L_rel transfer:
+  ~25%%  enc a=.05 -0.0004 (p=0.14 neutral) | h0 a=.50 -0.0048 (p=3e-4 harm)
+  ~46%%  enc a=.10 -0.0011              | h0 a=1.0 -0.0162
+  ~76%%  mid a=.05 -0.0021              | h0 cannot reach
 
-Tissue-context per tissue-cell predicted is 0.145 (anatomy) vs 0.166
-(envelope) -- our task is marginally harder, not 4.3x easier. The earlier
-ratio counted background tokens, which are trivially predictable.
+h0 is dominated everywhere: it saturates at 29.9%% transfer for alpha<=0.5.
+Efficiency (L_rel per unit Dice damage): enc 70,000 vs h0 6,268 -> 11x.
 
-This strengthens the +0.0054 result rather than confounding it, and shows
-envelope_matched is NOT a valid control: matching total cells leaves it hiding
-only 48%% of the retina with 3.2x more tissue context.
+The stated risk that a frozen decoder would AMPLIFY an off-manifold
+perturbation does not materialise. Amplification (|dH0|/|H0|)/(|dZ|/|Z|):
+  h0 1.00 (by construction, validates the metric) | mid 0.44-0.57 | enc 0.39-0.49
+The decoder roughly halves the relative perturbation.
 
-Real finding: to hide comparable retina, rectangles waste 5.4x more budget on
-background (81.3 vs 15.0 cells). That is what the anatomy shape buys.
+Why h0 transfers so little: Gram agreement with JEPA before training is
+enc 0.313, mid 0.371, h0 0.062 -- H0 is a near-logit representation whose
+similarity structure is essentially uncorrelated with JEPA's.
+
+Harness validated: no-adapter path reproduces frozen Dice 0.9457 exactly and
+the h0 tap returns amplification 1.00 as it must.
+
+Caveat recorded: at matched MASK RELOCATION rather than matched transfer, h0
+is cheapest. This settles placement, not whether the adapter earns its place.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

@@ -1,0 +1,51 @@
+{
+  "frozen_dice": 0.9457243807547048,
+  "teacher": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep100.pth.tar",
+  "cfg": {
+    "depth": 2,
+    "width": 128,
+    "alpha": 0.5,
+    "lr": 0.001,
+    "n_train": 4800
+  },
+  "placements": {
+    "enc_a0.05": {
+      "tap": "enc",
+      "alpha": 0.05,
+      "channels": 768,
+      "params": 788352,
+      "gram_r_before": 0.3131590908204932,
+      "rel_before": 0.04378439212838809,
+      "rel_after": 0.03305876756707827,
+      "rel_reduction_pct": 24.496456476680752,
+      "goals_dice": 0.9453709511385698,
+      "dice_delta": -0.00035342961613493706,
+      "dice_p_paired_t": 0.14002132597404657,
+      "better_on": 10,
+      "n_images": 30,
+      "amplification": 0.4893809307854576,
+      "delta_h0_rel": 0.05306383594870567,
+      "delta_tap_rel": 0.10843053460121155,
+      "mask_jaccard_vs_frozen": 0.9973382353782654
+    },
+    "enc_a0.50": {
+      "tap": "enc",
+      "alpha": 0.5,
+      "channels": 768,
+      "params": 788352,
+      "gram_r_before": 0.3131590908204932,
+      "rel_before": 0.04378439212838809,
+      "rel_after": 0.005703071920822064,
+      "rel_reduction_pct": 86.97464634406923,
+      "goals_dice": 0.9327593381670763,
+      "dice_delta": -0.012965042587628428,
+      "dice_p_paired_t": 3.0572780598516454e-10,
+      "better_on": 0,
+      "n_images": 30,
+      "amplification": 0.38980530141669534,
+      "delta_h0_rel": 0.2529301047325134,
+      "delta_tap_rel": 0.6488626599311829,
+      "mask_jaccard_vs_frozen": 0.9535046815872192
+    }
+  }
+}

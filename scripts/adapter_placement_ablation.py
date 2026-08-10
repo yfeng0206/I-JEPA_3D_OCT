@@ -119,6 +119,9 @@ def main():
     ap.add_argument('--jepa-ckpt', default=str(
         r'D:\jepa_phase0\runs\patch_mirage_envelope\jepa_patch_mirage-ep100.pth.tar'))
     ap.add_argument('--tag', default='placement')
+    ap.add_argument('--taps', default=None,
+                    help='comma-separated subset of enc,mid,h0')
+    ap.add_argument('--save-adapters', action='store_true')
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     dev = 'cuda'
@@ -129,14 +132,20 @@ def main():
         p.requires_grad_(False)
     sem = mir.output_adapters['semseg']
 
-    taps = {
+    ALL_TAPS = {
         'enc': (sem.proj_dec, 768),
         'mid': (sem.blocks, 384),
         'h0': (sem.final_layer, 384),
     }
+    # Hooks are always registered for every tap: predict() reads grab['h0'] to
+    # measure drift even when h0 is not one of the taps being swept.
+    taps = dict(ALL_TAPS)
+    if a.taps:
+        want = [t.strip() for t in a.taps.split(',')]
+        taps = {k: v for k, v in ALL_TAPS.items() if k in want}
 
     grab = {}
-    for nm, (mod, _) in taps.items():
+    for nm, (mod, _) in ALL_TAPS.items():
         mod.register_forward_hook(
             lambda m, i, o, nm=nm: grab.update({nm: i[0].detach()}))
 
@@ -226,7 +235,7 @@ def main():
 
     base_pred, base_h0, _ = predict()
     base_taps = {}
-    for t in taps:
+    for t in ALL_TAPS:
         base_taps[t] = predict(None, t)[2]
     base_dice, base_per = dice(base_pred)
     base_guide = guide(base_pred)
@@ -319,6 +328,12 @@ def main():
 
             from scipy import stats
             p = float(stats.ttest_rel(per, base_per).pvalue)
+            if a.save_adapters:
+                torch.save({'state_dict': ad.state_dict(),
+                            'cfg': {'ch': ch, 'depth': a.depth,
+                                    'width': a.width, 'alpha': al},
+                            'tap': tap, 'jepa_ckpt': str(a.jepa_ckpt)},
+                           OUT / ('adapter_%s_a%.2f.pt' % (tap, al)))
             print('%-6s %6.2f %8s %8.3f %9.2f%% %9.4f %+9.5f %8.2f %8.4f'
                   % (tap, al, '{:,}'.format(nparam), gram_r0, red, d,
                      d - base_dice, amp, jac))

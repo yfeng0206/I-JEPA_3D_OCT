@@ -1,38 +1,44 @@
-feat(adapter): placement ablation - encoder tap dominates H0
+feat(analysis): I-JEPA does not separate inner retina from choroid
 
-Tests whether the adapter's segmentation damage comes from the TAP POINT or
-from an irreconcilable objective mismatch between MultiMAE MIRAGE and I-JEPA.
+Tests the assumption L_rel rests on -- that MIRAGE and I-JEPA should agree
+about patch similarity -- decomposed BY TISSUE CLASS using GOALS labels.
+30 held-out images, 16x16 grid, cells >=70%% pure (120 inner, 174 choroid).
 
-Three taps, everything else fixed (same teacher, images, steps, trunk, lr):
-  enc  pre proj_dec        (256,768)  whole 95.5M decoder downstream
-  mid  pre ConvNeXt blocks (384,64,64)
-  h0   pre final_layer     (384,64,64)  CURRENT - 1,540 params downstream
+Mean cosine similarity by class pair:
 
-alpha is swept because the same alpha yields very different transfer at
-different taps, making matched-alpha comparison meaningless.
+  model                  in-in   ch-ch   in-ch   contrast
+  MIRAGE H0              0.942   0.935  -0.523    +1.461
+  MIRAGE enc             0.664   0.669   0.304    +0.362
+  JEPA ep100             0.837   0.785   0.719    +0.092
+  JEPA ep30              0.897   0.866   0.803    +0.079
+  JEPA untrained         0.696   0.744   0.526    +0.194
 
-Cost to achieve MATCHED L_rel transfer:
-  ~25%%  enc a=.05 -0.0004 (p=0.14 neutral) | h0 a=.50 -0.0048 (p=3e-4 harm)
-  ~46%%  enc a=.10 -0.0011              | h0 a=1.0 -0.0162
-  ~76%%  mid a=.05 -0.0021              | h0 cannot reach
+MIRAGE holds the classes apart (anti-correlated at H0). I-JEPA does not: its
+cross-class similarity is nearly as high as within-class, so an inner-retina
+patch and a choroid patch look almost the same.
 
-h0 is dominated everywhere: it saturates at 29.9%% transfer for alpha<=0.5.
-Efficiency (L_rel per unit Dice damage): enc 70,000 vs h0 6,268 -> 11x.
+I-JEPA is WORSE than an untrained network at this (+0.079/+0.092 vs +0.194).
+Pretraining halved the relational separation of the two tissues. What it did
+learn is tissue-vs-background (+0.435 untrained -> +0.517 trained) -- exactly
+what predicting masked regions rewards.
 
-The stated risk that a frozen decoder would AMPLIFY an off-manifold
-perturbation does not materialise. Amplification (|dH0|/|H0|)/(|dZ|/|Z|):
-  h0 1.00 (by construction, validates the metric) | mid 0.44-0.57 | enc 0.39-0.49
-The decoder roughly halves the relative perturbation.
+The damage mechanism observed directly: applying the encoder adapter pulls
+MIRAGE toward I-JEPA's geometry. inner-chor 0.304 -> 0.356 (a=0.05) -> 0.672
+(a=0.50), i.e. 83%% of the way to I-JEPA's 0.719, with contrast collapsing 55%%
+and Dice falling 0.9457 -> 0.9328. The Dice loss IS this collapse.
 
-Why h0 transfers so little: Gram agreement with JEPA before training is
-enc 0.313, mid 0.371, h0 0.062 -- H0 is a near-logit representation whose
-similarity structure is essentially uncorrelated with JEPA's.
+Corroborating: UNTRAINED JEPA agrees more with MIRAGE's block structure
+(r=0.738) than either trained one (r=0.663).
 
-Harness validated: no-adapter path reproduces frozen Dice 0.9457 exactly and
-the h0 tap returns amplification 1.00 as it must.
+Implication: no placement/width/depth/lr can fix this, because the target
+itself lacks the information. Explains the monotone alpha damage, the
+neutral-at-best ceiling, and why the 11x more efficient encoder tap still
+cannot help.
 
-Caveat recorded: at matched MASK RELOCATION rather than matched transfer, h0
-is cheapest. This settles placement, not whether the adapter earns its place.
+Figures: class_blocks.png, class_contrast.png, segmentation_before_after.png
+(a=0.05 visually identical to frozen; a=0.50 visibly blurs the boundary).
+
+Caveat: oracle ep100 is no longer on disk; envelope ep100 used instead.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

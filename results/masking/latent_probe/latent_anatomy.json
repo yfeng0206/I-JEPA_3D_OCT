@@ -1,0 +1,40 @@
+{
+  "jepa_ckpt": "D:\\jepa_phase0\\runs\\patch_mirage_anatomy\\jepa_patch_mirage-ep30.pth.tar",
+  "n_images": 30,
+  "n_tokens_kept": 6845,
+  "separability": {
+    "mirage_encoder": {
+      "probe_auc": 1.0,
+      "probe_auc_sd": 0.0,
+      "silhouette": 0.30368098616600037,
+      "n_tokens": 294
+    },
+    "mirage_h0": {
+      "probe_auc": 1.0,
+      "probe_auc_sd": 0.0,
+      "silhouette": 0.8206910490989685,
+      "n_tokens": 294
+    },
+    "jepa": {
+      "probe_auc": 1.0,
+      "probe_auc_sd": 0.0,
+      "silhouette": 0.17900080978870392,
+      "n_tokens": 294
+    }
+  },
+  "gram_agreement": {
+    "MIRAGE encoder vs JEPA": {
+      "pearson_r": 0.5037695968874172,
+      "gram_mse": 0.05051441863179207
+    },
+    "MIRAGE H0 vs JEPA": {
+      "pearson_r": 0.06210652448715213,
+      "gram_mse": 0.3125591278076172
+    }
+  },
+  "cka": {
+    "mirage_encoder_vs_jepa": 0.4797831177711487,
+    "mirage_h0_vs_jepa": 0.23819386959075928,
+    "mirage_encoder_vs_h0": 0.19462452828884125
+  }
+}

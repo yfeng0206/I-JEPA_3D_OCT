@@ -112,6 +112,11 @@ def main():
         ('random_default', 'mirage_envelope', (0.15, 0.2), 0),
         ('random_matched', 'mirage_envelope', (0.055, 0.075), 0),
         ('envelope_default', 'mirage_envelope', (0.15, 0.2), 50),
+        # Rectangles aimed at the retina AND shrunk to anatomy's masked area.
+        # envelope_default differs from anatomy in three ways at once (shape,
+        # area, context), so it cannot attribute anything to shape.  This arm
+        # holds placement and area fixed so shape is the only free variable.
+        ('envelope_matched', 'mirage_envelope', (0.055, 0.075), 50),
         ('anatomy', 'mirage_anatomy', (0.15, 0.2), 50),
     ]
     res = {}

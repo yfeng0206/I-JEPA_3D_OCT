@@ -13,6 +13,7 @@ a patch grid afterwards, so it always describes the pixels the model actually
 sees.
 """
 
+import json
 import os
 from typing import Optional, Tuple
 
@@ -94,6 +95,9 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
         # directory per-worker rather than globally -- still sufficient, since
         # any worker touching a mismatched volume aborts the run.
         self._guide_stamp = None
+        # Per-worker memmap handle cache for the uncompressed .npy fast path.
+        self._mm_cache = {}
+        self._mm_cache_max = 256
         self.patch_size = patch_size
         self.dilate_patches = int(dilate_patches)
         self.occupancy_threshold = float(occupancy_threshold)
@@ -123,6 +127,30 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
 
     # ------------------------------------------------------------------
 
+    def _check_stamp(self, path, mirage_sha, adapter_sha):
+        # type: (str, Optional[str], Optional[str]) -> None
+        """Refuse a guide directory that mixes provenances.
+
+        Schema and slice-index checks cannot catch a cache built from a
+        different adapter or a different MIRAGE: the arrays are shaped
+        identically and load without complaint. The first guide read fixes the
+        expectation for this worker; a later mismatch aborts rather than
+        silently training on two different guides.
+        """
+        stamp = (mirage_sha, adapter_sha)
+        if stamp == (None, None):
+            return
+        if self._guide_stamp is None:
+            self._guide_stamp = stamp
+        elif stamp != self._guide_stamp:
+            raise RuntimeError(
+                "Guide %s was built by mirage=%s adapter=%s but this run "
+                "already loaded guides built by mirage=%s adapter=%s -- the "
+                "cache directory is mixed"
+                % (path, stamp[0], stamp[1],
+                   self._guide_stamp[0], self._guide_stamp[1])
+            )
+
     def _load_soft_guide(self, file_index, slice_within):
         # type: (int, int) -> Optional[np.ndarray]
         """Return (2, NATIVE, NATIVE) float32 class scores, or None.
@@ -136,6 +164,51 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
         """
         name = os.path.basename(self.file_paths[file_index])
         path = os.path.join(self.guide_dir, name)
+
+        # Fast path: an uncompressed .npy sibling is memmapped and the handle
+        # is cached per worker. np.savez_compressed keeps one deflate stream
+        # per array, so pulling a single slice out of the .npz inflates the
+        # whole (100, 2, 200, 200) volume -- 8 MB of work to serve 80 KB.
+        # Measured on the live cache: 35.1 ms/slice compressed vs ~0 ms once
+        # the memmap handle is cached, which is ~0.98 h/epoch of pure waste at
+        # 600k reads/epoch. See scripts/convert_guides_to_npy.py.
+        npy = os.path.join(self.guide_dir, os.path.splitext(name)[0] + '.npy')
+        if npy in self._mm_cache or os.path.isfile(npy):
+            mm = self._mm_cache.get(npy)
+            if mm is None:
+                side = os.path.splitext(npy)[0] + '.json'
+                if os.path.isfile(side):
+                    with open(side, 'r') as fh:
+                        meta = json.load(fh)
+                    if meta.get('source_filename') != name:
+                        raise RuntimeError(
+                            "Guide %s was built from %s"
+                            % (npy, meta.get('source_filename')))
+                    if int(meta.get('schema_version', 0)) != 2:
+                        raise RuntimeError(
+                            "Guide %s has schema %s, expected 2"
+                            % (npy, meta.get('schema_version')))
+                    if not np.array_equal(np.asarray(meta['slice_indices']),
+                                          self.slice_indices):
+                        raise RuntimeError(
+                            "Guide %s slice indices do not match the dataset" % npy)
+                    self._check_stamp(npy, meta.get('mirage_sha'),
+                                      meta.get('adapter_sha'))
+                mm = np.load(npy, mmap_mode='r')
+                # Bound the cache: 6,000 open memmaps per worker would exhaust
+                # handles. Volumes are revisited often enough that a simple
+                # clear-when-full policy keeps the hit rate high.
+                if len(self._mm_cache) >= self._mm_cache_max:
+                    self._mm_cache.clear()
+                self._mm_cache[npy] = mm
+            soft = np.asarray(mm[slice_within])
+            if soft.shape != (2, NATIVE_SIZE, NATIVE_SIZE):
+                raise RuntimeError(
+                    "Guide %s has soft shape %s, expected %s"
+                    % (npy, soft.shape, (2, NATIVE_SIZE, NATIVE_SIZE))
+                )
+            return soft.astype(np.float32) / 255.0
+
         if not os.path.isfile(path):
             return None
         with np.load(path, allow_pickle=False) as cache:
@@ -160,21 +233,10 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
             # expectation for the run, so a mixed directory fails loudly on the
             # first mismatched volume instead of silently training on two
             # different guides.
-            stamp = (str(cache["mirage_sha"].item())
-                     if "mirage_sha" in cache else None,
-                     str(cache["adapter_sha"].item())
-                     if "adapter_sha" in cache else None)
-            if stamp != (None, None):
-                if self._guide_stamp is None:
-                    self._guide_stamp = stamp
-                elif stamp != self._guide_stamp:
-                    raise RuntimeError(
-                        "Guide %s was built by mirage=%s adapter=%s but this "
-                        "run already loaded guides built by mirage=%s "
-                        "adapter=%s -- the cache directory is mixed"
-                        % (path, stamp[0], stamp[1],
-                           self._guide_stamp[0], self._guide_stamp[1])
-                    )
+            self._check_stamp(
+                path,
+                str(cache["mirage_sha"].item()) if "mirage_sha" in cache else None,
+                str(cache["adapter_sha"].item()) if "adapter_sha" in cache else None)
             soft = cache["soft_scores"][slice_within]
         if soft.shape != (2, NATIVE_SIZE, NATIVE_SIZE):
             raise RuntimeError(

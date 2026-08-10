@@ -1,15 +1,35 @@
-fix(monitor): derive ETA from the iteration log, not a hardcoded constant
+perf(guides): memmap fast path - the guide cache was the bottleneck
 
-The monitor previously parsed epoch durations from a stdout file and fell back
-to SEC_PER_EPOCH when that file was absent. For the anatomy run no stdout log
-existed in the run directory, so every ETA it produced came from a stale
-constant -- which is how it reported 160 h for a run whose own CSV showed
-1.33 h/epoch. Run paths, start epoch and total are now environment-overridable
-and the pace is computed from the timing columns the trainer writes every
-iteration, with the source named in the output so a fallback is never mistaken
-for a measurement.
+The run is 2.5x slower per epoch than the rectangle baseline (10,865s vs
+4,375s) despite MIRAGE being frozen AND precomputed, so nothing of MIRAGE runs
+at train time. Measured cause: np.savez_compressed keeps one deflate stream
+per array, so reading a SINGLE slice inflates the whole (100,2,200,200)
+volume -- 8 MB of decompression to serve 80 KB, 600,000 times per epoch.
 
-Retargeted at the new run (anatomy_v2_ep25).
+Measured on the live cache (random volumes, cold):
+  compressed npz            35.1 ms/slice  -> 0.98 h/epoch across 6 workers
+  memmap .npy, reopened      9.6 ms/slice  -> 0.27 h/epoch
+  memmap .npy, cached handle  0.7 ms/slice -> ~0.03 h/epoch
+
+Diagnosis is consistent with the symptom: GPU utilisation samples at 0/1/97/
+100/99/100/1/92/100/100 %% and CPU at 21%% of 16 cores -- neither saturated,
+so the loop was I/O bound, not compute bound. It also explains the envelope
+vs anatomy gap: the envelope guide cache is 0.15 GB of 1-bit envelopes
+against 3.6 GB of two-channel soft scores, 28x more data per read.
+
+Adds convert_guides_to_npy.py (CPU/IO only, no GPU, resumable, verifies
+written volumes against their source) and a loader fast path that memmaps the
+.npy and caches the handle per worker, bounded at 256 handles. Provenance
+validation is preserved via a sidecar .json and factored into _check_stamp so
+both paths enforce it identically.
+
+Verified: fast path is byte-identical to the compressed path across 32
+volume/slice pairs, and 28x faster. 117 tests pass. Falls back to .npz when
+no .npy is present, so existing caches keep working untouched.
+
+Trade: ~48 GiB uncompressed against 3.6 GiB, on a disk with 870 GiB free.
+
+NOT yet deployed - the running job is untouched.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

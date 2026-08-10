@@ -1,35 +1,26 @@
-feat: seed pretraining and make guide cache builds resumable
+feat: pre-flight validation for pretraining launches
 
-SEEDING
-train_patch.py set no seed, so two runs differing in one config field also
-differed in crop draws, mask draws and dropout. That is why the ep30
-comparison could not honestly claim the arms differ ONLY in masking, and why
-pretraining-seed variance was unmeasurable. meta.seed is now read and applied
-to random/numpy/torch with a rank offset for DDP.
+A 100-hour run that starts from the wrong checkpoint, a stale guide cache or a
+silently-disabled curriculum is expensive to discover late. preflight_run.py
+validates the exact config about to be launched, through the PRODUCTION
+dataset and collator, and exits non-zero on anything it cannot verify.
 
-Verified: identical seed reproduces target and context masks exactly; a
-different seed diverges. This is what makes replicated forks possible.
+Checks: checkpoint loads/epoch/target_encoder; guide cache completeness and
+adapter+MIRAGE provenance; real guides load with plausible occupancy; the new
+guide actually DIFFERS from the previous cache; the collator yields connected
+anatomy-shaped targets with non-empty context at the run's own ramp value; and
+seeding reproduces masks exactly.
 
-RESUMABLE CACHE BUILD
-A 600k-slice build takes ~1 hour and had no resume, so any interruption
-restarted from zero. Volumes are now skipped when an existing file opens,
-carries this schema, has the expected shape, AND records the same adapter sha
--- a truncated or foreign file is rewritten rather than trusted. Progress and
-cache_meta.json record how many were reused.
+Result for configs/patch_anatomy_v2.yaml, all PASS:
+  checkpoint  random ep25, 149 target_encoder tensors
+  cache       6000/6000 volumes, schema 2, adapter d4f09adfa9f05f0b tap enc
+  guides      8/8 sampled volumes differ from the old cfg7 cache
+  collator    100.0%% single-component targets, 72.7%% on-anatomy, 153 context
+  seeding     reproducible
 
-This mattered immediately: a build was killed at 1750/6000 by a
-Select-Object -First in the invoking pipeline, and the retry reused 1800.
-
-LOCKED ADAPTER (final, for the ep25 restart)
-adapter_ep100_structl100_a010_e3_lr0.001_n4800.pt
-  encoder tap, structural loss lambda_sep=100, alpha=0.10, 3 passes over 4800
-  stratified slices, teacher = envelope ep100
-  GOALS Dice -0.00019 (neutral), separation 0.3551 vs frozen 0.3637 (97.6%%
-  preserved), discrimination AUC 0.9884 vs frozen 0.9773
-
-configs/patch_anatomy_v2.yaml differs from the previous anatomy config in
-exactly four fields: read_checkpoint (random ep25), guide dir (new
-encoder-tap cache), output folder, and seed.
+The 72.7%% on-anatomy figure independently reproduces the 72.1%% measured for
+the previous cache, so the encoder-tap adapter has not disturbed the property
+the method depends on.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

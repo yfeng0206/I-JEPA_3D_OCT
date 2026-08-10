@@ -2,7 +2,7 @@
 
 Branch: `ijepa-mask`. Code: [`src/masks/curriculum.py`](../../src/masks/curriculum.py).
 
-> **Historical plan.** The current MIRAGE-guided anatomy sampler, adapter
+> **Historical plan.** The current anatomy-shaped MIRAGE sampler, adapter
 > ablations, guardrails, and blockers are documented in
 > [`masking/ablations.md`](masking/ablations.md). This file is retained because
 > it covers the distinct oracle → self-guided → curriculum experiment program.

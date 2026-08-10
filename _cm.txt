@@ -1,46 +1,42 @@
-feat(adapter): class-conditioned structural loss + separation barrier
+docs: separate comparison from ablation, disambiguate MIRAGE-guided
 
-Implements transfer-strengths/preserve-strengths objective: I-JEPA teaches
-only safe blocks {I-I, C-C, I-B, C-B}, the I-C block it gets wrong is excluded,
-both sides z-scored per image, and a one-sided barrier
-L_sep = relu(delta_frozen - delta_adapted)^2 protects MIRAGE's separation.
-Pseudo-classes come from frozen MIRAGE itself - no external labels.
+The phrase 'MIRAGE-guided masking' was ambiguous: BOTH the baseline and the
+contribution use MIRAGE. mirage_envelope uses it to PLACE rectangles;
+mirage_anatomy uses it to SHAPE targets to the tissue. MIRAGE guidance is not
+the novelty -- shape is. Every ambiguous use is now disambiguated.
 
-PREREQUISITE FINDING: every prior adapter experiment trained on slice 100 ONLY
-(one depth of 200). A stratified cache spanning 100 depths is strictly better
-(cross-depth generalisation 21.84%% vs 21.18%%, Dice +0.0001 vs -0.00035).
-Saturation is real regardless: 1200/2400/4800 -> 20.1/23.2/24.3%%, so one pass
-over 4800 stratified slices is the right budget.
+masking/ (41 KB ablations.md was a mix of unrelated topics):
+  method_setup.md      what each mode is, sampler mechanics, configs
+  comparison.md        arm-vs-arm results
+  sampler_ablations.md masking parameter sweeps
+  adapter_ablations.md adapter investigation
+  engineering_notes.md implementation record
+  ablations.md/findings.md reduced to compatibility stubs
+All 42 figure references preserved (48 now across the split pages).
 
-RESULT 1 - the barrier works exactly as designed. At alpha=0.50 Gram-MSE
-destroys 61%% of the inner/choroid separation (+0.3637 -> +0.1434); structural
-preserves 104%% (+0.3785). lambda=0 ablation confirms the barrier is the active
-ingredient.
+pretraining/:
+  mirage_100ep.md -> envelope_100ep.md (it documented the RECTANGLE arm)
+  anatomy_run_spec.md -> anatomy_ep30.md (actual status, not just a spec)
+  README run table now includes the anatomy arm, records which checkpoints
+  still exist (oracle's do not), and adds the planned ep25 restart
 
-RESULT 2 - it does NOT remove the Dice damage, refuting the premise that
-separation collapse CAUSES it:
-  alpha   Gram-MSE   structural
-  0.05    +0.00010   +0.00028
-  0.10    -0.00072   -0.00062
-  0.25    -0.00324   -0.00970
-  0.50    -0.00609   -0.02042
-At alpha=0.50 structural holds separation ABOVE frozen and still loses 0.0204
-Dice. Class geometry and segmentation damage are INDEPENDENT axes: the barrier
-controls the first, alpha (drift magnitude) controls the second.
+top level:
+  mirage_guided_masking.md is now a disambiguation page rather than a stub
+  README.md rewritten as a proper index
 
-Honest positive: at matched (neutral) Dice, structural preserves 97%% of the
-separation vs Gram-MSE's 84%% -- 17%% better. Use structural lam=100, alpha=0.10.
+Also records the val-loss caveat (val uses plain MaskCollator so it is
+comparable across runs but NOT against train for curriculum runs) and the
+fp32/cache-key fixes.
 
-RESULT 3 - teacher maturity dominates. An early (ep27) teacher is 3.8x more
-damaging than ep100 under Gram-MSE (-0.0229 vs -0.0061). Bears directly on
-refresh cadence: adapting against an immature JEPA is expensive.
+Code: precompute_soft_guides.py now supports the encoder tap. It was hard-wired
+to H0, so it could not have built a cache for the new adapter at all. The tap
+is read from the checkpoint, injected via a pre-hook on proj_dec so the full
+frozen decoder processes adapted features, and the cache tag now includes the
+tap -- the same weights at different taps give different guides, and a stale
+cache is silent.
 
-RESULT 4 - the change is not diffuse noise. It concentrates at the deep
-choroid boundary and is almost entirely GAINED cells: the adapter
-systematically extends the retina downward. GOALS says that is wrong.
-
-Also fixes a real bug: saved adapter filenames omitted alpha, so an alpha
-sweep silently overwrote earlier checkpoints.
+Verified: all relative doc links resolve, no figure references lost, the
+retracted 4.3x context claim survives only as its own retraction.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

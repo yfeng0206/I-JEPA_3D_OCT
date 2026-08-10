@@ -70,7 +70,10 @@ def main():
     ap.add_argument('--out-root',
                     default=r'D:\jepa_phase0\fairvision-glaucoma\mirage_soft_guides')
     ap.add_argument('--adapter', default=None,
-                    help='cfg-7 adapter checkpoint; omit for the frozen baseline guide')
+                    help='adapter checkpoint; omit for the frozen baseline guide')
+    ap.add_argument('--tap', default='enc', choices=('enc', 'h0'),
+                    help='where to inject the adapter; overridden by the '
+                         'checkpoint\'s own "tap" field when present')
     ap.add_argument('--num-slices', type=int, default=100)
     ap.add_argument('--batch', type=int, default=16)
     ap.add_argument('--limit', type=int, default=0)
@@ -108,25 +111,54 @@ def main():
     mir = build_mirage(dev)
     assert not any(p.requires_grad for p in mir.parameters()), 'MIRAGE not frozen'
     grab = {}
-    head = mir.output_adapters['semseg'].final_layer
+    sem = mir.output_adapters['semseg']
+    head = sem.final_layer
     head.register_forward_hook(lambda m, i, o: grab.update(H=i[0].detach()))
 
     adapter = None
     adapter_sha = 'none'
+    pre_handle = None
     if a.adapter:
         ck = torch.load(a.adapter, map_location='cpu', weights_only=False)
-        adapter = Adapter(**ck['cfg']).to(dev)
+        cfg = dict(ck['cfg'])
+        # Two adapter generations exist. The original cfg-7 takes
+        # (depth, width, alpha) and is hard-wired to 384 channels at the H0
+        # tap; the encoder-tap adapter carries an explicit channel count.
+        if 'ch' in cfg:
+            from adapter_placement_ablation import Adapter as TapAdapter
+            adapter = TapAdapter(cfg['ch'], cfg['depth'], cfg['width'],
+                                 cfg['alpha']).to(dev)
+        else:
+            adapter = Adapter(**cfg).to(dev)
         adapter.load_state_dict(ck['state_dict'])
         adapter.eval()
         for p in adapter.parameters():
             p.requires_grad_(False)
         adapter_sha = sha(a.adapter)
-        print('adapter          %s  (sha %s, taught by %s)'
-              % (a.adapter, adapter_sha, ck.get('jepa_ckpt')))
+        tap = ck.get('tap', a.tap)
+        print('adapter          %s  (sha %s, tap %s, taught by %s)'
+              % (a.adapter, adapter_sha, tap,
+                 ck.get('jepa_ckpt') or ck.get('teacher')))
+        if tap not in ('enc', 'h0'):
+            raise SystemExit('unsupported adapter tap %r' % tap)
+        if tap == 'enc':
+            # Inject before proj_dec so the FULL frozen decoder processes the
+            # adapted features -- measured to be ~11x more efficient per unit
+            # of segmentation damage than perturbing H0 directly.
+            def _pre(m, args):
+                x = args[0]
+                return (adapter(x.float()).to(x.dtype),) + args[1:]
+            pre_handle = sem.proj_dec.register_forward_pre_hook(_pre)
     else:
+        tap = 'none'
         print('adapter          NONE - caching the frozen baseline guide')
 
-    tag = 'base512_%s' % ('cfg7_' + adapter_sha if adapter else 'frozen')
+    # The tag must distinguish tap points: the same adapter weights applied at
+    # different taps produce different guides, and a stale cache is silent.
+    if adapter:
+        tag = 'base512_%s_%s' % (tap, adapter_sha)
+    else:
+        tag = 'base512_frozen'
     out = pathlib.Path(a.out_root) / tag / a.split
     out.mkdir(parents=True, exist_ok=True)
 
@@ -135,6 +167,7 @@ def main():
             'mirage_ckpt': str(CK_MIRAGE), 'mirage_sha': sha(CK_MIRAGE),
             'adapter_ckpt': str(a.adapter) if a.adapter else None,
             'adapter_sha': adapter_sha,
+            'adapter_tap': tap,
             'num_slices': int(a.num_slices),
             'slice_indices': idxs.tolist(),
             'native_size': NATIVE, 'mirage_input_res': RES,
@@ -167,7 +200,7 @@ def main():
                 else:
                     mir({'bscan': x})
                 H = grab['H'].float()
-                if adapter is not None:
+                if adapter is not None and tap == 'h0':
                     H = adapter(H)
                 # softmax FIRST, at the decoder's own 64x64 resolution
                 P = head(H).float().softmax(1)[:, ANATOMY]

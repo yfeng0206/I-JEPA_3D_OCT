@@ -78,17 +78,11 @@ Oracle ep25 ≡ random ep25 (fork point, r_t=0). Real divergence is ep50/75/100,
 4. **Mid-run stress phase (ep55–65), not a failure.** cos_sim dips to its min 0.69, l2_dist peaks 18.9, loss peaks — as the EMA target matures under full oracle masking. It **recovers** by ep88 (cos_sim 0.86, rep_div 0.23). Watch that downstream ep50 is not unusually weak because of it.
 5. **Mild train/val gap at ep100** (0.013 vs random's 0.007) — slightly more specialized/overfit-leaning, expected for a task-biased objective. Flag for the downstream sweep.
 
-## Available Checkpoints (downloaded locally)
+## Available Checkpoints
 
-| Checkpoint | Epoch | Local path |
-|-----------|-------|-----------|
-| `jepa_patch_oracle-best.pth.tar` | 26 (lowest val; r_t still ramping — **do not use for downstream**) | `results/pretraining/pretrain_oracle_anatomical/` |
-| `jepa_patch_oracle-ep50.pth.tar` | 50 | same |
-| `jepa_patch_oracle-ep75.pth.tar` | 75 | same |
-| `jepa_patch_oracle-ep100.pth.tar` | 100 | same |
-| (ep25) | 25 | ≡ random ep25 fork point; not re-uploaded |
+The oracle run was completed historically, but its checkpoints are no longer on disk. A current search of all of `D:` found no oracle checkpoints. Future readers should not assume they can re-evaluate this arm locally unless the artifacts are restored from external storage.
 
-Checkpoints/CSV/log are gitignored (size); only the doc + PNGs are committed. AML job safe to delete — all artifacts are local.
+Historic downstream frozen mean-pool ep100 AUC was 0.8855. Use that number as a recorded result, not as evidence that the checkpoint is locally available.
 
 ## Notes
 

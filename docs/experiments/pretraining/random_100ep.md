@@ -64,4 +64,4 @@ Current baseline: random-init I-JEPA ViT-B/16, 100 epochs, fixed 2D sinusoidal p
 
 - **Healthy diagnostics throughout**: rep_diversity stable 0.20-0.27, cos_sim stable 0.78-0.87. No divergence. (Note: rep_diversity is background-dominated for OCT and does not conclusively rule out retina-specific collapse — see `docs/experiments/masking/findings.md` §2.)
 - **Loss increase is expected**: I-JEPA loss increases as EMA target learns harder representations. Train loss decreased in late epochs (0.1445 → 0.1357) while val loss stayed in 0.14-0.15.
-- **Downstream sweep picked ep100 as winner**: Val AUC 0.8597, Test AUC 0.8706. See [frozen/d1_sweep.md](../frozen/d1_sweep.md).
+- **Downstream sweep picked ep100 as winner**: the older d=1 sweep reported Val AUC 0.8597 and Test AUC 0.8706. The later frozen mean-pool probe used for the current pretraining comparison records historic ep100 Test AUC 0.8746. See [frozen/d1_sweep.md](../frozen/d1_sweep.md).

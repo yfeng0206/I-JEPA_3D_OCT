@@ -282,4 +282,4 @@ every epoch.
 | `scripts/jepa_to_mirage_probe.py` | `build_mirage()`, `build_jepa()` |
 | `scripts/adapter_stage.py` | `Adapter` class, training loop, L_rel |
 | `scripts/precompute_soft_guides.py` | Guide cache builder |
-| `src/masks/anatomy.py` | Production anatomy sampler |
+| `src/masks/anatomy.py` | Production anatomy-shaped sampler |

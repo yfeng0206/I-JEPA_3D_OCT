@@ -29,10 +29,10 @@ Navigation hub for the I-JEPA 3D OCT project documentation.
 | Document | Description |
 |----------|-------------|
 | [`experiments/README.md`](experiments/README.md) | Experiment index with results summary table |
-| [`experiments/pretraining/`](experiments/pretraining/) | SSL run specs: random, oracle, MIRAGE-envelope, anatomy-guided |
+| [`experiments/pretraining/`](experiments/pretraining/) | SSL run specs: random, oracle/anatomical-prior, and MIRAGE-envelope records |
 | [`experiments/frozen/`](experiments/frozen/) | Frozen-encoder probe evaluations (d=1, CrossAttnPool, MeanPool) |
 | [`experiments/finetune/`](experiments/finetune/) | LLRD fine-tune evaluations |
-| [`experiments/masking/`](experiments/masking/) | MIRAGE-guided anatomy masking: ablations, findings, collation fixes |
+| [`experiments/masking/`](experiments/masking/) | Anatomy-shaped masking: MIRAGE-envelope baseline, MIRAGE-anatomy method, ablations, findings, collation fixes |
 | [`experiments/interpretability.md`](experiments/interpretability.md) | Occlusion attribution across 3 fine-tune probes |
 | [`experiments/curriculum_masking.md`](experiments/curriculum_masking.md) | Historical oracle → self-guided → curriculum plan |
 

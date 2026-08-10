@@ -323,7 +323,9 @@ def main():
             torch.save({'state_dict': ad.state_dict(),
                         'cfg': {'ch': tap_ch, 'depth': 2, 'width': 128,
                                 'alpha': a.alpha},
-                        'teacher': tpath, 'loss': loss_name},
+                        'tap': 'enc', 'teacher': tpath, 'loss': loss_name,
+                        'lam_sep': lam, 'epochs': a.epochs,
+                        'cache': str(CACHE)},
                        OUT / ('adapter_%s_%s_a%03d.pt' % (tname, label.replace('(','').replace(')','').replace('=','').replace('.',''), round(a.alpha*100))))
         del enc
         torch.cuda.empty_cache()

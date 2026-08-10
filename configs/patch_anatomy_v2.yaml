@@ -37,7 +37,7 @@ mask:
     T_total: 30
     r_max: 1.0
     ramp_shape: linear
-    mirage_guide_dir: D:\jepa_phase0\fairvision-glaucoma\mirage_soft_guides\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8
+    mirage_guide_dir: D:\jepa_phase0\fairvision-glaucoma\mirage_soft_guides\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8_npy
     mirage_dilate_patches: 0
     mirage_min_block_fill: 0.4
     mirage_min_retina_visible: 0.25
@@ -53,7 +53,7 @@ meta:
   pred_emb_dim: 384
   use_bfloat16: false
   load_checkpoint: true
-  read_checkpoint: D:\jepa_phase0\fairvision-glaucoma\checkpoint-ep25\jepa_patch-random_posfix-ep25.pth.tar
+  read_checkpoint: D:\jepa_phase0\runs\anatomy_v2_ep25\jepa_patch_mirage-best.pth.tar
   seed: 0
 optimization:
   epochs: 100

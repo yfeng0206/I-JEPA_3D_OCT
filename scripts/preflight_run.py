@@ -43,6 +43,18 @@ def check(name, ok, detail=''):
         FAIL.append(name)
 
 
+def _load_guide_array(p):
+    """Read a guide volume from either on-disk form.
+
+    Caches exist as compressed .npz (one deflate stream per array) or as
+    memmap-friendly .npy written by convert_guides_to_npy.py.
+    """
+    if p.suffix == '.npy':
+        return np.asarray(np.load(p, mmap_mode='r'))
+    with np.load(p, allow_pickle=False) as z:
+        return z['soft_scores']
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--config', required=True)
@@ -77,25 +89,31 @@ def main():
     check('cache_meta.json present', meta_p.is_file())
     if meta_p.is_file():
         gm = json.loads(meta_p.read_text())
-        n = len(list((gdir / 'Training').glob('*.npz')))
+        # The cache exists in two on-disk forms: compressed .npz, and the
+        # memmap-friendly .npy + sidecar .json produced by
+        # convert_guides_to_npy.py. Both are valid; count whichever is present.
+        npz = sorted((gdir / 'Training').glob('*.npz'))
+        npy = sorted((gdir / 'Training').glob('*.npy'))
+        n = len(npy) if npy else len(npz)
         check('volume count matches meta', n == gm.get('n_volumes'),
-              '%d files vs meta %s' % (n, gm.get('n_volumes')))
+              '%d %s files vs meta %s'
+              % (n, 'npy (memmap)' if npy else 'npz (compressed)',
+                 gm.get('n_volumes')))
         check('schema is 2', gm.get('schema_version') == 2)
         check('two soft channels', gm.get('channels') == ['P_inner', 'P_choroid'],
               str(gm.get('channels')))
-        print('       adapter %s tap %s | mirage %s'
+        print('       adapter %s tap %s | mirage %s | storage %s'
               % (gm.get('adapter_sha'), gm.get('adapter_tap'),
-                 gm.get('mirage_sha')))
+                 gm.get('mirage_sha'),
+                 'memmap .npy' if npy else 'compressed .npz'))
 
     # 3 ---- real guides load, and differ from the previous cache
     print('\n3. guide content')
-    tr = sorted((gdir / 'Training').glob('*.npz'))[:8]
+    tr = sorted((gdir / 'Training').glob('*.npy'))[:8]
+    if not tr:
+        tr = sorted((gdir / 'Training').glob('*.npz'))[:8]
     check('training guides found', len(tr) == 8, '%d sampled' % len(tr))
-    occs = []
-    for p in tr:
-        with np.load(p, allow_pickle=False) as z:
-            s = z['soft_scores']
-            occs.append(s)
+    occs = [_load_guide_array(p) for p in tr]
     if occs:
         s0 = occs[0]
         check('shape (slices,2,H,W)', s0.ndim == 4 and s0.shape[1] == 2,
@@ -107,19 +125,20 @@ def main():
         old = pathlib.Path(a.compare_guide) / 'Training'
         same, diff, n = 0, 0, 0
         for p in tr:
-            q = old / p.name
+            # The previous cache may be stored in the other form.
+            q = old / (p.stem + '.npz')
+            if not q.is_file():
+                q = old / (p.stem + '.npy')
             if not q.is_file():
                 continue
-            with np.load(p, allow_pickle=False) as z1, \
-                    np.load(q, allow_pickle=False) as z2:
-                A, B = z1['soft_scores'], z2['soft_scores']
-                if A.shape != B.shape:
-                    continue
-                n += 1
-                if np.array_equal(A, B):
-                    same += 1
-                else:
-                    diff += 1
+            A, B = _load_guide_array(p), _load_guide_array(q)
+            if A.shape != B.shape:
+                continue
+            n += 1
+            if np.array_equal(A, B):
+                same += 1
+            else:
+                diff += 1
         check('new guide differs from previous cache', n > 0 and same == 0,
               '%d/%d volumes differ' % (diff, n))
 

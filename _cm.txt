@@ -1,20 +1,12 @@
-fix(train): write a rolling -last checkpoint every epoch
+fix(preflight): support the memmap guide cache form
 
-The anatomy_v2 run crashed at the epoch 29->30 boundary and only
--best.pth.tar survived, at epoch 26. Three epochs (~9 h) were unrecoverable.
+The pre-flight globbed only *.npz, so it reported 0 volumes for a converted
+.npy cache that in fact held all 6000 -- failing the launch it exists to
+protect. It now counts and reads either form, names which storage it found,
+and matches volumes across forms when diffing against a previous cache.
 
-Two causes compounded:
-* -best tracks validation loss, but validation uses a plain MaskCollator with
-  42-cell rectangles while curriculum runs train on 16-cell anatomy blobs. Val
-  loss therefore RISES as the ramp engages (0.1251 -> 0.1325 -> 0.1393) and
-  -best stays pinned to the earliest post-warmup epoch. It is not a usable
-  resume point for these runs.
-* save_every=5 with ~3 h epochs left up to 15 h of exposure, and the crash
-  landed one epoch before the first periodic save.
-
--last.pth.tar is now written every epoch via a temp file plus os.replace, so a
-crash mid-write cannot corrupt the only good resume point. Cost is a 1.4 GB
-write (~15 s) against ~3 h of compute.
+Re-run on the restart config: all checks PASS, 6000 npy (memmap) files,
+8/8 volumes differ from the old cfg7 cache, 72.7%% on-anatomy, seeded.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

@@ -1,12 +1,28 @@
-fix(preflight): support the memmap guide cache form
+fix(dataset): accept .npy guide caches at startup and in _load_guide
 
-The pre-flight globbed only *.npz, so it reported 0 volumes for a converted
-.npy cache that in fact held all 6000 -- failing the launch it exists to
-protect. It now counts and reads either form, names which storage it found,
-and matches volumes across forms when diffing against a previous cache.
+The memmap read path was added but two .npz assumptions upstream of it were
+not, so a fully valid converted cache was rejected:
 
-Re-run on the restart config: all checks PASS, 6000 npy (memmap) files,
-8/8 volumes differ from the old cfg7 cache, 72.7%% on-anatomy, seeded.
+* __init__ require_guides listed every volume as missing because it only
+  probed <name>.npz -- this aborted the relaunch immediately
+* _load_guide returned (None, False) when the .npz was absent, before ever
+  consulting _load_soft_guide, so every __getitem__ raised 'No guide for ...'
+
+Both now accept either storage form.
+
+Verified end to end by constructing the real dataset against BOTH caches and
+comparing: 600,000 slices each, guide grids byte-identical across stores, and
+23.2 ms vs 60.2 ms per item (2.6x) including image loading.
+
+The pre-flight passed while both bugs were live because it inspected files
+and the collator but never constructed the dataset; it now would still miss
+them, so the dataset construction check above was run manually. 117 tests pass.
+
+Measured pace after the fix: 9,375 s/epoch (2.60 h) against 10,865 s (3.02 h)
+before. The remaining gap to the envelope run's 4,375 s is guide volume: at
+78 KB/slice the 44.7 GiB cache cannot fit in 34 GB of RAM, so every epoch
+re-reads it from disk, where envelope's 5 KB/slice bit-packed guides totalled
+3 GB and stayed resident.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

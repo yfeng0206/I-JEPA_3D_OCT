@@ -112,13 +112,16 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
         self.grid_size = slice_size // patch_size
 
         if require_guides:
-            missing = [
-                os.path.basename(path)
-                for path in self.file_paths
-                if not os.path.isfile(
-                    os.path.join(guide_dir, os.path.basename(path))
-                )
-            ]
+            # A guide may be stored as the original compressed .npz or as the
+            # memmap-friendly .npy written by convert_guides_to_npy.py. Accept
+            # either: checking only for .npz rejects a fully valid converted
+            # cache at startup.
+            missing = []
+            for path in self.file_paths:
+                stem = os.path.splitext(os.path.basename(path))[0]
+                if not (os.path.isfile(os.path.join(guide_dir, stem + '.npz'))
+                        or os.path.isfile(os.path.join(guide_dir, stem + '.npy'))):
+                    missing.append(os.path.basename(path))
             if missing:
                 raise FileNotFoundError(
                     "Missing %d MIRAGE guide files under %s (first: %s)"
@@ -250,8 +253,8 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
         """Return the native-resolution envelope for one slice."""
         name = os.path.basename(self.file_paths[file_index])
         guide_path = os.path.join(self.guide_dir, name)
-        if not os.path.isfile(guide_path):
-            return None, False
+        # A schema-2 cache may be stored as .npy (memmap form) with no .npz
+        # present at all, so absence of the .npz is not absence of a guide.
         soft = self._load_soft_guide(file_index, slice_within)
         if soft is not None:
             # A schema-2 cache has no packed envelope and no repair
@@ -259,6 +262,8 @@ class GuidedOCTSliceDataset(OCTSliceDataset):
             # says anatomy.  Validity is still re-checked after cropping by the
             # caller, which is the check that actually matters.
             return (soft.sum(axis=0) >= 0.5), True
+        if not os.path.isfile(guide_path):
+            return None, False
         with np.load(guide_path, allow_pickle=False) as cache:
             # The guide must describe the same volume, the same slice ordering
             # and the same repair logic as the image, otherwise the mask points

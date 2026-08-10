@@ -18,19 +18,25 @@ from __future__ import annotations
 import csv
 import json
 import pathlib
+import os
 import re
 import subprocess
 import sys
 import time
 
-RUN = pathlib.Path(r'D:\jepa_phase0\runs\patch_mirage_anatomy')
+RUN = pathlib.Path(os.environ.get(
+    'JEPA_MONITOR_RUN', r'D:\jepa_phase0\runs\anatomy_v2_ep25'))
 LOG = RUN / 'jepa_patch_mirage-log.csv'
-OUT = pathlib.Path(r'D:\jepa_phase0\runs\anatomy_main_stdout.log')
+OUT = pathlib.Path(os.environ.get(
+    'JEPA_MONITOR_LOG', r'D:\jepa_phase0\runs\anatomy_v2_ep25_stdout.log'))
 STATE = RUN / 'monitor_state.json'
 
-SEC_PER_EPOCH = 5796.0
-TOTAL_EPOCHS = 100
-START_EPOCH = 27
+TOTAL_EPOCHS = int(os.environ.get('JEPA_MONITOR_TOTAL', '100'))
+START_EPOCH = int(os.environ.get('JEPA_MONITOR_START', '25'))
+# Fallback only. The real pace is measured from the iteration log below; a
+# hardcoded constant combined with a missing stdout file is exactly how this
+# monitor once reported a 160-hour ETA for a run that costs ~1.33 h/epoch.
+SEC_PER_EPOCH = 4800.0
 
 MIRAGE_RE = re.compile(
     r'patches/block=([\d.]+)\s+unique_targets=([\d.]+)\s+context=([\d.]+)\s+'
@@ -44,6 +50,32 @@ def tail(path, n=400):
         return []
     with open(path, 'r', errors='ignore') as f:
         return f.readlines()[-n:]
+
+
+def _pace_from_csv(iters_per_epoch, sample=4000):
+    """Seconds/epoch from the timing columns the trainer logs every iteration.
+
+    Returns None when the log is unusable, so the caller can say so rather
+    than present a fabricated ETA.
+    """
+    try:
+        import csv as _csv
+        with open(LOG, 'r', errors='ignore') as f:
+            rows = list(_csv.DictReader(f))[-sample:]
+        if not rows:
+            return None
+        cols = [c for c in rows[0] if c and 'time_ms' in c]
+        if not cols:
+            return None
+        tot = 0.0
+        for r in rows:
+            tot += sum(float(r[c] or 0) for c in cols)
+        per_iter_ms = tot / len(rows)
+        if per_iter_ms <= 0:
+            return None
+        return per_iter_ms * iters_per_epoch / 1000.0
+    except Exception:
+        return None
 
 
 def gpu():
@@ -149,14 +181,23 @@ def main():
     frac = done_ep + itr / tot_it
     remain = (TOTAL_EPOCHS - START_EPOCH) - frac
     secs = [int(m.group(2)) for m in ep_done]
-    per = sum(secs) / len(secs) if secs else SEC_PER_EPOCH
+    if secs:
+        per = sum(secs) / len(secs)
+        pace_src = 'measured epochs'
+    else:
+        # Derive pace from the iteration log rather than a constant: the CSV
+        # always exists while the stdout file may not, and a stale constant
+        # produces an ETA that is confidently wrong.
+        per = _pace_from_csv(tot_it)
+        pace_src = 'iteration log' if per else 'fallback constant'
+        per = per or SEC_PER_EPOCH
     eta_h = remain * per / 3600.0
     notes.append('progress: epoch %d/%d iter %d/%d  (%.1f%% of the %d-epoch run)'
                  % (epoch, tot_ep, itr, tot_it,
                     100 * frac / (TOTAL_EPOCHS - START_EPOCH),
                     TOTAL_EPOCHS - START_EPOCH))
-    notes.append('pace: %.0f s/epoch measured, ETA %.1f h (%.1f days)'
-                 % (per, eta_h, eta_h / 24))
+    notes.append('pace: %.0f s/epoch from %s, ETA %.1f h (%.1f days)'
+                 % (per, pace_src, eta_h, eta_h / 24))
 
     for m in ep_done[-3:]:
         notes.append('  completed epoch %s in %ss  train %s%s'

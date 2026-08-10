@@ -1,26 +1,15 @@
-feat: pre-flight validation for pretraining launches
+fix(monitor): derive ETA from the iteration log, not a hardcoded constant
 
-A 100-hour run that starts from the wrong checkpoint, a stale guide cache or a
-silently-disabled curriculum is expensive to discover late. preflight_run.py
-validates the exact config about to be launched, through the PRODUCTION
-dataset and collator, and exits non-zero on anything it cannot verify.
+The monitor previously parsed epoch durations from a stdout file and fell back
+to SEC_PER_EPOCH when that file was absent. For the anatomy run no stdout log
+existed in the run directory, so every ETA it produced came from a stale
+constant -- which is how it reported 160 h for a run whose own CSV showed
+1.33 h/epoch. Run paths, start epoch and total are now environment-overridable
+and the pace is computed from the timing columns the trainer writes every
+iteration, with the source named in the output so a fallback is never mistaken
+for a measurement.
 
-Checks: checkpoint loads/epoch/target_encoder; guide cache completeness and
-adapter+MIRAGE provenance; real guides load with plausible occupancy; the new
-guide actually DIFFERS from the previous cache; the collator yields connected
-anatomy-shaped targets with non-empty context at the run's own ramp value; and
-seeding reproduces masks exactly.
-
-Result for configs/patch_anatomy_v2.yaml, all PASS:
-  checkpoint  random ep25, 149 target_encoder tensors
-  cache       6000/6000 volumes, schema 2, adapter d4f09adfa9f05f0b tap enc
-  guides      8/8 sampled volumes differ from the old cfg7 cache
-  collator    100.0%% single-component targets, 72.7%% on-anatomy, 153 context
-  seeding     reproducible
-
-The 72.7%% on-anatomy figure independently reproduces the 72.1%% measured for
-the previous cache, so the encoder-tap adapter has not disturbed the property
-the method depends on.
+Retargeted at the new run (anatomy_v2_ep25).
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

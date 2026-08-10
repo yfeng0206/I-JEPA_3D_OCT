@@ -1,67 +1,20 @@
-fix: address adversarial review - 2 P0, 8 P1, and contradicted doc claims
+fix: encode full identity in adapter filenames
 
-Three reviewers (rubber-duck, code-review, judge; all gpt-5.6-sol xhigh).
-Every finding below was independently verified before acting on it.
+Last instance of the incomplete-identity bug class. Filenames carried only
+alpha, so runs differing in epochs, lr, training size, depth or width silently
+overwrote each other -- and other scripts then consumed whichever file
+happened to survive.
 
-P0 CODE
-* set_amp() was called only in run_patch_downstream, so fine-tune and slice
-  configs specifying use_amp:false STILL ran fp16. Set once in main() before
-  dispatch; GradScaler now takes enabled=_USE_AMP (a scaler that rescales
-  losses while autocast is off corrupts fp32 runs).
-* latent_anatomy_probe split flattened tokens with StratifiedKFold, putting
-  patches from the same B-scan in train and test. Now StratifiedGroupKFold
-  grouped by image with scaling inside the fold. Re-run: AUC is STILL 1.0000
-  for all three representations, so the leak was real but was not the cause of
-  the saturation. The original conclusion (use silhouette) stands.
+adapter_structural_loss:  adapter_{teacher}_{loss}_a{NNN}_e{E}_lr{LR}_n{N}.pt
+adapter_placement_ablation: adapter_{tap}_a{NNN}_d{D}_w{W}_lr{LR}_n{N}.pt
+Both also store lr and n_train inside the checkpoint.
 
-P1 CODE
-* precompute_soft_guides: legacy cfg-7 checkpoints have no 'tap'/'ch' and are
-  hard-wired to 384-ch H0; they were inheriting the --tap default of 'enc'.
-  Tap is now inferred from the cfg shape.
-* sha() hashed only the first 1 MiB - not a safe identity for multi-MB
-  checkpoints. Now streams the whole file.
-* Guide cache tag omitted the MIRAGE hash; now base512_{tap}_a{sha}_m{sha}.
-* oct_slices_guided validated schema/slices but NOT provenance, so a cache
-  built by a different adapter or MIRAGE loaded silently. The first guide read
-  fixes the expected stamp; a mixed directory now fails loudly.
-* eval_downstream feature-cache key omitted the encoder checkpoint; keeping
-  output_dir while swapping checkpoints served stale features. Key now
-  includes an encoder digest and the input resolution.
-* cadence_guide_diff scored two EMPTY guides as total disagreement, so
-  frozen-vs-itself returned 0.9983 instead of 1.0. Fixed; diagonal is now
-  exactly 1.0000. This CORRECTED a reported trend: consecutive-refresh drift
-  is FLAT at ~0.36%, not declining 0.34/0.38/0.16%.
-* fairvision_before_after defaults predated the _aNNN rename and silently
-  loaded no adapters; now fails loudly.
-* structural_loss separation() substituted a single block mean for
-  (mu_II+mu_CC)/2 when one class was absent, evaluating a different quantity
-  than the barrier is defined on. Now requires II, CC and IC.
+Consumers (class_relation_probe, cadence_guide_diff, fairvision_before_after)
+now accept a unique prefix and fall back to a glob, so they keep working with
+both old and new names and fail loudly when nothing matches rather than
+silently producing a figure with no adapters in it.
 
-DOCS - contradicted or wrong
-* class_relations claimed the Dice loss 'is this collapse, measured'. The
-  later structural-loss experiment refutes it: separation ABOVE frozen
-  (+0.3785 vs +0.3637) with Dice still -0.0204. Marked superseded; class
-  geometry and drift are independent axes.
-* '83%% of the way' was arithmetic error; recomputed 88.78%%.
-* 'whole decoder (95.5M) downstream of the encoder tap' was false - 95,571,460
-  is ALL of MIRAGE including its upstream ViT. Measured downstream: 9,532,420.
-* 'encoder > mid > H0 confirmed' is contradicted by its own table: mid beats
-  encoder at high transfer. Supported claim is H0 worst, enc/mid trade off.
-* Class 0 is 'Elsewhere', not 'background' - it includes outer retina between
-  the two labelled bands. Caveat added; inner-vs-choroid results unaffected.
-* 'Stopped at ep30' - training ran into ep32; ep30 is the last surviving
-  periodic checkpoint.
-
-DOCS - the headline result is now honestly bounded
-anatomy_vs_rectangle_ep30 previously said the arms differ ONLY in masking.
-Four further differences are active during ep28-30 and are now stated up front:
-unseeded pretraining (no manual_seed in train_patch.py), a look-ahead ep100
-teacher inside the guide, per-image vs per-block ramp granularity, and
-different target-count policies. The ramp is also r_t~0.4/0.6/0.8 at the saved
-checkpoint, not 1.0, so the full-ramp budget table characterises the modes
-rather than the exact training condition. The 5 probe seeds are labelled as
-technical replicates: with one pretraining trajectory per arm the p-values
-rank two fixed encoders, they do not establish a method-level claim.
+117 tests pass.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

@@ -323,13 +323,22 @@ def main():
                 'mask_jaccard': jac,
                 'final_loss': float(np.mean([h['loss'] for h in hist[-20:]])),
             }
+            # Filename must encode everything that determines the weights. It
+            # already burned us once: omitting alpha let a sweep silently
+            # overwrite earlier checkpoints that other scripts then consumed.
+            stem = 'adapter_%s_%s_a%03d_e%d_lr%g_n%d' % (
+                tname,
+                label.replace('(', '').replace(')', '').replace('=', '')
+                     .replace('.', ''),
+                round(a.alpha * 100), a.epochs, a.lr, len(idx_tr))
             torch.save({'state_dict': ad.state_dict(),
                         'cfg': {'ch': tap_ch, 'depth': 2, 'width': 128,
                                 'alpha': a.alpha},
                         'tap': 'enc', 'teacher': tpath, 'loss': loss_name,
                         'lam_sep': lam, 'epochs': a.epochs,
+                        'lr': a.lr, 'n_train': int(len(idx_tr)),
                         'cache': str(CACHE)},
-                       OUT / ('adapter_%s_%s_a%03d.pt' % (tname, label.replace('(','').replace(')','').replace('=','').replace('.',''), round(a.alpha*100))))
+                       OUT / ('%s.pt' % stem))
         del enc
         torch.cuda.empty_cache()
 

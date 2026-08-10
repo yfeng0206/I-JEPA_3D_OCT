@@ -185,13 +185,18 @@ def main():
 
     adapters = {}
     for al in (0.05, 0.50):
-        p = PLACE / ('adapter_enc_a%.2f.pt' % al)
-        if p.exists():
-            ck = torch.load(p, map_location=dev)
-            m = EncAdapter(ck['cfg']['ch'], ck['cfg']['depth'],
-                           ck['cfg']['width'], ck['cfg']['alpha']).to(dev)
-            m.load_state_dict(ck['state_dict']); m.eval()
-            adapters[al] = m
+        # Adapter filenames carry their full identity, so match on the alpha
+        # field rather than assuming an exact stem.
+        hits = sorted(PLACE.glob('adapter_enc_a%03d_*.pt' % round(al * 100)))
+        hits += sorted(PLACE.glob('adapter_enc_a%.2f.pt' % al))   # legacy
+        if not hits:
+            print('  no encoder adapter found for alpha=%.2f -- skipped' % al)
+            continue
+        ck = torch.load(hits[0], map_location=dev)
+        m = EncAdapter(ck['cfg']['ch'], ck['cfg']['depth'],
+                       ck['cfg']['width'], ck['cfg']['alpha']).to(dev)
+        m.load_state_dict(ck['state_dict']); m.eval()
+        adapters[al] = m
 
     feats = {'MIRAGE enc': [], 'MIRAGE H0': []}
     for al in adapters:

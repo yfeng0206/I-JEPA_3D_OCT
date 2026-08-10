@@ -91,7 +91,14 @@ def main():
     names = [s.strip() for s in a.adapters.split(',')]
     G = {'frozen': guides(None)}
     for nm in names:
+        # Accept either an exact stem or a unique prefix, so callers need not
+        # repeat the full identity encoded in the filename.
         f = SRC / ('adapter_%s.pt' % nm)
+        if not f.exists():
+            hits = sorted(SRC.glob('adapter_%s*.pt' % nm))
+            if not hits:
+                raise SystemExit('no adapter matching %r in %s' % (nm, SRC))
+            f = hits[0]
         ck = torch.load(f, map_location=dev)
         m = Adapter(ck['cfg']['ch'], ck['cfg']['depth'], ck['cfg']['width'],
                     ck['cfg']['alpha']).to(dev)

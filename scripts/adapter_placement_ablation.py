@@ -329,11 +329,16 @@ def main():
             from scipy import stats
             p = float(stats.ttest_rel(per, base_per).pvalue)
             if a.save_adapters:
+                # Encode the full identity: omitting a determining parameter
+                # lets one sweep silently overwrite another's checkpoints.
                 torch.save({'state_dict': ad.state_dict(),
                             'cfg': {'ch': ch, 'depth': a.depth,
                                     'width': a.width, 'alpha': al},
-                            'tap': tap, 'jepa_ckpt': str(a.jepa_ckpt)},
-                           OUT / ('adapter_%s_a%.2f.pt' % (tap, al)))
+                            'tap': tap, 'jepa_ckpt': str(a.jepa_ckpt),
+                            'lr': a.lr, 'n_train': int(len(idx_tr))},
+                           OUT / ('adapter_%s_a%03d_d%d_w%d_lr%g_n%d.pt'
+                                  % (tap, round(al * 100), a.depth, a.width,
+                                     a.lr, len(idx_tr))))
             print('%-6s %6.2f %8s %8.3f %9.2f%% %9.4f %+9.5f %8.2f %8.4f'
                   % (tap, al, '{:,}'.format(nparam), gram_r0, red, d,
                      d - base_dice, amp, jac))

@@ -106,6 +106,9 @@ def main():
     for stem in a.adapters.split(','):
         f = SRC / ('adapter_%s.pt' % stem.strip())
         if not f.exists():
+            hits = sorted(SRC.glob('adapter_%s*.pt' % stem.strip()))
+            f = hits[0] if hits else f
+        if not f.exists():
             print('missing %s -- skipped' % f.name)
             continue
         ck = torch.load(f, map_location=dev)

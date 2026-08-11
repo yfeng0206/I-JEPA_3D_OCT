@@ -52,6 +52,40 @@ def tail(path, n=400):
         return f.readlines()[-n:]
 
 
+EPOCH_LINE = re.compile(
+    r'Epoch (\d+)/\d+\s+\((\d+)s\)\s+train_loss=([\d.]+)(?:\s+val_loss=([\d.]+))?')
+
+# Reference runs for cross-run comparison. Validation ALWAYS uses the plain
+# 42-cell rectangle MaskCollator regardless of training mode, which is what
+# makes val loss comparable ACROSS runs (and, for the same reason, not
+# comparable against train loss within a curriculum run).
+REFERENCE_RUNS = {
+    'envelope': pathlib.Path(
+        r'C:\Users\Gary\Desktop\jepa\results\pretraining'
+        r'\pretrain_mirage_envelope\combined_stdout.log'),
+}
+# Oracle and random kept no per-epoch log, only plots; these are the published
+# checkpoints from docs/experiments/pretraining/{oracle,random}_100ep.md.
+REFERENCE_POINTS = {
+    'oracle': {26: 0.1202, 100: 0.1430},
+    'random': {25: 0.1197, 50: 0.1423, 75: 0.1469, 100: 0.1419},
+}
+
+
+def _epochs_from_log(path):
+    """{epoch: (train_loss, val_loss)} from a run's stdout log."""
+    try:
+        txt = pathlib.Path(path).read_text(errors='ignore')
+    except Exception:
+        return {}
+    out = {}
+    for m in EPOCH_LINE.finditer(txt):
+        out[int(m.group(1))] = (
+            float(m.group(3)),
+            float(m.group(4)) if m.group(4) else None)
+    return out
+
+
 def _pace_from_csv(iters_per_epoch, sample=4000):
     """Seconds/epoch from the timing columns the trainer logs every iteration.
 
@@ -227,6 +261,34 @@ def main():
 
     # ---- checkpoints ----
     cks = sorted(RUN.glob('*.pth.tar'))
+    # ---- cross-run comparison ----
+    # Val loss is the only loss comparable across runs, because validation
+    # always uses the same 42-cell rectangle collator. A curriculum run's TRAIN
+    # loss is not comparable to a baseline's: it measures a different task.
+    mine = _epochs_from_log(OUT)
+    if mine:
+        ref = _epochs_from_log(REFERENCE_RUNS['envelope'])
+        rows = []
+        for ep in sorted(mine):
+            t, v = mine[ep]
+            rt, rv = ref.get(ep, (None, None))
+            delta = ('%+.4f' % (v - rv)) if (v is not None and rv is not None) else '   -'
+            rows.append('    ep%-4d ours %s/%s   envelope %s/%s   val %s'
+                        % (ep,
+                           '%.4f' % t,
+                           '%.4f' % v if v is not None else '  -   ',
+                           '%.4f' % rt if rt is not None else '  -   ',
+                           '%.4f' % rv if rv is not None else '  -   ',
+                           delta))
+        notes.append('val vs envelope (same uniform val task; lower is better):')
+        notes.extend(rows[-6:])
+        for nm, pts in REFERENCE_POINTS.items():
+            near = [e for e in pts if e in mine]
+            if near:
+                e = near[-1]
+                notes.append('    ep%-4d ours %.4f   %s %.4f'
+                             % (e, mine[e][1] or float('nan'), nm, pts[e]))
+
     notes.append('checkpoints: %d saved%s'
                  % (len(cks), '  latest ' + cks[-1].name if cks else ''))
     if epoch >= 31 and not cks:

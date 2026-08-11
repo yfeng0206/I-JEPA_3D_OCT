@@ -1,28 +1,25 @@
-fix(dataset): accept .npy guide caches at startup and in _load_guide
+feat(monitor): report val loss against the baseline runs each check
 
-The memmap read path was added but two .npz assumptions upstream of it were
-not, so a fully valid converted cache was rejected:
+Validation always uses the plain 42-cell rectangle collator regardless of
+training mode, which is precisely what makes val loss comparable ACROSS runs
+(and, for the same reason, not comparable against train loss within a
+curriculum run). The monitor now prints our per-epoch train/val beside the
+envelope run's at the same epoch, plus the published oracle and random
+checkpoints from the docs where epochs align.
 
-* __init__ require_guides listed every volume as missing because it only
-  probed <name>.npz -- this aborted the relaunch immediately
-* _load_guide returned (None, False) when the .npz was absent, before ever
-  consulting _load_soft_guide, so every __getitem__ raised 'No guide for ...'
+Oracle and random kept no per-epoch logs, only plots, so their reference
+points are the tabulated values in docs/experiments/pretraining/.
 
-Both now accept either storage form.
+Context this makes visible, from the previous anatomy attempt:
+  ep28  envelope 0.1215/0.1191   anatomy 0.0638/0.1288
+  ep31  envelope 0.1160/0.1248   anatomy 0.0564/0.1647
+Anatomy trains to a much lower train loss on its own easier 16-cell target
+and scores worse on the rectangle validation task -- while nonetheless
+beating envelope on downstream AUC at ep30 (0.8582 vs 0.8528). Consistent
+with the repo's standing position that loss is not the quality signal.
 
-Verified end to end by constructing the real dataset against BOTH caches and
-comparing: 600,000 slices each, guide grids byte-identical across stores, and
-23.2 ms vs 60.2 ms per item (2.6x) including image loading.
-
-The pre-flight passed while both bugs were live because it inspected files
-and the collator but never constructed the dataset; it now would still miss
-them, so the dataset construction check above was run manually. 117 tests pass.
-
-Measured pace after the fix: 9,375 s/epoch (2.60 h) against 10,865 s (3.02 h)
-before. The remaining gap to the envelope run's 4,375 s is guide volume: at
-78 KB/slice the 44.7 GiB cache cannot fit in 34 GB of RAM, so every epoch
-re-reads it from disk, where envelope's 5 KB/slice bit-packed guides totalled
-3 GB and stayed resident.
+monitor_run.py is not imported by the training process, so editing it while
+the run is live is safe.
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 Copilot-Session: 4dd84b82-282c-4eff-9f95-5f93a1ff1d8b

@@ -72,6 +72,15 @@ from collections import deque
 import numpy as np
 
 NB8 = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+NB4 = [(-1, 0), (0, -1), (0, 1), (1, 0)]
+
+# 4-connectivity: cells must share an EDGE.  `n_components` below uses the
+# 3x3 box instead, which counts diagonal corner-touches, so a chain of
+# corner-joined cells reports as one component there and as several here.
+# Measured on the production path (real random crops, two class scores, full
+# ramp, 5120 targets): targets are 100% single-component under the box rule
+# but only 83.3% under this one.
+CROSS4 = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], dtype=np.uint8)
 
 
 def _neighbours(r, c, h, w):
@@ -86,6 +95,15 @@ def n_components(m):
     if m.sum() == 0:
         return 0
     return int(ndimage.label(m, structure=np.ones((3, 3)))[1])
+
+
+def n_components4(m):
+    """Component count under EDGE adjacency -- the honest reading of
+    "one connected region".  See CROSS4."""
+    from scipy import ndimage
+    if m.sum() == 0:
+        return 0
+    return int(ndimage.label(m, structure=CROSS4)[1])
 
 
 # ------------------------------------------------------------ region ------
@@ -735,6 +753,194 @@ def shrink_to_k(mask, k, score=None):
             frontier.append(p)
             n += 1
     return out
+
+
+def _diagonal_pairs(m):
+    """Corner-touching cell pairs with no edge path inside the 2x2 block.
+
+    Vectorised: for every 2x2 window, (a,b) is the main diagonal and (x,y) the
+    anti-diagonal.  A diagonal step exists when one diagonal is fully set and
+    the other is fully clear; either cell of the empty diagonal closes it.
+    """
+    a = m[:-1, :-1]; b = m[1:, 1:]
+    x = m[1:, :-1]; y = m[:-1, 1:]
+    main = a & b & ~x & ~y            # bridge with (r+1,c) or (r,c+1)
+    anti = x & y & ~a & ~b            # bridge with (r,c) or (r+1,c+1)
+    return main, anti
+
+
+def bridge_diagonals(mask, score=None, forbid=None, max_add=None):
+    """Add few cells to make `mask` 4-connected, preferring tissue.
+
+    Growth in `grow_region` uses NB8, which lets a region hug the thin diagonal
+    retinal band -- that is why anatomy targets capture more tissue than a
+    4-neighbour rule reaches.  The cost is that the result is often a
+    corner-joined chain that edge-adjacency sees as several pieces.
+
+    Only cells that CLOSE a corner-touch are eligible, so the target can never
+    leave the footprint its 8-connected form already occupied, and never
+    reaches outside the grid.  Among those, candidates are ranked by
+
+        (number of distinct components the cell merges, anatomy score)
+
+    Ranking on merge count first is not cosmetic.  Ranking on score alone is
+    not minimal: for cells (0,0), (0,2), (1,1), adding (0,1) merges all three
+    at once, whereas the higher-scoring (1,0) merges only two and forces a
+    second addition -- and every extra bridge cell costs a real anatomy cell at
+    the trim step.  This is still a greedy heuristic, not a proven minimum
+    (the exact problem is a Steiner tree), but it removes that failure mode.
+
+    `forbid` marks cells that must not be used -- pass the other targets' cells
+    so bridging cannot annex a neighbour's territory.
+
+    Returns (mask, n_added).  `mask` is not modified in place.
+    """
+    from scipy import ndimage
+    out = np.asarray(mask, bool).copy()
+    if out.sum() == 0:
+        return out, 0
+    sc = np.asarray(score, float) if score is not None else out.astype(float)
+    block = np.asarray(forbid, bool) if forbid is not None else None
+    added = 0
+    for _ in range(out.size):
+        lab, n = ndimage.label(out, structure=CROSS4)
+        if n <= 1:
+            break
+        if max_add is not None and added >= max_add:
+            break
+        main, anti = _diagonal_pairs(out)
+        cand = np.zeros_like(out)
+        cand[1:, :-1] |= main            # (r+1,c) closes the main diagonal
+        cand[:-1, 1:] |= main            # (r,c+1)   "
+        cand[:-1, :-1] |= anti           # (r,c)   closes the anti-diagonal
+        cand[1:, 1:] |= anti             # (r+1,c+1) "
+        cand &= ~out
+        if block is not None:
+            cand &= ~block
+        if not cand.any():
+            break
+        h, w = out.shape
+        best, best_key = None, None
+        for r, c in zip(*np.nonzero(cand)):
+            labs = set()
+            for dr, dc in NB4:
+                rr, cc = r + dr, c + dc
+                if 0 <= rr < h and 0 <= cc < w and out[rr, cc]:
+                    labs.add(int(lab[rr, cc]))
+            if len(labs) < 2:            # would not join anything
+                continue
+            key = (len(labs), float(sc[r, c]))
+            if best_key is None or key > best_key:
+                best, best_key = (r, c), key
+        if best is None:
+            break
+        out[best] = True
+        added += 1
+    return out, added
+
+
+def trim_to_k_4conn(mask, k, score=None):
+    """Drop cells down to `k` without ever breaking 4-connectivity.
+
+    A cell may go only if the remainder is still one edge-connected component,
+    i.e. it is not an articulation point; among those the lowest anatomy score
+    goes first.  Candidates are tested in ascending score order and the first
+    that survives is taken, so the common case costs one label call.
+
+    This exists because collation forces exactly `pred_target_k` cells:
+    `utils.resample_to_k` would otherwise subsample a bridged 17-cell target
+    back to 16 UNIFORMLY, which is the operation `shrink_to_k` was written to
+    avoid.  Trimming here keeps the hidden budget unmoved -- measured on the
+    production path, cells per target 13.56 and hidden union 54.1 with and
+    without bridging.
+    """
+    from scipy import ndimage
+    out = np.asarray(mask, bool).copy()
+    if k <= 0:
+        return out
+    sc = np.asarray(score, float) if score is not None else out.astype(float)
+    while int(out.sum()) > k:
+        coords = np.argwhere(out)
+        order = np.argsort([sc[tuple(c)] for c in coords], kind='stable')
+        dropped = False
+        for i in order:
+            r, c = coords[i]
+            out[r, c] = False
+            if out.any() and ndimage.label(out, structure=CROSS4)[1] == 1:
+                dropped = True
+                break
+            out[r, c] = True
+        if not dropped:               # every remaining cell is a cut vertex
+            break
+    return out
+
+
+def make_connected(mask, score=None, forbid=None):
+    """Return `mask` as ONE edge-connected region with the SAME cell count.
+
+        bridge_diagonals -> trim_to_k_4conn(back to the original count)
+
+    The count is preserved because collation forces exactly `pred_target_k`:
+    `utils.resample_to_k` would subsample a bridged 17-cell target back to 16
+    UNIFORMLY, which is the operation `shrink_to_k` was written to avoid.
+
+    `forbid` marks cells bridging may not take -- pass the other targets' cells.
+
+    POSTCONDITION: the result is a single 4-connected component with at most
+    the input's cell count.  Bridging can only fail on an input that was
+    already disconnected under 8-adjacency, which `build_targets` never
+    produces (measured: 0 of 4000 targets).  Should it happen anyway, the
+    largest component is returned rather than a silently disconnected mask --
+    `resample_to_k` tops a short target back up to K with duplicates, so a
+    smaller connected target is safe where a fragmented one is not.
+    """
+    from scipy import ndimage
+    m = np.asarray(mask, bool)
+    cells = int(m.sum())
+    if cells == 0:
+        return m.copy()
+    out, added = bridge_diagonals(m, score, forbid=forbid)
+    if forbid is not None and n_components4(out) > 1:
+        # The only cells that could close this target are owned by another
+        # target.  Connectivity is the invariant the method exists to provide;
+        # disjointness across classes is already only 97.2% (see the module
+        # docstring), and the alternative here is strictly worse -- the
+        # largest-component guard below would silently shrink the target and
+        # move the hidden budget.  So yield the overlap and keep the shape.
+        out, added = bridge_diagonals(m, score)
+    if added and int(out.sum()) > cells:
+        out = trim_to_k_4conn(out, cells, score)
+    lab, n = ndimage.label(out, structure=CROSS4)
+    if n > 1:
+        sizes = ndimage.sum(out, lab, range(1, n + 1))
+        out = lab == (int(np.argmax(sizes)) + 1)
+    return out
+
+
+def shrink_to_k_connected(mask, k, score=None, forbid=None):
+    """`shrink_to_k`, then made a single edge-connected region at the same size.
+
+    Measured through the production dataset, paired transform and collator
+    (20 batches of 64 = 1280 slices, 5120 targets, epoch-28 weights):
+
+        full ramp (r_t=1.0)      bridge off   bridge on
+          4-connected targets         83.3%      100.0%
+          8-connected targets        100.0%      100.0%
+          cells per target            13.56       13.56
+          hidden union                 54.1        54.1
+          context tokens              160.4       160.3
+          cells shared by 2 targets     0.08        0.11
+          smooth-L1 loss           0.061159    0.061316
+
+    At the epoch-28 resume point (r_t=0.60) 4-connectivity goes 90.5% ->
+    100.0%; it is higher there only because 40% of images are still masked
+    with rectangles, which are trivially connected.
+
+    The loss difference (+0.000157) is 43x smaller than the batch-to-batch
+    standard deviation (0.0068), i.e. the two maskings are indistinguishable
+    in loss at fixed weights.  This is a shape change, not a difficulty change.
+    """
+    return make_connected(shrink_to_k(mask, k, score), score, forbid)
 
 
 def is_viable(class_scores, n=4, min_cells=4, mass_cap=0.90, tau=0.10,

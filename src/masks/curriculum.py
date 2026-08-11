@@ -59,7 +59,9 @@ from src.masks.utils import resample_to_k
 from src.masks.anatomy import (
     build_targets as anatomy_build_targets,
     is_viable as anatomy_is_viable,
+    make_connected as anatomy_make_connected,
     shrink_to_k as anatomy_shrink_to_k,
+    shrink_to_k_connected as anatomy_shrink_to_k_connected,
 )
 
 
@@ -383,6 +385,16 @@ class CurriculumMaskGenerator:
         # to support anatomy at all.  0.90/0.10 are the swept defaults.
         self.anatomy_mass_cap = float(cfg.get("anatomy_mass_cap", 0.90))
         self.anatomy_tau = float(cfg.get("anatomy_tau", 0.10))
+        # Region growth uses NB8, so targets hug the thin diagonal retinal band
+        # but often end up corner-joined rather than edge-joined -- measured
+        # 83.3% single-component under edge adjacency at full ramp.  When this
+        # is on, each target is bridged into one edge-connected region and
+        # trimmed back to the same cell count, so the hidden budget does not
+        # change.  Defaults to False: turning it on changes the mask
+        # distribution and so is not comparable with runs that predate it.
+        self.anatomy_bridge_diagonals = bool(
+            cfg.get("anatomy_bridge_diagonals", False)
+        )
 
         if self.mode == "mirage_anatomy" and self.pred_target_k is None:
             # Anatomy targets are ragged by construction (p05 = 6 cells) and
@@ -513,6 +525,18 @@ class CurriculumMaskGenerator:
         block_h = max(1, min(block_h, self.height))
         block_w = max(1, min(block_w, self.width))
         return block_h, block_w
+
+    def _shrink(self, mask, k, score=None):
+        """Connected shrink to `k`, optionally made edge-connected.
+
+        A bool decides this rather than a stored function object: the collator
+        is re-pickled to the DataLoader workers every epoch (that is how the
+        curriculum ramp reaches them), and a bound function attribute is a
+        needless pickling hazard on the spawn start method.
+        """
+        if self.anatomy_bridge_diagonals:
+            return anatomy_shrink_to_k_connected(mask, k, score)
+        return anatomy_shrink_to_k(mask, k, score)
 
     @staticmethod
     def _sample_uniform_location(
@@ -1181,6 +1205,25 @@ class CurriculumMaskGenerator:
                             anatomy_shrink_to_k(p, int(self.pred_target_k), ref)
                             for p in parts
                         ]
+                        if self.anatomy_bridge_diagonals:
+                            # Bridge AFTER every target has been shrunk, with
+                            # the other targets' cells forbidden.  Bridging
+                            # each target in isolation would let one annex a
+                            # neighbour's cell, which does not corrupt the
+                            # mask (the union is still excluded from the
+                            # context) but silently shrinks the unique hidden
+                            # union and reweights the loss toward the shared
+                            # cell.  Disjointness is otherwise a property the
+                            # sampler already provides within a class.
+                            union = np.logical_or.reduce(
+                                [np.asarray(p, bool) for p in parts]
+                            )
+                            parts = [
+                                anatomy_make_connected(
+                                    p, ref, forbid=union & ~np.asarray(p, bool)
+                                )
+                                for p in parts
+                            ]
                     per_image_pred = [
                         np.flatnonzero(np.asarray(p).ravel()).tolist()
                         for p in parts
@@ -1203,7 +1246,7 @@ class CurriculumMaskGenerator:
                             # exactly as the anatomy branch does.
                             m = np.zeros((self.height, self.width), bool)
                             m.ravel()[np.asarray(idx)] = True
-                            m = anatomy_shrink_to_k(m, int(self.pred_target_k))
+                            m = self._shrink(m, int(self.pred_target_k))
                             idx = np.flatnonzero(m.ravel()).tolist()
                         per_image_pred.append(idx)
                 for indices in per_image_pred:

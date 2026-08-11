@@ -274,6 +274,14 @@ def main(args):
             % (curr_cfg.get('mode'), curr_cfg.get('T_warm', 25),
                curr_cfg.get('T_total', opt_cfg['epochs']),
                curr_cfg.get('r_max', 0.5), curr_cfg.get('ramp_shape', 'linear')))
+        if curr_cfg.get('mode') == 'mirage_anatomy':
+            # Recorded because it changes the mask DISTRIBUTION: targets become
+            # edge-connected (4-conn 51.3% -> 100.0%) at the same cell count.
+            # A run log without this line cannot be attributed to either sampler.
+            log('  Anatomy sampler: mass_cap=%.2f tau=%.2f bridge_diagonals=%s'
+                % (curr_cfg.get('anatomy_mass_cap', 0.90),
+                   curr_cfg.get('anatomy_tau', 0.10),
+                   bool(curr_cfg.get('anatomy_bridge_diagonals', False))))
 
     # ---- Transforms --------------------------------------------------------
     transform = make_transforms(
@@ -406,6 +414,16 @@ def main(args):
         num_workers=data_cfg['num_workers'],
         pin_memory=data_cfg.get('pin_mem', True),
         drop_last=True,
+        # A deeper prefetch queue absorbs the burst pattern that leaves the GPU
+        # idle ~47% of the time when the loader cannot keep up. Only valid when
+        # workers exist.
+        #
+        # persistent_workers is deliberately NOT enabled: MirageMaskCollator
+        # delivers the curriculum ramp to workers by being re-pickled when each
+        # epoch's iterator is created. Persistent workers are pickled once, so
+        # r_t would freeze at its first-epoch value for the rest of the run.
+        **({'prefetch_factor': int(data_cfg.get('prefetch_factor', 4))}
+           if data_cfg['num_workers'] > 0 else {}),
         collate_fn=(
             mirage_collator
             if use_mirage

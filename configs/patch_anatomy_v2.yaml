@@ -4,16 +4,17 @@ data:
   crop_scale:
   - 0.3
   - 1.0
-  num_workers: 6
+  num_workers: 10
   val_num_workers: 2
   pin_mem: true
   data_dir: D:\jepa_phase0\fairvision-glaucoma\data
-  slice_cache_dir: D:\jepa_phase0\fairvision-glaucoma\slice_cache
+  slice_cache_dir: C:\jepa_data\slice_cache
   num_slices: 100
   color_jitter_strength: 0.0
   use_color_distortion: false
   use_gaussian_blur: false
   use_horizontal_flip: false
+  prefetch_factor: 4
 mask:
   patch_size: 16
   num_enc_masks: 1
@@ -37,7 +38,7 @@ mask:
     T_total: 30
     r_max: 1.0
     ramp_shape: linear
-    mirage_guide_dir: D:\jepa_phase0\fairvision-glaucoma\mirage_soft_guides\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8_npy
+    mirage_guide_dir: C:\jepa_data\mirage_soft_guides\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8_npy
     mirage_dilate_patches: 0
     mirage_min_block_fill: 0.4
     mirage_min_retina_visible: 0.25
@@ -47,13 +48,14 @@ mask:
     mirage_overlap_tolerance: 0.25
     anatomy_mass_cap: 0.9
     anatomy_tau: 0.1
+    anatomy_bridge_diagonals: true
 meta:
   model_name: vit_base
   pred_depth: 6
   pred_emb_dim: 384
   use_bfloat16: false
   load_checkpoint: true
-  read_checkpoint: D:\jepa_phase0\runs\anatomy_v2_ep25\jepa_patch_mirage-best.pth.tar
+  read_checkpoint: D:\jepa_phase0\runs\anatomy_v2_ep25\jepa_patch_mirage-last.pth.tar
   seed: 0
 optimization:
   epochs: 100

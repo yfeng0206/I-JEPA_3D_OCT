@@ -33,6 +33,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from src.masks.curriculum import CurriculumMaskGenerator          # noqa: E402
+from src.masks.anatomy import CROSS4                              # noqa: E402
 
 FAIL = []
 
@@ -172,19 +173,33 @@ def main():
     from scipy import ndimage
     G = mask_cfg['patch_size']
     grid = cfg['data']['crop_size'] // mask_cfg['patch_size']
-    conn, on = [], []
+    conn, conn8, on = [], [], []
     for b in range(64):
         u = set()
         for p in pred:
             idx = p[b].numpy()
             u.update(idx.tolist())
             m = np.zeros(grid * grid, bool); m[idx] = True
-            conn.append(ndimage.label(m.reshape(grid, grid),
-                                      structure=np.ones((3, 3)))[1] == 1)
+            M = m.reshape(grid, grid)
+            # EDGE adjacency, not the 3x3 box.  The box rule counts diagonal
+            # corner-touches as connected, so it passes a staircase -- and even
+            # a checkerboard -- as "one region".  On the production path the
+            # box rule scored targets 100% connected where this rule scored
+            # 83.3%.  A pre-flight that cannot fail is not a check.
+            conn.append(ndimage.label(M, structure=CROSS4)[1] == 1)
+            conn8.append(ndimage.label(M, structure=np.ones((3, 3)))[1] == 1)
         i = np.array(sorted(u))
         on.append(float(occ[b].ravel()[i].mean()))
-    check('targets are connected', float(np.mean(conn)) > 0.95,
-          '%.1f%% single-component' % (100 * np.mean(conn)))
+    bridging = bool(cur.get('anatomy_bridge_diagonals', False))
+    # Without bridging only ~83% of targets are edge-connected at full ramp,
+    # which is the known state of the sampler rather than a launch blocker;
+    # with it on, anything below 99% means the bridge did not do its job.
+    thresh = 0.99 if bridging else 0.45
+    check('targets are edge-connected (4-conn)', float(np.mean(conn)) >= thresh,
+          '%.1f%% single-component, bridge_diagonals=%s (threshold %.0f%%)'
+          % (100 * np.mean(conn), bridging, 100 * thresh))
+    check('targets are 8-connected', float(np.mean(conn8)) > 0.95,
+          '%.1f%% single-component' % (100 * np.mean(conn8)))
     check('targets land on anatomy', float(np.mean(on)) > 0.55,
           '%.1f%% on-anatomy at full ramp' % (100 * np.mean(on)))
     check('context non-empty', int(enc[0].shape[1]) > 20,

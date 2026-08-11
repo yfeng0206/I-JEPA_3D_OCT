@@ -1,0 +1,56 @@
+{
+  "epoch_28": {
+    "off": {
+      "loss": 0.06531739439815283,
+      "loss_std": 0.008625790800263206,
+      "conn4_pct": 90.48828125,
+      "conn8_pct": 100.0,
+      "cells_per_target": 14.581640625,
+      "hidden_union": 54.05390625,
+      "overlap_cells": 3.9546875,
+      "context_tokens": 159.0,
+      "r_t": 0.6
+    },
+    "on": {
+      "loss": 0.06529770027846098,
+      "loss_std": 0.008702366003724893,
+      "conn4_pct": 100.0,
+      "conn8_pct": 100.0,
+      "cells_per_target": 14.581640625,
+      "hidden_union": 54.0328125,
+      "overlap_cells": 3.97578125,
+      "context_tokens": 159.0,
+      "r_t": 0.6
+    }
+  },
+  "epoch_50": {
+    "off": {
+      "loss": 0.0611594894900918,
+      "loss_std": 0.006766519620950461,
+      "conn4_pct": 83.33984375,
+      "conn8_pct": 100.0,
+      "cells_per_target": 13.5580078125,
+      "hidden_union": 54.14453125,
+      "overlap_cells": 0.0828125,
+      "context_tokens": 160.45,
+      "r_t": 1.0
+    },
+    "on": {
+      "loss": 0.06131604108959436,
+      "loss_std": 0.006869432988882714,
+      "conn4_pct": 100.0,
+      "conn8_pct": 100.0,
+      "cells_per_target": 13.5580078125,
+      "hidden_union": 54.1140625,
+      "overlap_cells": 0.11328125,
+      "context_tokens": 160.3,
+      "r_t": 1.0
+    }
+  },
+  "_resources": {
+    "peak_rss_gb": 3.3985671997070312,
+    "peak_vram_gb": 2.2441940307617188,
+    "batches": 20,
+    "batch_size": 64
+  }
+}

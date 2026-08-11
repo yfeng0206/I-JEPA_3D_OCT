@@ -1,0 +1,32 @@
+{
+  "anatomy_bridge_off": {
+    "context": 158.368,
+    "hidden": 54.213,
+    "anat_hidden": 39.292864120099,
+    "bg_hidden": 14.920135879901006,
+    "on_anatomy_pct": 72.11166313765351,
+    "conn8_pct": 100.0,
+    "conn4_pct": 51.324999999999996,
+    "holes": 0.06275,
+    "dead_pct": 2.0,
+    "all4dead_pct": 1.7000000000000002,
+    "fallback_pct": 2.1,
+    "unique_cells_per_target": 13.6115,
+    "ms_per_image": 31.196074400038924
+  },
+  "anatomy_bridge_on": {
+    "context": 159.008,
+    "hidden": 52.709,
+    "anat_hidden": 38.124890096280026,
+    "bg_hidden": 14.584109903719975,
+    "on_anatomy_pct": 71.99103546021286,
+    "conn8_pct": 100.0,
+    "conn4_pct": 100.0,
+    "holes": 0.035,
+    "dead_pct": 2.0,
+    "all4dead_pct": 1.7000000000000002,
+    "fallback_pct": 2.1,
+    "unique_cells_per_target": 13.6115,
+    "ms_per_image": 31.510877199994866
+  }
+}

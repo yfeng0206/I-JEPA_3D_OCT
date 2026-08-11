@@ -1,0 +1,27 @@
+{
+  "r0_ring0": {
+    "tissue_mass": 0.6733870630462965,
+    "background_frac": 0.026733400244511794,
+    "jaccard_vs_undilated": 1.0
+  },
+  "r1_ring15": {
+    "tissue_mass": 0.6010892776151499,
+    "background_frac": 0.1272913229457537,
+    "jaccard_vs_undilated": 0.8461121791349304
+  },
+  "r1_ring30": {
+    "tissue_mass": 0.5172424917419751,
+    "background_frac": 0.25831314890146256,
+    "jaccard_vs_undilated": 0.6361590299552257
+  },
+  "r2_ring30": {
+    "tissue_mass": 0.5237375835577647,
+    "background_frac": 0.24809179560647757,
+    "jaccard_vs_undilated": 0.6392978973368727
+  },
+  "r2_ring50": {
+    "tissue_mass": 0.44150495578845345,
+    "background_frac": 0.37625527291459143,
+    "jaccard_vs_undilated": 0.449698168105785
+  }
+}

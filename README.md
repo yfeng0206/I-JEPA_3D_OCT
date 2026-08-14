@@ -47,6 +47,21 @@ See [`docs/architecture/`](docs/architecture/) for the full spec.
 
 Harvard FairVision Glaucoma subset: 10,000 subjects (6K Train / 1K Val / 3K Test), each with a 200×200×200 OCT B-scan volume. Binary label glaucoma/not. ~48.5% positive prevalence — balanced. Available on [HuggingFace](https://huggingface.co/datasets/ming0100/Harvard_FairVision).
 
+## Pretrained checkpoints
+
+Both pretraining arms are published on Hugging Face (private repo — request access):
+
+**[`yfeng0206/ijepa-3d-oct-checkpoints`](https://huggingface.co/yfeng0206/ijepa-3d-oct-checkpoints)**
+
+| arm | checkpoints |
+|---|---|
+| `random-posfix-100ep/` | ep025, ep050, ep075, ep100 — stock uniform-random block placement |
+| `oracle-anatomical-100ep/` | ep050, ep075, ep100 — anatomy-guided target placement, forked from random ep025 |
+
+Each `.pth.tar` is a full training state (`encoder`, `target_encoder`, `predictor`, `opt`, ...); use `target_encoder` (the EMA teacher) for feature extraction. `MANIFEST.json` records sha256, epoch and original run path for every file.
+
+> The `-lowest-pretrain-loss-*` files are **not** better checkpoints. They were selected by lowest pretraining loss, which in I-JEPA is close to an anti-signal — the random arm's minimum is epoch 1. Use `ep100`.
+
 ## Roadmap
 
 - Phase 1 (done): Random-init I-JEPA SSL → frozen probe + fine-tune evaluation

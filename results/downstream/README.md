@@ -32,6 +32,21 @@ All arms share the FairVision **Test** split: **N = 3000**, 1466 positive /
 1534 negative, `seed: 42`, `shuffle=False`. The `labels` array is byte-identical
 across arms — this is precisely what makes a paired test valid.
 
+## Pretrained encoders
+
+The encoders that produced these predictions are on Hugging Face (private repo —
+request access):
+
+**<https://huggingface.co/yfeng0206/ijepa-3d-oct-checkpoints>**
+
+| directory here | Hugging Face path |
+|---|---|
+| `meanpool_sweep_random/`, `finetune_random/` | `random-posfix-100ep/jepa_patch-ep{025,050,075,100}.pth.tar` |
+| `meanpool_sweep_oracle/`, `finetune_oracle/` | `oracle-anatomical-100ep/jepa_patch_oracle-ep{050,075,100}.pth.tar` |
+
+`MANIFEST.json` there records sha256, epoch and original run path per file, so a
+prediction file here traces to the exact encoder that produced it.
+
 ## Running a paired comparison
 
 ```bash

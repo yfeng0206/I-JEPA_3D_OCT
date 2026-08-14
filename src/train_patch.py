@@ -282,6 +282,18 @@ def main(args):
                 % (curr_cfg.get('anatomy_mass_cap', 0.90),
                    curr_cfg.get('anatomy_tau', 0.10),
                    bool(curr_cfg.get('anatomy_bridge_diagonals', False))))
+        if curr_cfg.get('mode') == 'mirage_cover':
+            # Recorded for the same reason as the anatomy line: these knobs
+            # set how much anatomy the targets hide, which IS the experiment.
+            log('  Cover sampler: leave_frac=%.2f min_visible_frac=%.2f '
+                'min_visible_cells=%d fill=%s tau=%.2f'
+                % (curr_cfg.get('cover_leave_frac', 0.15),
+                   curr_cfg.get('cover_min_visible_frac', 0.15),
+                   int(curr_cfg.get('cover_min_visible_cells', 4)),
+                   curr_cfg.get('cover_fill',
+                                'transition' if curr_cfg.get('cover_transition', True)
+                                else 'random'),
+                   curr_cfg.get('anatomy_tau', 0.10)))
 
     # ---- Transforms --------------------------------------------------------
     transform = make_transforms(
@@ -302,7 +314,7 @@ def main(args):
     # one random crop, so it uses a paired transform + guided dataset.  Every
     # other path is untouched.
     use_mirage = use_curriculum and curr_cfg.get('mode') in (
-        'mirage_envelope', 'mirage_anatomy'
+        'mirage_envelope', 'mirage_anatomy', 'mirage_cover'
     )
     guide_dir = curr_cfg.get('mirage_guide_dir')
     if use_mirage:
@@ -453,7 +465,25 @@ def main(args):
         )
 
     accum_steps = opt_cfg.get('accum_steps', 1)
-    iterations_per_epoch = len(train_loader) // accum_steps
+    # CEIL, not floor.  The training loop steps the optimizer on the final
+    # partial accumulation window too ("(itr + 1) == len(train_loader)"), so a
+    # 9375-batch epoch at accum 8 performs ceil(9375/8) = 1172 optimizer steps,
+    # not 9375 // 8 = 1171.  Using the floor here made the LR/WD/EMA
+    # fast-forward on resume fall one step behind PER COMPLETED EPOCH (~75
+    # steps by epoch 100), silently desynchronising a resumed run from an
+    # uninterrupted one.
+    iterations_per_epoch = -(-len(train_loader) // accum_steps)
+    # Run the EMA-teacher forward under autocast.  It is ~59% of the training
+    # step in fp32, so this is the single largest speed lever (1.66x overall).
+    # Off by default because every previously trained arm used fp32 targets.
+    # Validation deliberately stays fp32 so val loss remains comparable across
+    # arms (train_patch pins validation to a uniform collator for the same
+    # reason).
+    amp_target = bool(meta_cfg.get('amp_target', False))
+    log('  Target-encoder autocast (amp_target): %s%s'
+        % (amp_target,
+           '  <- targets computed in fp16; val stays fp32' if amp_target else ''))
+    iterations_per_epoch = -(-len(train_loader) // accum_steps)
     log('  Batches per epoch: %d (%d iters x %d accum)' % (len(train_loader), iterations_per_epoch, accum_steps))
     log('  Effective batch size: %d' % (data_cfg['batch_size'] * world_size * accum_steps))
 
@@ -638,8 +668,9 @@ def main(args):
                     # vs the R1 baseline which already does this inside
                     # _forward_backward).
                     with torch.no_grad():
-                        h_full = target_encoder(imgs)  # (B, N, D)
-                        h_full = F.layer_norm(h_full, (h_full.size(-1),))
+                        with autocast(enabled=amp_target):
+                            h_full = target_encoder(imgs)  # (B, N, D)
+                        h_full = F.layer_norm(h_full.float(), (h_full.size(-1),))
 
                     # mask_gen.generate() must run on every rank (no rank-0
                     # short-circuit) so its internal state stays in sync.
@@ -668,10 +699,21 @@ def main(args):
                 # Target path (no gradient).  Reuse the precomputed h_full
                 # when curriculum mode already computed it; otherwise run
                 # the standard R1 target forward.
+                #
+                # The target forward is 59% of the step when run in fp32, and
+                # the reference I-JEPA implementation runs it under autocast.
+                # Enabling `amp_target` makes the step 1.66x faster (68 -> 41
+                # min/epoch).  It is OPT-IN because every previously trained
+                # arm used fp32 targets; the numerical effect is negligible
+                # (cosine 1.00000000, mean |diff| 2.5e-04 on layer-normed
+                # targets, versus ~0.4%/step EMA drift), but it is a change and
+                # is therefore recorded in the run log.  layer_norm is always
+                # taken in fp32 so the targets themselves stay well-conditioned.
                 with torch.no_grad():
                     if h_full is None:
-                        h = target_encoder(imgs)  # (B, N, D) full patch features
-                        h = F.layer_norm(h, (h.size(-1),))
+                        with autocast(enabled=amp_target):
+                            h = target_encoder(imgs)  # (B, N, D)
+                        h = F.layer_norm(h.float(), (h.size(-1),))
                     else:
                         h = h_full
                     # Extract target features at predicted positions
@@ -781,6 +823,16 @@ def main(args):
                                ms['infeasible'], ms['unbiased_by_ramp'],
                                ms['accept_rate'], ms['mean_block_fill'],
                                ms['retina_visible'], ms['mean_attempts']))
+                        if curr_cfg.get('mode') == 'mirage_cover':
+                            # hidden= is the experiment's whole point: the
+                            # fraction of anatomy MASS the targets removed.
+                            log('    [COVER] hidden=%.3f  visible_cells=%.1f  '
+                                'floor_ok=%.3f  transition=%.2f  random=%.2f'
+                                % (ms.get('cover_hidden_frac', 0.0),
+                                   ms.get('cover_visible_cells', 0.0),
+                                   ms.get('cover_floor_ok', 0.0),
+                                   ms.get('cover_transition_blocks', 0.0),
+                                   ms.get('cover_random_blocks', 0.0)))
 
             # CSV log
             if csv_logger is not None:

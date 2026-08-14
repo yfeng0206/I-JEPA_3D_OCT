@@ -13,9 +13,25 @@ from functools import partial
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from src.masks.utils import apply_masks
 from src.utils.tensors import trunc_normal_, repeat_interleave_batch
+
+# Fused scaled-dot-product attention is available from PyTorch 2.0.  On Ampere
+# it dispatches to Flash / memory-efficient kernels, which avoids materialising
+# the (B, heads, N, N) attention matrix entirely.
+#
+# DISABLED BY DEFAULT AND DELIBERATELY SO.  Although the forward pass is
+# mathematically identical (cosine 1.00000000 against the explicit path), under
+# fp16 autocast the BACKWARD differs measurably: input-gradient cosine 0.9907
+# and parameter-gradient differences up to 3.5e-06.  Every previously trained
+# arm (random, oracle, envelope, blob) used the explicit path, and the AUC
+# effects being compared are ~0.002-0.005, so a ~1% gradient deviation is not
+# safe to introduce on one arm only.  Set USE_SDPA=True only when every arm in
+# a comparison is trained with it.
+_HAS_SDPA = hasattr(F, "scaled_dot_product_attention")
+USE_SDPA = False
 
 # ---------------------------------------------------------------------------
 # Embedding dimension look-up for factory functions
@@ -170,7 +186,6 @@ class Attention(nn.Module):
     Uses a single ``nn.Linear(dim, dim * 3)`` for Q, K, V projection
     (NOT ``nn.MultiheadAttention``), followed by manual reshape for heads.
     """
-
     def __init__(self, dim, num_heads=12, qkv_bias=True, attn_drop=0.0,
                  proj_drop=0.0):
         super().__init__()
@@ -183,21 +198,42 @@ class Attention(nn.Module):
         self.proj = nn.Linear(dim, dim)
         self.proj_drop = nn.Dropout(proj_drop)
 
-    def forward(self, x):
+    def forward(self, x, need_weights=False):
         """Forward pass.
 
         Args:
             x: (B, N, D)
+            need_weights: return the explicit (B, heads, N, N) attention matrix.
+                Off by default because the fused kernel below never materialises
+                it -- that is the whole point of using it.
 
         Returns:
             Tuple of (output, attn_weights) where output is (B, N, D) and
-            attn_weights is (B, num_heads, N, N).
+            attn_weights is (B, num_heads, N, N), or None when the fused path
+            was taken.
         """
         B, N, C = x.shape
         qkv = self.qkv(x)  # (B, N, 3*D)
         qkv = qkv.reshape(B, N, 3, self.num_heads, self.head_dim)
         qkv = qkv.permute(2, 0, 3, 1, 4)  # (3, B, num_heads, N, head_dim)
         q, k, v = qkv.unbind(0)  # each (B, num_heads, N, head_dim)
+
+        # Fused scaled-dot-product attention (Flash / mem-efficient kernels on
+        # Ampere).  Mathematically identical to the explicit path below -- SDPA
+        # defaults to scale = 1/sqrt(head_dim), which is exactly self.scale --
+        # but it never materialises the (B, heads, N, N) matrix, so it is both
+        # faster and far lighter on memory.  Skipped when the caller actually
+        # wants the weights, or when attention dropout is active, so the two
+        # paths can never disagree.
+        if (
+            _HAS_SDPA
+            and USE_SDPA
+            and not need_weights
+            and not (self.training and self.attn_drop.p > 0.0)
+        ):
+            y = F.scaled_dot_product_attention(q, k, v)
+            y = y.transpose(1, 2).reshape(B, N, C)
+            return self.proj_drop(self.proj(y)), None
 
         attn = (q @ k.transpose(-2, -1)) * self.scale  # (B, num_heads, N, N)
         attn = attn.softmax(dim=-1)

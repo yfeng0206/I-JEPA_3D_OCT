@@ -1,0 +1,85 @@
+data:
+  batch_size: 64
+  crop_size: 256
+  crop_scale:
+  - 0.3
+  - 1.0
+  num_workers: 10
+  val_num_workers: 2
+  pin_mem: true
+  data_dir: D:\jepa_phase0\fairvision-glaucoma\data
+  slice_cache_dir: C:\jepa_data\slice_cache
+  num_slices: 100
+  color_jitter_strength: 0.0
+  use_color_distortion: false
+  use_gaussian_blur: false
+  use_horizontal_flip: false
+  prefetch_factor: 4
+mask:
+  patch_size: 16
+  num_enc_masks: 1
+  num_pred_masks: 4
+  enc_mask_scale:
+  - 0.85
+  - 1.0
+  pred_mask_scale:
+  - 0.15
+  - 0.2
+  aspect_ratio:
+  - 0.75
+  - 1.5
+  allow_overlap: false
+  min_keep: 10
+  # pred_target_k is deliberately NOT set.  COVER targets are rectangles of the
+  # batch-shared sizes, so every target in a group has the same length and the
+  # stock global-min truncation is harmless -- exactly as in the envelope and
+  # random arms.  Setting it would change the supervision budget and break the
+  # comparison.  (mirage_anatomy needs it only because its blobs are ragged.)
+  curriculum:
+    enabled: true
+    mode: mirage_cover
+    # Same ramp window the envelope and oracle arms used when they forked at
+    # ep25, so the ep26-30 losses are compared like for like.
+    T_warm: 25
+    T_total: 30
+    r_max: 1.0
+    ramp_shape: linear
+    mirage_guide_dir: C:\jepa_data\mirage_soft_guides\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8_npy
+    mirage_dilate_patches: 0
+    mirage_occupancy_threshold: 0.25
+    # --- COVER knobs ---
+    # leave_frac is the SOFT stop; min_visible_* are HARD floors that keep the
+    # encoder anchored on some tissue.  tau is shared with the anatomy arm so
+    # "what counts as anatomy" is defined identically across arms.
+    anatomy_tau: 0.1
+    cover_leave_frac: 0.15
+    cover_min_visible_frac: 0.15
+    cover_min_visible_cells: 4
+    cover_transition: true
+meta:
+  model_name: vit_base
+  pred_depth: 6
+  pred_emb_dim: 384
+  use_bfloat16: false
+  load_checkpoint: true
+  # The common ancestor of random, oracle, envelope AND cover.
+  read_checkpoint: D:\jepa_phase0\fairvision-glaucoma\checkpoint-ep25\jepa_patch-random_posfix-ep25.pth.tar
+  seed: 0
+optimization:
+  epochs: 100
+  lr: 0.00025
+  start_lr: 0.0001
+  final_lr: 1.0e-06
+  warmup: 5
+  weight_decay: 0.04
+  final_weight_decay: 0.4
+  ema:
+  - 0.996
+  - 1.0
+  ipe_scale: 1.0
+  accum_steps: 8
+  save_every: 5
+  patience: 9999
+logging:
+  folder: D:\jepa_phase0\runs\cover_ep25
+  write_tag: jepa_patch_cover

@@ -63,6 +63,10 @@ from src.masks.anatomy import (
     shrink_to_k as anatomy_shrink_to_k,
     shrink_to_k_connected as anatomy_shrink_to_k_connected,
 )
+from src.masks.cover import (
+    build_targets as cover_build_targets,
+    is_viable as cover_is_viable,
+)
 
 
 # ----------------------------------------------------------------------
@@ -185,6 +189,7 @@ class CurriculumMaskGenerator:
         "anatomical_prior",
         "mirage_envelope",
         "mirage_anatomy",
+        "mirage_cover",
     )
 
     def __init__(
@@ -396,6 +401,75 @@ class CurriculumMaskGenerator:
             cfg.get("anatomy_bridge_diagonals", False)
         )
 
+        # --- mirage_cover mode ---
+        # Stock rectangles, greedily placed to hide the anatomy rather than
+        # merely aimed at it.  ``cover_leave_frac`` is the SOFT stopping
+        # target (blocks stop being spent on coverage once 1 - leave_frac of
+        # the anatomy mass is hidden); the two ``min_visible`` knobs are HARD
+        # floors that keep some tissue in the context, mirroring
+        # ``mirage_min_retina_visible``.  Shares ``anatomy_tau`` so "what
+        # counts as anatomy" is defined identically to the mirage_anatomy arm.
+        self.cover_leave_frac = float(cfg.get("cover_leave_frac", 0.15))
+        self.cover_min_visible_frac = float(
+            cfg.get("cover_min_visible_frac", 0.15)
+        )
+        self.cover_min_visible_cells = int(
+            cfg.get("cover_min_visible_cells", 4)
+        )
+        self.cover_transition = bool(cfg.get("cover_transition", True))
+        # How the per-group encoder mask is cut down to the batch-wide minimum
+        # length.  "prefix" is the historical behaviour (t[:min_len] on sorted
+        # indices), which is a row-major prefix and therefore systematically
+        # discards the bottom of the image -- see the collation site for the
+        # measured damage.  "random" drops a spatially unbiased subset instead.
+        # Defaults to "prefix" so previously trained arms remain reproducible;
+        # a run must opt in.
+        self.enc_truncate = str(cfg.get("enc_truncate", "prefix"))
+        if self.enc_truncate not in ("prefix", "random", "guard", "window",
+                                     "window_free"):
+            raise ValueError(
+                "curriculum.enc_truncate must be 'prefix', 'random', 'guard', "
+                "'window' or 'window_free'; got %r" % (self.enc_truncate,)
+            )
+        # For "guard": how many anatomy cells the crop must never take away.
+        # The crop has to drop SOMETHING to make the batch rectangular, but
+        # nothing forces it to drop anatomy first; reserving a handful of
+        # anatomy tokens makes the arm's visibility guarantee hold end-to-end
+        # instead of only up to the target union.
+        #
+        # NOTE: "random" and "guard" both scatter the retained tokens, which
+        # destroys the spatial coherence of the context block -- stock I-JEPA
+        # hands the encoder a CONTIGUOUS region minus the targets, not a
+        # speckle.  "window" is the policy that keeps both properties: it takes
+        # a CONTIGUOUS run of the sorted context indices (so the kept region is
+        # still a coherent band) but slides the window to the offset that
+        # retains the most anatomy, instead of always keeping the prefix.
+        self.enc_guard_cells = int(cfg.get("enc_guard_cells", 6))
+        self._enc_trunc_gen = torch.Generator()
+        self._enc_trunc_seed = int(cfg.get("enc_truncate_seed", 1234))
+        self._enc_trunc_gen.manual_seed(self._enc_trunc_seed)
+        # Re-derived per (seed, epoch, worker) in _reseed_enc_trunc().  Without
+        # this every DataLoader worker rebuilds the generator from the SAME
+        # constant seed -- __getstate__ drops torch.Generator on pickle -- so
+        # all 10 workers would replay an identical tie-breaking stream every
+        # epoch, correlating the crop across the whole run.
+        self._enc_trunc_epoch = 0
+        # How a block NOT needed for coverage is spent.  ``transition`` is the
+        # shipped behaviour (straddle the anatomy/background boundary).
+        # ``random_legal`` makes it a plain uniform I-JEPA rectangle but still
+        # restricted to windows that keep the hard anatomy-visibility floor --
+        # measured on 600 slices, unconstrained ``random`` breaches that floor
+        # on 40% of slices while ``random_legal`` breaches it on 0% at
+        # identical anatomy coverage (84.4%).
+        self.cover_fill = cfg.get(
+            "cover_fill", "transition" if self.cover_transition else "random"
+        )
+        if self.cover_fill not in ("transition", "random", "random_legal"):
+            raise ValueError(
+                "curriculum.cover_fill must be one of 'transition', 'random', "
+                "'random_legal'; got %r" % (self.cover_fill,)
+            )
+
         if self.mode == "mirage_anatomy" and self.pred_target_k is None:
             # Anatomy targets are ragged by construction (p05 = 6 cells) and
             # the fallback rectangles are ~21, so the global-min truncation
@@ -482,6 +556,32 @@ class CurriculumMaskGenerator:
     # ------------------------------------------------------------------
     # set_epoch
     # ------------------------------------------------------------------
+
+    def _reseed_enc_trunc(self) -> None:
+        """Derive the crop RNG from (seed, epoch, worker, rank).
+
+        ``__getstate__`` drops ``torch.Generator`` when the collator is pickled
+        into a DataLoader worker, so every worker rebuilds it from the same
+        constant.  Left alone, all workers replay an identical tie-breaking
+        stream every epoch and across DDP ranks, correlating the crop over the
+        whole run.  Mixing the worker id, rank and epoch in makes the streams
+        independent while keeping a resumed epoch reproducible.
+        """
+        wid = 0
+        info = torch.utils.data.get_worker_info()
+        if info is not None:
+            wid = int(info.id)
+        rank = 0
+        try:
+            import torch.distributed as _d
+            if _d.is_available() and _d.is_initialized():
+                rank = int(_d.get_rank())
+        except Exception:  # noqa: BLE001
+            rank = 0
+        s = (self._enc_trunc_seed * 1_000_003
+             + int(self._enc_trunc_epoch) * 9_176
+             + rank * 131_071 + wid * 521) % (2 ** 63 - 1)
+        self._enc_trunc_gen.manual_seed(int(s))
 
     def set_epoch(self, epoch: int, total_epochs: Optional[int] = None) -> None:
         """Update ``self._r_t`` for the current epoch.
@@ -1086,6 +1186,8 @@ class CurriculumMaskGenerator:
                 bias_active = guide_grids is not None
             elif self.mode == "mirage_anatomy":
                 bias_active = guide_grids is not None
+            elif self.mode == "mirage_cover":
+                bias_active = guide_grids is not None
 
         # Pre-compute cluster assignments per image (R3b) so update_after_iter
         # can reuse them without re-clustering.
@@ -1119,6 +1221,12 @@ class CurriculumMaskGenerator:
             "patches_per_block_sum": 0,
             "unique_target_sum": 0,
             "context_patch_sum": 0,
+            # mirage_cover only
+            "cover_hidden_sum": 0.0,
+            "cover_visible_cells_sum": 0.0,
+            "cover_floor_ok_sum": 0.0,
+            "cover_transition_sum": 0.0,
+            "cover_random_sum": 0.0,
         }
 
         for b in range(B):
@@ -1266,6 +1374,161 @@ class CurriculumMaskGenerator:
                     len(indices) for indices in per_image_pred
                 )
                 mirage_batch["unique_target_sum"] += len(pred_indices_union)
+            elif self.mode == "mirage_cover":
+                # COVER: stock rectangles, greedily placed so they HIDE the
+                # anatomy instead of merely being aimed at it.  Block sizes
+                # come from ``pred_sizes`` -- sampled once per batch above and
+                # shared across every image, exactly as the envelope and stock
+                # arms do.  Only PLACEMENT differs, which is what keeps the
+                # comparison to a single variable.
+                guide = None
+                if guide_grids is not None:
+                    guide = guide_grids[b].detach().to(
+                        device="cpu", dtype=torch.float32
+                    )
+                    if guide.dim() == 2:  # occupancy only; no dilated channel
+                        guide = torch.stack([guide, guide], dim=0)
+                occupancy = guide[0] if guide is not None else None
+                # Guide health is a property of the DATA, so it is tracked
+                # independently of the ramp: at r_t=0 a perfectly good guide
+                # must not be reported as an invalid-guide fallback.
+                guide_ok = guide is not None
+                if guide_ok and guide_valid is not None:
+                    guide_ok = bool(guide_valid[b])
+                usable = bias_active and guide_ok
+                # A schema-2 guide carries P_inner and P_choroid in channels 2
+                # and 3.  Channel 0 alone merges inner retina and choroid into
+                # one band, which still works but is the degraded form.
+                if guide is not None and guide.shape[0] >= 4:
+                    class_scores = [guide[2].numpy(), guide[3].numpy()]
+                elif occupancy is not None:
+                    class_scores = [occupancy.numpy()]
+                else:
+                    class_scores = None
+                # Guide health and slice viability are evaluated INDEPENDENTLY
+                # of the ramp draw, so the fallback counters measure what they
+                # claim to: a missing/QC-invalid guide or an unusable slice is
+                # a fallback whatever the coin says.
+                viable = (
+                    class_scores is not None
+                    and cover_is_viable(
+                        class_scores,
+                        tau=self.anatomy_tau,
+                        min_visible_cells=self.cover_min_visible_cells,
+                    )
+                )
+                # Bernoulli(r_t) PER BLOCK, matching mirage_envelope's policy.
+                # NOTE: the DISTRIBUTION matches envelope, but the exact
+                # realisations do NOT -- an adversarial review demonstrated the
+                # flag sequences diverge (seed 0, 8 images: first divergence at
+                # image 2, slot 0) because COVER's placement consumes a
+                # different amount of the shared RNG than envelope's.  Do not
+                # rely on paired draws between the two arms; treat them as
+                # independent samples from the same ramp distribution.
+                biased_flags = [
+                    bool(usable and random.random() < self._r_t)
+                    for _ in range(self.npred)
+                ]
+                # Draw the non-guided block locations ONCE so retries cannot
+                # quietly bias blocks the ramp designated as random.
+                fixed_uniform: List[Optional[List[int]]] = []
+                fixed_masks: List[Optional[np.ndarray]] = []
+                for p in range(self.npred):
+                    if biased_flags[p]:
+                        fixed_uniform.append(None)
+                        fixed_masks.append(None)
+                    else:
+                        bh, bw = pred_sizes[p]
+                        top, left = self._sample_uniform_location(
+                            bh, bw, self.height, self.width
+                        )
+                        idx = self._block_to_indices(top, left, bh, bw)
+                        fixed_uniform.append(idx)
+                        m = np.zeros((self.height, self.width), bool)
+                        m.ravel()[np.asarray(idx)] = True
+                        fixed_masks.append(m)
+                cover_info = None
+                if usable and viable and any(biased_flags):
+                    parts, cover_info = cover_build_targets(
+                        class_scores,
+                        pred_sizes,
+                        guided=biased_flags,
+                        fixed=fixed_masks,
+                        leave_frac=self.cover_leave_frac,
+                        min_visible_frac=self.cover_min_visible_frac,
+                        min_visible_cells=self.cover_min_visible_cells,
+                        tau=self.anatomy_tau,
+                        transition=self.cover_transition,
+                        fill=self.cover_fill,
+                        occupancy=(
+                            (occupancy.numpy() >= self.mirage_occupancy_threshold)
+                            if occupancy is not None
+                            else None
+                        ),
+                    )
+                    if not cover_info["ok"]:
+                        # The hard floors could not be honoured on this slice.
+                        # Emitting it anyway would quietly break the arm's
+                        # stated guarantee, so it becomes a counted fallback.
+                        cover_info = None
+                if cover_info is not None:
+                    per_image_pred = [
+                        np.flatnonzero(np.asarray(p).ravel()).tolist()
+                        for p in parts
+                    ]
+                    mirage_batch["guided_images"] += 1
+                    mirage_batch["cover_hidden_sum"] += float(
+                        cover_info["covered_frac"]
+                    )
+                    mirage_batch["cover_visible_cells_sum"] += float(
+                        cover_info["visible_cells"]
+                    )
+                    mirage_batch["cover_floor_ok_sum"] += float(
+                        cover_info["floor_ok"]
+                    )
+                    mirage_batch["cover_transition_sum"] += float(
+                        cover_info["n_transition"]
+                    )
+                    mirage_batch["cover_random_sum"] += float(
+                        cover_info["n_random"]
+                    )
+                else:
+                    if not (guide_ok and viable):
+                        mirage_batch["fallback_invalid"] += 1
+                    elif not any(biased_flags):
+                        mirage_batch["unbiased_by_ramp"] += 1
+                    else:
+                        # Guide was fine and the ramp said go, but no legal
+                        # placement existed.
+                        mirage_batch["infeasible"] += 1
+                    for p in range(self.npred):
+                        if fixed_uniform[p] is not None:
+                            per_image_pred.append(fixed_uniform[p])
+                        else:
+                            bh, bw = pred_sizes[p]
+                            top, left = self._sample_uniform_location(
+                                bh, bw, self.height, self.width
+                            )
+                            per_image_pred.append(
+                                self._block_to_indices(top, left, bh, bw)
+                            )
+                for indices in per_image_pred:
+                    pred_indices_union.update(indices)
+                if occupancy is not None and pred_indices_union:
+                    flat = occupancy.flatten()
+                    on_region = sum(
+                        1
+                        for i in pred_indices_union
+                        if float(flat[i]) >= self.mirage_occupancy_threshold
+                    )
+                    mirage_batch["target_on_region_sum"] += on_region / len(
+                        pred_indices_union
+                    )
+                mirage_batch["images"] += 1
+                mirage_batch["patches_per_block_sum"] += sum(
+                    len(indices) for indices in per_image_pred
+                )
+                mirage_batch["unique_target_sum"] += len(pred_indices_union)
             elif self.mode == "mirage_envelope":
                 # Statistics must be measurable even when the ramp is off, so
                 # the guide is read independently of ``bias_active``.
@@ -1387,7 +1650,7 @@ class CurriculumMaskGenerator:
                 masks_enc[e].append(
                     torch.tensor(sorted(best_indices), dtype=torch.long)
                 )
-                if self.mode in ("mirage_envelope", "mirage_anatomy"):
+                if self.mode in ("mirage_envelope", "mirage_anatomy", "mirage_cover"):
                     mirage_batch["context_patch_sum"] += len(best_indices)
 
             for p in range(self.npred):
@@ -1396,12 +1659,105 @@ class CurriculumMaskGenerator:
                 )
 
         # --- Per-group enc min-truncate ---
+        # Per-image anatomy, used only by the "guard" truncation policy below.
+        enc_anatomy: List[np.ndarray] = []
+        if self.enc_truncate != "prefix":
+            # Re-derive per call so each worker/rank/epoch gets its own stream.
+            self._enc_trunc_epoch = int(getattr(self, "epoch", 0) or 0)
+            self._reseed_enc_trunc()
+        if self.enc_truncate in ("guard", "window") and guide_grids is not None:
+            occ_all = (
+                guide_grids[:, 0] if guide_grids.dim() == 4 else guide_grids
+            )
+            thr = self.mirage_occupancy_threshold
+            enc_anatomy = [
+                (occ_all[i].detach().cpu().reshape(-1).numpy() >= thr)
+                for i in range(occ_all.shape[0])
+            ]
         collated_masks_enc = []
         for group in masks_enc:
             min_len = max(1, min(t.numel() for t in group))
-            collated_masks_enc.append(
-                torch.stack([t[:min_len] for t in group], dim=0)
-            )
+            # Truncating with ``t[:min_len]`` on SORTED indices is a ROW-MAJOR
+            # PREFIX: it always discards the highest indices, i.e. the BOTTOM of
+            # the image.  The retina is a roughly horizontal band, so on slices
+            # where it sits low this deletes the entire anatomy from the
+            # encoder's context.  Measured over 1,279 slices at full ramp: the
+            # crop alone costs ~10 pp of anatomy context and drives the
+            # zero-anatomy-context rate from 0.0% to 10-13% (envelope, which
+            # never sees this arm's code, is hit identically at 0.1% -> 7.0%),
+            # so this is a defect in the shared collation path rather than
+            # anything a particular masking arm introduces.
+            #
+            # Dropping a spatially UNBIASED subset instead keeps the same token
+            # count and the same sorted-index contract, but no longer
+            # systematically removes one side of the image.
+            if self.enc_truncate == "prefix":
+                group_t = [t[:min_len] for t in group]
+            else:
+                group_t = []
+                for bi, t in enumerate(group):
+                    if t.numel() <= min_len:
+                        group_t.append(t)
+                        continue
+                    if self.enc_truncate in ("window", "window_free"):
+                        # Contiguous run of the sorted context indices, so the
+                        # retained region stays a coherent band exactly as in
+                        # the stock collator -- only WHICH band moves.
+                        #
+                        # "window"      picks the offset retaining the most
+                        #               anatomy.  This READS THE GUIDE, so it is
+                        #               a SECOND anatomy-guided intervention on
+                        #               top of target placement, and it breaks
+                        #               the "only target placement differs"
+                        #               attribution.  Use only when the guided
+                        #               context is itself the thing under test.
+                        # "window_free" picks the offset uniformly at random.
+                        #               It removes the "always drop the bottom"
+                        #               bias WITHOUT consulting the guide, so
+                        #               the arm keeps a single guided
+                        #               intervention.
+                        n = t.numel()
+                        n_off = n - min_len + 1
+                        if (self.enc_truncate == "window"
+                                and bi < len(enc_anatomy)):
+                            is_a = enc_anatomy[bi][t.numpy()].astype(np.int64)
+                            cs = np.concatenate([[0], np.cumsum(is_a)])
+                            score = cs[min_len:min_len + n_off] - cs[:n_off]
+                            cand = np.flatnonzero(score >= int(score.max()))
+                        else:
+                            cand = np.arange(n_off)
+                        pick = int(cand[torch.randint(
+                            len(cand), (1,), generator=self._enc_trunc_gen).item()])
+                        group_t.append(t[pick:pick + min_len])
+                        continue
+                    if self.enc_truncate == "guard" and bi < len(enc_anatomy):
+                        # Reserve up to `enc_guard_cells` anatomy tokens, then
+                        # fill the rest of the budget uniformly from whatever
+                        # remains.  Only binds when anatomy would otherwise be
+                        # crowded out; on slices with plenty of anatomy context
+                        # this is indistinguishable from the uniform draw.
+                        anat_b = enc_anatomy[bi]
+                        is_a = torch.as_tensor(
+                            anat_b[t.numpy()], dtype=torch.bool
+                        )
+                        a_idx = torch.nonzero(is_a, as_tuple=False).flatten()
+                        o_idx = torch.nonzero(~is_a, as_tuple=False).flatten()
+                        n_keep_a = int(min(a_idx.numel(),
+                                           self.enc_guard_cells, min_len))
+                        perm_a = torch.randperm(
+                            a_idx.numel(), generator=self._enc_trunc_gen)
+                        take_a = a_idx[perm_a[:n_keep_a]]
+                        rest = torch.cat([a_idx[perm_a[n_keep_a:]], o_idx])
+                        perm_r = torch.randperm(
+                            rest.numel(), generator=self._enc_trunc_gen)
+                        take_r = rest[perm_r[:min_len - n_keep_a]]
+                        keep = torch.cat([take_a, take_r])
+                    else:
+                        keep = torch.randperm(
+                            t.numel(), generator=self._enc_trunc_gen
+                        )[:min_len]
+                    group_t.append(t[keep.sort().values])
+            collated_masks_enc.append(torch.stack(group_t, dim=0))
 
         # --- GLOBAL pred min-truncate (across all groups AND batch) ---
         # With irregular anatomy targets this is destructive: one small target
@@ -1427,7 +1783,7 @@ class CurriculumMaskGenerator:
                     torch.stack([t[:global_min_pred] for t in group], dim=0)
                 )
 
-        if self.mode in ("mirage_envelope", "mirage_anatomy"):
+        if self.mode in ("mirage_envelope", "mirage_anatomy", "mirage_cover"):
             images = max(mirage_batch["images"], 1)
             guided = max(mirage_batch["guided_images"], 1)
             self._mirage_stats = {
@@ -1451,6 +1807,15 @@ class CurriculumMaskGenerator:
                 "context_patches": mirage_batch["context_patch_sum"] / images,
                 "mean_attempts": mirage_batch["attempts_sum"] / guided,
                 "truncated_target_patches": global_min_pred,
+                # mirage_cover only — zero elsewhere.
+                "cover_hidden_frac": mirage_batch["cover_hidden_sum"] / guided,
+                "cover_visible_cells": mirage_batch["cover_visible_cells_sum"]
+                / guided,
+                "cover_floor_ok": mirage_batch["cover_floor_ok_sum"] / guided,
+                "cover_transition_blocks": mirage_batch["cover_transition_sum"]
+                / guided,
+                "cover_random_blocks": mirage_batch["cover_random_sum"]
+                / guided,
             }
 
         return collated_masks_enc, collated_masks_pred

@@ -135,16 +135,29 @@ This exists so the writeup can be honest rather than reconstructed later.
 
 | deviation | status | rationale |
 |---|---|---|
-| `enc_truncate: window` | **ENABLED** | Fixes a defect corrupting ~14% of samples. Same operation as stock (contiguous run of sorted indices), only the offset moves. |
+| `enc_truncate: window` | **ENABLED** | Fixes a defect corrupting ~14–16% of samples. Same operation as stock (contiguous run of sorted indices), only the offset moves. **BUT it selects that offset using the MIRAGE guide**, so it is a SECOND anatomy-guided intervention — see the attribution limit below. |
 | fused SDPA attention | **REVERTED** | Forward is identical (cos 1.0000) but under fp16 the **input-gradient cosine is 0.9907**. ~1% gradient deviation is unsafe at the ~0.002–0.005 AUC effects being compared. `USE_SDPA = False`. |
-| `amp_target` (fp16 teacher) | **DISABLED** | 1.66× speedup (68→41 min/epoch, saves 58 h) and numerically tiny (cos 1.0000, mean diff 2.5e-04) — but it changes the **regression targets**, with no correctness benefit. Pure speed. |
+| `amp_target` (fp16 teacher) | **ENABLED** | 1.66× (68 → ~45 min/epoch). Changes the regression targets, but only numerically (cos 1.0000, mean diff 2.5e-04 on layer-normed features, versus ~0.4%/step EMA drift). |
 | occupancy floor in COVER | ENABLED | The floor was enforced only on the soft-score support, a superset of the occupancy mask the audits use; 24.2% of slices fell below the advertised 15%. Now 0%. |
+| `iterations_per_epoch` ceil | FIXED | Floor division left the LR/WD/EMA fast-forward one step behind per resumed epoch. |
+| crop RNG per worker/rank/epoch | FIXED | Every DataLoader worker previously rebuilt the generator from the same constant, replaying one correlated stream. |
 
-**Known consequence:** because `window` is enabled, a strict code-matched
-comparison would require rerunning envelope under the same crop. The archived
-envelope numbers (ep30 0.8539, ep50 0.8761, ep75 0.8803, ep100 0.8807) were
-produced under `prefix` and are therefore an **imperfect** baseline. This must
-be stated in any writeup.
+### Attribution limit — state this in any writeup
+
+The 2×2 controls (`random/window` and `COVER/prefix` at ep50) were **considered
+and dropped** to save ~34 h. Consequently this arm differs from the archived
+baselines in **two** guided ways at once: where the target rectangles go, and
+which contiguous slice of encoder context survives the batch crop. **If it beats
+envelope, the gain cannot be cleanly attributed between the two.**
+
+A guide-free crop was tested as a way out and is **worse than stock**
+(21.1% zero-anatomy vs 16.0% for `prefix`), because a uniformly random band
+misses the retina more often than the top of the image does. So there is no
+cheap escape: the crop fix necessarily consults the guide.
+
+**Known consequence:** the archived envelope numbers (ep30 0.8539, ep50 0.8761,
+ep75 0.8803, ep100 0.8807) were produced under `prefix`, fp32 targets and the
+explicit attention path. They are an **imperfect** baseline for this run.
 
 ---
 
@@ -169,29 +182,36 @@ masking **0.47%**; slice has no anatomy at all 0.05%; COVER `ok=False` ~0.17%.
 
 ## 6. Schedule and ETAs
 
-Baseline 68 min/epoch (measured from envelope: 4,394–4,626 s/epoch, matched
-context size). AUC probe ≈ 1 h each (measured from the ep25 fork probe).
+**Execution model: sequential milestones.** Training holds ~98% of the 24 GB
+card, so a frozen-AUC probe cannot run alongside it. `scripts/campaign_chain.py`
+therefore trains to a milestone, stops the trainer cleanly, probes that
+checkpoint, and resumes for the next leg.
 
-| # | stage | hrs | ETA |
-|---|---|---|---|
-| 0 | P0 fire-ready | 1.1 | Aug 14 07:06 |
-| 1 | COVER ep26→30 | 5.7 | Aug 14 12:48 |
-| 2 | **AUC @ ep30** | 1.0 | Aug 14 13:48 |
-| 3 | COVER ep30→50 | 22.7 | Aug 15 12:30 |
-| 4 | **AUC @ ep50** | 1.0 | Aug 15 13:30 |
-| 5 | COVER ep50→75 | 28.3 | Aug 16 17:48 |
-| 6 | **AUC @ ep75** | 1.0 | Aug 16 18:48 |
-| 7 | COVER ep75→100 | 28.3 | Aug 17 23:06 |
-| 8 | **AUC @ ep100** | 1.0 | Aug 18 00:06 |
-| 9 | COVER report + GitHub docs | 1.5 | Aug 18 01:36 |
-| 10 | BLOB resume ep56→75 | 26.3 | Aug 19 03:54 |
-| 11 | **AUC @ blob ep75** | 1.0 | Aug 19 04:54 |
-| 12 | BLOB ep75→100 | 34.6 | Aug 20 15:30 |
-| 13 | **AUC @ blob ep100** | 1.0 | Aug 20 16:30 |
-| 14 | BLOB report + combined docs | 1.0 | Aug 20 17:30 |
+The stop is implemented via the supervisor's `--stop_after_epoch`, **not** by
+shortening `optimization.epochs`. That value sizes the cosine LR/WD/EMA
+schedules; setting it to 30 for the first leg would anneal the learning rate to
+`final_lr` at epoch 30 instead of at epoch 100 and silently change the
+experiment. It stays at 100 for every leg, and resume fast-forwards the
+schedules to the correct position (now correct, after the ceil fix in §4).
 
-**Total ≈ 155.5 h ≈ 6.5 days.** With `amp_target` enabled the training stages
-shrink by 1.66× and the campaign finishes **Aug 18 07:29** instead — 58 h saved.
+`amp_target` is **ON**. The 2×2 controls were dropped (see §4), so this run is
+compared against archived arms rather than against freshly generated controls;
+`amp_target` is one more entry in the ledger and buys 1.66× (68 → ~45 min/epoch).
+
+| leg | stage | ETA |
+|---|---|---|
+| 1 | COVER ep26→30 | Aug 14 ~10:40 |
+| 2 | **frozen AUC @ ep30** | ~11:40 |
+| 3 | ep30→50 | Aug 15 ~03:00 |
+| 4 | **AUC @ ep50** — key comparator | ~04:00 |
+| 5 | ep50→75 | Aug 16 ~01:00 |
+| 6 | **AUC @ ep75** | ~02:00 |
+| 7 | ep75→100 | Aug 16 ~22:00 |
+| 8 | **AUC @ ep100** | ~23:00 |
+| 9 | blob resume ep56→100, from the COPIED seed | Aug 18 ~12:00 |
+| 10 | **AUC @ blob ep75 / ep100** | Aug 18 ~14:00 |
+
+**≈3.5 days.**
 
 Comparators to report against, per epoch:
 

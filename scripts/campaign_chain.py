@@ -53,6 +53,39 @@ def status(**kw):
     STATUS.write_text(json.dumps(s, indent=2))
 
 
+def trainer_running() -> bool:
+    """True while a train_patch.py process is alive.
+
+    The AUC probes and the trainer cannot share this GPU: training already sits
+    at ~97% of the 24 GB card, so launching a probe alongside it would OOM both.
+    """
+    try:
+        out = subprocess.run(
+            ["wmic", "process", "where", "name='python.exe'", "get", "CommandLine"],
+            capture_output=True, text=True, timeout=60).stdout
+    except Exception:  # noqa: BLE001
+        return False
+    return "train_patch.py" in out
+
+
+def wait_for_training_done(timeout_h=200):
+    """Block until no trainer is alive, so the GPU is exclusively ours."""
+    deadline = time.time() + timeout_h * 3600
+    announced = False
+    while time.time() < deadline:
+        if not trainer_running():
+            # Confirm across two polls -- the supervisor may be between restarts.
+            time.sleep(120)
+            if not trainer_running():
+                return True
+        if not announced:
+            say("  training in progress; probes deferred until the GPU is free")
+            announced = True
+        time.sleep(300)
+    say("  TIMEOUT waiting for training to finish")
+    return False
+
+
 def ckpt_for(run: pathlib.Path, tag: str, epoch: int):
     for name in (f"{tag}-ep{epoch}.pth.tar", f"{tag}-ep{epoch:03d}.pth.tar"):
         p = run / name
@@ -162,12 +195,20 @@ def main():
     status(stage="start")
 
     # ---- Stage A: COVER checkpoints + probes -------------------------------
+    # Training holds ~97% of the card, so probes only start once it is done.
+    # Checkpoints for ep30/50/75/100 are written by save_every=5 regardless, so
+    # nothing is lost by deferring; if the collapse gate stops training early,
+    # we simply probe whichever checkpoints exist.
+    status(stage="cover_train_wait")
+    wait_for_training_done()
+    say("GPU free -- starting COVER probes")
     aucs = {}
     for ep in (30, 50, 75, 100):
-        p = ckpt_for(COVER_RUN, COVER_TAG, ep) or wait_for_ckpt(COVER_RUN, COVER_TAG, ep)
+        p = ckpt_for(COVER_RUN, COVER_TAG, ep)
         if p is None:
-            say(f"COVER ep{ep} never appeared; stopping stage A")
-            break
+            say(f"  COVER ep{ep} checkpoint absent (training may have stopped "
+                f"earlier); skipping")
+            continue
         status(stage=f"cover_ep{ep}_probe")
         aucs[f"cover_ep{ep}"] = run_probe(p, f"cover_random_ep{ep}")
         status(cover_aucs=aucs)

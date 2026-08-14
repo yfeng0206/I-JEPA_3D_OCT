@@ -201,7 +201,11 @@ def main():
             say("no rolling checkpoint yet -> initial launch from the configured fork")
             cfg_path = base_cfg
 
-        run_log = run_dir / f"train_attempt{restarts}.log"
+        # Timestamped so a later leg cannot overwrite an earlier one's log: the
+        # restart counter resets on every supervisor invocation, so milestone
+        # leg 2 was writing train_attempt0.log over leg 1's and destroying the
+        # per-epoch loss history for those epochs.
+        run_log = run_dir / f"train_{time.strftime('%Y%m%d_%H%M%S')}_a{restarts}.log"
         say(f"launching attempt {restarts} -> {run_log.name}")
         env = dict(os.environ, PYTHONPATH=str(pathlib.Path(__file__).resolve().parents[1]))
         with open(run_log, "w") as lf:

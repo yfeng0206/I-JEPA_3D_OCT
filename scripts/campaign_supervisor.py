@@ -126,8 +126,13 @@ def health_flags(state: dict, baseline_epoch_s: float, val_baseline: dict):
             else:
                 state["consec_high"] = 0
     c = state.get("cover")
-    if c and c["floor_ok"] < 0.999:
-        flags.append(f"FLOOR REGRESSION: cover_floor_ok={c['floor_ok']:.3f}")
+    # Only meaningful once the ramp has actually engaged COVER.  During the
+    # warm-up (r_t = 0) every block is a stock uniform rectangle, no COVER mask
+    # is produced, and floor_ok is trivially 0 -- flagging that would cry wolf
+    # for several epochs and desensitise the log to a real regression.
+    if c and c["hidden"] > 0.0 and c["floor_ok"] < 0.999:
+        flags.append(f"FLOOR REGRESSION: cover_floor_ok={c['floor_ok']:.3f} "
+                     f"(hidden={c['hidden']:.3f})")
     return flags, abort
 
 

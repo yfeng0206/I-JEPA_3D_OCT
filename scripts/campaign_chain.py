@@ -194,24 +194,45 @@ def main():
     say("campaign chain start")
     status(stage="start")
 
-    # ---- Stage A: COVER checkpoints + probes -------------------------------
-    # Training holds ~97% of the card, so probes only start once it is done.
-    # Checkpoints for ep30/50/75/100 are written by save_every=5 regardless, so
-    # nothing is lost by deferring; if the collapse gate stops training early,
-    # we simply probe whichever checkpoints exist.
-    status(stage="cover_train_wait")
-    wait_for_training_done()
-    say("GPU free -- starting COVER probes")
+    # ---- Stage A: COVER, stopping at each milestone to probe ---------------
+    # Sequential by design: training holds ~97% of the 24 GB card, so a probe
+    # cannot run alongside it.  optimization.epochs stays at 100 throughout --
+    # it sizes the cosine LR/WD/EMA schedules, and shortening it per milestone
+    # would anneal the LR to final_lr at the milestone instead of at epoch 100.
+    # The supervisor stops the trainer at the milestone instead, then resumes
+    # from the rolling checkpoint for the next leg.
     aucs = {}
     for ep in (30, 50, 75, 100):
+        existing = ckpt_for(COVER_RUN, COVER_TAG, ep)
+        if existing is None:
+            status(stage=f"cover_train_to_{ep}")
+            say(f"COVER: training to epoch {ep}")
+            rc = subprocess.call(
+                [PY, "-u", "scripts/campaign_supervisor.py",
+                 "--config", str(REPO / "configs" / "patch_cover_random_ep25.yaml"),
+                 "--val_baseline_json", str(CAMP / "val_baseline_envelope.json"),
+                 "--baseline_epoch_s", "2600", "--max_restarts", "8",
+                 "--stop_after_epoch", str(ep)],
+                cwd=str(REPO),
+                env=dict(**{**dict(__import__("os").environ), "PYTHONPATH": str(REPO)}))
+            say(f"  supervisor for ep{ep} exited rc={rc}")
+            if rc == 4:
+                say("  collapse gate stopped training; probing what exists and "
+                    "skipping the remaining COVER legs")
+                p = ckpt_for(COVER_RUN, COVER_TAG, ep)
+                if p:
+                    aucs[f"cover_ep{ep}"] = run_probe(p, f"cover_random_ep{ep}")
+                    status(cover_aucs=aucs)
+                break
         p = ckpt_for(COVER_RUN, COVER_TAG, ep)
         if p is None:
-            say(f"  COVER ep{ep} checkpoint absent (training may have stopped "
-                f"earlier); skipping")
-            continue
+            say(f"  COVER ep{ep} checkpoint absent after training; stopping stage A")
+            break
         status(stage=f"cover_ep{ep}_probe")
+        wait_for_training_done()
         aucs[f"cover_ep{ep}"] = run_probe(p, f"cover_random_ep{ep}")
         status(cover_aucs=aucs)
+        say(f"  AUC so far: {aucs}")
     say(f"COVER AUCs: {aucs}")
 
     # ---- Stage B: blob resume from the COPY --------------------------------

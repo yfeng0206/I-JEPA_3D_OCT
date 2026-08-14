@@ -145,6 +145,13 @@ def main():
     ap.add_argument("--val_baseline_json", default="")
     ap.add_argument("--poll", type=int, default=120)
     ap.add_argument("--state_dir", default=r"D:\jepa_phase0\campaign")
+    ap.add_argument("--stop_after_epoch", type=int, default=0,
+                    help="stop cleanly once this epoch completes (0 = run to "
+                         "optimization.epochs).  Used to interleave frozen-AUC "
+                         "probes without touching optimization.epochs, which "
+                         "drives the cosine LR/WD/EMA schedules -- shortening "
+                         "it would anneal the LR to final_lr at the milestone "
+                         "instead of at epoch 100.")
     args = ap.parse_args()
 
     base_cfg = pathlib.Path(args.config).resolve()
@@ -171,12 +178,16 @@ def main():
 
     restarts = 0
     last_progress_epoch = -1
+    stop_at = int(args.stop_after_epoch) or target_epochs
+    if stop_at != target_epochs:
+        say(f"milestone mode: will stop cleanly after epoch {stop_at} "
+            f"(schedules still sized for {target_epochs} epochs)")
     while restarts <= args.max_restarts:
         ck = find_last(run_dir, tag)
         if ck is not None:
             ep = ckpt_epoch(ck)
-            if ep >= target_epochs:
-                say(f"DONE: rolling checkpoint already at epoch {ep} >= {target_epochs}")
+            if ep >= stop_at:
+                say(f"DONE: rolling checkpoint at epoch {ep} >= target {stop_at}")
                 return 0
             say(f"resuming from {ck.name} (epoch {ep})")
             cfg_path = build_resume_config(base_cfg, ck, state_dir)
@@ -201,6 +212,7 @@ def main():
 
         st = {"pos": 0, "epochs": [], "last_epoch": -1}
         aborted = None
+        reached = False
         while proc.poll() is None:
             time.sleep(args.poll)
             for ev in scan_log(run_log, st):
@@ -208,6 +220,15 @@ def main():
             fl, abort = health_flags(st, args.baseline_epoch_s, val_baseline)
             for f in fl:
                 say("  !! " + f)
+            if st.get("last_epoch", -1) >= stop_at:
+                reached = True
+                say(f"  *** milestone epoch {stop_at} reached -- stopping cleanly")
+                proc.terminate()
+                try:
+                    proc.wait(timeout=300)
+                except Exception:  # noqa: BLE001
+                    proc.kill()
+                break
             if abort:
                 aborted = abort
                 say(f"  *** ABORTING RUN: {abort}")
@@ -222,6 +243,11 @@ def main():
         rc = proc.returncode
         for ev in scan_log(run_log, st):
             say("  " + ev)
+        if reached:
+            ck = find_last(run_dir, tag)
+            ep = ckpt_epoch(ck) if ck else -1
+            say(f"MILESTONE {stop_at} complete (checkpoint at epoch {ep})")
+            return 0
         if aborted:
             say(f"STOPPED by health gate: {aborted}")
             say("Not relaunching. The rolling checkpoint is intact for inspection.")

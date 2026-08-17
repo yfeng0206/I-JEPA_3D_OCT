@@ -243,10 +243,21 @@ def main():
             status(stage="blob_train")
             cfg = make_blob_cfg()
             say(f"blob: supervising resume {BLOB_SEED.name} -> ep100 in {BLOB_RUN}")
+            # Blob MUST be gated against its own trajectory, not envelope's.
+            # It sits at ~0.33 val loss versus envelope's ~0.14 -- that gap IS
+            # the predictor collapse this run exists to document, and it
+            # predates the campaign. Gating it on the envelope curve stopped it
+            # at ep57 on a 2.33x ratio that was really a 1.01x continuation of
+            # its own history.
+            blob_baseline = CAMP / "val_baseline_blob.json"
+            if not blob_baseline.exists():
+                blob_baseline = CAMP / "val_baseline_envelope.json"
+                say("  WARNING: blob baseline missing, falling back to envelope "
+                    "(will over-trigger)")
             rc = subprocess.call(
                 [PY, "-u", "scripts/campaign_supervisor.py", "--config", str(cfg),
-                 "--val_baseline_json", str(CAMP / "val_baseline_envelope.json"),
-                 "--baseline_epoch_s", "3300", "--max_restarts", "8"],
+                 "--val_baseline_json", str(blob_baseline),
+                 "--baseline_epoch_s", "5400", "--max_restarts", "8"],
                 cwd=str(REPO),
                 env=dict(**{**dict(__import__("os").environ), "PYTHONPATH": str(REPO)}))
             say(f"blob training supervisor exited rc={rc}")

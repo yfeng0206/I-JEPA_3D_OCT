@@ -4,7 +4,7 @@ data:
   crop_scale:
   - 0.3
   - 1.0
-  num_workers: 10
+  num_workers: 6
   val_num_workers: 2
   pin_mem: true
   data_dir: D:\jepa_phase0\fairvision-glaucoma\data
@@ -14,7 +14,7 @@ data:
   use_color_distortion: false
   use_gaussian_blur: false
   use_horizontal_flip: false
-  prefetch_factor: 4
+  prefetch_factor: 2
 mask:
   patch_size: 16
   num_enc_masks: 1

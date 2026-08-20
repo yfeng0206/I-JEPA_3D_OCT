@@ -9,9 +9,11 @@
 *.fls
 *.toc
 
-# Overleaf bundles are built on demand; the authoritative copy is
-# C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_Overleaf.zip
+# Loose Overleaf bundles in this directory are scratch builds.
+# Committed, downloadable copies live in paper/dist/ - see paper/dist/README.md
 *.zip
+!dist/*.zip
+!dist/archive/*.zip
 
 # Backups
 *.bak

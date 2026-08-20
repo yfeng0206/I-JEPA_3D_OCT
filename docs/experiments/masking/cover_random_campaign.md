@@ -1,10 +1,46 @@
 # COVER-then-RANDOM campaign — locked run plan
 
-**Status:** LOCKED, awaiting fire-ready approval. No training has started.
+**Status:** COMPLETED (ep26→100), **results RETRACTED as comparable evidence**
+— see RESULTS AND RETRACTION below. The plan and deviation ledger that follow
+are preserved as the historical run record.
 **Owner config:** `configs/patch_cover_random_ep25.yaml`
 **Run dir:** `D:\jepa_phase0\runs\cover_random_ep25`  **tag:** `jepa_patch_cover_random`
 **Fork point:** `D:\jepa_phase0\fairvision-glaucoma\checkpoint-ep25\jepa_patch-random_posfix-ep25.pth.tar`
 (the common ancestor of random, oracle, envelope and blob — frozen AUC 0.8487)
+
+---
+
+## RESULTS AND RETRACTION
+
+**The campaign completed** ep26→100 with frozen MeanPool AUCs
+**0.8558 / 0.8590 / 0.8612 / 0.8607** at ep30/50/75/100 — finishing **last of
+all arms at every epoch** (see the comparator table in §6).
+
+**These numbers cannot be attributed to the masking method.** The arm carried
+**three** deviations from the archived baselines simultaneously:
+
+1. `enc_truncate: window` — a second, COVER-only anatomy-guided intervention (§3, §4).
+2. `amp_target: true` — the EMA teacher ran under fp16 autocast for this
+   entire run, while every archived baseline (random, oracle, envelope, blob
+   ep1→56) used fp32 targets (§4, and the ledger below).
+3. Soft-guide mismatch versus envelope — COVER shares its guide cache with
+   blob, not with envelope, which used an older `.npz` guide set.
+
+Full detail on all three, plus additional findings (the crop truncation is
+stock I-JEPA and not a local defect; measured oracle-fallback feasibility;
+draw-dependent blanking; a config audit finding exactly one unexpected diff)
+is in [`crop_and_precision_audit.md`](crop_and_precision_audit.md).
+
+**Process note.** The attribution-limit note in §4 below was written only for
+the winning case — *"If it beats envelope, the gain cannot be cleanly
+attributed between the two"* — when the same limit applies identically to
+**losing**. COVER lost at every epoch while carrying three deviations, not
+one; the deficit is exactly as unattributable as a win would have been.
+
+The deviation ledger below is preserved as-is (history, not rewritten). The
+`amp_target` remediation applied after this run (config now set to `false`
+with a provenance comment) is recorded in
+[`crop_and_precision_audit.md`](crop_and_precision_audit.md#finding-1--amp_target-precision-confound-a-real-defect-in-real-runs).
 
 ---
 

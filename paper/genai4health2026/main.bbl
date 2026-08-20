@@ -1,0 +1,142 @@
+\begin{thebibliography}{14}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Assran et~al.(2023)Assran, Duval, Misra, Bojanowski, Vincent, Rabbat,
+  LeCun, and Ballas]{assran2023ijepa}
+Mahmoud Assran, Quentin Duval, Ishan Misra, Piotr Bojanowski, Pascal Vincent,
+  Michael Rabbat, Yann LeCun, and Nicolas Ballas.
+\newblock Self-supervised learning from images with a joint-embedding
+  predictive architecture.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition}, pages 15619--15629, 2023.
+\newblock \doi{10.1109/CVPR52729.2023.01499}.
+
+\bibitem[Bao et~al.(2022)Bao, Dong, Piao, and Wei]{bao2022beit}
+Hangbo Bao, Li~Dong, Songhao Piao, and Furu Wei.
+\newblock {BEiT}: {BERT} pre-training of image transformers.
+\newblock In \emph{International Conference on Learning Representations}, 2022.
+\newblock URL \url{https://openreview.net/forum?id=p-BhZSz59o4}.
+
+\bibitem[Ceballos~Arroyo et~al.(2026)Ceballos~Arroyo, Kim, Lin, Qin, Young, and
+  Jiang]{ceballosarroyo2026anatomymae}
+Alberto~M. Ceballos~Arroyo, Jisoo Kim, Chu-Hsuan Lin, Lei Qin, Geoffrey~S.
+  Young, and Huaizu Jiang.
+\newblock Anatomically-guided masked autoencoder pre-training for aneurysm
+  detection.
+\newblock In \emph{Proceedings of the IEEE/CVF Winter Conference on
+  Applications of Computer Vision}, pages 5693--5702, 2026.
+\newblock \doi{10.1109/WACV61042.2026.00552}.
+
+\bibitem[Dosovitskiy et~al.(2021)Dosovitskiy, Beyer, Kolesnikov, Weissenborn,
+  Zhai, Unterthiner, Dehghani, Minderer, Heigold, Gelly,
+  et~al.]{dosovitskiy2021vit}
+Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn,
+  Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg
+  Heigold, Sylvain Gelly, et~al.
+\newblock An image is worth 16x16 words: Transformers for image recognition at
+  scale.
+\newblock In \emph{International Conference on Learning Representations}, 2021.
+
+\bibitem[Gichoya et~al.(2022)Gichoya, Banerjee, Bhimireddy, Burns, Celi, Chen,
+  Correa, Dullerud, Ghassemi, Huang, Kuo, Lungren, Palmer, Price, Purkayastha,
+  Pyrros, Oakden-Rayner, Okechukwu, Seyyed-Kalantari, Trivedi, Wang, Zaiman,
+  and Zhang]{gichoya2022race}
+Judy~Wawira Gichoya, Imon Banerjee, Ananth~Reddy Bhimireddy, John~L. Burns,
+  Leo~Anthony Celi, Li-Ching Chen, Ramon Correa, Natalie Dullerud, Marzyeh
+  Ghassemi, Shih-Cheng Huang, Po-Chih Kuo, Matthew~P. Lungren, Lyle~J. Palmer,
+  Brandon~J. Price, Saptarshi Purkayastha, Ayis~T. Pyrros, Lauren
+  Oakden-Rayner, Chima Okechukwu, Laleh Seyyed-Kalantari, Hari Trivedi, Ryan
+  Wang, Zachary Zaiman, and Haoran Zhang.
+\newblock {AI} recognition of patient race in medical imaging: A modelling
+  study.
+\newblock \emph{The Lancet Digital Health}, 4\penalty0 (6):\penalty0
+  e406--e414, 2022.
+\newblock \doi{10.1016/S2589-7500(22)00063-2}.
+
+\bibitem[He et~al.(2022)He, Chen, Xie, Li, Doll{\'a}r, and Girshick]{he2022mae}
+Kaiming He, Xinlei Chen, Saining Xie, Yanghao Li, Piotr Doll{\'a}r, and Ross
+  Girshick.
+\newblock Masked autoencoders are scalable vision learners.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition}, pages 16000--16009, 2022.
+\newblock \doi{10.1109/CVPR52688.2022.01553}.
+
+\bibitem[He et~al.(2025)He, Sakai, Chandhok, Beery, Yuan, Padoy, Hasegawa, and
+  Sigal]{he2025dseqjepa}
+Xiangteng He, Shunsuke Sakai, Shivam Chandhok, Sara Beery, Kun Yuan, Nicolas
+  Padoy, Tatsuhito Hasegawa, and Leonid Sigal.
+\newblock {DSeq-JEPA}: Discriminative sequential joint-embedding predictive
+  architecture, 2025.
+\newblock URL \url{https://arxiv.org/abs/2511.17354}.
+\newblock Accepted at ECCV 2026; final proceedings metadata unavailable at
+  verification time.
+
+\bibitem[Huang et~al.(2025)Huang, Liu, Zhang, Su, Chen, Li, Guo, Zu, Chen, Su,
+  Cong, Yan, Yan, and Deng]{huang2025amap}
+Mingxuan Huang, Tiantian Liu, Jiayin Zhang, Xiaoming Su, Hanlin Chen, Miao Li,
+  Jinghan Guo, Kaiyang Zu, Xiaofeng Chen, Yanguo Su, Hengri Cong, Long Yan,
+  Tianyi Yan, and Yiming Deng.
+\newblock Anatomically-guided masked autoencoder with domain-adaptive prompting
+  ({AMAP}) for multimodal cerebral aneurysm detection and segmentation.
+\newblock \emph{npj Digital Medicine}, 9\penalty0 (1), 2025.
+\newblock \doi{10.1038/s41746-025-02188-8}.
+
+\bibitem[Jin et~al.(2024)Jin, Xu, Zhong, Yao, Dou, Zhou, and
+  Li]{jin2024fairmedfm}
+Ruinan Jin, Zikang Xu, Yuan Zhong, Qingsong Yao, Qi~Dou, S.~Kevin Zhou, and
+  Xiaoxiao Li.
+\newblock {FairMedFM}: Fairness benchmarking for medical imaging foundation
+  models.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~37, pages 111318--111357, 2024.
+\newblock \doi{10.52202/079017-3535}.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper_files/paper/2024/hash/c9826b9ea5e1b49b256329934a578d83-Abstract-Datasets_and_Benchmarks_Track.html}.
+
+\bibitem[Kakogeorgiou et~al.(2022)Kakogeorgiou, Gidaris, Psomas, Avrithis,
+  Bursuc, Karantzalos, and Komodakis]{kakogeorgiou2022attmask}
+Ioannis Kakogeorgiou, Spyros Gidaris, Bill Psomas, Yannis Avrithis, Andrei
+  Bursuc, Konstantinos Karantzalos, and Nikos Komodakis.
+\newblock What to hide from your students: Attention-guided masked image
+  modeling.
+\newblock In \emph{Computer Vision -- ECCV 2022}, pages 300--318. Springer,
+  2022.
+\newblock \doi{10.1007/978-3-031-20056-4_18}.
+
+\bibitem[Li et~al.(2024)Li, Luan, Wu, Pan, Chen, and Yang]{li2024anatomask}
+Yuheng Li, Tianyu Luan, Yizhou Wu, Shaoyan Pan, Yenho Chen, and Xiaofeng Yang.
+\newblock {AnatoMask}: Enhancing medical image segmentation with
+  reconstruction-guided self-masking.
+\newblock In \emph{Computer Vision -- ECCV 2024}, pages 146--163. Springer,
+  2024.
+\newblock \doi{10.1007/978-3-031-73027-6_9}.
+
+\bibitem[Luo et~al.(2024)Luo, Khan, Tian, Shi, Dou, Elze, Fang, and
+  Wang]{luo2024fairvision}
+Yan Luo, Muhammad~Osama Khan, Yu~Tian, Min Shi, Zehao Dou, Tobias Elze,
+  Yi~Fang, and Mengyu Wang.
+\newblock {FairVision}: Equitable deep learning for eye disease screening via
+  fair identity scaling, 2024.
+\newblock URL \url{https://arxiv.org/abs/2310.02492}.
+
+\bibitem[Mo and Tong(2024)]{mo2024cjepa}
+Shentong Mo and Shengbang Tong.
+\newblock Connecting joint-embedding predictive architecture with contrastive
+  self-supervised learning, 2024.
+\newblock URL \url{https://arxiv.org/abs/2410.19560}.
+
+\bibitem[Morano et~al.(2025)Morano, Fazekas, S{\"u}kei, Fecso, Emre, Gumpinger,
+  Faustmann, Oghbaie, Schmidt-Erfurth, and Bogunovi{\'c}]{morano2025mirage}
+Jos{\'e} Morano, Botond Fazekas, Emese S{\"u}kei, Ronald Fecso, Taha Emre,
+  Markus Gumpinger, Georg Faustmann, Marzieh Oghbaie, Ursula Schmidt-Erfurth,
+  and Hrvoje Bogunovi{\'c}.
+\newblock Multimodal foundation model and benchmark for comprehensive retinal
+  {OCT} image analysis.
+\newblock \emph{npj Digital Medicine}, 8:\penalty0 576, 2025.
+\newblock \doi{10.1038/s41746-025-01852-3}.
+
+\end{thebibliography}

@@ -1,0 +1,20 @@
+# LaTeX build artefacts - regenerate with:
+#   D:\jepa_phase0\tools\tectonic\tectonic.exe -X compile main.tex --keep-intermediates --keep-logs
+*.aux
+*.log
+*.out
+*.blg
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.toc
+
+# Overleaf bundles are built on demand; the authoritative copy is
+# C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_Overleaf.zip
+*.zip
+
+# Backups
+*.bak
+
+__pycache__/
+*.pyc

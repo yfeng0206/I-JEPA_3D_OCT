@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "claim_labels": {
+    "MEASURED": "Observed in a stored artifact or documented run.",
+    "INFERRED": "Interpretation or arithmetic consequence of measured values.",
+    "ASSUMED": "Causal premise not identified by current experiments."
+  },
+  "composition_ep50": {
+    "status": "MEASURED",
+    "source": "D:\\jepa_phase0\\reports\\composition_vs_auc\\composition_vs_auc_ep50.json",
+    "source_selector": "rows[arm=*]",
+    "sample_note": "random/oracle/envelope/COVER are from the 6137-slice sweep; blob is from arm_stats(n=1534), per scripts/composition_vs_auc.py:8-14",
+    "rows": [
+      {
+        "arm": "random",
+        "auc_ep50": 0.8641,
+        "pct_anatomy_hidden": 53.04446982807447,
+        "pct_target_anatomy": 31.583217099488156,
+        "pct_context_anatomy": 26.3784588816686,
+        "context_anatomy_cells": 18.252566400521427,
+        "context_tokens": 69.09092390418772,
+        "zero_anatomy_context_pct": 3.682581065667264,
+        "composition_source": "sweep"
+      },
+      {
+        "arm": "oracle",
+        "auc_ep50": 0.874,
+        "pct_anatomy_hidden": 61.58470785250753,
+        "pct_target_anatomy": 39.68775691115843,
+        "pct_context_anatomy": 19.343864464525257,
+        "context_anatomy_cells": 14.928140785400032,
+        "context_tokens": 77.22568029982077,
+        "zero_anatomy_context_pct": 4.187713866710119,
+        "composition_source": "sweep"
+      },
+      {
+        "arm": "cover_f021",
+        "auc_ep50": null,
+        "pct_anatomy_hidden": 73.0945185679789,
+        "pct_target_anatomy": 40.877618298930145,
+        "pct_context_anatomy": 14.554988039789313,
+        "context_anatomy_cells": 9.27651947205475,
+        "context_tokens": 63.616587909401986,
+        "zero_anatomy_context_pct": 7.837705719406876,
+        "composition_source": "sweep"
+      },
+      {
+        "arm": "envelope",
+        "auc_ep50": 0.8761,
+        "pct_anatomy_hidden": 77.58224558657956,
+        "pct_target_anatomy": 43.192692001977136,
+        "pct_context_anatomy": 11.383926817686994,
+        "context_anatomy_cells": 8.634511976535766,
+        "context_tokens": 76.4109499755581,
+        "zero_anatomy_context_pct": 8.065830210200424,
+        "composition_source": "sweep"
+      },
+      {
+        "arm": "blob",
+        "auc_ep50": 0.8654,
+        "pct_anatomy_hidden": 82.0662494138952,
+        "pct_target_anatomy": 97.5011057324625,
+        "pct_context_anatomy": 6.2635448808140035,
+        "context_anatomy_cells": 9.966753585397653,
+        "context_tokens": 159.9973924380704,
+        "zero_anatomy_context_pct": 1.2385919165580181,
+        "composition_source": "arm_stats(n=1534)"
+      }
+    ]
+  },
+  "target_composition": {
+    "status": "MEASURED",
+    "source": "D:\\jepa_phase0\\reports\\target_composition\\summary.json",
+    "source_selector": "entries selected by arm",
+    "rows": [
+      {
+        "arm": "random",
+        "target_slots": 154.624,
+        "unique_target_cells": 111.008,
+        "target_background_pct": 65.21071428571429,
+        "context_tokens": 80.416,
+        "context_background_pct": 74.99910623651593,
+        "duplicate_slots_pct": 28.20778145695364
+      },
+      {
+        "arm": "oracle",
+        "target_slots": 154.624,
+        "unique_target_cells": 100.674,
+        "target_background_pct": 55.32791666666667,
+        "context_tokens": 91.704,
+        "context_background_pct": 81.9467981408812,
+        "duplicate_slots_pct": 34.89109064569536
+      },
+      {
+        "arm": "envelope",
+        "target_slots": 154.624,
+        "unique_target_cells": 118.314,
+        "target_background_pct": 52.08678571428571,
+        "context_tokens": 84.768,
+        "context_background_pct": 88.53613158932001,
+        "duplicate_slots_pct": 23.48277110927153
+      },
+      {
+        "arm": "anatomy_blob",
+        "target_slots": 64.0,
+        "unique_target_cells": 54.744,
+        "target_background_pct": 1.55,
+        "context_tokens": 163.016,
+        "context_background_pct": 92.5669897140169,
+        "duplicate_slots_pct": 14.4625
+      }
+    ]
+  },
+  "background_signal": {
+    "context_token_values": {
+      "status": "MEASURED",
+      "source": "D:\\jepa_phase0\\reports\\background_signal\\marginal_token_value.csv",
+      "rows": [
+        {"tag": "fork_ep25", "family": "random", "epoch": 25, "value_background": 0.00016866454237225137, "value_anatomy": 0.0010274632283289523, "anatomy_over_background": 6.091755942759373, "full_context_error": 0.08290260459816676},
+        {"tag": "random_ep50", "family": "random", "epoch": 50, "value_background": 0.00027758745895381824, "value_anatomy": 0.0018058437874293525, "anatomy_over_background": 6.505494860017389, "full_context_error": 0.11584218882223346},
+        {"tag": "random_ep75", "family": "random", "epoch": 75, "value_background": 0.0003907341255347967, "value_anatomy": 0.001610685722288958, "anatomy_over_background": 4.122203864544508, "full_context_error": 0.11924884352037164},
+        {"tag": "random_ep100", "family": "random", "epoch": 100, "value_background": 0.00040459682231654804, "value_anatomy": 0.0015938536986675586, "anatomy_over_background": 3.9393628687982156, "full_context_error": 0.11107870510221539},
+        {"tag": "oracle_ep50", "family": "oracle", "epoch": 50, "value_background": 0.00027650585303968237, "value_anatomy": 0.0015572563648538523, "anatomy_over_background": 5.631911034557249, "full_context_error": 0.10098477555925534},
+        {"tag": "oracle_ep75", "family": "oracle", "epoch": 75, "value_background": 0.0003565084270466227, "value_anatomy": 0.0019432999407855076, "anatomy_over_background": 5.450922876870372, "full_context_error": 0.1053837189777377},
+        {"tag": "oracle_ep100", "family": "oracle", "epoch": 100, "value_background": 0.0003733610712611408, "value_anatomy": 0.0017500197171671902, "anatomy_over_background": 4.687204563817983, "full_context_error": 0.0952205864837488},
+        {"tag": "envelope_ep30", "family": "envelope", "epoch": 30, "value_background": 0.00018501380371652743, "value_anatomy": 0.0012220129268118267, "anatomy_over_background": 6.604982451385942, "full_context_error": 0.08405812981170875},
+        {"tag": "envelope_ep50", "family": "envelope", "epoch": 50, "value_background": 0.0002653433464904706, "value_anatomy": 0.001241524453819394, "anatomy_over_background": 4.67893568932576, "full_context_error": 0.0860442002591124},
+        {"tag": "envelope_ep75", "family": "envelope", "epoch": 75, "value_background": 0.00035667873288550313, "value_anatomy": 0.0015645916015123924, "anatomy_over_background": 4.386557025295477, "full_context_error": 0.09619449188248494},
+        {"tag": "envelope_ep100", "family": "envelope", "epoch": 100, "value_background": 0.00030909746984252116, "value_anatomy": 0.0016549884653516028, "anatomy_over_background": 5.354260797394381, "full_context_error": 0.0912933368591528},
+        {"tag": "blob_ep30", "family": "anatomy", "epoch": 30, "value_background": 0.00031896382860139503, "value_anatomy": 0.0011257683489870624, "anatomy_over_background": 3.529454590269295, "full_context_error": 0.1048676068578898},
+        {"tag": "blob_ep40", "family": "anatomy", "epoch": 40, "value_background": 0.000980783687943344, "value_anatomy": 0.000978558819261743, "anatomy_over_background": 0.9977315398808614, "full_context_error": 0.22437283282309872},
+        {"tag": "blob_ep50", "family": "anatomy", "epoch": 50, "value_background": 0.0010851408698618773, "value_anatomy": 0.0009008352678404918, "anatomy_over_background": 0.8301551373280734, "full_context_error": 0.2711579536018538},
+        {"tag": "blob_ep56", "family": "anatomy", "epoch": 56, "value_background": 0.0013973936789183846, "value_anatomy": 0.0010300428203202918, "anatomy_over_background": 0.7371171316000006, "full_context_error": 0.2894607929523696}
+      ]
+    },
+    "position_baseline_skill": {
+      "status": "MEASURED",
+      "source": "D:\\jepa_phase0\\reports\\background_signal\\skill_scores.json",
+      "rows": [
+        {"tag": "fork_ep25", "epoch": 25, "background_skill_vs_position": 0.5849790573120117, "anatomy_skill_vs_position": 0.569136917591095},
+        {"tag": "random_ep100", "epoch": 100, "background_skill_vs_position": 0.6798094511032104, "anatomy_skill_vs_position": 0.6334153413772583},
+        {"tag": "oracle_ep100", "epoch": 100, "background_skill_vs_position": 0.6321108937263489, "anatomy_skill_vs_position": 0.648565411567688},
+        {"tag": "envelope_ep100", "epoch": 100, "background_skill_vs_position": 0.604257345199585, "anatomy_skill_vs_position": 0.628738522529602},
+        {"tag": "blob_ep50", "epoch": 50, "background_skill_vs_position": 0.13244187831878662, "anatomy_skill_vs_position": 0.2175227403640747}
+      ]
+    }
+  },
+  "downstream_region_auc": {
+    "status": "MEASURED",
+    "source": "D:\\jepa_phase0\\reports\\downstream_region_auc\\region_auc_summary.json",
+    "protocol": {
+      "train_volumes": 2000,
+      "validation_volumes": 600,
+      "test_volumes": 1000,
+      "slices_per_volume": 25,
+      "source": "docs\\experiments\\masking\\background_signal.md:276-357"
+    },
+    "rows": [
+      {"arm": "random_ep50", "all": 0.8608340834083408, "anatomy": 0.8746554655465547, "background": 0.8543614361436144},
+      {"arm": "oracle_ep50", "all": 0.8682588258825882, "anatomy": 0.8746474647464747, "background": 0.8652265226522653},
+      {"arm": "envelope_ep50", "all": 0.872991299129913, "anatomy": 0.8784438443844385, "background": 0.8700750075007501},
+      {"arm": "blob_ep50", "all": 0.8593499349934992, "anatomy": 0.8606020602060205, "background": 0.859049904990499}
+    ],
+    "top_three_arm_region_cells": [
+      {"rank": 1, "arm": "envelope_ep50", "region": "anatomy", "auc": 0.8784438443844385},
+      {"rank": 2, "arm": "random_ep50", "region": "anatomy", "auc": 0.8746554655465547},
+      {"rank": 3, "arm": "oracle_ep50", "region": "anatomy", "auc": 0.8746474647464747}
+    ]
+  },
+  "patch_attribution": {
+    "status": "MEASURED",
+    "source": "D:\\jepa_phase0\\reports\\patch_attribution\\*_attrib.json",
+    "derived_fields": {
+      "background_over_anatomy_per_patch": "per_patch_background / per_patch_anatomy",
+      "background_over_anatomy_total_abs": "total_abs_background / total_abs_anatomy"
+    },
+    "rows": [
+      {"arm": "random_ep50", "per_patch_anatomy": 0.000267926898316201, "per_patch_background": 0.0003402889764739215, "background_over_anatomy_per_patch": 1.2700814237483558, "background_over_anatomy_total_abs": 4.164559053831162, "auc_full": 0.8552495249524953, "auc_anatomy_contribution": 0.8638503850385038, "auc_background_contribution": 0.846960696069607, "anatomy_cells_fraction": 0.2336784765625},
+      {"arm": "oracle_ep50", "per_patch_anatomy": 0.0003279086644328305, "per_patch_background": 0.00038203831751350704, "background_over_anatomy_per_patch": 1.1650753973650019, "background_over_anatomy_total_abs": 3.8202474296275524, "auc_full": 0.8632143214321433, "auc_anatomy_contribution": 0.8642504250425043, "auc_background_contribution": 0.8594379437943793, "anatomy_cells_fraction": 0.2336784765625},
+      {"arm": "envelope_ep50", "per_patch_anatomy": 0.00033675319986336557, "per_patch_background": 0.0003584562523030406, "background_over_anatomy_per_patch": 1.064447947186488, "background_over_anatomy_total_abs": 3.490293026020823, "auc_full": 0.8652345234523453, "auc_anatomy_contribution": 0.8654025402540253, "auc_background_contribution": 0.8585938593859386, "anatomy_cells_fraction": 0.2336784765625},
+      {"arm": "blob_ep50", "per_patch_anatomy": 0.000415496960826063, "per_patch_background": 0.00035991248561185053, "background_over_anatomy_per_patch": 0.8662217044772045, "background_over_anatomy_total_abs": 2.8403150967747344, "auc_full": 0.8566496649664965, "auc_anatomy_contribution": 0.8464246424642463, "auc_background_contribution": 0.8556775677567756, "anatomy_cells_fraction": 0.2336784765625}
+    ],
+    "max_abs_logit_reconstruction_residual": 5.066394805908203e-07
+  },
+  "indirect_tissue_relation_evidence": {
+    "status": "MEASURED_INDIRECT",
+    "source": "docs\\experiments\\masking\\class_relations.md:68-91",
+    "metric": "inner-retina-versus-choroid relation discrimination AUC",
+    "rows": [
+      {"model": "MIRAGE_encoder", "auc": 0.9773},
+      {"model": "I_JEPA_envelope_ep100", "auc": 0.6945},
+      {"model": "I_JEPA_untrained", "auc": 0.8288}
+    ]
+  },
+  "verdict": {
+    "background_position_tokens_carry_readable_glaucoma_signal": {
+      "status": "MEASURED",
+      "confidence": "high within the stated regional-probe protocol",
+      "strongest_number": 0.8700750075007501,
+      "strongest_number_definition": "envelope ep50 background-only pooled test AUC"
+    },
+    "black_pixels_themselves_carry_glaucoma_signal": {
+      "status": "NOT_IDENTIFIED",
+      "confidence": "low",
+      "reasons": [
+        "ViT tokens globally mix image information.",
+        "Anatomy mask recall is 0.89340, allowing anatomy leakage.",
+        "No eroded-background or content-shuffle control has been completed."
+      ]
+    },
+    "anatomy_percentage_starvation_explains_blob": {
+      "status": "UNDERMINED",
+      "confidence": "low",
+      "reasons": [
+        "Blob has 9.9668 anatomy context cells versus envelope 8.6345.",
+        "Blob has the lowest zero-anatomy context rate at 1.2386%."
+      ]
+    },
+    "narrow_underconstrained_objective_and_predictor_shortcut_explain_blob": {
+      "status": "INFERRED",
+      "confidence": "moderate",
+      "reasons": [
+        "Blob uses 64 target slots versus 154.624 for rectangle arms.",
+        "Blob full-context error rises from 0.104868 at ep30 to 0.289461 at ep56.",
+        "Blob anatomy/background marginal token value falls from 3.529 to 0.737.",
+        "Blob emphasizes anatomy per patch but anatomy contribution AUC is below background contribution AUC."
+      ]
+    }
+  }
+}

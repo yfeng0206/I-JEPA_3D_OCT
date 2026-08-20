@@ -8,6 +8,7 @@ Start here if you are preparing the CVPR/NeurIPS-workshop submission. Generic MI
 2. [`comparison.md`](comparison.md) — arm-vs-arm evidence, including the ep30 AUC result and mask-budget decomposition.
 3. [`sampler_ablations.md`](sampler_ablations.md) — mass-cap, collation, coverage, region-growth, integration, and rejected sampler designs.
 4. [`adapter_ablations.md`](adapter_ablations.md) — cfg-7 sweep, guardrails, saturation, and AMP-vs-fp32 guide generation.
+5. [`crop_and_precision_audit.md`](crop_and_precision_audit.md) — audit of the `amp_target` teacher-precision and `enc_truncate: window` confounds that retract the COVER-then-RANDOM campaign result.
 
 ## Method
 
@@ -28,6 +29,11 @@ Start here if you are preparing the CVPR/NeurIPS-workshop submission. Generic MI
 
 - [`adapter_placement.md`](adapter_placement.md) — encoder/mid/H0 placement ablation.
 - [`class_relations.md`](class_relations.md) — MIRAGE-vs-I-JEPA tissue-class relationship probe.
+
+## Confound audit
+
+- [`crop_and_precision_audit.md`](crop_and_precision_audit.md) — `amp_target` teacher-precision defect, the `enc_truncate: window` confound, a retraction of the "crop is a local bug" claim, oracle-fallback feasibility, and the resulting retraction of the COVER-then-RANDOM campaign result.
+- [`cover_random_campaign.md`](cover_random_campaign.md) — the COVER-then-RANDOM run plan and completed result, now flagged non-comparable; see its RESULTS AND RETRACTION section.
 
 ## Compatibility stubs
 

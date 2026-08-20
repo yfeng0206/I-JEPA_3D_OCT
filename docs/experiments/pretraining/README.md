@@ -17,13 +17,23 @@ MIRAGE guidance alone is not the novelty. The `mirage_envelope` baseline already
 
 | Run | Mode | Init | Epochs | Status | Checkpoints now on disk | Downstream AUC |
 |---|---|---|---:|---|---|---|
-| [Random-init 100ep](random_100ep.md) | Random rectangles | Random | 100 | Completed baseline | Not re-verified in the current disk audit | Historic ep100: 0.8746 |
-| [Oracle anatomical 100ep](oracle_100ep.md) | `anatomical_prior` rectangles placed on a hand-crafted retina band | Warm-start random ep25 | 100 | Completed historic comparison | **No** — searched all of `D:` and checkpoints are no longer present | Historic ep100: 0.8855 |
+| [Random-init 100ep](random_100ep.md) | Random rectangles | Random | 100 | Completed baseline | **Yes** — `D:\jepa_phase0\checkpoints_hf\random-posfix-100ep\jepa_patch-ep{050,075,100}.pth.tar` (1437.7 MB each; all three load, keys `encoder/predictor/target_encoder/opt/scaler/epoch/loss/batch_size`) | Historic ep100: 0.8746 |
+| [Oracle anatomical 100ep](oracle_100ep.md) | `anatomical_prior` rectangles placed on a hand-crafted retina band | Warm-start random ep25 | 100 | Completed historic comparison | **Yes** — `D:\jepa_phase0\checkpoints_hf\oracle-anatomical-100ep\jepa_patch_oracle-ep{050,075,100}.pth.tar` (1437.7 MB each; all three load and report the expected `epoch` values) | Historic ep100: 0.8855 |
 | [MIRAGE envelope 100ep](envelope_100ep.md) | `mirage_envelope`: MIRAGE-placed rectangles | Warm-start random ep25 | 100 | Completed baseline | **Yes** — `D:\jepa_phase0\runs\patch_mirage_envelope\` has ep30,35,40,45,...,100 plus `resume-ep27.pth.tar` and `best` | Historic ep100: 0.8807; matched ep30: 0.8528 ± 0.0018 |
 | [MIRAGE anatomy ep30](anatomy_ep30.md) | `mirage_anatomy`: connected anatomy-shaped blobs | Warm-start envelope `resume-ep27.pth.tar` | 30 so far | Halted in ep32; last checkpoint ep30 | **Yes** — `D:\jepa_phase0\runs\patch_mirage_anatomy\` has `ep30.pth.tar` and `best.pth.tar` only | Matched ep30: 0.8582 ± 0.0003 |
 | Planned anatomy restart | `mirage_anatomy` with new adapter design | Warm-start random ep25 | Planned 100 | Planned, not run | No | Unknown |
 
 Shared completed-run config unless noted: ViT-B/16, peak LR 0.00025, warmup 5 epochs, EMA 0.996→1.0, effective batch 512, weight_decay 0.04→0.4 cosine, no early stopping.
+
+> **Correction (2026-08-19).** An earlier revision of this table recorded the
+> oracle checkpoints as deleted ("searched all of `D:` and checkpoints are no
+> longer present") and the random checkpoints as unverified. Both statements
+> were wrong: all six files are present under `D:\jepa_phase0\checkpoints_hf\`
+> and were re-verified by loading each one. The ep100 comparison is therefore
+> reproducible. The genuine limitation is **not** checkpoint availability but
+> the warm-start structure recorded in the `Init` column above: random is the
+> only cold-start arm, so every guided-vs-random contrast is confounded with
+> initialisation.
 
 ## Downstream comparisons
 

@@ -52,8 +52,8 @@ mask:
     # encoder anchored on some tissue.  tau is shared with the anatomy arm so
     # "what counts as anatomy" is defined identically across arms.
     anatomy_tau: 0.1
-    cover_leave_frac: 0.15
-    cover_min_visible_frac: 0.15
+    cover_leave_frac: 0.21
+    cover_min_visible_frac: 0.21
     cover_min_visible_cells: 4
     # Leftover blocks (those not needed for coverage) are placed as PLAIN
     # uniform I-JEPA rectangles rather than boundary-straddling transitions --
@@ -75,7 +75,22 @@ mask:
     # (78.8% hidden, unchanged): zero-anatomy context 14.38% -> 1.93%, and
     # anatomy-in-context 9.9% -> 12.5%.  No change to rectangle shape, size,
     # count, or the masking method.
-    enc_truncate: window
+    # enc_truncate: STOCK. `prefix` is what src/masks/multiblock.py does
+    # (`_truncate_and_stack`: min_len = min(t.numel()); t[:min_len]) and what
+    # random, oracle, envelope and blob were all trained under. It is stock
+    # I-JEPA behaviour, NOT a local defect.
+    #
+    # It does bias spatially: indices are row-major, so `t[:min_len]` keeps the
+    # TOP of the image and deletes the BOTTOM. Measured over 6,137 slices it
+    # removes 31-36% of encoder context in EVERY rectangle arm including plain
+    # random. At floor 0.21 this arm blanks on 7.84% of slices versus
+    # envelope's 8.07% (paired McNemar delta -0.23%, z = -0.6: same).
+    #
+    # The previous run set this to `window`, which picks the crop offset by
+    # argmax over the MIRAGE guide. That made it a SECOND anatomy-guided
+    # intervention and its AUC deficit could not be attributed. Do not re-enable
+    # it unless every comparison arm is retrained with it.
+    enc_truncate: prefix
 meta:
   model_name: vit_base
   pred_depth: 6
@@ -120,5 +135,5 @@ optimization:
   save_every: 5
   patience: 9999
 logging:
-  folder: D:\jepa_phase0\runs\cover_random_ep25
-  write_tag: jepa_patch_cover_random
+  folder: D:\jepa_phase0\runs\cover_f021_ep25
+  write_tag: jepa_patch_cover_f021

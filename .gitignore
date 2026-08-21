@@ -33,3 +33,9 @@ report.*.json
 
 # Regenerable sweep intermediates (adapter_sweep.py --sweep re-creates)
 results/**/*.npz
+# ...but per-volume predictions are evidence, not intermediates. They are the
+# only record of a run's per-sample output and cannot be regenerated without the
+# original checkpoint + dataset, so they must always be committed. Losing them
+# is what previously made cross-machine paired bootstrap tests impossible.
+!results/**/*_test_predictions.npz
+!results/**/*_val_predictions.npz

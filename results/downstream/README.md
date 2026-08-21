@@ -15,9 +15,11 @@ the eval, which made cross-machine paired comparisons impossible.
 | `*_results.json` | test AUC, sensitivity, specificity, best epoch, full resolved config |
 | `*_config.yaml` | the eval config as run |
 | `*_train_log.csv` | per-epoch probe training curve |
+| `*_best_model.pt` | **the trained classifier itself** — probe + head weights (and the fine-tuned encoder, for fine-tune runs) |
 
 Written automatically by `src/eval_downstream.py` (frozen probe: line ~706;
-fine-tune: line ~1333). Model weights (`*.pt`) are gitignored and stay local.
+fine-tune: line ~1333). The `*.pt` files are gitignored (too large) and live
+locally plus on Hugging Face — see "Trained classifier heads" below.
 
 ### Arms
 
@@ -46,6 +48,52 @@ request access):
 
 `MANIFEST.json` there records sha256, epoch and original run path per file, so a
 prediction file here traces to the exact encoder that produced it.
+
+## Trained classifier heads
+
+Each run also saved its trained classifier as `*_best_model.pt` — the weights
+selected at the best-val-AUC epoch. These are what turn a pretrained encoder
+into an actual glaucoma classifier, and they are published alongside the
+encoders under `downstream-heads/` in the Hugging Face repo.
+
+**Frozen runs** store only `probe` + `head`. The MeanPool probe has **zero**
+parameters, so the entire trained frozen classifier is a LayerNorm + Linear over
+768 dims — **2,305 parameters, 11 KB**:
+
+```python
+{'epoch', 'probe', 'head', 'val_auc', 'val_loss'}
+head: norm.weight (768,)  norm.bias (768,)  linear.weight (1,768)  linear.bias (1,)
+```
+
+**Fine-tune runs** additionally bundle the fine-tuned encoder (85.8M params), so
+those files are self-contained end-to-end models (~330–355 MB).
+
+Inference path, identical to `eval_downstream.py`:
+
+```
+volume (S,3,256,256)
+  -> imagenet_normalize -> encoder -> mean over patch tokens   (S, 768)
+  -> probe (MeanPool = mean over slices)                       (768,)
+  -> head: LayerNorm -> Linear -> sigmoid                      P(glaucoma)
+```
+
+Use `scripts/load_classifier.py` to inspect a head or score volumes end to end:
+
+```bash
+# inspect (no data needed)
+python scripts/load_classifier.py \
+  --head results/downstream/meanpool_sweep_oracle/ep100_best_model.pt
+
+# score, and check against the published predictions
+python scripts/load_classifier.py \
+  --head    results/downstream/meanpool_sweep_oracle/ep100_best_model.pt \
+  --encoder results/pretraining/pretrain_oracle_anatomical/jepa_patch_oracle-ep100.pth.tar \
+  --data-dir <FairVision root> --split Test \
+  --expect-npz results/downstream/meanpool_sweep_oracle/ep100_test_predictions.npz
+```
+
+Every head's stored `val_auc` was checked against its `results.json` — 12/12
+match exactly, so a head file can be traced to the published number it produced.
 
 ## Running a paired comparison
 

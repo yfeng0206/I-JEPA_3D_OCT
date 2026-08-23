@@ -21,7 +21,7 @@
 % number below is typed by hand, so prose, tables and figures cannot disagree.
 \input{auto/auto_numbers}
 
-\title{Location, Not Shape: A Controlled Study of Anatomy-Guided\\
+\title{Location Beats Shape: A Controlled Comparison of Anatomy-Guided\\
 Masking for Joint-Embedding Predictive Pretraining\\
 on Retinal OCT}
 
@@ -44,7 +44,7 @@ tissue improves AUC by $\DEnvelopeRandomEpFifty$ over unguided masking at the
 matched epoch (95\% CI $\DEnvelopeRandomEpFiftyCI$), and a band located by a
 first-order intensity statistic improves it by $\DOracleRandomEpHundred$ at
 epoch 100 ($\DOracleRandomEpHundredCI$, $p\,\DOracleRandomEpHundredP$). All six
-pre-specified contrasts against the null, at all three epochs, exclude zero. But
+contrasts against the null, at all three epochs, exclude zero. But
 anatomical \emph{precision} does not help. A policy that places $97\%$ of masked
 patches on tissue, using a trained retinal segmentation model to shape the
 targets, is \emph{indistinguishable from unguided masking} at the matched epoch
@@ -659,8 +659,9 @@ $\DEnvelopeRandomEpFifty$ at the matched epoch, while shaping targets to trace
 the segmented retina, or maximising anatomy coverage, left performance
 indistinguishable from not guiding at all; and the best policy consulted no
 segmentation model. Mask geometry is uncorrelated with how much anatomy is
-hidden, and a subgroup audit over \NprobesSub{} probes shows the gains do not
-reach the groups or the disease stage that need them most. We suggest the
+hidden, and a subgroup audit over \NprobesSub{} probes shows every group and
+every disease stage improving --- mild disease most of all --- while the
+difficulty ordering between them is untouched. We suggest the
 operative variable is the consistency of the predictive task rather than its
 anatomical correctness, and will release weights and the reproduction protocol.
 
@@ -890,7 +891,7 @@ an illusion of symmetry.
 \includegraphics[width=0.92\linewidth]{interp_14_odos_mirror_test.png}
 \caption{The two-peak structure is an OD/OS storage artefact. Clustering
 per-volume attribution curves into two groups returns near-perfect mirror images
-of one another, which is the direct signature of laterality flipping rather than
+of one another, which is what laterality flipping would produce, rather than
 bilateral anatomy.}
 \label{fig:interp-odos}
 \end{figure}
@@ -948,7 +949,7 @@ not evidence of clinical utility.
 
 The subgroup analysis in Section~\ref{sec:subgroup} is a caution, not a
 contribution. Every masking policy we tested leaves the same groups worst-served,
-and the best-performing policy does not close any gap. We would regard deployment
+and the best-performing policy narrows none of them reliably, even though every subgroup point estimate rises. We would regard deployment
 of any encoder reported here, without a dedicated and prospective fairness
 evaluation on the target population, as inappropriate. We also stress that the
 audit is AUC-only: it contains no subgroup calibration, no sensitivity at a fixed
@@ -1009,7 +1010,9 @@ masking policy as the only difference.
 \caption{Primary contrasts: matched epoch \emph{and} matched precision. $\Delta$
 is a paired difference on identical test cases; the interval is a
 \Nboot-resample paired bootstrap and $p$ is a DeLong test for correlated ROC
-curves. $q$ is Benjamini--Hochberg over these nine pre-specified contrasts. Every
+curves. $q$ is Benjamini--Hochberg over these nine contrasts. Because the test split was
+inspected repeatedly across this programme, we read all $p$ and $q$ values here as
+descriptive rather than confirmatory. Every
 comparison against the null excludes zero.}
 \label{tab:contrasts}
 \small

@@ -1,10 +1,10 @@
 # CURRENT STATUS
 
-Updated: **2026-08-22T23:41:02-07:00**
+Updated: **2026-08-23T12:48:40-07:00**
 Run started: 2026-08-22T18:30:39-07:00
 
 ## Current phase
-**P3+P9+P10** - GPU fp32 queue running; manuscript integrated; 4 agents active (style, relwork, numverify, review-r1)
+**P-B-training** - COVER ep79/100, healthy; review round 2 running; Phase C pre-validated
 
 ## Completed work
 - [P0-01] Inventory checkpoints, predictions, protocols
@@ -29,7 +29,7 @@ Run started: 2026-08-22T18:30:39-07:00
 - [SCHED-01] Stop obsolete COVER pretraining monitor schedule (conflicts with no-pretraining boundary)
 
 ## Active subagents
-- (none)
+- `082216f7-c015-49a5-beb3-dfb5e48dae0f` gpt-5.6-sol-xhigh - P12-mock-review-round2 (last heartbeat 2026-08-23T12:48:39-07:00)
 
 ## Active processes
 - `gpu-queue` pid=25120 python gpu_queue.py (4 guarded frozen probes: envelope fp32 ep100/50/75, cover ep73)
@@ -37,9 +37,9 @@ Run started: 2026-08-22T18:30:39-07:00
 - `gpu-queue2` pid=14428 gpu_queue2.py -> meanpool_random_ep100_fp32
 
 ## Resources
-- GPU: util 100%, 77 C, 9122 / 24576 MiB (37.1%)
-- RAM: 20.0 / 34.3 GB used (58%)
-- Disk: C 20.5 GB free (8.2%); D 734.5 GB free (36.7%)
+- GPU: util 98%, 78 C, 19938 / 24576 MiB (81.1%)
+- RAM: 33.5 / 34.3 GB used (97%)
+- Disk: C 20.2 GB free (8.1%); D 717.6 GB free (35.9%)
 
 ## Blockers
 - (none)

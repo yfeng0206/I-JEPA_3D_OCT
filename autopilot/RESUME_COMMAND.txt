@@ -1,5 +1,5 @@
 # How to resume this autopilot run
-# Generated 2026-08-22T23:41:02-07:00
+# Generated 2026-08-23T12:48:40-07:00
 
 # 1. Restart the resource monitor (if not running):
 powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\Gary\Desktop\jepa\autopilot\resource_monitor.ps1 -IntervalSec 45

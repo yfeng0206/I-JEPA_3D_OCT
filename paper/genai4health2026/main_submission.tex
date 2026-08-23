@@ -337,8 +337,12 @@ not an established ranking over retrainings (Section~\ref{sec:limits}).
 All arms continue from one epoch-25 ancestor (AUC $\AUCAncestor$). $\Delta$ is
 versus \textsc{random} at the \emph{matched} epoch. The upper block is
 precision-matched (fp16 throughout) and carries every headline claim. The lower
-block is fp32 and its $\Delta$ is taken against an fp32 null re-probed for that
-comparison, so those rows are matched on epoch and precision too.}
+block is fp32. Its epoch-50 $\Delta$ is taken against an fp32 null re-probed for
+that comparison and is matched on epoch and precision. The \textsc{cover}
+epoch-75 $\Delta$ is marked $\ddagger$: no fp32 null exists at that epoch yet, so
+it is matched on epoch only. The measured fp16/fp32 gap is at most
+$2\times10^{-4}$ (Appendix~\ref{app:fp32}), some forty times below that
+$\Delta$.}
 \label{tab:main}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -353,7 +357,7 @@ policy & guidance signal & AUC & $\Delta$ & AUC & $\Delta$ & AUC & $\Delta$ \\
 \textsc{intensity}   & intensity centroid, no segmenter & \AUCOracleEpFifty   & $\mathbf{\DOracleRandomEpFifty}$   & \AUCOracleEpSeventyFive   & $\mathbf{\DOracleRandomEpSeventyFive}$   & \textbf{\AUCOracleEpHundred} & $\mathbf{\DOracleRandomEpHundred}$ \\
 \midrule
 \textsc{anatomy-v2} & segmenter (target shape) & \AUCAnatomyTwoEpFifty & \DAnatomyTwoRandomEpFifty & --- & --- & --- & --- \\
-\textsc{cover} $f{=}.21$ & segmenter (coverage) & \AUCCoverEpFifty & \DCoverRandomEpFifty & \AUCCoverEpSeventyFive & $\mathbf{\DCoverRandomEpSeventyFive}$ & \ph{pending} & \ph{pending} \\
+\textsc{cover} $f{=}.21$ & segmenter (coverage) & \AUCCoverEpFifty & \DCoverRandomEpFifty & \AUCCoverEpSeventyFive & $\mathbf{\DCoverRandomEpSeventyFive}^{\ddagger}$ & \ph{pending} & \ph{pending} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -534,14 +538,20 @@ improves \emph{every} race stratum over the null --- black
 $\RaceRandomBlack \to \RaceOracleBlack$ ($\BlackGainOracle$, a larger gain than
 white's $\RaceRandomWhite \to \RaceOracleWhite$) --- and the max--min gap widens
 only because the already-best asian subgroup gains most. Nor is there a
-defensible gap \emph{trend}: the race gap correlates with aggregate AUC at
-$\rho=\SubRaceRho$ ($p=\SubRaceRhoP$) across checkpoints, but this fails
-Benjamini--Hochberg correction over the seven attributes tested
-($q=\SubRaceQ$) and vanishes when pseudo-replication is removed by averaging
-within each of the \NbranchesSub{} branches ($\rho=\SubRaceBranchRho$,
-$p=\SubRaceBranchP$). The only gaps that survive both are sex and severity, and
-both \emph{narrow}. We do not claim that better masking harms any group, and we
-do not claim it helps equity either.
+defensible gap \emph{trend}. Across checkpoints the race gap correlates with
+aggregate AUC at $\rho=\SubRaceRho$ ($p=\SubRaceRhoP$, $q=\SubRaceQ$ after
+Benjamini--Hochberg over the seven attributes tested), but those checkpoints are
+not independent: they are \NprobesSub{} probes drawn from only \NbranchesSub{}
+pretraining branches, so a branch probed at four epochs contributes four
+correlated points. Collapsing to one point per branch, the association
+disappears ($\rho=\SubRaceBranchRho$, $p=\SubRaceBranchP$). We therefore treat
+the checkpoint-level correlation as pseudo-replicated and make no claim that
+better models are less fair. The same holds for severity in the opposite
+direction ($\rho=\SubSeverityRho$ per checkpoint, $\SubSeverityBranchRho$ per
+branch). Only the sex gap is consistent across both views, and it \emph{narrows}
+($q=\SubGenderQ$; branch-level $\rho=\SubGenderBranchRho$,
+$p=\SubGenderBranchP$). We do not claim that better masking harms any group, and
+we do not claim it helps equity either.
 
 \paragraph{Early disease improves, but stays hard.} Scoring each severity
 stratum against the shared pool of all negatives, the strongest policy improves
@@ -666,37 +676,16 @@ Table~\ref{tab:allprobes} lists every frozen MeanPool probe in the study.
 
 \begin{table}[h]
 \centering
-\caption{All frozen probes. Protocol identical throughout: FairVision test
-$N{=}3000$, seed 42, frozen encoder, MeanPool + LayerNorm + Linear.}
+\caption{Every frozen probe in the study, including runs excluded from the
+analysis and the reasons. Protocol is identical throughout except where the
+precision column says otherwise: FairVision test $N{=}\Ntest$, seed 42, frozen
+encoder, MeanPool + LayerNorm + Linear. ``Precision'' is the probe-time
+numerical precision, inferred from the stored prediction dtype, and is distinct
+from the pretraining target precision discussed in
+Appendix~\ref{app:excluded}.}
 \label{tab:allprobes}
-\small
-\begin{tabular}{llcc}
-\toprule
-policy & epoch & test AUC & target precision \\
-\midrule
-ancestor (\textsc{random} @ep25) & 25 & 0.848680 & fp32 \\
-\textsc{random}   & 50 & 0.864097 & fp32 \\
-\textsc{random}   & 75 & 0.872302 & fp32 \\
-\textsc{random}   & 100 & 0.874581 & fp32 \\
-\textsc{intensity}   & 50 & 0.874030 & fp32 \\
-\textsc{intensity}   & 75 & 0.883636 & fp32 \\
-\textsc{intensity}   & 100 & \textbf{0.885485} & fp32 \\
-\textsc{envelope} & 30 & 0.853917 & fp32 \\
-\textsc{envelope} & 50 & 0.876064 & fp32 \\
-\textsc{envelope} & 75 & 0.880307 & fp32 \\
-\textsc{envelope} & 100 & 0.880743 & fp32 \\
-\textsc{anatomy-v1} & 30 & 0.858274 & fp32 \\
-\textsc{anatomy-v2} & 35 & 0.866129 & fp32 \\
-\textsc{anatomy-v2} & 40 & 0.868251 & fp32 \\
-\textsc{anatomy-v2} & 50 & 0.865386 & fp32 \\
-\textsc{anatomy-v2} & 75 & 0.862492 & fp16 (confounded) \\
-\textsc{anatomy-v2} & 92 & 0.860364 & fp16 (confounded) \\
-\textsc{cover} $f{=}.21$ & 27 & 0.848347 & fp32 \\
-\textsc{cover} $f{=}.21$ & 30 & 0.852249 & fp32 \\
-\textsc{cover} $f{=}.21$ & 34 & 0.857083 & fp32 \\
-\textsc{cover} $f{=}.21$ & 50 & 0.864281 & fp32 \\
-\bottomrule
-\end{tabular}
+\footnotesize
+\input{auto/table_allprobes}
 \end{table}
 
 \section{Masking policies across the volume}

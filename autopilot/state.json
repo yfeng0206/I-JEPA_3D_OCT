@@ -1,7 +1,7 @@
 {
  "started": "2026-08-22T18:30:39-07:00",
- "phase": "P3+P9+P10",
- "phase_note": "GPU fp32 queue running; manuscript integrated; 4 agents active (style, relwork, numverify, review-r1)",
+ "phase": "P-B-training",
+ "phase_note": "COVER ep79/100, healthy; review round 2 running; Phase C pre-validated",
  "tasks": {
   "P0-01": {
    "status": "done",
@@ -371,6 +371,19 @@
    "verification": "accepted",
    "next_action": "round-2-after-fixes",
    "last_heartbeat": "2026-08-22T20:01:45-07:00"
+  },
+  "082216f7-c015-49a5-beb3-dfb5e48dae0f": {
+   "retries": 0,
+   "model": "gpt-5.6-sol-xhigh",
+   "task": "P12-mock-review-round2",
+   "start": "2026-08-23T12:55-07:00",
+   "expected": "2026-08-23T14:30-07:00",
+   "status": "running",
+   "output": "autopilot/reports/P12_mock_review_round2.md",
+   "deps": "P11",
+   "verification": "meta",
+   "next_action": "await-report",
+   "last_heartbeat": "2026-08-23T12:48:39-07:00"
   }
  },
  "procs": {
@@ -494,9 +507,14 @@
    "time": "2026-08-22T23:41:02-07:00",
    "decision": "Cancel the ep75 fp32 re-probes; keep ep50 and the completed ep100",
    "rationale": "Operator challenged whether the ep50/ep75 fp32 probes were needed. Checking p1c_stats.json, every cross-precision contrast in the manuscript sits at epoch 50: anatomy-v2 and cover-f021 exist only at fp32 and are compared there against an fp16 null, producing six confounded contrasts. At epochs 75 and 100 only random, intensity and envelope exist and all three are already fp16, so no confound exists to remove and an fp32 re-probe would only re-confirm a precision effect the completed ep100 trio already measured at 1e-6 to 2e-4. The ep50 trio is therefore kept because it converts the H2 comparison from confounded to precision-matched; the ep75 pair is cancelled, saving roughly 2.5 GPU hours for zero claim. The envelope ep75 probe already running is allowed to finish because most of its cost is sunk and it yields a third fp16/fp32 pair. Queue 1 is untouched so the COVER epoch-73 probe still runs, since that is new evidence rather than replication."
+  },
+  {
+   "time": "2026-08-23T12:48:40-07:00",
+   "decision": "Phase C verified ready by config diff before it runs, rather than discovering a fault when Phase B ends",
+   "rationale": "chain_blob_fp32.py has never executed, and a failure would surface at about 08:00 on 24 August when Phase B releases the GPU, wasting the window. Dry run confirms: the epoch-56 seed exists, campaign_supervisor accepts the argument list (val_baseline_json and baseline_epoch_s are optional), and the generated config differs from configs/patch_anatomy_v2.yaml in exactly 4 of 62 flattened keys, all intended: logging.folder, logging.write_tag, meta.read_checkpoint, meta.amp_target=False. The entire mask section is identical, so the rerun differs from the contaminated original only in EMA-target precision, which is precisely the controlled comparison intended."
   }
  ],
- "updated": "2026-08-22T23:41:02-07:00",
+ "updated": "2026-08-23T12:48:40-07:00",
  "eta": "Final validated ZIP: 2026-08-24 16:00 PDT to 2026-08-25 12:00 PDT",
  "zip_status": "DRAFT_v2 validated 6/6, main content exactly 9 pages, 11.87MB (limit 50MB)"
 }

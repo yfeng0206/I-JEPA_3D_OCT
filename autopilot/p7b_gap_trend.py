@@ -16,6 +16,7 @@ Output -> D:/jepa_phase0/autopilot_out/p1_stats/p7b_gap_trend.json
 """
 import json
 import os
+import re
 import numpy as np
 from scipy import stats as sps
 
@@ -84,8 +85,7 @@ def main():
                                      "matched-epoch arm comparison.",
            "trends": {}, "worst_group_consistency": {}, "rows": rows}
 
-    auc = np.array([r["overall_auc"] for r in rows])
-    print("n probes retained: %d   (dropped %d)" % (len(rows), len(dropped)))
+    print("n probes retained before dedup: %d   (dropped %d)" % (len(rows), len(dropped)))
     for n, why in dropped:
         print("   dropped %-34s %s" % (n, why))
 
@@ -93,17 +93,59 @@ def main():
     # Several rows are different epochs of ONE training branch. Treating them as
     # independent points inflates n from 7 branches to 19 checkpoints. We report
     # both, and treat the branch-level figure as the honest one.
+    #
+    # Order matters: the more specific keys must be tested first, because
+    # e.g. "frozen_meanpool_oracle_ep100_fp32" contains "oracle" but is not a
+    # "sweep_oracle" directory.
     def branch_of(name):
         n = name.lower()
         for key, arm in (("cover_f021", "cover-f021"), ("bridge", "anatomy-v2"),
-                         ("anatomy", "anatomy-v1"), ("fork", "ancestor"),
-                         ("envelope", "envelope"), ("mirage", "envelope"),
-                         ("sweep_oracle", "oracle"), ("sweep_random", "random")):
+                         ("blob_fp32", "anatomy-v2"), ("anatomy", "anatomy-v1"),
+                         ("fork", "ancestor"), ("envelope", "envelope"),
+                         ("mirage", "envelope"), ("oracle", "oracle"),
+                         ("random", "random")):
             if key in n:
                 return arm
         return n
+
+    def epoch_of(name):
+        m = re.search(r"ep(\d+)", name.lower())
+        return int(m.group(1)) if m else -1
+
     for r in rows:
         r["branch"] = branch_of(r["probe"])
+        r["epoch"] = epoch_of(r["probe"])
+
+    # ---- collapse technical duplicates -------------------------------------
+    # An fp32 re-probe and its fp16 original are the SAME frozen encoder scored
+    # twice at different probe precision. Counting both inflates n, invents
+    # spurious "branches", and shifts every correlation. Keep exactly one probe
+    # per (branch, epoch), preferring the fp16 original because that is the run
+    # the manuscript reports.
+    best = {}
+    dup = []
+    for r in rows:
+        k = (r["branch"], r["epoch"])
+        if k not in best:
+            best[k] = r
+        else:
+            keep, drop = (best[k], r) if "fp32" not in best[k]["probe"] else (r, best[k])
+            best[k] = keep
+            dup.append((drop["probe"], "same encoder as %s" % keep["probe"]))
+    if dup:
+        rows = sorted(best.values(), key=lambda r: r["overall_auc"])
+        out["n_probes"] = len(rows)
+        out["rows"] = rows
+        out["collapsed_duplicates"] = dup
+        print("\ncollapsed %d technical duplicates (same encoder, different probe precision):" % len(dup))
+        for a, why in dup:
+            print("   %-38s %s" % (a, why))
+
+    # AUC vector must be built AFTER the dedup, or the boolean masks below
+    # index a stale array.
+    auc = np.array([r["overall_auc"] for r in rows])
+    print("\nn probes used: %d   branches: %d"
+          % (len(rows), len(set(r["branch"] for r in rows))))
 
     print("\n%-14s %8s %8s %8s   %-24s %s" %
           ("attribute", "rho", "p", "q(BH7)", "worst group", "gap range"))

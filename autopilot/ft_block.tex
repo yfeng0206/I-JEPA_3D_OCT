@@ -1,0 +1,11 @@
+\section{Fine-tuning narrows but does not erase the gap}
+
+Under full fine-tuning rather than a frozen probe, \textsc{intensity} reaches
+$\FTOracleMeanpool$ (mean-pool head) against \textsc{random}'s
+$\FTRandomMeanpool$, a gap of $\FTDelta$ compared with $\DOracleRandomEpHundred$
+frozen. Taking each arm's best head instead, the gap is $\FTDeltaBest$. The
+pretraining difference is partially, but not entirely, absorbed by supervised
+adaptation --- consistent with the masking policy shaping the representation
+rather than merely the optimisation start point. These runs used a different
+head and schedule from the frozen probes and are never pooled with them.
+

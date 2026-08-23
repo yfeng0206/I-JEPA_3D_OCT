@@ -176,7 +176,14 @@ def make_blob_cfg():
     base = yaml.safe_load((REPO / "configs" / "patch_anatomy_v2.yaml").read_text())
     base["meta"]["read_checkpoint"] = str(BLOB_SEED)
     base["meta"]["load_checkpoint"] = True
-    base["meta"]["amp_target"] = True
+    # BUG FIX 2026-08-23: this line previously read `amp_target = True`, which
+    # silently overrode the YAML and computed EMA targets in fp16 from the resume
+    # onward. train_patch.py:482 defaults amp_target to False, so the config's
+    # intent was always fp32. The override is what spliced target precision at
+    # epoch 56 and forced the anatomy-v2 epoch-75 and epoch-92 probes to be
+    # excluded from every matched-epoch comparison in the paper. Set explicitly
+    # rather than omitted so the intent is unambiguous to the next reader.
+    base["meta"]["amp_target"] = False
     base["optimization"]["epochs"] = 100
     base["logging"]["folder"] = str(BLOB_RUN)
     base["logging"]["write_tag"] = BLOB_TAG

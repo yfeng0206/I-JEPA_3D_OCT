@@ -487,17 +487,6 @@ asks the encoder to represent the same region of the image. This suggests a
 mechanism other than anatomical correctness --- consistency of the predictive
 task --- which we return to in Section~\ref{sec:limits}.
 
-\subsection{Fine-tuning narrows but does not erase the gap}
-
-Under full fine-tuning rather than a frozen probe, \textsc{intensity} reaches
-$\FTOracleMeanpool$ (mean-pool head) against \textsc{random}'s
-$\FTRandomMeanpool$, a gap of $\FTDelta$ compared with $\DOracleRandomEpHundred$
-frozen. Taking each arm's best head instead, the gap is $\FTDeltaBest$. The
-pretraining difference is partially, but not entirely, absorbed by supervised
-adaptation --- consistent with the masking policy shaping the representation
-rather than merely the optimisation start point. These runs used a different
-head and schedule from the frozen probes and are never pooled with them.
-
 \subsection{Subgroup analysis}
 \label{sec:subgroup}
 
@@ -599,12 +588,14 @@ quantify seed-to-seed variance of pretraining. With $n{=}1$ continuation per arm
 the \emph{ranking} is not statistically established even where individual
 pairwise differences are significant on this test set.
 \citet{bouthillier2021variance} show that single-seed comparisons routinely
-mistake optimisation noise for method effects, and that the variance that matters
-is the one induced by re-running training, not by resampling the test set. That
-is precisely the variance we cannot measure here. This is the principal
-limitation of the study, it applies to every arm comparison we report, and the
-single most valuable follow-up is a seed replicate of the two policies that
-separate from the null.
+mistake optimisation noise for method effects. We can bound one component: with
+five probe seeds on two fixed encoders the probe-seed standard deviation is
+$0.0003$ and $0.0018$, and the arms stay fully separated across all five, so
+probe noise is an order of magnitude below the effects in
+Table~\ref{tab:main}. Those are \emph{technical} replicates and do not estimate
+pretraining noise, which would need at least three paired continuations from the
+shared checkpoint with the continuation as the unit of replication. That is the
+single most valuable follow-up and we do not claim its result in advance.
 
 \paragraph{Scope, coverage and an incomplete arm.}
 All results are glaucoma classification from FairVision OCT; generality to other
@@ -636,13 +627,12 @@ a shared ancestor checkpoint, guidance helped --- but anatomical precision did
 not. Restricting targets to retinal tissue improved AUC over unguided masking by
 $\DEnvelopeRandomEpFifty$ at the matched epoch, while shaping targets to trace
 the segmented retina, or maximising anatomy coverage, left performance
-indistinguishable from not guiding at all; and the best policy in the study
-consulted no segmentation model. Direct measurement of mask geometry shows the
-ordering is uncorrelated with how much anatomy is hidden, and a subgroup audit
-over \NprobesSub{} probes shows the gains do not reach the groups or the disease
-stage that need them most. We suggest the operative variable may be the
-consistency of the predictive task rather than its anatomical correctness, and we
-will release weights and the reproduction protocol so the claim can be checked.
+indistinguishable from not guiding at all; and the best policy consulted no
+segmentation model. Mask geometry is uncorrelated with how much anatomy is
+hidden, and a subgroup audit over \NprobesSub{} probes shows the gains do not
+reach the groups or the disease stage that need them most. We suggest the
+operative variable is the consistency of the predictive task rather than its
+anatomical correctness, and will release weights and the reproduction protocol.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
@@ -1066,6 +1056,18 @@ unchanged, so no result here can be contaminated by an accidental encoder
 update.
 
 \ph{fp32 re-probe table pending}
+
+\section{Fine-tuning narrows but does not erase the gap}
+
+Under full fine-tuning rather than a frozen probe, \textsc{intensity} reaches
+$\FTOracleMeanpool$ (mean-pool head) against \textsc{random}'s
+$\FTRandomMeanpool$, a gap of $\FTDelta$ compared with $\DOracleRandomEpHundred$
+frozen. Taking each arm's best head instead, the gap is $\FTDeltaBest$. The
+pretraining difference is partially, but not entirely, absorbed by supervised
+adaptation --- consistent with the masking policy shaping the representation
+rather than merely the optimisation start point. These runs used a different
+head and schedule from the frozen probes and are never pooled with them.
+
 
 \section{Fine-tuned results}
 

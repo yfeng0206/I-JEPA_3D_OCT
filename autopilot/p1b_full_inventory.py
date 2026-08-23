@@ -50,11 +50,10 @@ SPECS = [
     (os.path.join(RUNS, "frozen_meanpool_bridge_ep50", "test_predictions.npz"), "anatomy-v2", "frozen_probe", "primary"),
     (os.path.join(RUNS, "frozen_meanpool_bridge_ep75", "test_predictions.npz"), "anatomy-v2", "frozen_probe", "excluded"),
     (os.path.join(RUNS, "frozen_meanpool_bridge_ep92", "test_predictions.npz"), "anatomy-v2", "frozen_probe", "excluded"),
-    (os.path.join(RUNS, "frozen_meanpool_cover_f021_ep27", "test_predictions.npz"), "cover-f021", "frozen_probe", "primary"),
-    (os.path.join(RUNS, "frozen_meanpool_cover_f021_ep30", "test_predictions.npz"), "cover-f021", "frozen_probe", "primary"),
-    (os.path.join(RUNS, "frozen_meanpool_cover_f021_ep34", "test_predictions.npz"), "cover-f021", "frozen_probe", "primary"),
-    (os.path.join(RUNS, "frozen_meanpool_cover_f021_ep50", "test_predictions.npz"), "cover-f021", "frozen_probe", "primary"),
-    (os.path.join(RUNS, "frozen_meanpool_cover_f021_ep73", "test_predictions.npz"), "cover-f021", "frozen_probe", "primary"),
+    (os.path.join(RUNS, "frozen_meanpool_cover_f021_ep*", "test_predictions.npz"), "cover-f021", "frozen_probe", "primary"),
+    # ---- clean fp32 blob/anatomy-v2 continuation (Phase C), replaces the
+    # precision-spliced ep75/ep92 probes listed as excluded below
+    (os.path.join(RUNS, "frozen_meanpool_blob_fp32_ep*", "test_predictions.npz"), "anatomy-v2", "frozen_probe", "primary"),
     # ---- fp32 re-probes produced by this autopilot run ----
     (os.path.join(RUNS, "frozen_meanpool_envelope_fp32_ep*", "test_predictions.npz"), "envelope", "frozen_probe", "primary"),
     (os.path.join(RUNS, "frozen_meanpool_oracle_ep*_fp32", "test_predictions.npz"), "oracle", "frozen_probe", "primary"),

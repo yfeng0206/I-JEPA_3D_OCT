@@ -1,0 +1,488 @@
+\begin{thebibliography}{48}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Assran et~al.(2023)Assran, Duval, Misra, Bojanowski, Vincent, Rabbat,
+  LeCun, and Ballas]{assran2023ijepa}
+Mahmoud Assran, Quentin Duval, Ishan Misra, Piotr Bojanowski, Pascal Vincent,
+  Michael Rabbat, Yann LeCun, and Nicolas Ballas.
+\newblock Self-supervised learning from images with a joint-embedding
+  predictive architecture.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition}, pages 15619--15629, 2023.
+\newblock \doi{10.1109/CVPR52729.2023.01499}.
+
+\bibitem[Azizi et~al.(2021)Azizi, Mustafa, Ryan, Beaver, Freyberg, Deaton, Loh,
+  Karthikesalingam, Kornblith, Chen, et~al.]{azizi2021big}
+Shekoofeh Azizi, Basil Mustafa, Fiona Ryan, Zachary Beaver, Jan Freyberg,
+  Jonathan Deaton, Aaron Loh, Alan Karthikesalingam, Simon Kornblith, Ting
+  Chen, et~al.
+\newblock Big self-supervised models advance medical image classification.
+\newblock In \emph{Proceedings of the IEEE/CVF International Conference on
+  Computer Vision}, 2021.
+
+\bibitem[Baevski et~al.(2022)Baevski, Hsu, Xu, Babu, Gu, and
+  Auli]{baevski2022data2vec}
+Alexei Baevski, Wei-Ning Hsu, Qiantong Xu, Arun Babu, Jiatao Gu, and Michael
+  Auli.
+\newblock data2vec: A general framework for self-supervised learning in speech,
+  vision and language.
+\newblock In \emph{Proceedings of the 39th International Conference on Machine
+  Learning}, volume 162 of \emph{Proceedings of Machine Learning Research},
+  pages 1298--1312. PMLR, 2022.
+\newblock URL \url{https://proceedings.mlr.press/v162/baevski22a.html}.
+
+\bibitem[Balestriero and LeCun(2025)]{balestriero2025lejepa}
+Randall Balestriero and Yann LeCun.
+\newblock {LeJEPA}: Provable and scalable self-supervised learning without the
+  heuristics, 2025.
+\newblock URL \url{https://arxiv.org/abs/2511.08544}.
+
+\bibitem[Bao et~al.(2022)Bao, Dong, Piao, and Wei]{bao2022beit}
+Hangbo Bao, Li~Dong, Songhao Piao, and Furu Wei.
+\newblock {BEiT}: {BERT} pre-training of image transformers.
+\newblock In \emph{International Conference on Learning Representations}, 2022.
+\newblock URL \url{https://openreview.net/forum?id=p-BhZSz59o4}.
+
+\bibitem[Bardes et~al.(2024)Bardes, Garrido, Ponce, Chen, Rabbat, LeCun,
+  Assran, and Ballas]{bardes2024vjepa}
+Adrien Bardes, Quentin Garrido, Jean Ponce, Xinlei Chen, Michael Rabbat, Yann
+  LeCun, Mahmoud Assran, and Nicolas Ballas.
+\newblock Revisiting feature prediction for learning visual representations
+  from video.
+\newblock \emph{Transactions on Machine Learning Research}, 2024.
+\newblock URL \url{https://openreview.net/forum?id=QaCCuDfBk2}.
+
+\bibitem[Bouthillier et~al.(2021)Bouthillier, Delaunay, Bronzi, Trofimov,
+  Nichyporuk, Szeto, Sepahvand, Raff, Madan, Voleti, Kahou, Michalski, Arbel,
+  Pal, Varoquaux, and Vincent]{bouthillier2021variance}
+Xavier Bouthillier, Pierre Delaunay, Mirko Bronzi, Assya Trofimov, Brennan
+  Nichyporuk, Justin Szeto, Nazanin~Mohammadi Sepahvand, Edward Raff, Kanika
+  Madan, Vikram Voleti, Samira~Ebrahimi Kahou, Vincent Michalski, Tal Arbel,
+  Chris Pal, Gael Varoquaux, and Pascal Vincent.
+\newblock Accounting for variance in machine learning benchmarks.
+\newblock \emph{Proceedings of Machine Learning and Systems}, 3:\penalty0
+  747--769, 2021.
+\newblock URL
+  \url{https://proceedings.mlsys.org/paper_files/paper/2021/hash/0184b0cd3cfb185989f858a1d9f5c1eb-Abstract.html}.
+
+\bibitem[Ceballos~Arroyo et~al.(2026)Ceballos~Arroyo, Kim, Lin, Qin, Young, and
+  Jiang]{ceballosarroyo2026anatomymae}
+Alberto~M. Ceballos~Arroyo, Jisoo Kim, Chu-Hsuan Lin, Lei Qin, Geoffrey~S.
+  Young, and Huaizu Jiang.
+\newblock Anatomically-guided masked autoencoder pre-training for aneurysm
+  detection.
+\newblock In \emph{Proceedings of the IEEE/CVF Winter Conference on
+  Applications of Computer Vision}, pages 5693--5702, 2026.
+\newblock \doi{10.1109/WACV61042.2026.00552}.
+
+\bibitem[Chen et~al.(2023{\natexlab{a}})Chen, Zhang, Wang, and
+  Yang]{chen2023automae}
+Haijian Chen, Wendong Zhang, Yunbo Wang, and Xiaokang Yang.
+\newblock Improving masked autoencoders by learning where to mask.
+\newblock In \emph{Pattern Recognition and Computer Vision}, pages 377--390.
+  Springer, 2023{\natexlab{a}}.
+\newblock \doi{10.1007/978-981-99-8543-2_31}.
+
+\bibitem[Chen et~al.(2023{\natexlab{b}})Chen, Agarwal, Aggarwal, Safta, Balan,
+  and Brown]{chen2023mim3d}
+Zekai Chen, Devansh Agarwal, Kshitij Aggarwal, Wiem Safta, Mariann~Micsinai
+  Balan, and Kevin Brown.
+\newblock Masked image modeling advances 3d medical image analysis.
+\newblock In \emph{Proceedings of the IEEE/CVF Winter Conference on
+  Applications of Computer Vision}, pages 1970--1980, 2023{\natexlab{b}}.
+\newblock \doi{10.1109/WACV56688.2023.00201}.
+
+\bibitem[DeLong et~al.(1988)DeLong, DeLong, and Clarke-Pearson]{delong1988roc}
+Elizabeth~R. DeLong, David~M. DeLong, and Daniel~L. Clarke-Pearson.
+\newblock Comparing the areas under two or more correlated receiver operating
+  characteristic curves: A nonparametric approach.
+\newblock \emph{Biometrics}, 44\penalty0 (3):\penalty0 837--845, 1988.
+\newblock \doi{10.2307/2531595}.
+\newblock URL \url{https://doi.org/10.2307/2531595}.
+
+\bibitem[Gichoya et~al.(2022)Gichoya, Banerjee, Bhimireddy, Burns, Celi, Chen,
+  Correa, Dullerud, Ghassemi, Huang, Kuo, Lungren, Palmer, Price, Purkayastha,
+  Pyrros, Oakden-Rayner, Okechukwu, Seyyed-Kalantari, Trivedi, Wang, Zaiman,
+  and Zhang]{gichoya2022race}
+Judy~Wawira Gichoya, Imon Banerjee, Ananth~Reddy Bhimireddy, John~L. Burns,
+  Leo~Anthony Celi, Li-Ching Chen, Ramon Correa, Natalie Dullerud, Marzyeh
+  Ghassemi, Shih-Cheng Huang, Po-Chih Kuo, Matthew~P. Lungren, Lyle~J. Palmer,
+  Brandon~J. Price, Saptarshi Purkayastha, Ayis~T. Pyrros, Lauren
+  Oakden-Rayner, Chima Okechukwu, Laleh Seyyed-Kalantari, Hari Trivedi, Ryan
+  Wang, Zachary Zaiman, and Haoran Zhang.
+\newblock {AI} recognition of patient race in medical imaging: A modelling
+  study.
+\newblock \emph{The Lancet Digital Health}, 4\penalty0 (6):\penalty0
+  e406--e414, 2022.
+\newblock \doi{10.1016/S2589-7500(22)00063-2}.
+
+\bibitem[Guo et~al.(2025)Guo, Hosseini, Zhang, Somayajula, Chowdhury, Gupta,
+  and Xie]{guo2025mlomae}
+Han Guo, Ramtin Hosseini, Ruiyi Zhang, Sai~Ashish Somayajula, Ranak~Roy
+  Chowdhury, Rajesh~K. Gupta, and Pengtao Xie.
+\newblock Downstream task guided masking learning in masked autoencoders using
+  multi-level optimization.
+\newblock \emph{Transactions on Machine Learning Research}, 2025.
+\newblock arXiv:2402.18128.
+
+\bibitem[He et~al.(2022)He, Chen, Xie, Li, Doll{\'a}r, and Girshick]{he2022mae}
+Kaiming He, Xinlei Chen, Saining Xie, Yanghao Li, Piotr Doll{\'a}r, and Ross
+  Girshick.
+\newblock Masked autoencoders are scalable vision learners.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition}, pages 16000--16009, 2022.
+\newblock \doi{10.1109/CVPR52688.2022.01553}.
+
+\bibitem[He et~al.(2025)He, Sakai, Chandhok, Beery, Yuan, Padoy, Hasegawa, and
+  Sigal]{he2025dseqjepa}
+Xiangteng He, Shunsuke Sakai, Shivam Chandhok, Sara Beery, Kun Yuan, Nicolas
+  Padoy, Tatsuhito Hasegawa, and Leonid Sigal.
+\newblock {DSeq-JEPA}: Discriminative sequential joint-embedding predictive
+  architecture, 2025.
+\newblock URL \url{https://arxiv.org/abs/2511.17354}.
+\newblock Accepted at ECCV 2026; final proceedings metadata unavailable at
+  verification time.
+
+\bibitem[Huang et~al.(2026)Huang, Zhou, Gui, Xie, Liu, Wang, Xiang, Ma, Xiao,
+  and Hou]{huang2026vasomim}
+De-Xing Huang, Xiao-Hu Zhou, Mei-Jiang Gui, Xiao-Liang Xie, Shi-Qi Liu,
+  Shuang-Yi Wang, Tian-Yu Xiang, Rui-Ze Ma, Nu-Fang Xiao, and Zeng-Guang Hou.
+\newblock {VasoMIM}: Vascular anatomy-aware masked image modeling for vessel
+  segmentation.
+\newblock In \emph{Proceedings of the AAAI Conference on Artificial
+  Intelligence}, volume~40, pages 4985--4993, 2026.
+\newblock \doi{10.1609/aaai.v40i6.42503}.
+
+\bibitem[Huang et~al.(2024)Huang, Lyu, Cheng, Tam, and Tang]{huang2024ssit}
+Yijin Huang, Junyan Lyu, Pujin Cheng, Roger Tam, and Xiaoying Tang.
+\newblock {SSiT}: Saliency-guided self-supervised image transformer for
+  diabetic retinopathy grading.
+\newblock \emph{IEEE Journal of Biomedical and Health Informatics}, 28\penalty0
+  (5):\penalty0 2806--2817, 2024.
+\newblock \doi{10.1109/JBHI.2024.3362878}.
+\newblock URL \url{https://doi.org/10.1109/JBHI.2024.3362878}.
+
+\bibitem[Jin et~al.(2024)Jin, Xu, Zhong, Yao, Dou, Zhou, and
+  Li]{jin2024fairmedfm}
+Ruinan Jin, Zikang Xu, Yuan Zhong, Qingsong Yao, Qi~Dou, S.~Kevin Zhou, and
+  Xiaoxiao Li.
+\newblock {FairMedFM}: Fairness benchmarking for medical imaging foundation
+  models.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~37, pages 111318--111357, 2024.
+\newblock \doi{10.52202/079017-3535}.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper_files/paper/2024/hash/c9826b9ea5e1b49b256329934a578d83-Abstract-Datasets_and_Benchmarks_Track.html}.
+
+\bibitem[Kakogeorgiou et~al.(2022)Kakogeorgiou, Gidaris, Psomas, Avrithis,
+  Bursuc, Karantzalos, and Komodakis]{kakogeorgiou2022attmask}
+Ioannis Kakogeorgiou, Spyros Gidaris, Bill Psomas, Yannis Avrithis, Andrei
+  Bursuc, Konstantinos Karantzalos, and Nikos Komodakis.
+\newblock What to hide from your students: Attention-guided masked image
+  modeling.
+\newblock In \emph{Computer Vision -- ECCV 2022}, pages 300--318. Springer,
+  2022.
+\newblock \doi{10.1007/978-3-031-20056-4_18}.
+
+\bibitem[Larrazabal et~al.(2020)Larrazabal, Nieto, Peterson, Milone, and
+  Ferrante]{larrazabal2020gender}
+Agostina~J. Larrazabal, Nicol{\'a}s Nieto, Victoria Peterson, Diego~H. Milone,
+  and Enzo Ferrante.
+\newblock Gender imbalance in medical imaging datasets produces biased
+  classifiers for computer-aided diagnosis.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 117\penalty0
+  (23):\penalty0 12592--12594, 2020.
+\newblock \doi{10.1073/pnas.1919012117}.
+
+\bibitem[Lee et~al.(2025)Lee, Dang, Yu, Le, Rahman, Jang, Lee, Kim, Kim, and
+  Kim]{lee2025hufgm}
+Jin Lee, Vu~Dang, Gwang-Hyun Yu, Anh Le, Zahid Rahman, Jin-Ho Jang, Heonzoo
+  Lee, Kun-Yung Kim, Jin-Sul Kim, and Jin-Young Kim.
+\newblock {HU}-based foreground masking for {3D} medical masked image modeling.
+\newblock In \emph{Medical Image Computing and Computer Assisted Intervention
+  (MICCAI)}, 2025.
+\newblock \doi{10.1007/978-3-032-09569-5_13}.
+\newblock arXiv:2509.07534.
+
+\bibitem[Li et~al.(2022)Li, Zheng, Liu, Wang, Su, and Zheng]{li2022semmae}
+Gang Li, Heliang Zheng, Daqing Liu, Chaoyue Wang, Bing Su, and Changwen Zheng.
+\newblock {SemMAE}: Semantic-guided masking for learning masked autoencoders.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~35, pages 14290--14302, 2022.
+\newblock \doi{10.52202/068431-1039}.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper_files/paper/2022/hash/5db4e0a62cb5b4a5a70f1fdc9a78a4cc-Abstract-Conference.html}.
+
+\bibitem[Li et~al.(2024)Li, Luan, Wu, Pan, Chen, and Yang]{li2024anatomask}
+Yuheng Li, Tianyu Luan, Yizhou Wu, Shaoyan Pan, Yenho Chen, and Xiaofeng Yang.
+\newblock {AnatoMask}: Enhancing medical image segmentation with
+  reconstruction-guided self-masking.
+\newblock In \emph{Computer Vision -- ECCV 2024}, pages 146--163. Springer,
+  2024.
+\newblock \doi{10.1007/978-3-031-73027-6_9}.
+
+\bibitem[Liu et~al.(2026)Liu, Xu, Woicik, Shapiro, Blazes, Wu, Steffen, Cukras,
+  Lee, Zhang, Lee, and Wang]{liu2026octcube}
+Zixuan Liu, Hanwen Xu, Addie Woicik, Linda~G. Shapiro, Marian Blazes, Yue Wu,
+  Verena Steffen, Catherine~A. Cukras, Cecilia~S. Lee, Miao Zhang, Aaron~Y.
+  Lee, and Sheng Wang.
+\newblock A three-dimensional multi-modal foundation model for optical
+  coherence tomography.
+\newblock \emph{Nature Biomedical Engineering}, 2026.
+\newblock \doi{10.1038/s41551-026-01662-2}.
+
+\bibitem[Luo et~al.(2024{\natexlab{a}})Luo, Khan, Tian, Shi, Dou, Elze, Fang,
+  and Wang]{luo2024fairvision}
+Yan Luo, Muhammad~Osama Khan, Yu~Tian, Min Shi, Zehao Dou, Tobias Elze,
+  Yi~Fang, and Mengyu Wang.
+\newblock {FairVision}: Equitable deep learning for eye disease screening via
+  fair identity scaling, 2024{\natexlab{a}}.
+\newblock URL \url{https://arxiv.org/abs/2310.02492}.
+
+\bibitem[Luo et~al.(2024{\natexlab{b}})Luo, Tian, Shi, Pasquale, Shen,
+  Zebardast, Elze, and Wang]{luo2024harvardgf}
+Yan Luo, Yu~Tian, Min Shi, Louis~R. Pasquale, Lucy~Q. Shen, Nazlee Zebardast,
+  Tobias Elze, and Mengyu Wang.
+\newblock Harvard glaucoma fairness: A retinal nerve disease dataset for
+  fairness learning and fair identity normalization.
+\newblock \emph{IEEE Transactions on Medical Imaging}, 43\penalty0
+  (7):\penalty0 2623--2633, 2024{\natexlab{b}}.
+\newblock \doi{10.1109/TMI.2024.3377552}.
+
+\bibitem[Maetschke et~al.(2019)Maetschke, Antony, Ishikawa, Wollstein, Schuman,
+  and Garnavi]{maetschke2019glaucoma}
+Stefan Maetschke, Bhavna Antony, Hiroshi Ishikawa, Gadi Wollstein, Joel
+  Schuman, and Rahil Garnavi.
+\newblock A feature agnostic approach for glaucoma detection in {OCT} volumes.
+\newblock \emph{PLOS ONE}, 14\penalty0 (7), 2019.
+
+\bibitem[Maier-Hein et~al.(2024)Maier-Hein, Reinke, Godau, Tizabi, Buettner,
+  Christodoulou, Glocker, Isensee, Kleesiek, Kozubek, Reyes, Riegler,
+  Wiesenfarth, Kavur, Sudre, Baumgartner, Eisenmann, Heckmann-N{\"o}tzel,
+  R{\"a}dsch, Acion, Antonelli, Arbel, Bakas, Benis, Blaschko, Cardoso,
+  Cheplygina, Cimini, Collins, Farahani, Ferrer, Galdran, van Ginneken, Haase,
+  Hashimoto, Hoffman, Huisman, Jannin, Kahn, Kainmueller, Kainz, Karargyris,
+  Karthikesalingam, Kofler, Kopp-Schneider, Kreshuk, Kurc, Landman, Litjens,
+  Madani, Maier-Hein, Martel, Mattson, Meijering, Menze, Moons, M{\"u}ller,
+  Nichyporuk, Nickel, Petersen, Rajpoot, Rieke, Saez-Rodriguez, S{\'a}nchez,
+  Shetty, van Smeden, Summers, Taha, Tiulpin, Tsaftaris, Calster, Varoquaux,
+  and J{\"a}ger]{maierhein2024metricsreloaded}
+Lena Maier-Hein, Annika Reinke, Patrick Godau, Minu~D. Tizabi, Florian
+  Buettner, Evangelia Christodoulou, Ben Glocker, Fabian Isensee, Jens
+  Kleesiek, Michal Kozubek, Mauricio Reyes, Michael~A. Riegler, Manuel
+  Wiesenfarth, A.~Emre Kavur, Carole~H. Sudre, Michael Baumgartner, Matthias
+  Eisenmann, Doreen Heckmann-N{\"o}tzel, Tim R{\"a}dsch, Laura Acion, Michela
+  Antonelli, Tal Arbel, Spyridon Bakas, Arriel Benis, Matthew~B. Blaschko,
+  M.~Jorge Cardoso, Veronika Cheplygina, Beth~A. Cimini, Gary~S. Collins,
+  Keyvan Farahani, Luciana Ferrer, Adrian Galdran, Bram van Ginneken, Robert
+  Haase, Daniel~A. Hashimoto, Michael~M. Hoffman, Merel Huisman, Pierre Jannin,
+  Charles~E. Kahn, Dagmar Kainmueller, Bernhard Kainz, Alexandros Karargyris,
+  Alan Karthikesalingam, Florian Kofler, Annette Kopp-Schneider, Anna Kreshuk,
+  Tahsin Kurc, Bennett~A. Landman, Geert Litjens, Amin Madani, Klaus
+  Maier-Hein, Anne~L. Martel, Peter Mattson, Erik Meijering, Bjoern Menze,
+  Karel G.~M. Moons, Henning M{\"u}ller, Brennan Nichyporuk, Felix Nickel, Jens
+  Petersen, Nasir Rajpoot, Nicola Rieke, Julio Saez-Rodriguez, Clara~I.
+  S{\'a}nchez, Shravya Shetty, Maarten van Smeden, Ronald~M. Summers, Abdel~A.
+  Taha, Aleksei Tiulpin, Sotirios~A. Tsaftaris, Ben~Van Calster, Ga{\"e}l
+  Varoquaux, and Paul~F. J{\"a}ger.
+\newblock Metrics reloaded: Recommendations for image analysis validation.
+\newblock \emph{Nature Methods}, 21\penalty0 (2):\penalty0 195--212, 2024.
+\newblock \doi{10.1038/s41592-023-02151-z}.
+\newblock URL \url{https://doi.org/10.1038/s41592-023-02151-z}.
+
+\bibitem[Mao et~al.(2023)Mao, Guo, Chang, Yin, and Nie]{mao2023msmae}
+Jiawei Mao, Shujian Guo, Yuanqi Chang, Xuesong Yin, and Binling Nie.
+\newblock Medical supervised masked autoencoders: Crafting a better masking
+  strategy and efficient fine-tuning schedule for medical image classification,
+  2023.
+\newblock URL \url{https://arxiv.org/abs/2305.05871}.
+
+\bibitem[Morano et~al.(2025)Morano, Fazekas, S{\"u}kei, Fecso, Emre, Gumpinger,
+  Faustmann, Oghbaie, Schmidt-Erfurth, and Bogunovi{\'c}]{morano2025mirage}
+Jos{\'e} Morano, Botond Fazekas, Emese S{\"u}kei, Ronald Fecso, Taha Emre,
+  Markus Gumpinger, Georg Faustmann, Marzieh Oghbaie, Ursula Schmidt-Erfurth,
+  and Hrvoje Bogunovi{\'c}.
+\newblock Multimodal foundation model and benchmark for comprehensive retinal
+  {OCT} image analysis.
+\newblock \emph{npj Digital Medicine}, 8:\penalty0 576, 2025.
+\newblock \doi{10.1038/s41746-025-01852-3}.
+
+\bibitem[Noury et~al.(2022)Noury, Mannil, Chang, Ran, Cheung, Thapa, Rao,
+  Dasari, Riyazuddin, Chang, Nagaraj, Tham, and Zadeh]{noury2022glaucoma}
+Erfan Noury, Suria~S. Mannil, Robert~T. Chang, An~Ran Ran, Carol~Y. Cheung,
+  Suman~S. Thapa, Harsha~L. Rao, Srilakshmi Dasari, Mohammed Riyazuddin, Dolly
+  Chang, Sriharsha Nagaraj, Clement~C. Tham, and Reza Zadeh.
+\newblock Deep learning for glaucoma detection and identification of novel
+  diagnostic areas in diverse real-world datasets.
+\newblock \emph{Translational Vision Science \& Technology}, 11\penalty0
+  (5):\penalty0 11, 2022.
+\newblock \doi{10.1167/tvst.11.5.11}.
+
+\bibitem[Obuchowski(1997)]{obuchowski1997clusteredroc}
+Nancy~A. Obuchowski.
+\newblock Nonparametric analysis of clustered {ROC} curve data.
+\newblock \emph{Biometrics}, 53\penalty0 (2):\penalty0 567--578, 1997.
+\newblock \doi{10.2307/2533958}.
+\newblock URL \url{https://doi.org/10.2307/2533958}.
+
+\bibitem[Pissas et~al.(2024)Pissas, M{\'a}rquez-Neila, Wolf, Zinkernagel, and
+  Sznitman]{pissas2024octmim}
+Theodoros Pissas, Pablo M{\'a}rquez-Neila, Sebastian Wolf, Martin~S.
+  Zinkernagel, and Raphael Sznitman.
+\newblock Masked image modelling for retinal {OCT} understanding.
+\newblock In \emph{Ophthalmic Medical Image Analysis}, pages 115--125.
+  Springer, 2024.
+\newblock \doi{10.1007/978-3-031-73119-8_12}.
+
+\bibitem[Qiu et~al.(2024)Qiu, Wu, Wei, Shi, Zhang, Sun, Li, Liu, Liu, Hou,
+  Zhao, Shi, Xian, Qu, Zhu, Pan, Chen, Zhang, Jiang, Wang, Yang, Chen, Fan, Hu,
+  Lv, Miao, Guo, Zhang, Pei, Fan, Lei, Wei, Duan, Liu, Xia, Xiong, Li, Lam, Lo,
+  Tham, Wong, Wang, and Yuan]{qiu2024visionfm}
+Jianing Qiu, Jian Wu, Hao Wei, Peilun Shi, Minqing Zhang, Yunyun Sun, Lin Li,
+  Hanruo Liu, Hongyi Liu, Simeng Hou, Yuyang Zhao, Xuehui Shi, Junfang Xian,
+  Xiaoxia Qu, Sirui Zhu, Lijie Pan, Xiaoniao Chen, Xiaojia Zhang, Shuai Jiang,
+  Kebing Wang, Chenlong Yang, Mingqiang Chen, Sujie Fan, Jianhua Hu, Aiguo Lv,
+  Hui Miao, Li~Guo, Shujun Zhang, Cheng Pei, Xiaojuan Fan, Jianqin Lei, Ting
+  Wei, Junguo Duan, Chun Liu, Xiaobo Xia, Siqi Xiong, Junhong Li, Kyle Lam,
+  Benny Lo, Yih~Chung Tham, Tien~Yin Wong, Ningli Wang, and Wu~Yuan.
+\newblock Development and validation of a multimodal multitask vision
+  foundation model for generalist ophthalmic artificial intelligence.
+\newblock \emph{NEJM AI}, 1\penalty0 (12), 2024.
+\newblock \doi{10.1056/AIoa2300221}.
+
+\bibitem[Ran et~al.(2019)Ran, Cheung, Wang, Chen, Luo, Chan, Wong, Chang,
+  Mannil, Young, Yung, Pang, Heng, and Tham]{ran2019glaucoma}
+An~Ran Ran, Carol~Y. Cheung, Xi~Wang, Hao Chen, Lu-Yang Luo, Poemen~P. Chan,
+  Mandy O.~M. Wong, Robert~T. Chang, Suria~S. Mannil, Alvin~L. Young, Hon-Wah
+  Yung, Chi~Pui Pang, Pheng-Ann Heng, and Clement~C. Tham.
+\newblock Detection of glaucomatous optic neuropathy with spectral-domain
+  optical coherence tomography: A retrospective training and validation
+  deep-learning analysis.
+\newblock \emph{The Lancet Digital Health}, 1\penalty0 (4):\penalty0
+  e172--e182, 2019.
+\newblock \doi{10.1016/S2589-7500(19)30085-8}.
+
+\bibitem[Rutter(2000)]{rutter2000clusterbootstrap}
+Carolyn~M. Rutter.
+\newblock Bootstrap estimation of diagnostic accuracy with patient-clustered
+  data.
+\newblock \emph{Academic Radiology}, 7\penalty0 (6):\penalty0 413--419, 2000.
+\newblock \doi{10.1016/S1076-6332(00)80381-5}.
+\newblock URL \url{https://doi.org/10.1016/S1076-6332(00)80381-5}.
+
+\bibitem[Seyyed-Kalantari et~al.(2021)Seyyed-Kalantari, Zhang, McDermott, Chen,
+  and Ghassemi]{seyyedkalantari2021underdiagnosis}
+Laleh Seyyed-Kalantari, Haoran Zhang, Matthew B.~A. McDermott, Irene~Y. Chen,
+  and Marzyeh Ghassemi.
+\newblock Underdiagnosis bias of artificial intelligence algorithms applied to
+  chest radiographs in under-served patient populations.
+\newblock \emph{Nature Medicine}, 27\penalty0 (12):\penalty0 2176--2182, 2021.
+\newblock \doi{10.1038/s41591-021-01595-0}.
+
+\bibitem[Shi et~al.(2025)Shi, Luo, Tian, Shen, Elze, Zebardast, Eslami,
+  Kazeminasab, Boland, Friedman, Pasquale, and Wang]{shi2025equitable}
+Min Shi, Yan Luo, Yu~Tian, Lucy~Q. Shen, Tobias Elze, Nazlee Zebardast,
+  Mohammad Eslami, Saber Kazeminasab, Michael~V. Boland, David~S. Friedman,
+  Louis~R. Pasquale, and Mengyu Wang.
+\newblock Equitable artificial intelligence for glaucoma screening with fair
+  identity normalization.
+\newblock \emph{npj Digital Medicine}, 8\penalty0 (1), 2025.
+\newblock \doi{10.1038/s41746-025-01432-5}.
+
+\bibitem[Shi et~al.(2022)Shi, Siddharth, Torr, and Kosiorek]{shi2022adios}
+Yuge Shi, N.~Siddharth, Philip H.~S. Torr, and Adam~R. Kosiorek.
+\newblock Adversarial masking for self-supervised learning.
+\newblock In \emph{Proceedings of the 39th International Conference on Machine
+  Learning}, volume 162 of \emph{Proceedings of Machine Learning Research},
+  pages 20026--20040. PMLR, 2022.
+\newblock URL \url{https://proceedings.mlr.press/v162/shi22d.html}.
+
+\bibitem[Sick et~al.(2025)Sick, Engel, Hermosilla, and Ropinski]{sick2025attg}
+Leon Sick, Dominik Engel, Pedro Hermosilla, and Timo Ropinski.
+\newblock Attention-guided masked autoencoders for learning image
+  representations.
+\newblock In \emph{Proceedings of the IEEE/CVF Winter Conference on
+  Applications of Computer Vision}, pages 836--846, 2025.
+\newblock \doi{10.1109/WACV61041.2025.00091}.
+\newblock URL
+  \url{https://openaccess.thecvf.com/content/WACV2025/html/Sick_Attention-Guided_Masked_Autoencoders_for_Learning_Image_Representations_WACV_2025_paper.html}.
+
+\bibitem[Taleb et~al.(2020)Taleb, Loetzsch, Danz, Severin, G{\"a}rtner,
+  Bergner, and Lippert]{taleb20203dssl}
+Aiham Taleb, Winfried Loetzsch, Noel Danz, Julius Severin, Thomas G{\"a}rtner,
+  Benjamin Bergner, and Christoph Lippert.
+\newblock 3d self-supervised methods for medical imaging.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~33, pages 18158--18172, 2020.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper/2020/hash/d2dc6368837861b42020ee72b0896182-Abstract.html}.
+
+\bibitem[Wang et~al.(2023{\natexlab{a}})Wang, Song, Fan, Wang, Xie, and
+  Zhang]{wang2023hardpatches}
+Haochen Wang, Kaiyou Song, Junsong Fan, Yuxi Wang, Jin Xie, and Zhaoxiang
+  Zhang.
+\newblock Hard patches mining for masked image modeling.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition}, pages 10375--10385, 2023{\natexlab{a}}.
+\newblock \doi{10.1109/CVPR52729.2023.01000}.
+
+\bibitem[Wang et~al.(2023{\natexlab{b}})Wang, Song, Fan, Wang, Xie, and
+  Zhang]{wang2023hpm}
+Haochen Wang, Kaiyou Song, Junsong Fan, Yuxi Wang, Jin Xie, and Zhaoxiang
+  Zhang.
+\newblock Hard patches mining for masked image modeling.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition}, pages 10375--10385, 2023{\natexlab{b}}.
+\newblock \doi{10.1109/CVPR52729.2023.01000}.
+\newblock URL
+  \url{https://openaccess.thecvf.com/content/CVPR2023/html/Wang_Hard_Patches_Mining_for_Masked_Image_Modeling_CVPR_2023_paper.html}.
+
+\bibitem[Wang et~al.(2025)Wang, Xu, Liu, Huang, Chen, and
+  Su]{wang2025maskwhatmatters}
+Ruilang Wang, Shuotong Xu, Bowen Liu, Runlin Huang, Donglong Chen, and Weifeng
+  Su.
+\newblock Mask what matters: Controllable text-guided masking for
+  self-supervised medical image analysis, 2025.
+\newblock URL \url{https://arxiv.org/abs/2509.23054}.
+
+\bibitem[Xie et~al.(2022)Xie, Zhang, Cao, Lin, Bao, Yao, Dai, and
+  Hu]{xie2022simmim}
+Zhenda Xie, Zheng Zhang, Yue Cao, Yutong Lin, Jianmin Bao, Zhuliang Yao,
+  Qi~Dai, and Han Hu.
+\newblock {SimMIM}: A simple framework for masked image modeling.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition}, pages 9653--9663, 2022.
+\newblock \doi{10.1109/CVPR52688.2022.00943}.
+
+\bibitem[Yu et~al.(2024)Yu, Zhou, Bai, Soh, Xu, Goh, Cheng, and
+  Liu]{yu2024urfound}
+Kai Yu, Yang Zhou, Yang Bai, Zhi~Da Soh, Xinxing Xu, Rick Siow~Mong Goh,
+  Ching-Yu Cheng, and Yong Liu.
+\newblock {UrFound}: Towards universal retinal foundation models via
+  knowledge-guided masked modeling.
+\newblock In \emph{Medical Image Computing and Computer Assisted Intervention
+  -- MICCAI 2024}, pages 753--762. Springer, 2024.
+\newblock \doi{10.1007/978-3-031-72390-2_70}.
+
+\bibitem[Zhou et~al.(2022)Zhou, Wei, Wang, Shen, Xie, Yuille, and
+  Kong]{zhou2022ibot}
+Jinghao Zhou, Chen Wei, Huiyu Wang, Wei Shen, Cihang Xie, Alan Yuille, and Tao
+  Kong.
+\newblock {iBOT}: Image {BERT} pre-training with online tokenizer.
+\newblock In \emph{International Conference on Learning Representations}, 2022.
+
+\bibitem[Zhou et~al.(2023)Zhou, Chia, Wagner, Ayhan, Williamson, Struyven, Liu,
+  Xu, Lozano, Woodward-Court, et~al.]{zhou2023retfound}
+Yukun Zhou, Mark~A. Chia, Siegfried~K. Wagner, Murat~Se{\c{c}}kin Ayhan,
+  Dominic~J. Williamson, Robbert~R. Struyven, Timing Liu, Moucheng Xu, Mateo~G.
+  Lozano, Peter Woodward-Court, et~al.
+\newblock A foundation model for generalizable disease detection from retinal
+  images.
+\newblock \emph{Nature}, 622:\penalty0 156--163, 2023.
+\newblock \doi{10.1038/s41586-023-06555-x}.
+
+\end{thebibliography}

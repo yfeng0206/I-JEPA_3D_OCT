@@ -417,6 +417,7 @@ training ($\DEnvelopeRandomEpFifty \to \DEnvelopeRandomEpSeventyFive \to
 \DEnvelopeRandomEpHundred$) while \textsc{intensity}'s does not.
 
 \subsection{H3: it is not anatomical targeting}
+\label{sec:results-h3}
 
 \begin{table}[t]
 \centering
@@ -825,6 +826,117 @@ use them to support any claim. Similarly, the \textsc{anatomy-v2} probes at
 epochs 75 and 92 follow a change of target precision partway through that arm's
 training; they are listed in Table~\ref{tab:allprobes} but excluded from the
 matched-epoch comparisons in Table~\ref{tab:main}.
+
+\section{Occlusion attribution: where the classifier looks}
+\label{app:interp}
+
+The analyses in this appendix were run on the three \emph{fine-tuned} probes
+(mean-pool, cross-attention pool, and a depth-1 attentive probe) that tie at test
+AUC $\approx 0.887$, not on the frozen probes used for the arm comparison in the
+main text. They characterise what the downstream classifier uses, and they are
+reported here because two of the findings are cautionary rather than positive.
+
+\paragraph{Method.} Attribution is by \emph{occlusion}, which is
+architecture-agnostic and causal. Gradient$\times$input is not used because two of
+the three probes are non-linear in the slice-token matrix, where gradient
+attribution is misleading. For slice-level attribution each slice token is zeroed
+in turn and $\Delta$logit recorded; for window-level, seven consecutive slices;
+for patch-level, leave-one-out over the 256 patch tokens of a target slice.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\linewidth]{interp_slice_contribution_curves.png}
+\caption{Single-slice occlusion attribution against native slice position,
+averaged over all \Ntest{} test volumes, for all three fine-tuned probes.
+Despite spanning zero to 7.17M probe parameters they converge on the same
+structure (mean-pool vs cross-attention pool $r{=}0.94$). The $y$-axis is
+\emph{signed} $\Delta$logit: peaks are slices whose removal lowers the logit,
+the central dip is slices whose removal raises it, and only slices near zero are
+genuinely unused.}
+\label{fig:interp-slice}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\linewidth]{interp_04_window_occlusion_W7.png}
+\caption{Window occlusion ($W{=}7$) amplifies the same signal roughly sevenfold
+and suppresses single-volume noise. For mean-pooled models, single-slice
+occlusion systematically under-estimates attributed signal; the windowed variant
+recovers about $25\times$ more. We recommend it as the default primitive for
+this class of model.}
+\label{fig:interp-window}
+\end{figure}
+
+\paragraph{A bimodal attribution curve that is an artefact, not anatomy.}
+The population-averaged curve peaks at native slice $\approx 63$ and
+$\approx 137$ with a dip near $95$. The tempting reading --- that the model has
+discovered the superior and inferior optic disc rim --- is \textbf{wrong}, and we
+report it because it is exactly the kind of claim a plausible-looking attribution
+figure invites. Three tests reject it. First, if the two peaks were bilateral
+anatomy then within a diseased eye they should co-occur, giving positive
+per-volume correlation between them; the observed correlation is slightly
+\emph{negative} ($-0.22$, $-0.07$, $-0.14$ across the three probes). Second,
+clustering the per-volume curves into two groups yields clusters that are
+near-perfect \emph{mirror images} along the slice axis
+($\mathrm{corr}(c_1,\mathrm{flip}(c_2)) = 0.971$ and $0.988$ for the two
+well-structured probes, against raw correlations of $-0.124$ and $-0.478$).
+Third, using that cluster label as pseudo-laterality and flipping one cluster
+collapses the bimodality asymmetrically. The signature is OD/OS axial storage:
+each eye carries its dominant signal on one side of the disc, right and left eyes
+are stored with opposite axial orientation, and population averaging manufactures
+an illusion of symmetry.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\linewidth]{interp_14_odos_mirror_test.png}
+\caption{The two-peak structure is an OD/OS storage artefact. Clustering
+per-volume attribution curves into two groups returns near-perfect mirror images
+of one another, which is the direct signature of laterality flipping rather than
+bilateral anatomy.}
+\label{fig:interp-odos}
+\end{figure}
+
+\paragraph{Errors are weaker signal, not different anatomy.} Stratifying by
+outcome, false-negative curves are scaled-down true-positive curves with the same
+shape, and false positives likewise mirror true negatives. Attribution structure
+is also near-invariant to prediction confidence ($|r| \leq 0.25$ between peak
+contribution magnitude and $|\text{logit}|$). The error rate at threshold $0.5$
+therefore reflects signal-strength saturation on hard cases, not the model
+attending to the wrong structures.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\linewidth]{interp_slice_contribution_by_outcome.png}
+\caption{Attribution stratified by TP / FN / TN / FP. Errors reproduce the
+correct pattern at lower amplitude rather than selecting different anatomy.}
+\label{fig:interp-outcome}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\linewidth,height=0.84\textheight,keepaspectratio]%
+{interp_heatmap_grid.png}
+\caption{Per-patch occlusion heat maps on individual B-scans, drawn on a shared
+scale with the slice mean subtracted so that maps are comparable across volumes.
+Between $84\%$ and $91\%$ of patches have a $95\%$ bootstrap interval excluding
+zero on the glaucoma class ($B{=}500$), so attribution is broadly distributed
+rather than concentrated in a few patches. Cross-probe agreement is strong at
+slice level ($r{=}0.94$) and moderate at patch level (per-volume $r \approx
+0.35$--$0.48$).}
+\label{fig:interp-heatmap}
+\end{figure}
+
+\paragraph{Why this is in a masking paper.} Two of these results bear directly on
+the main claim. The classifier's evidence is spread across the middle two-thirds
+of the volume and across most patches within a slice, rather than concentrated on
+a compact anatomical target. A masking policy that sharpens targets onto a
+precise anatomical boundary is therefore optimising for a spatial prior the
+downstream task does not appear to need, which is consistent with
+Section~\ref{sec:results-h3} finding no relationship between anatomical
+specificity and downstream AUC. The OD/OS result is a methodological caution of
+the same family as our precision and epoch-matching checks: a figure that looks
+anatomically meaningful can be an artefact of data storage, and we would rather
+report that than let it stand.
 
 \section{Broader impact and ethics}
 \label{app:ethics}

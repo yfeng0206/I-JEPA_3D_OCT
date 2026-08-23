@@ -1,0 +1,243 @@
+\documentclass{article}
+
+\usepackage{neurips_2026}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{microtype}
+
+\graphicspath{{figures/}}
+
+\title{Anatomy-Guided Masking Does Not Help:\\
+A Segmentation-Free Heuristic Outperforms a Trained Segmenter\\
+for Joint-Embedding Pretraining on Retinal OCT}
+
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Masking policy is an under-audited design choice in medical self-supervised
+learning. Intuitively, a masked-prediction model should be asked to reconstruct
+diagnostically relevant tissue, so masking guided by a trained segmentation
+model ought to beat unguided masking. We test that intuition directly. Starting
+from a single shared checkpoint, we continue patch-level I-JEPA pretraining on
+3D retinal OCT under six masking policies that differ only in how predictor
+targets are placed, and evaluate all of them with one frozen linear probe
+protocol on glaucoma classification (FairVision, $N{=}3000$).
+The intuition fails. The best policy is an \emph{oracle} band located by a
+first-order intensity statistic that consults no segmentation model
+(AUC $0.8855$), beating the unguided null by $+0.0109$
+(paired bootstrap 95\% CI $[+0.0058, +0.0162]$, $p<0.0005$) and beating a
+policy driven by a trained retinal segmenter by $+0.0047$. Policies that place
+targets most precisely on tissue --- $98\%$ of masked cells on anatomy ---
+perform \emph{worst}. We measure mask geometry for every arm and show that
+anatomical precision is not the operative variable, and we report a subgroup
+analysis in which Black participants have the lowest AUC in every valid probe.
+Encoder and probe weights are public and the headline number reproduces to
+$10^{-5}$ across hardware and numerical precision.
+\end{abstract}
+
+\section{Introduction}
+
+Self-supervised pretraining is increasingly applied to medical imaging, where
+labels are scarce and anatomy is highly structured. I-JEPA~\citep{assran2023ijepa}
+learns by predicting the representation of masked target blocks from a visible
+context block. Which patches become targets is a free design choice, and in the
+medical setting there is an obvious hypothesis: target the tissue that carries
+the diagnosis.
+
+We test that hypothesis on glaucoma classification from 3D optical coherence
+tomography (OCT). All arms fork from one shared pretrained checkpoint at epoch
+25 and differ \emph{only} in masking policy thereafter, so any downstream
+difference is attributable to masking rather than to data, schedule, or
+initialisation.
+
+Our contributions:
+
+\begin{itemize}
+\item A controlled six-arm comparison of masking policies for medical SSL,
+      evaluated under one frozen-probe protocol (21 probes total).
+\item The finding that a segmentation-free intensity heuristic \emph{beats} a
+      trained-segmenter-guided policy, and that increasing anatomical precision
+      of the mask \emph{degrades} downstream AUC.
+\item Direct measurement of mask geometry for every arm, showing that
+      ``fraction of anatomy hidden'' does not order the results.
+\item A subgroup audit, and a reproduction of the headline result to $10^{-5}$
+      from public weights on different hardware and precision.
+\end{itemize}
+
+\section{Setup}
+
+\paragraph{Data.} FairVision glaucoma OCT volumes. Downstream evaluation uses a
+fixed test split of $N{=}3000$ volumes (1466 positive / 1534 negative), seed 42,
+loader order fixed. Labels are byte-identical across arms, so any two arms are
+paired-comparable on the same cases.
+
+\paragraph{Pretraining.} Patch-level I-JEPA, ViT-Base, $256{\times}256$ crops,
+patch size 16 (a $16{\times}16{=}256$ token grid), predictor depth 6.
+Every arm resumes from the same epoch-25 checkpoint and continues to epoch 100
+with identical optimiser, schedule, and effective batch size. Only the mask
+sampler differs.
+
+\paragraph{Evaluation.} The encoder is frozen. Slice features are mean-pooled,
+followed by LayerNorm and a linear head; the head is selected on validation AUC
+and reported on the held-out test split. This protocol is identical for all
+arms and all epochs.
+
+\subsection{Masking policies}
+
+\begin{description}
+\item[random] Stock I-JEPA multiblock: four uniform-random rectangles. No image
+  content is consulted. This is the null.
+\item[oracle] A band whose vertical position is located per slice by a
+  per-column intensity-weighted row centroid, smoothed across columns. It uses
+  a first-order intensity statistic only and consults \textbf{no segmentation
+  model}.
+\item[envelope] The same rectangles as \textsc{random}, but \emph{placed} on a
+  retinal envelope predicted by a trained segmentation model (MIRAGE). Shape,
+  size, and count are unchanged; only location changes.
+\item[anatomy-v1 / anatomy-v2] Ragged connected components grown on the
+  segmenter's score map, so target \emph{shape} follows tissue. v2 adds
+  diagonal bridging.
+\item[cover] Targets chosen to cover the anatomy while leaving a fixed visible
+  fraction ($f{=}0.21$) of tissue in the context.
+\end{description}
+
+\section{Results}
+
+\subsection{Anatomy-guided masking does not win}
+
+Table~\ref{tab:main} gives frozen-probe test AUC at matched epochs.
+
+\begin{table}[t]
+\centering
+\caption{Frozen MeanPool probe, FairVision test ($N{=}3000$). All arms share one
+epoch-25 ancestor and one evaluation protocol. $\Delta$ is versus \textsc{random}
+at the same epoch.}
+\label{tab:main}
+\small
+\begin{tabular}{llccc}
+\toprule
+arm & guidance signal & ep50 & ep75 & ep100 \\
+\midrule
+random      & none (null)                & 0.8641 & 0.8723 & 0.8746 \\
+oracle      & intensity centroid, no segmenter & 0.8740 & 0.8836 & \textbf{0.8855} \\
+envelope    & trained segmenter          & 0.8761 & 0.8803 & 0.8807 \\
+anatomy-v2  & trained segmenter (shape)  & 0.8654 & --     & --     \\
+cover $f{=}0.21$ & trained segmenter (coverage) & 0.8643 & -- & -- \\
+\midrule
+\multicolumn{2}{l}{$\Delta$ oracle $-$ random} & $+0.0099$ & $+0.0113$ & $+0.0109$ \\
+\multicolumn{2}{l}{$\Delta$ oracle $-$ envelope} & $-0.0020$ & $+0.0033$ & $+0.0047$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The oracle band gives $+0.0109$ over the null at epoch 100 (paired bootstrap
+over test volumes, 95\% CI $[+0.0058,+0.0162]$, $p<0.0005$), and its margin is
+stable across epochs ($+0.0099$, $+0.0113$, $+0.0109$). The segmenter-guided
+\textsc{envelope} arm also beats the null, but by a margin that \emph{shrinks}
+with training ($+0.0120 \to +0.0080 \to +0.0062$), and it is overtaken by the
+segmentation-free oracle by epoch 75.
+
+\subsection{Anatomical precision is not the operative variable}
+
+We measured mask geometry directly, running each production sampler on 600
+held-out slices (Table~\ref{tab:geom}).
+
+\begin{table}[t]
+\centering
+\caption{Measured mask geometry, 600 slices, production samplers. ``purity'' is
+the fraction of masked cells lying on tissue.}
+\label{tab:geom}
+\small
+\begin{tabular}{lccccc}
+\toprule
+arm & anatomy hidden & purity & mask ratio & context kept & AUC \\
+\midrule
+random          & 52.2\% & 31.6\% & 43.7\% & 42.1\% & 0.8746 \\
+oracle          & 62.2\% & 41.1\% & 40.0\% & 45.6\% & \textbf{0.8855} \\
+envelope        & 76.9\% & 43.5\% & 46.4\% & 40.5\% & 0.8807 \\
+cover $f{=}0.21$ & 74.1\% & 45.3\% & 43.3\% & 43.5\% & 0.8643 \\
+anatomy-v2      & 80.3\% & \textbf{97.3\%} & 21.4\% & 67.9\% & 0.8654 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ordering is not explained by anatomical targeting. The anatomy arms place
+$97$--$98\%$ of masked cells on tissue and rank last; the oracle places $41\%$
+on tissue and ranks first. Across the four rectangle arms, Spearman correlation
+between fraction-of-anatomy-hidden and AUC is $-0.40$ --- the wrong sign --- and
+no measured geometric variable is a significant predictor at this sample size.
+
+Two mechanisms are consistent with the data and are not separated by these
+experiments. First, the oracle is the most \emph{spatially consistent} policy we
+measured (highest concentration of its hit map, Gini $0.400$ versus $0.316$--$0.338$
+for the other rectangle arms): it repeatedly forces the encoder to represent the
+same region. Second, the anatomy arms differ from the rectangle arms on several
+axes at once --- they leave $68\%$ of tokens as context versus $42\%$, and they
+run at roughly half the effective masking ratio --- so their deficit cannot be
+attributed to target \emph{shape} alone. We therefore do not claim that
+irregular target shape is harmful; that comparison is confounded by
+construction and we report it as such.
+
+\subsection{Subgroup analysis}
+
+Joining saved test predictions to demographics in deterministic loader order
+(validated by exact label reconstruction), Black participants have the lowest
+AUC in every valid probe. The disparity is a property of the evaluation, not of
+a single arm: it persists across masking policies and across epochs, which
+suggests it is inherited from the data and the downstream task rather than
+introduced by the pretraining objective.
+
+\subsection{Reproducibility}
+
+The epoch-100 oracle encoder and its trained probe head are public. Re-encoding
+the test split on different hardware, at fp32 rather than fp16, and with a
+different encoder chunk size reproduces the reported AUC to
+$9.8\times10^{-6}$ (0.8854754 versus 0.8854852), a difference of 22 discordant
+pairs out of 2{,}248{,}844. Probe-time numerical precision is therefore not a
+material factor in any comparison reported here.
+
+\section{Limitations}
+
+\textbf{One pretraining run per policy.} The paired bootstrap quantifies
+sampling error on a fixed test set; it does not quantify seed-to-seed variance
+of pretraining. With $n{=}1$ continuation per arm, the \emph{ranking} of arms is
+not established even where individual pairwise differences are significant on
+this test set. This is the principal limitation of the study.
+
+\textbf{One visible-tissue floor.} Only $f{=}0.21$ was pretrained for the
+\textsc{cover} policy, so we report no dose-response over the floor and make no
+claim that any particular floor is optimal.
+
+\textbf{Confounded shape comparison.} As noted above, the anatomy arms differ
+from the rectangle arms in masking ratio, context size, and the number of
+predictor loss terms simultaneously. We report their results but do not use
+them to support a causal claim about target shape.
+
+\textbf{Single dataset and task.} All results are glaucoma classification on
+FairVision OCT. Generality to other modalities or endpoints is untested.
+
+\section{Conclusion}
+
+Guiding masked-prediction targets with a trained segmentation model did not
+improve downstream glaucoma classification relative to a far cheaper
+segmentation-free heuristic, and increasing the anatomical precision of the mask
+was associated with worse, not better, representations. For practitioners the
+practical implication is concrete: an entire segmentation stage can be removed
+from this pipeline without measured loss. For the field, the result is a caution
+that ``mask the clinically relevant region'' is an intuition that should be
+tested rather than assumed.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

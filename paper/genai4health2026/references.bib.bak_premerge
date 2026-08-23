@@ -1,0 +1,516 @@
+% Merged bibliography: 43 agent-verified entries + carried-over cited entries.
+% Venues/DOIs verified. See research/unverified.md for excluded citations.
+
+@misc{abolade2026vamae,
+  title         = {{VAMAE}: Vessel-Aware Masked Autoencoders for {OCT} Angiography},
+  author        = {Abolade, Ilerioluwakiiye and Mireku, Prince and Chibundu, Kelechi and Ododo, Peace and Idoko, Emmanuel and Omoigui, Promise and Odelola, Solomon},
+  year          = {2026},
+  eprint        = {2604.06583},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  note          = {Accepted at ICPR 2026; final proceedings metadata unavailable at verification time},
+  doi           = {10.48550/arXiv.2604.06583},
+  url           = {https://arxiv.org/abs/2604.06583}
+}
+
+@inproceedings{assran2023ijepa,
+  title     = {Self-Supervised Learning from Images with a Joint-Embedding Predictive Architecture},
+  author    = {Assran, Mahmoud and Duval, Quentin and Misra, Ishan and Bojanowski, Piotr and Vincent, Pascal and Rabbat, Michael and LeCun, Yann and Ballas, Nicolas},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages     = {15619--15629},
+  year      = {2023},
+  doi       = {10.1109/CVPR52729.2023.01499}
+}
+
+@article{avram2025accurate,
+  title   = {Accurate Prediction of Disease-Risk Factors from Volumetric Medical Scans by a Deep Vision Model Pre-Trained with 2D Scans},
+  author  = {Avram, Oren and Durmus, Berkin and Rakocz, Nadav and Corradetti, Giulia and An, Ulzee and Nittala, Muneeswar G. and Terway, Prerit and Rudas, Akos and Chen, Zeyuan Johnson and Wakatsuki, Yu and Hirabayashi, Kazutaka and Velaga, Swetha and Tiosano, Liran and Corvi, Federico and Verma, Aditya and Karamat, Ayesha and Lindenberg, Sophiana and Oncel, Deniz and Almidani, Louay and Hull, Victoria and Fasih-Ahmad, Sohaib and Esmaeilkhanian, Houri and Cannesson, Maxime and Wykoff, Charles C. and Rahmani, Elior and Arnold, Corey W. and Zhou, Bolei and Zaitlen, Noah and Gronau, Ilan and Sankararaman, Sriram and Chiang, Jeffrey N. and Sadda, Srinivas R. and Halperin, Eran},
+  journal = {Nature Biomedical Engineering},
+  volume  = {9},
+  number  = {4},
+  pages   = {507--520},
+  year    = {2025},
+  doi     = {10.1038/s41551-024-01257-9}
+}
+
+@inproceedings{azizi2021big,
+  title={Big Self-Supervised Models Advance Medical Image Classification},
+  author={Azizi, Shekoofeh and Mustafa, Basil and Ryan, Fiona and Beaver, Zachary and Freyberg, Jan and Deaton, Jonathan and Loh, Aaron and Karthikesalingam, Alan and Kornblith, Simon and Chen, Ting and others},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+  year={2021}
+}
+
+@inproceedings{baevski2022data2vec,
+  title     = {data2vec: A General Framework for Self-supervised Learning in Speech, Vision and Language},
+  author    = {Baevski, Alexei and Hsu, Wei-Ning and Xu, Qiantong and Babu, Arun and Gu, Jiatao and Auli, Michael},
+  booktitle = {Proceedings of the 39th International Conference on Machine Learning},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {162},
+  pages     = {1298--1312},
+  publisher = {PMLR},
+  year      = {2022},
+  url       = {https://proceedings.mlr.press/v162/baevski22a.html}
+}
+
+@misc{balestriero2025lejepa,
+  title         = {{LeJEPA}: Provable and Scalable Self-Supervised Learning Without the Heuristics},
+  author        = {Balestriero, Randall and LeCun, Yann},
+  year          = {2025},
+  eprint        = {2511.08544},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG},
+  doi           = {10.48550/arXiv.2511.08544},
+  url           = {https://arxiv.org/abs/2511.08544}
+}
+
+@inproceedings{bao2022beit,
+  title     = {{BEiT}: {BERT} Pre-Training of Image Transformers},
+  author    = {Bao, Hangbo and Dong, Li and Piao, Songhao and Wei, Furu},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2022},
+  url       = {https://openreview.net/forum?id=p-BhZSz59o4}
+}
+
+@article{bardes2024vjepa,
+  title   = {Revisiting Feature Prediction for Learning Visual Representations from Video},
+  author  = {Bardes, Adrien and Garrido, Quentin and Ponce, Jean and Chen, Xinlei and Rabbat, Michael and LeCun, Yann and Assran, Mahmoud and Ballas, Nicolas},
+  journal = {Transactions on Machine Learning Research},
+  year    = {2024},
+  url     = {https://openreview.net/forum?id=QaCCuDfBk2}
+}
+
+@inproceedings{ceballosarroyo2026anatomymae,
+  title     = {Anatomically-Guided Masked Autoencoder Pre-Training for Aneurysm Detection},
+  author    = {Ceballos Arroyo, Alberto M. and Kim, Jisoo and Lin, Chu-Hsuan and Qin, Lei and Young, Geoffrey S. and Jiang, Huaizu},
+  booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision},
+  pages     = {5693--5702},
+  year      = {2026},
+  doi       = {10.1109/WACV61042.2026.00552}
+}
+
+@inproceedings{chen2023automae,
+  title     = {Improving Masked Autoencoders by Learning Where to Mask},
+  author    = {Chen, Haijian and Zhang, Wendong and Wang, Yunbo and Yang, Xiaokang},
+  booktitle = {Pattern Recognition and Computer Vision},
+  pages     = {377--390},
+  publisher = {Springer},
+  year      = {2023},
+  doi       = {10.1007/978-981-99-8543-2_31}
+}
+
+@inproceedings{chen2023mim3d,
+  title     = {Masked Image Modeling Advances 3D Medical Image Analysis},
+  author    = {Chen, Zekai and Agarwal, Devansh and Aggarwal, Kshitij and Safta, Wiem and Balan, Mariann Micsinai and Brown, Kevin},
+  booktitle = {Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision},
+  pages     = {1970--1980},
+  year      = {2023},
+  doi       = {10.1109/WACV56688.2023.00201}
+}
+
+@inproceedings{dosovitskiy2021vit,
+  title={An Image Is Worth 16x16 Words: Transformers for Image Recognition at Scale},
+  author={Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and others},
+  booktitle={International Conference on Learning Representations},
+  year={2021}
+}
+
+@inproceedings{dubois2023risk,
+  title     = {Evaluating Self-Supervised Learning via Risk Decomposition},
+  author    = {Dubois, Yann and Hashimoto, Tatsunori and Liang, Percy},
+  booktitle = {Proceedings of the 40th International Conference on Machine Learning},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {202},
+  pages     = {8779--8820},
+  publisher = {PMLR},
+  year      = {2023},
+  url       = {https://proceedings.mlr.press/v202/dubois23a.html}
+}
+
+@inproceedings{fang2022goals,
+  title     = {Dataset and Evaluation Algorithm Design for {GOALS} Challenge},
+  author    = {Fang, Huihui and Li, Fei and Fu, Huazhu and Wu, Junde and Zhang, Xiulan and Xu, Yanwu},
+  booktitle = {Ophthalmic Medical Image Analysis},
+  pages     = {135--142},
+  publisher = {Springer},
+  year      = {2022},
+  doi       = {10.1007/978-3-031-16525-2_14}
+}
+
+@article{gichoya2022race,
+  title   = {{AI} Recognition of Patient Race in Medical Imaging: A Modelling Study},
+  author  = {Gichoya, Judy Wawira and Banerjee, Imon and Bhimireddy, Ananth Reddy and Burns, John L. and Celi, Leo Anthony and Chen, Li-Ching and Correa, Ramon and Dullerud, Natalie and Ghassemi, Marzyeh and Huang, Shih-Cheng and Kuo, Po-Chih and Lungren, Matthew P. and Palmer, Lyle J. and Price, Brandon J. and Purkayastha, Saptarshi and Pyrros, Ayis T. and Oakden-Rayner, Lauren and Okechukwu, Chima and Seyyed-Kalantari, Laleh and Trivedi, Hari and Wang, Ryan and Zaiman, Zachary and Zhang, Haoran},
+  journal = {The Lancet Digital Health},
+  volume  = {4},
+  number  = {6},
+  pages   = {e406--e414},
+  year    = {2022},
+  doi     = {10.1016/S2589-7500(22)00063-2}
+}
+
+@inproceedings{he2022mae,
+  title     = {Masked Autoencoders Are Scalable Vision Learners},
+  author    = {He, Kaiming and Chen, Xinlei and Xie, Saining and Li, Yanghao and Doll{\'a}r, Piotr and Girshick, Ross},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages     = {16000--16009},
+  year      = {2022},
+  doi       = {10.1109/CVPR52688.2022.01553}
+}
+
+@misc{he2025dseqjepa,
+  title         = {{DSeq-JEPA}: Discriminative Sequential Joint-Embedding Predictive Architecture},
+  author        = {He, Xiangteng and Sakai, Shunsuke and Chandhok, Shivam and Beery, Sara and Yuan, Kun and Padoy, Nicolas and Hasegawa, Tatsuhito and Sigal, Leonid},
+  year          = {2025},
+  eprint        = {2511.17354},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  note          = {Accepted at ECCV 2026; final proceedings metadata unavailable at verification time},
+  doi           = {10.48550/arXiv.2511.17354},
+  url           = {https://arxiv.org/abs/2511.17354}
+}
+
+@article{huang2025amap,
+  title   = {Anatomically-Guided Masked Autoencoder with Domain-Adaptive Prompting ({AMAP}) for Multimodal Cerebral Aneurysm Detection and Segmentation},
+  author  = {Huang, Mingxuan and Liu, Tiantian and Zhang, Jiayin and Su, Xiaoming and Chen, Hanlin and Li, Miao and Guo, Jinghan and Zu, Kaiyang and Chen, Xiaofeng and Su, Yanguo and Cong, Hengri and Yan, Long and Yan, Tianyi and Deng, Yiming},
+  journal = {npj Digital Medicine},
+  volume  = {9},
+  number  = {1},
+  year    = {2025},
+  doi     = {10.1038/s41746-025-02188-8}
+}
+
+@inproceedings{huang2026vasomim,
+  title     = {{VasoMIM}: Vascular Anatomy-Aware Masked Image Modeling for Vessel Segmentation},
+  author    = {Huang, De-Xing and Zhou, Xiao-Hu and Gui, Mei-Jiang and Xie, Xiao-Liang and Liu, Shi-Qi and Wang, Shuang-Yi and Xiang, Tian-Yu and Ma, Rui-Ze and Xiao, Nu-Fang and Hou, Zeng-Guang},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume    = {40},
+  number    = {6},
+  pages     = {4985--4993},
+  year      = {2026},
+  doi       = {10.1609/aaai.v40i6.42503}
+}
+
+@inproceedings{jin2024fairmedfm,
+  title     = {{FairMedFM}: Fairness Benchmarking for Medical Imaging Foundation Models},
+  author    = {Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qingsong and Dou, Qi and Zhou, S. Kevin and Li, Xiaoxiao},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {37},
+  pages     = {111318--111357},
+  year      = {2024},
+  doi       = {10.52202/079017-3535},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2024/hash/c9826b9ea5e1b49b256329934a578d83-Abstract-Datasets_and_Benchmarks_Track.html}
+}
+
+@inproceedings{kakogeorgiou2022attmask,
+  title     = {What to Hide from Your Students: Attention-Guided Masked Image Modeling},
+  author    = {Kakogeorgiou, Ioannis and Gidaris, Spyros and Psomas, Bill and Avrithis, Yannis and Bursuc, Andrei and Karantzalos, Konstantinos and Komodakis, Nikos},
+  booktitle = {Computer Vision -- ECCV 2022},
+  pages     = {300--318},
+  publisher = {Springer},
+  year      = {2022},
+  doi       = {10.1007/978-3-031-20056-4_18}
+}
+
+@article{larrazabal2020gender,
+  title   = {Gender Imbalance in Medical Imaging Datasets Produces Biased Classifiers for Computer-Aided Diagnosis},
+  author  = {Larrazabal, Agostina J. and Nieto, Nicol{\'a}s and Peterson, Victoria and Milone, Diego H. and Ferrante, Enzo},
+  journal = {Proceedings of the National Academy of Sciences},
+  volume  = {117},
+  number  = {23},
+  pages   = {12592--12594},
+  year    = {2020},
+  doi     = {10.1073/pnas.1919012117}
+}
+
+@misc{lee2023evaluation,
+  title         = {Rethinking Evaluation Protocols of Visual Representations Learned via Self-Supervised Learning},
+  author        = {Lee, Jae-Hun and Yoon, Doyoung and Ji, ByeongMoon and Kim, Kyungyul and Hwang, Sangheum},
+  year          = {2023},
+  eprint        = {2304.03456},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  doi           = {10.48550/arXiv.2304.03456},
+  url           = {https://arxiv.org/abs/2304.03456}
+}
+
+@inproceedings{li2022semmae,
+  title     = {{SemMAE}: Semantic-Guided Masking for Learning Masked Autoencoders},
+  author    = {Li, Gang and Zheng, Heliang and Liu, Daqing and Wang, Chaoyue and Su, Bing and Zheng, Changwen},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {35},
+  pages     = {14290--14302},
+  year      = {2022},
+  doi       = {10.52202/068431-1039},
+  url       = {https://proceedings.neurips.cc/paper_files/paper/2022/hash/5db4e0a62cb5b4a5a70f1fdc9a78a4cc-Abstract-Conference.html}
+}
+
+@inproceedings{li2024anatomask,
+  title     = {{AnatoMask}: Enhancing Medical Image Segmentation with Reconstruction-Guided Self-masking},
+  author    = {Li, Yuheng and Luan, Tianyu and Wu, Yizhou and Pan, Shaoyan and Chen, Yenho and Yang, Xiaofeng},
+  booktitle = {Computer Vision -- ECCV 2024},
+  pages     = {146--163},
+  publisher = {Springer},
+  year      = {2024},
+  doi       = {10.1007/978-3-031-73027-6_9}
+}
+
+@article{liu2026octcube,
+  title   = {A Three-Dimensional Multi-Modal Foundation Model for Optical Coherence Tomography},
+  author  = {Liu, Zixuan and Xu, Hanwen and Woicik, Addie and Shapiro, Linda G. and Blazes, Marian and Wu, Yue and Steffen, Verena and Cukras, Catherine A. and Lee, Cecilia S. and Zhang, Miao and Lee, Aaron Y. and Wang, Sheng},
+  journal = {Nature Biomedical Engineering},
+  year    = {2026},
+  doi     = {10.1038/s41551-026-01662-2}
+}
+
+@misc{luo2024fairvision,
+  title         = {{FairVision}: Equitable Deep Learning for Eye Disease Screening via Fair Identity Scaling},
+  author        = {Luo, Yan and Khan, Muhammad Osama and Tian, Yu and Shi, Min and Dou, Zehao and Elze, Tobias and Fang, Yi and Wang, Mengyu},
+  year          = {2024},
+  eprint        = {2310.02492},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  doi           = {10.48550/arXiv.2310.02492},
+  url           = {https://arxiv.org/abs/2310.02492}
+}
+
+@article{luo2024harvardgf,
+  title   = {Harvard Glaucoma Fairness: A Retinal Nerve Disease Dataset for Fairness Learning and Fair Identity Normalization},
+  author  = {Luo, Yan and Tian, Yu and Shi, Min and Pasquale, Louis R. and Shen, Lucy Q. and Zebardast, Nazlee and Elze, Tobias and Wang, Mengyu},
+  journal = {IEEE Transactions on Medical Imaging},
+  volume  = {43},
+  number  = {7},
+  pages   = {2623--2633},
+  year    = {2024},
+  doi     = {10.1109/TMI.2024.3377552}
+}
+
+@article{maetschke2019glaucoma,
+  title={A Feature Agnostic Approach for Glaucoma Detection in {OCT} Volumes},
+  author={Maetschke, Stefan and Antony, Bhavna and Ishikawa, Hiroshi and Wollstein, Gadi and Schuman, Joel and Garnavi, Rahil},
+  journal={PLOS ONE},
+  volume={14},
+  number={7},
+  year={2019}
+}
+
+@misc{mao2023msmae,
+  title         = {Medical Supervised Masked Autoencoders: Crafting a Better Masking Strategy and Efficient Fine-Tuning Schedule for Medical Image Classification},
+  author        = {Mao, Jiawei and Guo, Shujian and Chang, Yuanqi and Yin, Xuesong and Nie, Binling},
+  year          = {2023},
+  eprint        = {2305.05871},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  doi           = {10.48550/arXiv.2305.05871},
+  url           = {https://arxiv.org/abs/2305.05871}
+}
+
+@article{marks2025benchmarking,
+  title   = {A Closer Look at Benchmarking Self-Supervised Pre-training with Image Classification},
+  author  = {Marks, Markus and Knott, Manuel and Kondapaneni, Neehar and Cole, Elijah and Defraeye, Thijs and P{\'e}rez-Cruz, Fernando and Perona, Pietro},
+  journal = {International Journal of Computer Vision},
+  volume  = {133},
+  number  = {8},
+  pages   = {5013--5025},
+  year    = {2025},
+  doi     = {10.1007/s11263-025-02402-w}
+}
+
+@misc{mo2024cjepa,
+  title         = {Connecting Joint-Embedding Predictive Architecture with Contrastive Self-supervised Learning},
+  author        = {Mo, Shentong and Tong, Shengbang},
+  year          = {2024},
+  eprint        = {2410.19560},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  doi           = {10.48550/arXiv.2410.19560},
+  url           = {https://arxiv.org/abs/2410.19560}
+}
+
+@article{morano2025mirage,
+  title   = {Multimodal Foundation Model and Benchmark for Comprehensive Retinal {OCT} Image Analysis},
+  author  = {Morano, Jos{\'e} and Fazekas, Botond and S{\"u}kei, Emese and Fecso, Ronald and Emre, Taha and Gumpinger, Markus and Faustmann, Georg and Oghbaie, Marzieh and Schmidt-Erfurth, Ursula and Bogunovi{\'c}, Hrvoje},
+  journal = {npj Digital Medicine},
+  volume  = {8},
+  pages   = {576},
+  year    = {2025},
+  doi     = {10.1038/s41746-025-01852-3}
+}
+
+@article{noury2022glaucoma,
+  title   = {Deep Learning for Glaucoma Detection and Identification of Novel Diagnostic Areas in Diverse Real-World Datasets},
+  author  = {Noury, Erfan and Mannil, Suria S. and Chang, Robert T. and Ran, An Ran and Cheung, Carol Y. and Thapa, Suman S. and Rao, Harsha L. and Dasari, Srilakshmi and Riyazuddin, Mohammed and Chang, Dolly and Nagaraj, Sriharsha and Tham, Clement C. and Zadeh, Reza},
+  journal = {Translational Vision Science \& Technology},
+  volume  = {11},
+  number  = {5},
+  pages   = {11},
+  year    = {2022},
+  doi     = {10.1167/tvst.11.5.11}
+}
+
+@article{oquab2024dinov2,
+  title={{DINOv2}: Learning Robust Visual Features without Supervision},
+  author={Oquab, Maxime and Darcet, Timoth{\'e}e and Moutakanni, Th{\'e}o and Vo, Huy and Szafraniec, Marc and Khalidov, Vasil and Fernandez, Pierre and Haziza, Daniel and Massa, Francisco and El-Nouby, Alaa and others},
+  journal={Transactions on Machine Learning Research},
+  year={2024}
+}
+
+@inproceedings{pissas2024octmim,
+  title     = {Masked Image Modelling for Retinal {OCT} Understanding},
+  author    = {Pissas, Theodoros and M{\'a}rquez-Neila, Pablo and Wolf, Sebastian and Zinkernagel, Martin S. and Sznitman, Raphael},
+  booktitle = {Ophthalmic Medical Image Analysis},
+  pages     = {115--125},
+  publisher = {Springer},
+  year      = {2024},
+  doi       = {10.1007/978-3-031-73119-8_12}
+}
+
+@article{qiu2024visionfm,
+  title   = {Development and Validation of a Multimodal Multitask Vision Foundation Model for Generalist Ophthalmic Artificial Intelligence},
+  author  = {Qiu, Jianing and Wu, Jian and Wei, Hao and Shi, Peilun and Zhang, Minqing and Sun, Yunyun and Li, Lin and Liu, Hanruo and Liu, Hongyi and Hou, Simeng and Zhao, Yuyang and Shi, Xuehui and Xian, Junfang and Qu, Xiaoxia and Zhu, Sirui and Pan, Lijie and Chen, Xiaoniao and Zhang, Xiaojia and Jiang, Shuai and Wang, Kebing and Yang, Chenlong and Chen, Mingqiang and Fan, Sujie and Hu, Jianhua and Lv, Aiguo and Miao, Hui and Guo, Li and Zhang, Shujun and Pei, Cheng and Fan, Xiaojuan and Lei, Jianqin and Wei, Ting and Duan, Junguo and Liu, Chun and Xia, Xiaobo and Xiong, Siqi and Li, Junhong and Lam, Kyle and Lo, Benny and Tham, Yih Chung and Wong, Tien Yin and Wang, Ningli and Yuan, Wu},
+  journal = {NEJM AI},
+  volume  = {1},
+  number  = {12},
+  year    = {2024},
+  doi     = {10.1056/AIoa2300221}
+}
+
+@article{ran2019glaucoma,
+  title   = {Detection of Glaucomatous Optic Neuropathy with Spectral-Domain Optical Coherence Tomography: A Retrospective Training and Validation Deep-Learning Analysis},
+  author  = {Ran, An Ran and Cheung, Carol Y. and Wang, Xi and Chen, Hao and Luo, Lu-Yang and Chan, Poemen P. and Wong, Mandy O. M. and Chang, Robert T. and Mannil, Suria S. and Young, Alvin L. and Yung, Hon-Wah and Pang, Chi Pui and Heng, Pheng-Ann and Tham, Clement C.},
+  journal = {The Lancet Digital Health},
+  volume  = {1},
+  number  = {4},
+  pages   = {e172--e182},
+  year    = {2019},
+  doi     = {10.1016/S2589-7500(19)30085-8}
+}
+
+@article{seyyedkalantari2021underdiagnosis,
+  title   = {Underdiagnosis Bias of Artificial Intelligence Algorithms Applied to Chest Radiographs in Under-Served Patient Populations},
+  author  = {Seyyed-Kalantari, Laleh and Zhang, Haoran and McDermott, Matthew B. A. and Chen, Irene Y. and Ghassemi, Marzyeh},
+  journal = {Nature Medicine},
+  volume  = {27},
+  number  = {12},
+  pages   = {2176--2182},
+  year    = {2021},
+  doi     = {10.1038/s41591-021-01595-0}
+}
+
+@inproceedings{shi2022adios,
+  title     = {Adversarial Masking for Self-Supervised Learning},
+  author    = {Shi, Yuge and Siddharth, N. and Torr, Philip H. S. and Kosiorek, Adam R.},
+  booktitle = {Proceedings of the 39th International Conference on Machine Learning},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {162},
+  pages     = {20026--20040},
+  publisher = {PMLR},
+  year      = {2022},
+  url       = {https://proceedings.mlr.press/v162/shi22d.html}
+}
+
+@article{shi2025equitable,
+  title   = {Equitable Artificial Intelligence for Glaucoma Screening with Fair Identity Normalization},
+  author  = {Shi, Min and Luo, Yan and Tian, Yu and Shen, Lucy Q. and Elze, Tobias and Zebardast, Nazlee and Eslami, Mohammad and Kazeminasab, Saber and Boland, Michael V. and Friedman, David S. and Pasquale, Louis R. and Wang, Mengyu},
+  journal = {npj Digital Medicine},
+  volume  = {8},
+  number  = {1},
+  year    = {2025},
+  doi     = {10.1038/s41746-025-01432-5}
+}
+
+@inproceedings{taleb20203dssl,
+  title     = {3D Self-Supervised Methods for Medical Imaging},
+  author    = {Taleb, Aiham and Loetzsch, Winfried and Danz, Noel and Severin, Julius and G{\"a}rtner, Thomas and Bergner, Benjamin and Lippert, Christoph},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {33},
+  pages     = {18158--18172},
+  year      = {2020},
+  url       = {https://proceedings.neurips.cc/paper/2020/hash/d2dc6368837861b42020ee72b0896182-Abstract.html}
+}
+
+@inproceedings{tang2022swinunetr,
+  title={Self-Supervised Pre-Training of {Swin} Transformers for 3D Medical Image Analysis},
+  author={Tang, Yucheng and Yang, Dong and Li, Wenqi and Roth, Holger R. and Landman, Bennett and Xu, Daguang and Nath, Vishwesh and Hatamizadeh, Ali},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year={2022}
+}
+
+@inproceedings{wang2023hardpatches,
+  title     = {Hard Patches Mining for Masked Image Modeling},
+  author    = {Wang, Haochen and Song, Kaiyou and Fan, Junsong and Wang, Yuxi and Xie, Jin and Zhang, Zhaoxiang},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages     = {10375--10385},
+  year      = {2023},
+  doi       = {10.1109/CVPR52729.2023.01000}
+}
+
+@misc{wang2025maskwhatmatters,
+  title         = {Mask What Matters: Controllable Text-Guided Masking for Self-Supervised Medical Image Analysis},
+  author        = {Wang, Ruilang and Xu, Shuotong and Liu, Bowen and Huang, Runlin and Chen, Donglong and Su, Weifeng},
+  year          = {2025},
+  eprint        = {2509.23054},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},
+  doi           = {10.48550/arXiv.2509.23054},
+  url           = {https://arxiv.org/abs/2509.23054}
+}
+
+@inproceedings{xie2022simmim,
+  title     = {{SimMIM}: A Simple Framework for Masked Image Modeling},
+  author    = {Xie, Zhenda and Zhang, Zheng and Cao, Yue and Lin, Yutong and Bao, Jianmin and Yao, Zhuliang and Dai, Qi and Hu, Han},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages     = {9653--9663},
+  year      = {2022},
+  doi       = {10.1109/CVPR52688.2022.00943}
+}
+
+@inproceedings{yu2024urfound,
+  title     = {{UrFound}: Towards Universal Retinal Foundation Models via Knowledge-Guided Masked Modeling},
+  author    = {Yu, Kai and Zhou, Yang and Bai, Yang and Soh, Zhi Da and Xu, Xinxing and Goh, Rick Siow Mong and Cheng, Ching-Yu and Liu, Yong},
+  booktitle = {Medical Image Computing and Computer Assisted Intervention -- MICCAI 2024},
+  pages     = {753--762},
+  publisher = {Springer},
+  year      = {2024},
+  doi       = {10.1007/978-3-031-72390-2_70}
+}
+
+@article{zhou2021modelsgenesis,
+  title={Models Genesis: Generic Autodidactic Models for 3D Medical Image Analysis},
+  author={Zhou, Zongwei and Sodha, Vatsal and Pang, Jiang and Gotway, Michael B. and Liang, Jianming},
+  journal={Medical Image Analysis},
+  volume={67},
+  year={2021}
+}
+
+@inproceedings{zhou2022ibot,
+  title={{iBOT}: Image {BERT} Pre-Training with Online Tokenizer},
+  author={Zhou, Jinghao and Wei, Chen and Wang, Huiyu and Shen, Wei and Xie, Cihang and Yuille, Alan and Kong, Tao},
+  booktitle={International Conference on Learning Representations},
+  year={2022}
+}
+
+@article{zhou2023retfound,
+  title   = {A Foundation Model for Generalizable Disease Detection from Retinal Images},
+  author  = {Zhou, Yukun and Chia, Mark A. and Wagner, Siegfried K. and Ayhan, Murat Se{\c{c}}kin and Williamson, Dominic J. and Struyven, Robbert R. and Liu, Timing and Xu, Moucheng and Lozano, Mateo G. and Woodward-Court, Peter and others},
+  journal = {Nature},
+  volume  = {622},
+  pages   = {156--163},
+  year    = {2023},
+  doi     = {10.1038/s41586-023-06555-x}
+}
+
+@article{guo2025mlomae,
+  title={Downstream Task Guided Masking Learning in Masked Autoencoders Using Multi-Level Optimization},
+  author={Guo, Han and Hosseini, Ramtin and Zhang, Ruiyi and Somayajula, Sai Ashish and Chowdhury, Ranak Roy and Gupta, Rajesh K. and Xie, Pengtao},
+  journal={Transactions on Machine Learning Research},
+  year={2025},
+  note={arXiv:2402.18128}
+}
+
+@inproceedings{lee2025hufgm,
+  title={{HU}-based Foreground Masking for {3D} Medical Masked Image Modeling},
+  author={Lee, Jin and Dang, Vu and Yu, Gwang-Hyun and Le, Anh and Rahman, Zahid and Jang, Jin-Ho and Lee, Heonzoo and Kim, Kun-Yung and Kim, Jin-Sul and Kim, Jin-Young},
+  booktitle={Medical Image Computing and Computer Assisted Intervention (MICCAI)},
+  year={2025},
+  doi={10.1007/978-3-032-09569-5_13},
+  note={arXiv:2509.07534}
+}

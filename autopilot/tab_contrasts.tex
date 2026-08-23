@@ -1,0 +1,27 @@
+\begin{table}[t]
+\centering
+\caption{Primary contrasts: matched epoch \emph{and} matched precision. $\Delta$
+is a paired difference on identical test cases; the interval is a
+\Nboot-resample paired bootstrap and $p$ is a DeLong test for correlated ROC
+curves. $q$ is Benjamini--Hochberg over these nine pre-specified contrasts. Every
+comparison against the null excludes zero.}
+\label{tab:contrasts}
+\small
+\begin{tabular}{llcccc}
+\toprule
+contrast & epoch & $\Delta$ AUC & 95\% CI & $p$ & $q$ \\
+\midrule
+\textsc{envelope} $-$ \textsc{random} & 50  & \DEnvelopeRandomEpFifty  & \DEnvelopeRandomEpFiftyCI  & \DEnvelopeRandomEpFiftyP  & \DEnvelopeRandomEpFiftyQ \\
+\textsc{envelope} $-$ \textsc{random} & 75  & \DEnvelopeRandomEpSeventyFive  & \DEnvelopeRandomEpSeventyFiveCI  & \DEnvelopeRandomEpSeventyFiveP  & \DEnvelopeRandomEpSeventyFiveQ \\
+\textsc{envelope} $-$ \textsc{random} & 100 & \DEnvelopeRandomEpHundred & \DEnvelopeRandomEpHundredCI & \DEnvelopeRandomEpHundredP & \DEnvelopeRandomEpHundredQ \\
+\addlinespace
+\textsc{intensity} $-$ \textsc{random}   & 50  & \DOracleRandomEpFifty    & \DOracleRandomEpFiftyCI    & \DOracleRandomEpFiftyP    & \DOracleRandomEpFiftyQ \\
+\textsc{intensity} $-$ \textsc{random}   & 75  & \DOracleRandomEpSeventyFive    & \DOracleRandomEpSeventyFiveCI    & \DOracleRandomEpSeventyFiveP    & \DOracleRandomEpSeventyFiveQ \\
+\textsc{intensity} $-$ \textsc{random}   & 100 & \DOracleRandomEpHundred   & \DOracleRandomEpHundredCI   & \DOracleRandomEpHundredP   & \DOracleRandomEpHundredQ \\
+\addlinespace
+\textsc{intensity} $-$ \textsc{envelope} & 50  & \DOracleEnvelopeEpFifty  & \DOracleEnvelopeEpFiftyCI  & \DOracleEnvelopeEpFiftyP  & \DOracleEnvelopeEpFiftyQ \\
+\textsc{intensity} $-$ \textsc{envelope} & 75  & \DOracleEnvelopeEpSeventyFive  & \DOracleEnvelopeEpSeventyFiveCI  & \DOracleEnvelopeEpSeventyFiveP  & \DOracleEnvelopeEpSeventyFiveQ \\
+\textsc{intensity} $-$ \textsc{envelope} & 100 & \DOracleEnvelopeEpHundred & \DOracleEnvelopeEpHundredCI & \DOracleEnvelopeEpHundredP & \DOracleEnvelopeEpHundredQ \\
+\bottomrule
+\end{tabular}
+\end{table}

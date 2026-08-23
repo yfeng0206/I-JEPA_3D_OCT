@@ -1,0 +1,105 @@
+\section{Subgroup and severity analysis}
+\label{app:subgroup}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_fairness.png}
+\caption{\textbf{Left:} race-stratified AUC at epoch 100 with bootstrap
+intervals. The black subgroup is lowest under every policy, but note that
+\emph{every} group improves from \textsc{random} to \textsc{intensity}.
+\textbf{Right:} max--min race gap against aggregate AUC across \NprobesSub{}
+checkpoints. The fitted slope is positive but does not survive multiplicity
+correction or branch-level aggregation (Table~\ref{tab:subtrends}), so we draw
+no trend conclusion from it.}
+\label{fig:fair}
+\end{figure}
+
+All numbers below come from saved test predictions joined to FairVision's
+released metadata in deterministic loader order; the join is validated by exact
+label reconstruction (\Ntest/\Ntest{} labels recovered in every probe). The
+\NprobesSub{} probes used here are exactly those the inventory marks valid: the
+four retracted coverage probes of Appendix~\ref{app:excluded} and the two
+precision-spliced \textsc{anatomy-v2} probes are excluded here as everywhere
+else in the paper.
+
+\paragraph{Why we report two sample sizes.} The \NprobesSub{} probes span only
+\NbranchesSub{} pretraining branches, because several are different epochs of
+one training run. Probes within a branch share an encoder lineage, a seed and
+the test split, so treating them as \NprobesSub{} independent observations is
+pseudo-replication. Table~\ref{tab:subtrends} therefore reports each trend twice:
+once per checkpoint, and once after averaging within each branch. Where the two
+disagree, the branch-level figure is the one to believe.
+
+\begin{table}[h]
+\centering
+\caption{Subgroup gap trends. ``gap range'' is the max--min subgroup AUC gap
+observed across the \NprobesSub{} valid probes. $q$ is Benjamini--Hochberg
+across the seven attributes tested, which is necessary because seven trends were
+examined. Only the sex gap and the severity gap survive correction, and both
+\emph{narrow} as aggregate AUC rises.}
+\label{tab:subtrends}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\input{auto/table_subgroup_trends}
+\end{table}
+
+\paragraph{Race.} The black subgroup has the lowest AUC in every one of the
+\NprobesSub{} probes ($n{=}\NBlack$ black, $n{=}\NAsian$ asian, $n{=}\NWhite$
+white). At matched epoch 100 the black subgroup improves from
+$\RaceRandomBlack$ under \textsc{random} to $\RaceOracleBlack$ under
+\textsc{intensity} ($\BlackGainOracle$), a larger absolute gain than the white
+subgroup's ($\RaceRandomWhite \to \RaceOracleWhite$). The max--min gap
+nonetheless widens slightly, because the asian subgroup --- already the
+highest --- gains most ($\RaceRandomAsian \to \RaceOracleAsian$). A widening
+max--min gap with universally rising subgroup AUCs is not evidence of harm, and
+we do not present it as such. The checkpoint-level correlation between aggregate
+AUC and racial gap is $\rho{=}\SubRaceRho$ ($p{=}\SubRaceRhoP$), which fails BH
+correction ($q{=}\SubRaceQ$) and vanishes at branch level
+($\rho{=}\SubRaceBranchRho$, $p{=}\SubRaceBranchP$). We therefore explicitly do
+\emph{not} claim that more accurate models are less fair.
+
+\paragraph{Disease severity.} FairVision's label is defined by visual-field mean
+deviation (md): every test volume with md $\leq -2$ is positive. Severity
+therefore cannot be used as an ordinary subgroup axis, because within-bin AUC is
+undefined --- a trap that silently yields nothing under naive stratification.
+Instead each positive stratum is scored against the shared pool of all
+\Nneg{} negatives.
+
+\begin{table}[h]
+\centering
+\caption{Severity-stratified AUC at matched epoch 100. Each positive stratum is
+scored against the shared pool of all \Nneg{} negatives. Every stratum improves,
+and mild disease improves most.}
+\label{tab:severity}
+\small
+\begin{tabular}{lccccc}
+\toprule
+stratum & $n_{+}$ & \textsc{random} & \textsc{envelope} & \textsc{intensity} & $\Delta$ \\
+\midrule
+severe (md $\leq -12$)          & 334 & \SevRandomSevere   & \SevEnvelopeSevere   & \SevOracleSevere   & \SevDeltaSevere \\
+moderate ($-12 <$ md $\leq -6$) & 460 & \SevRandomModerate & \SevEnvelopeModerate & \SevOracleModerate & \SevDeltaModerate \\
+mild ($-6 <$ md $\leq -2$)      & 672 & \SevRandomMild     & \SevEnvelopeMild     & \SevOracleMild     & \textbf{\SevDeltaMild} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The severe-to-mild gap is $\SevGapRandom$ for the null and $\SevGapOracle$ for
+the strongest policy, and stays within $\SeverityGapSpread$
+($\SubSeverityGapMin$--$\SubSeverityGapMax$) across all \NprobesSub{} probes
+while aggregate AUC spans $\SubAUCMin$--$\SubAUCMax$. Target placement raises
+the whole severity curve --- mild disease most of all --- without altering the
+ordering that makes early disease hard. We note that mild functional loss is
+harder to separate from normal OCT by construction, so this ordering is expected
+clinically; what the data add is that no masking policy we tested changes it.
+
+\paragraph{Limitations.} One dataset, one test split, reused throughout this
+programme's history. Because policies, checkpoints and analyses were chosen
+after repeated inspection of that split, the $p$-values here should be read as
+descriptive rather than as confirmatory inference. Race and ethnicity are
+self-reported categories inherited from FairVision's coding; at these subgroup
+sizes we cannot speak to intersectional groups. All figures are frozen mean-pool
+linear probes with AUC as the only metric; we report no subgroup calibration,
+no sensitivity at a fixed specificity, and no threshold-transfer analysis, so
+this audit should not be read as a complete fairness evaluation. Disparities
+could differ under fine-tuning or a stronger head.
+

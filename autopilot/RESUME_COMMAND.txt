@@ -1,0 +1,26 @@
+# How to resume this autopilot run
+# Generated 2026-08-22T23:41:02-07:00
+
+# 1. Restart the resource monitor (if not running):
+powershell -NoProfile -ExecutionPolicy Bypass -File C:\Users\Gary\Desktop\jepa\autopilot\resource_monitor.ps1 -IntervalSec 45
+
+# 2. Inspect state:
+type C:\Users\Gary\Desktop\jepa\autopilot\CURRENT_STATUS.md
+type C:\Users\Gary\Desktop\jepa\autopilot\TASK_LEDGER.md
+
+# 3. Python for all analysis (torch lives here, NOT in system python):
+D:\jepa_phase0\.venv\Scripts\python.exe
+
+# 4. LaTeX build:
+& "D:\jepa_phase0\tools\tectonic\tectonic.exe" -X compile main_submission.tex --keep-intermediates
+#   (run from C:\Users\Gary\Desktop\jepa\paper\genai4health2026)
+
+# 5. HARD CONSTRAINT - do NOT resume pretraining. COVER-0.21 stays at epoch 73.
+#    Forbidden: scripts\chain_cover_f021.py, scripts\campaign_chain.py, any src/train*.py
+
+# 6. Outstanding in-progress tasks at last render:
+#    - [P11-01] Revision pass addressing every R1 objection -> resume
+#    - [P13-02] Build and validate final Overleaf ZIP -> resume
+#    - [P3-00] fp32 re-probe envelope ep50/75/100 (confound fix, blocks headline claim) -> resume
+#    - [P3-03] Trim unnecessary ep75 fp32 probes after ep50 completes -> resume
+#    - [P9-01] Rewrite manuscript around protocol-matched paired evidence -> resume

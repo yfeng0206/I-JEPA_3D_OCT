@@ -1,0 +1,4 @@
+job_id,pid,command,owner,input_artifacts,start_time,expected_completion,last_output_time,cpu_mem,gpu_mem,output_dir,exit_code,recovery_command
+gpu-queue,25120,"python gpu_queue.py (4 guarded frozen probes: envelope fp32 ep100/50/75, cover ep73)",coordinator,patch_mirage_envelope ep50/75/100; cover_f021 ep73-pinned,2026-08-22T19:05-07:00,2026-08-22T23:30-07:00,,,,D:\jepa_phase0\runs\frozen_meanpool_*,,python autopilot\gpu_queue.py (idempotent - skips runs with results.json)
+gpu-queue1,21724,gpu_queue.py -> meanpool_envelope_fp32_ep50,coordinator,,2026-08-22T19:43-07:00,,,,,D:\jepa_phase0\runs\frozen_meanpool_envelope_fp32_ep50,,python autopilot\gpu_queue.py (idempotent)
+gpu-queue2,14428,gpu_queue2.py -> meanpool_random_ep100_fp32,coordinator,,2026-08-22T19:45-07:00,,,,,D:\jepa_phase0\runs\frozen_meanpool_random_ep100_fp32,,python autopilot\gpu_queue2.py (idempotent)

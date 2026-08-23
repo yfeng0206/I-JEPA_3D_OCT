@@ -1,0 +1,502 @@
+{
+ "started": "2026-08-22T18:30:39-07:00",
+ "phase": "P3+P9+P10",
+ "phase_note": "GPU fp32 queue running; manuscript integrated; 4 agents active (style, relwork, numverify, review-r1)",
+ "tasks": {
+  "P0-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P0",
+   "title": "Inventory checkpoints, predictions, protocols",
+   "expected": "0.5h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T18:30:42-07:00"
+  },
+  "P0-02": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P0",
+   "title": "Launch resource monitor and control plane",
+   "expected": "0.2h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T18:30:42-07:00"
+  },
+  "P1-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P1",
+   "title": "Build protocol-matched paired master table from 19 saved prediction sets",
+   "expected": "1.0h",
+   "owner": "coordinator",
+   "started": "2026-08-22T18:31:55-07:00",
+   "finished": "2026-08-22T18:42:11-07:00"
+  },
+  "P1-02": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P1",
+   "title": "DeLong + paired bootstrap CIs for every arm contrast",
+   "expected": "1.5h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T19:01:49-07:00"
+  },
+  "P1-03": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P1",
+   "title": "ROC / PR / calibration / operating-point metrics per arm",
+   "expected": "1.0h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T19:06:45-07:00"
+  },
+  "P1-04": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P1",
+   "title": "Locate patient IDs; attempt patient-level clustered bootstrap",
+   "expected": "1.0h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T18:42:12-07:00"
+  },
+  "P2-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P2",
+   "title": "Diff neurips_2026.sty against official NeurIPS 2026 style",
+   "expected": "0.5h",
+   "owner": "agent",
+   "started": "2026-08-22T18:31:54-07:00",
+   "note": "VERDICT IDENTICAL - byte-for-byte match to official, 0 diff lines",
+   "finished": "2026-08-22T20:01:44-07:00"
+  },
+  "P2-02": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P2",
+   "title": "Related-work + citation research for anatomy-guided masked SSL",
+   "expected": "3.0h",
+   "owner": "agent",
+   "started": "2026-08-22T18:31:54-07:00",
+   "note": "30 verified works; 16 new bib entries merged; counter-evidence table added",
+   "finished": "2026-08-22T20:14:56-07:00"
+  },
+  "P2-03": {
+   "status": "pending",
+   "retries": 0,
+   "phase": "P2",
+   "title": "Verify P2-01/P2-02 findings independently",
+   "expected": "1.0h",
+   "owner": "agent"
+  },
+  "P3-01": {
+   "status": "pending",
+   "retries": 0,
+   "phase": "P3",
+   "title": "Frozen linear probe of COVER-0.21 epoch-73 checkpoint",
+   "expected": "2.0h",
+   "owner": "coordinator"
+  },
+  "P3-02": {
+   "status": "pending",
+   "retries": 0,
+   "phase": "P3",
+   "title": "Assert encoder frozen + hash unchanged before/after probe",
+   "expected": "0.2h",
+   "owner": "coordinator"
+  },
+  "P4-01": {
+   "status": "pending",
+   "retries": 0,
+   "phase": "P4",
+   "title": "Extract and cache frozen features for all arms",
+   "expected": "4.0h",
+   "owner": "coordinator"
+  },
+  "P5-01": {
+   "status": "pending",
+   "retries": 0,
+   "phase": "P5",
+   "title": "Label-efficiency curves (1/5/10/25/100%) from cached features",
+   "expected": "3.0h",
+   "owner": "coordinator"
+  },
+  "P6-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P6",
+   "title": "Embedding structure: PCA/UMAP, class separation, Cohen d",
+   "expected": "4.0h",
+   "owner": "coordinator",
+   "note": "SUPERSEDED: representation-structure analysis already exists (results/masking/class_relations, commit 2bbe199) with Cohen d + discrimination AUC",
+   "finished": "2026-08-22T23:03:28-07:00"
+  },
+  "P7-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P7",
+   "title": "Subgroup / fairness analysis on FairVision metadata",
+   "expected": "3.0h",
+   "owner": "coordinator",
+   "started": "2026-08-22T18:44:18-07:00",
+   "finished": "2026-08-22T19:06:45-07:00"
+  },
+  "P8-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P8",
+   "title": "Regenerate all figures and tables from verified artifacts",
+   "expected": "3.5h",
+   "owner": "coordinator",
+   "started": "2026-08-22T19:07:08-07:00",
+   "note": "assets generated: 90 macros, 3 tables, 3 figures",
+   "finished": "2026-08-22T19:15:55-07:00"
+  },
+  "P9-01": {
+   "status": "in_progress",
+   "retries": 0,
+   "phase": "P9",
+   "title": "Rewrite manuscript around protocol-matched paired evidence",
+   "expected": "8.0h",
+   "owner": "coordinator",
+   "started": "2026-08-22T19:24:54-07:00"
+  },
+  "P9-02": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P9",
+   "title": "Compile first full PDF and check page limit",
+   "expected": "0.5h",
+   "owner": "coordinator",
+   "note": "9-page limit met: References begin p9 y=605",
+   "finished": "2026-08-22T19:24:54-07:00"
+  },
+  "P10-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P10",
+   "title": "Mock review round 1: 3 independent reviewers",
+   "expected": "3.0h",
+   "owner": "agent",
+   "started": "2026-08-22T19:33:26-07:00",
+   "note": "R1 complete: Reject, 18pct accept, 3 FATAL + 14 MAJOR",
+   "finished": "2026-08-22T20:01:44-07:00"
+  },
+  "P10-02": {
+   "status": "pending",
+   "retries": 0,
+   "phase": "P10",
+   "title": "Meta-review and objection triage",
+   "expected": "1.0h",
+   "owner": "agent"
+  },
+  "P11-01": {
+   "status": "in_progress",
+   "retries": 0,
+   "phase": "P11",
+   "title": "Revision pass addressing every R1 objection",
+   "expected": "5.0h",
+   "owner": "coordinator",
+   "started": "2026-08-22T20:14:57-07:00",
+   "note": "R1 fixes applied"
+  },
+  "P12-01": {
+   "status": "pending",
+   "retries": 0,
+   "phase": "P12",
+   "title": "Mock review round 2 + numerical re-verification",
+   "expected": "3.0h",
+   "owner": "agent"
+  },
+  "P13-01": {
+   "status": "pending",
+   "retries": 0,
+   "phase": "P13",
+   "title": "Final compile, anonymity + citation validation",
+   "expected": "1.0h",
+   "owner": "coordinator"
+  },
+  "P13-02": {
+   "status": "in_progress",
+   "retries": 0,
+   "phase": "P13",
+   "title": "Build and validate final Overleaf ZIP",
+   "expected": "1.0h",
+   "owner": "coordinator",
+   "started": "2026-08-22T19:29:21-07:00",
+   "note": "builder validated: 6/6 checks pass, 9-page main content"
+  },
+  "P3-00": {
+   "status": "in_progress",
+   "retries": 0,
+   "phase": "P3",
+   "title": "fp32 re-probe envelope ep50/75/100 (confound fix, blocks headline claim)",
+   "expected": "4.0h",
+   "owner": "coordinator",
+   "started": "2026-08-22T18:44:18-07:00"
+  },
+  "P1-05": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P1",
+   "title": "Corrected inventory + family-partitioned paired stats (p1b/p1c)",
+   "expected": "2.0h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T19:01:50-07:00"
+  },
+  "P7-02": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P7",
+   "title": "Subgroup gap trends across 21 probes (gender/race/ethnicity/language/marital/age/severity)",
+   "expected": "1.0h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T19:15:55-07:00"
+  },
+  "P13-03": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P13",
+   "title": "ZIP builder with 6-check standalone validation",
+   "expected": "1.0h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T19:29:21-07:00"
+  },
+  "PV-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "PV",
+   "title": "Independent numerical audit of all statistics (GPT-5.6 Sol xhigh)",
+   "expected": "1.5h",
+   "owner": "agent",
+   "started": "2026-08-22T19:30:17-07:00",
+   "note": "MATERIAL ERRORS FOUND: 13 discrepancies, all triaged",
+   "finished": "2026-08-22T20:01:45-07:00"
+  },
+  "PC-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P9",
+   "title": "Citation integrity check: 40/40 keys resolve, 0 malformed",
+   "expected": "0.2h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T19:34:27-07:00"
+  },
+  "P2-04": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P2",
+   "title": "Submission-requirements audit incl. NeurIPS checklist requirement",
+   "expected": "1.0h",
+   "owner": "agent",
+   "started": "2026-08-22T19:39:40-07:00",
+   "note": "checklist NOT required; 9pp confirmed; no style options; 50MB PDF limit",
+   "finished": "2026-08-22T20:14:56-07:00"
+  },
+  "SCHED-01": {
+   "status": "done",
+   "retries": 0,
+   "phase": "P0",
+   "title": "Stop obsolete COVER pretraining monitor schedule (conflicts with no-pretraining boundary)",
+   "expected": "0.1h",
+   "owner": "coordinator",
+   "finished": "2026-08-22T20:18:40-07:00"
+  },
+  "P6-02": {
+   "status": "pending",
+   "retries": 0,
+   "phase": "P6",
+   "title": "Integrate existing class-relations evidence into the paper as a mechanism hypothesis",
+   "expected": "1.0h",
+   "owner": "coordinator"
+  },
+  "P3-03": {
+   "status": "in_progress",
+   "retries": 0,
+   "phase": "P3",
+   "title": "Trim unnecessary ep75 fp32 probes after ep50 completes",
+   "expected": "0.2h",
+   "owner": "coordinator",
+   "started": "2026-08-22T23:41:02-07:00"
+  }
+ },
+ "agents": {
+  "f2878f18-8262-46ca-b712-2a9c02276f39": {
+   "retries": 0,
+   "model": "gpt-5.6-sol-xhigh",
+   "task": "P2-04-submission-requirements-audit",
+   "start": "2026-08-22T18:47-07:00",
+   "expected": "2026-08-22T20:45-07:00",
+   "status": "complete",
+   "output": "autopilot/reports/P2-01_style_verification.md",
+   "deps": "none",
+   "verification": "transcribed",
+   "next_action": "none",
+   "last_heartbeat": "2026-08-22T20:14:57-07:00"
+  },
+  "17e3f16a-a61d-4d17-9c79-a3f42f69801f": {
+   "retries": 0,
+   "model": "gpt-5.6-sol-xhigh",
+   "task": "P2-02-related-work-research",
+   "start": "2026-08-22T18:47-07:00",
+   "expected": "2026-08-22T21:45-07:00",
+   "status": "complete",
+   "output": "autopilot/reports/P2-02_related_work.md",
+   "deps": "none",
+   "verification": "transcribed",
+   "next_action": "none",
+   "last_heartbeat": "2026-08-22T20:14:56-07:00"
+  },
+  "19c8467c-2afe-4be5-bb17-bb4f1134a3fa": {
+   "retries": 0,
+   "model": "gpt-5.6-sol-xhigh",
+   "task": "P-VERIFY-numerical-audit",
+   "start": "2026-08-22T19:31-07:00",
+   "expected": "2026-08-22T21:00-07:00",
+   "status": "complete",
+   "output": "autopilot/reports/P-VERIFY_numerical_audit.md",
+   "deps": "P1,P7,P8",
+   "verification": "accepted",
+   "next_action": "fixes-applied",
+   "last_heartbeat": "2026-08-22T20:01:45-07:00"
+  },
+  "c2a169b2-6933-4d16-9b28-3f16a7533b97": {
+   "retries": 0,
+   "model": "gpt-5.6-sol-xhigh",
+   "task": "P10-mock-review-round1",
+   "start": "2026-08-22T19:34-07:00",
+   "expected": "2026-08-22T21:30-07:00",
+   "status": "complete",
+   "output": "autopilot/reports/P10_mock_review_round1.md",
+   "deps": "P9",
+   "verification": "accepted",
+   "next_action": "round-2-after-fixes",
+   "last_heartbeat": "2026-08-22T20:01:45-07:00"
+  }
+ },
+ "procs": {
+  "gpu-queue": {
+   "pid": "25120",
+   "command": "python gpu_queue.py (4 guarded frozen probes: envelope fp32 ep100/50/75, cover ep73)",
+   "owner": "coordinator",
+   "input_artifacts": "patch_mirage_envelope ep50/75/100; cover_f021 ep73-pinned",
+   "start_time": "2026-08-22T19:05-07:00",
+   "expected_completion": "2026-08-22T23:30-07:00",
+   "output_dir": "D:\\jepa_phase0\\runs\\frozen_meanpool_*",
+   "recovery_command": "python autopilot\\gpu_queue.py (idempotent - skips runs with results.json)",
+   "exit_code": ""
+  },
+  "gpu-queue1": {
+   "pid": "21724",
+   "command": "gpu_queue.py -> meanpool_envelope_fp32_ep50",
+   "owner": "coordinator",
+   "start_time": "2026-08-22T19:43-07:00",
+   "output_dir": "D:\\jepa_phase0\\runs\\frozen_meanpool_envelope_fp32_ep50",
+   "exit_code": "",
+   "recovery_command": "python autopilot\\gpu_queue.py (idempotent)"
+  },
+  "gpu-queue2": {
+   "pid": "14428",
+   "command": "gpu_queue2.py -> meanpool_random_ep100_fp32",
+   "owner": "coordinator",
+   "start_time": "2026-08-22T19:45-07:00",
+   "output_dir": "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep100_fp32",
+   "exit_code": "",
+   "recovery_command": "python autopilot\\gpu_queue2.py (idempotent)"
+  }
+ },
+ "decisions": [
+  {
+   "time": "2026-08-22T18:30:43-07:00",
+   "decision": "Route all bulk output to D:, keep only control files on C:",
+   "rationale": "C: has 19.8 GB free (8.5 percent), already below the 25 GB / 10 percent stop threshold in the operator directive. D: has 694 GB free. Writing features, figures and PDFs to C: risks filling the system drive."
+  },
+  {
+   "time": "2026-08-22T18:30:43-07:00",
+   "decision": "Rebuild the paper's core evidence from the 19 saved test_predictions.npz rather than the previous mixed-protocol master table",
+   "rationale": "All 19 runs share one identical probe protocol (mean_pool/linear/100 slices/seed 42/frozen/lr 4e-4/50 epochs) and an identical 3000-sample test label vector. This makes paired DeLong and bootstrap tests valid and removes the mixed-protocol confound that the prior adversarial review rated fatal. It requires no GPU and no retraining."
+  },
+  {
+   "time": "2026-08-22T18:42:11-07:00",
+   "decision": "GPU priority reordered: fp32 re-probe of the envelope arm (ep50/75/100) comes BEFORE the COVER epoch-73 probe",
+   "rationale": "eval_downstream.py line 541 reads use_amp = data_cfg.get('use_amp', True), so the default is fp16 AMP. The three envelope probe configs omit use_amp entirely and therefore ran in fp16, while all 16 comparator runs set use_amp: False and ran fp32. The envelope arm is the winning arm and the source of the headline +0.0200 AUC vs random. A precision mismatch between the winner and its comparators is a confound that would invalidate the paper's central claim, and an adversarial reviewer would find it. Re-probing a frozen encoder is explicitly permitted under the no-pretraining boundary. Until the fp32 re-probe lands, the envelope-vs-random contrast is marked PENDING-CONFOUNDED and must not be written as a result."
+  },
+  {
+   "time": "2026-08-22T19:01:49-07:00",
+   "decision": "Extend GPU work to a complete fp32 family for random, oracle and envelope at ep50/75/100 (6 extra probes, queue 2)",
+   "rationale": "The inventory shows the paper's primary family (random, oracle, envelope) is entirely fp16 while the H2 arms (anatomy-v1, anatomy-v2, cover-f021, ancestor) are entirely fp32. Table 1 therefore compares anatomy-v2 and cover against a null probed at a different numerical precision while claiming a single shared protocol. All required encoders are available locally (checkpoints_hf/random-posfix-100ep and oracle-anatomical-100ep), so the confound can be eliminated rather than merely disclosed. The interrupted run frozen_meanpool_oracle_ep100_fp32 already holds a complete fp32 feature cache, saving about 60 minutes."
+  },
+  {
+   "time": "2026-08-22T19:01:49-07:00",
+   "decision": "Keep the fp16 primary-family results as the paper's primary numbers until the fp32 family completes",
+   "rationale": "Within the fp16 family every contrast is precision-matched and internally valid, and my independent paired bootstrap reproduces the published headline (oracle minus random at ep100 = +0.0109, CI [+0.0057,+0.0160] against the paper's [+0.0058,+0.0162]). Discarding these would lose the only complete three-epoch trajectory. The fp32 family will be reported as a precision-robustness replication."
+  },
+  {
+   "time": "2026-08-22T19:15:55-07:00",
+   "decision": "Reuse the repo's existing subgroup_analysis.py rather than my own p7_fairness.py as the authoritative fairness source",
+   "rationale": "The repo script joins to D:/jepa_phase0/fairvision-glaucoma/metadata/data_summary_glaucoma.csv, which carries age and visual-field mean deviation (md) in addition to the six attributes stored inside each volume .npz. That enables age bins and severity strata, which my version could not produce. The two implementations agree exactly where they overlap (oracle ep100 race gap 0.0717 in both), so the richer one is preferred and mine is retained as an independent cross-check."
+  },
+  {
+   "time": "2026-08-22T19:24:54-07:00",
+   "decision": "Every number in the manuscript is emitted as a LaTeX macro by p8_make_assets.py rather than typed by hand",
+   "rationale": "The prior draft contained transcription errors between prose, tables and figures (an epoch-mismatched comparison and a correlation quoted from the wrong sample were both caught in earlier review). Generating all 136 quantities from the verified JSON artifacts makes that class of error structurally impossible and lets a correction propagate everywhere with one re-run."
+  },
+  {
+   "time": "2026-08-22T19:32:39-07:00",
+   "decision": "Anonymity compliance verified locally by the coordinator while the style agent completes its byte-diff",
+   "rationale": "The compiled PDF renders 'Anonymous Author(s) / Affiliation / Address / email' on page 1, page geometry is US Letter 612x792, and neurips_2026.sty sets \\\\newif\\\\if@anonymous\\\\@anonymoustrue as the default with only 'final'/'preprint'/'nonanonymous' style options clearing it. The manuscript passes no options, so double-blind rendering is confirmed. This closes the highest-severity part of desk-reject risk R1 without waiting for the agent; the outstanding item is only the byte-level diff against the official upstream file."
+  },
+  {
+   "time": "2026-08-22T19:39:05-07:00",
+   "decision": "Keep the local neurips_2026.sty unchanged; desk-reject risk R1 closed",
+   "rationale": "The sty-verify agent downloaded the official archive from media.neurips.cc/Conferences/NeurIPS2026/Formatting_Instructions_For_NeurIPS_2026.zip and diffed it against our copy: 443 lines each, zero differing lines, identical SHA-256 c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a. Geometry, font sizes and the anonymity branch all match, and the GenAI4Health CFP's required no-option usage renders anonymously. I independently corroborated the anonymous rendering and US Letter geometry from the compiled PDF."
+  },
+  {
+   "time": "2026-08-22T19:39:05-07:00",
+   "decision": "Transcribe research-agent reports to disk manually",
+   "rationale": "Research-type subagents in this session are blocked by execution policy from writing files; sty-verify produced a complete report that existed only in its reply. Their deliverables must be captured from the inline reply or they are lost at session end. The relwork agent has been warned to print its report and BibTeX inline as a fallback."
+  },
+  {
+   "time": "2026-08-22T20:01:45-07:00",
+   "decision": "Accept the numerical audit's finding and exclude anatomy-v2 ep75/ep92 from the subgroup analysis, reducing it from 21 to 19 probes",
+   "rationale": "p7b_gap_trend.py filtered only on subgroup_analysis.py's RETRACTED tag, which does not know about the anatomy-v2 EMA-target precision splice at epoch 56. Two probes the manuscript declares excluded were therefore silently re-admitted. This was not cosmetic: it changed the severity trend from non-significant (p=0.065) to significant (p=0.022) and shifted the race correlation. p7b now joins p1b_full_inventory.json for exclusion status."
+  },
+  {
+   "time": "2026-08-22T20:01:45-07:00",
+   "decision": "Withdraw the claim that the racial AUC gap widens as models improve",
+   "rationale": "The mock review and the numerical audit independently showed the claim fails on three counts: it does not survive Benjamini-Hochberg over the seven attributes tested (q=0.0595), it vanishes when pseudo-replication is removed by averaging within training branches (rho=+0.429, p=0.337), and it misdescribes the data, since every race subgroup improves and the black subgroup gains more than the white subgroup (+0.0147 vs +0.0112). The gap widens only because the already-highest asian subgroup gains most. The paper now states this explicitly and makes no fairness-trend claim."
+  },
+  {
+   "time": "2026-08-22T20:14:57-07:00",
+   "decision": "Move the broader-impact statement to the appendix",
+   "rationale": "The submission-requirements audit established that GenAI4Health requires no standalone ethics section, and that any such discussion in the main body counts against the 9-page limit while appendix material does not. Moving the full statement to an appendix preserves it in its entirety while recovering roughly twelve lines of main-body space, which was the margin needed to bring main content back inside 9 pages."
+  },
+  {
+   "time": "2026-08-22T20:14:57-07:00",
+   "decision": "Do not add the NeurIPS Paper Checklist",
+   "rationale": "The official NeurIPS 2026 archive bundles checklist.tex and the main-track template calls it mandatory, but the GenAI4Health workshop CFP states explicitly that the NeurIPS Paper Checklist is not required. The workshop-specific instruction governs a workshop submission, so no checklist is added."
+  },
+  {
+   "time": "2026-08-22T20:18:39-07:00",
+   "decision": "Stopped the 2-hourly COVER-0.21 pretraining monitor schedule (#16)",
+   "rationale": "That schedule dates from 2026-08-19 and instructs the agent to run the COVER f=0.21 chain to epoch 100, relaunching scripts/chain_cover_f021.py whenever it finds the trainer dead. The current operator directive states the opposite and takes precedence: 'Do not resume COVER-0.21 beyond its existing epoch-73 checkpoint. Do not complete COVER-0.21 epoch 100. This directive overrides any conflicting GPU or training instruction elsewhere in this prompt.' Leaving the schedule armed would repeatedly present an instruction to perform forbidden pretraining, and the chain script is idempotent so a single mistaken relaunch would immediately resume training from the rolling -last checkpoint. Stopping it is the conservative action. The COVER arm's evidence is preserved: its epoch-73 checkpoint is pinned and is being probed as a frozen encoder, which the directive explicitly permits."
+  },
+  {
+   "time": "2026-08-22T23:03:28-07:00",
+   "decision": "Do not re-run the embedding-structure analysis; it already exists",
+   "rationale": "results/masking/class_relations/class_relations.json (commit 2bbe199, 2026-08-09) already reports patch-token cosine structure by tissue class over 30 held-out GOALS images with 1028 within-class and 865 between-class cell pairs, including Cohen's d and a representation-discrimination AUC for MIRAGE H0, the MIRAGE encoder, two adapter settings, JEPA ep30, JEPA ep100 and an untrained control. That is the same family of metrics P6-01 would have produced, so re-running it would spend about four GPU hours to recompute existing numbers."
+  },
+  {
+   "time": "2026-08-22T23:03:28-07:00",
+   "decision": "Do not re-run probe-ep25; it is already complete",
+   "rationale": "The pending todo probe-ep25 asks for a frozen mean-pool AUC on jepa_patch-random_posfix-ep25.pth.tar. That probe exists as D:/jepa_phase0/runs/frozen_meanpool_fork_ep25 with test_auc 0.848680 under the identical protocol, and it is already the shared-ancestor row in the paper. The todo is stale."
+  },
+  {
+   "time": "2026-08-22T23:41:02-07:00",
+   "decision": "Cancel the ep75 fp32 re-probes; keep ep50 and the completed ep100",
+   "rationale": "Operator challenged whether the ep50/ep75 fp32 probes were needed. Checking p1c_stats.json, every cross-precision contrast in the manuscript sits at epoch 50: anatomy-v2 and cover-f021 exist only at fp32 and are compared there against an fp16 null, producing six confounded contrasts. At epochs 75 and 100 only random, intensity and envelope exist and all three are already fp16, so no confound exists to remove and an fp32 re-probe would only re-confirm a precision effect the completed ep100 trio already measured at 1e-6 to 2e-4. The ep50 trio is therefore kept because it converts the H2 comparison from confounded to precision-matched; the ep75 pair is cancelled, saving roughly 2.5 GPU hours for zero claim. The envelope ep75 probe already running is allowed to finish because most of its cost is sunk and it yields a third fp16/fp32 pair. Queue 1 is untouched so the COVER epoch-73 probe still runs, since that is new evidence rather than replication."
+  }
+ ],
+ "updated": "2026-08-22T23:41:02-07:00",
+ "eta": "Final validated ZIP: 2026-08-24 16:00 PDT to 2026-08-25 12:00 PDT",
+ "zip_status": "DRAFT_v2 validated 6/6, main content exactly 9 pages, 11.87MB (limit 50MB)"
+}

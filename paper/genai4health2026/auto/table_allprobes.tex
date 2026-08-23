@@ -1,0 +1,35 @@
+\begin{tabular}{lcccc}
+\toprule
+policy & epoch & precision & test AUC & 95\% CI \\
+\midrule
+\textsc{anatomy-v1} & 30 & fp32 & 0.8583 & [0.8450,\,0.8712] \\
+\textsc{anatomy-v2} & 35 & fp32 & 0.8661 & [0.8531,\,0.8787] \\
+\textsc{anatomy-v2} & 40 & fp32 & 0.8683 & [0.8553,\,0.8807] \\
+\textsc{anatomy-v2} & 50 & fp32 & 0.8654 & [0.8522,\,0.8781] \\
+ancestor & 25 & fp32 & 0.8487 & [0.8349,\,0.8621] \\
+\textsc{cover} & 27 & fp32 & 0.8483 & [0.8346,\,0.8617] \\
+\textsc{cover} & 30 & fp32 & 0.8522 & [0.8386,\,0.8654] \\
+\textsc{cover} & 34 & fp32 & 0.8571 & [0.8437,\,0.8700] \\
+\textsc{cover} & 50 & fp32 & 0.8643 & [0.8513,\,0.8768] \\
+\textsc{envelope} & 30 & fp32 & 0.8539 & [0.8405,\,0.8669] \\
+\textsc{envelope} & 50 & fp16 & 0.8761 & [0.8635,\,0.8879] \\
+\textsc{envelope} & 50 & fp32 & 0.8761 & [0.8635,\,0.8879] \\
+\textsc{envelope} & 75 & fp16 & 0.8803 & [0.8677,\,0.8922] \\
+\textsc{envelope} & 100 & fp16 & 0.8807 & [0.8683,\,0.8926] \\
+\textsc{envelope} & 100 & fp32 & 0.8808 & [0.8683,\,0.8927] \\
+\textsc{intensity} & 50 & fp16 & 0.8740 & [0.8615,\,0.8862] \\
+\textsc{intensity} & 75 & fp16 & 0.8836 & [0.8714,\,0.8955] \\
+\textsc{intensity} & 100 & fp16 & 0.8855 & [0.8735,\,0.8971] \\
+\textsc{intensity} & 100 & fp32 & 0.8853 & [0.8732,\,0.8971] \\
+\textsc{random} & 50 & fp16 & 0.8641 & [0.8510,\,0.8769] \\
+\textsc{random} & 75 & fp16 & 0.8723 & [0.8593,\,0.8849] \\
+\textsc{random} & 100 & fp16 & 0.8746 & [0.8618,\,0.8869] \\
+\textsc{random} & 100 & fp32 & 0.8745 & [0.8617,\,0.8868] \\
+anatomy-v2 & 75 & fp32 & 0.8625 & \emph{excluded} \\
+anatomy-v2 & 92 & fp32 & 0.8604 & \emph{excluded} \\
+random & 30 & fp32 & 0.8558 & \emph{retracted} \\
+random & 50 & fp32 & 0.8590 & \emph{retracted} \\
+random & 75 & fp32 & 0.8612 & \emph{retracted} \\
+random & 100 & fp32 & 0.8607 & \emph{retracted} \\
+\bottomrule
+\end{tabular}

@@ -51,14 +51,18 @@ targets, is \emph{indistinguishable from unguided masking} at the matched epoch
 ($\DAnatomyTwoRandomEpFifty$, CI $\DAnatomyTwoRandomEpFiftyCI$), as is a
 coverage-constrained policy ($\DCoverRandomEpFifty$) --- while the two policies
 that merely \emph{place} rectangles on tissue gain an order of magnitude more.
-Direct measurement of mask geometry across 600 slices shows the fraction of
-anatomy hidden is uncorrelated with downstream AUC. The best policy consults no
-segmentation model at all. A subgroup audit over \NprobesSub{} probes finds the
-same worst-served group every time; gains reach every group and every disease
-stage, mild disease most of all ($\SevDeltaMild$), but the difficulty ordering
-is untouched: the severe-to-mild gap stays within $\SeverityGapSpread$ of
-constant across every policy. Because each policy was pretrained once, we report
-these as single-run observations rather than an established ranking.
+Carried past epoch 50 the coverage-constrained policy does not merely stall, it
+falls \emph{behind} unguided masking ($\DCoverRandomEpSeventyFive$ at epoch 75,
+CI $\DCoverRandomEpSeventyFiveCI$), so over-constraining where the model may look
+is worse than not guiding it at all. Direct measurement of mask geometry across
+600 slices shows the fraction of anatomy hidden is uncorrelated with downstream
+AUC. The best policy consults no segmentation model at all. A subgroup audit over
+\NprobesSub{} probes finds the same worst-served group every time; gains reach
+every group and every disease stage, mild disease most of all
+($\SevDeltaMild$), but the difficulty ordering is untouched: the severe-to-mild
+gap stays within $\SeverityGapSpread$ of constant across every policy. Because
+each policy was pretrained once, we report these as single-run observations
+rather than an established ranking.
 \end{abstract}
 
 \section{Introduction}

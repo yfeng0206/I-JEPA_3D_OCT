@@ -393,11 +393,19 @@ def main():
 
     ax = axes[1]
     eps = [50, 75, 100]
-    off = {"envelope": -0.28, "oracle": 0.28}
-    for arm in ("envelope", "oracle"):
+    off = {"envelope": -0.30, "oracle": 0.0, "cover-f021": 0.30}
+    for arm in ("envelope", "oracle", "cover-f021"):
         xs, ds, lo, hi = [], [], [], []
         for i, ep in enumerate(eps):
-            r = delta("%s@ep%d@fp16" % (arm, ep), "random@ep%d@fp16" % ep)
+            # cover was probed fp32; prefer an fp32 null where one exists
+            src = ("%s@ep%d@fp32" if arm == "cover-f021" else "%s@ep%d@fp16") % (arm, ep)
+            if src not in T:
+                continue
+            nul = next((c for c in ("random@ep%d@fp32" % ep, "random@ep%d@fp16" % ep)
+                        if c in T), None)
+            if nul is None:
+                continue
+            r = delta(src, nul)
             if r is None:
                 continue
             d, l, h, p, c = r
@@ -405,6 +413,8 @@ def main():
             ds.append(d)
             lo.append(d - l)
             hi.append(h - d)
+        if not xs:
+            continue
         ax.errorbar(xs, ds, yerr=[lo, hi], fmt="o", color=COL[arm], capsize=4,
                     ms=6, lw=1.8, label=ARM_PLOT[arm] + r" $-$ random")
     ax.axhline(0, color="#333333", lw=1.2, ls="-")

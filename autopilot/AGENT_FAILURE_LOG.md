@@ -58,3 +58,45 @@ duplicate work is possible.
 **Follow-up:** monitor VRAM every sample while both run; if VRAM exceeds 85% or
 GPU exceeds 84 C for 120 s, pause the queue-2 job (it is the later-started one
 and its checkpoint is cached, so it is the cheaper one to restart).
+
+## 2026-08-23 06:20 PDT - RAM at 97 percent during COVER Phase B (assessed, no action)
+
+**Alert:** RESOURCE_ALERTS.log fired [STOP] "System RAM at 96.5-97.4% (>= 85)"
+continuously from about 06:13. VRAM also reported 96.7%.
+
+**Cause, measured.** Six dataloader worker processes hold 2.85-4.16 GB each
+(~23 GB total) plus the trainer. That is the configured 
+um_workers fan-out for
+this run, not a leak. The VRAM figure is the torch caching allocator's
+reservation: torch itself reports gpu=11789MB allocated, i.e. 48 percent of the
+card. The operator's runbook documents this ratchet as expected for this arm.
+
+**Is it harming the run? No.** The decisive test is epoch wall time, which would
+balloon under swapping:
+
+| epoch | seconds | vs 3517 s historical mean |
+|---|---|---|
+| 74 (today, under the alert) | 3487 | -0.9 percent |
+
+Epoch 74 completed slightly FASTER than the historical mean, so the run is not
+paging. Windows memory compression is absorbing the pressure (2.18 GB compressed).
+
+**Action taken: none, deliberately.**
+- Every python process was audited and all are legitimate: trainer, supervisor,
+  chain, sequencer, and the six workers. No stale queue or watcher processes
+  remain to reclaim.
+- Reducing 
+um_workers would require editing a config knob in flight, which the
+  operating instructions forbid, and would cost a restart of a healthy run.
+- No new GPU or memory-heavy process will be launched while training holds the
+  card, which is what the [STOP] guidance actually requires.
+
+**Note for the next milestone refresh.** efresh_all.py --fast is cheap in RAM:
+it loads 39 prediction files of about 24 KB each and the bootstrap allocates
+roughly 3 MB, so running it during a training window is safe. The expensive
+subgroup re-run is skipped under --fast and should be deferred to a window when
+no trainer holds the card.
+
+**Standing watch:** if an epoch time exceeds about 4200 s (a 20 percent
+regression) while this alert is active, that is genuine paging and the run should
+be paused and diagnosed rather than left to grind.

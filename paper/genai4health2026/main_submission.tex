@@ -349,7 +349,7 @@ policy & guidance signal & AUC & $\Delta$ & AUC & $\Delta$ & AUC & $\Delta$ \\
 \textsc{intensity}   & intensity centroid, no segmenter & \AUCOracleEpFifty   & $\mathbf{\DOracleRandomEpFifty}$   & \AUCOracleEpSeventyFive   & $\mathbf{\DOracleRandomEpSeventyFive}$   & \textbf{\AUCOracleEpHundred} & $\mathbf{\DOracleRandomEpHundred}$ \\
 \midrule
 \textsc{anatomy-v2} & segmenter (target shape) & \AUCAnatomyTwoEpFifty & \DAnatomyTwoRandomEpFifty & --- & --- & --- & --- \\
-\textsc{cover} $f{=}.21$ & segmenter (coverage) & \AUCCoverEpFifty & \DCoverRandomEpFifty & --- & --- & \ph{pending} & \ph{pending} \\
+\textsc{cover} $f{=}.21$ & segmenter (coverage) & \AUCCoverEpFifty & \DCoverRandomEpFifty & \AUCCoverEpSeventyFive & $\mathbf{\DCoverRandomEpSeventyFive}$ & \ph{pending} & \ph{pending} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -392,15 +392,34 @@ roughly an order of magnitude more than the policies that shape targets to match
 it. Increasing anatomical fidelity past ``rectangles on tissue'' does not add
 benefit.
 
-We are careful not to overstate this. \textsc{anatomy-v2} is not \emph{worse}
-than the null at the matched epoch; it is statistically indistinguishable from
-it (CI $\DAnatomyTwoRandomEpFiftyCI$, $p=\DAnatomyTwoRandomEpFiftyP$), as is
-\textsc{cover} (CI $\DCoverRandomEpFiftyCI$, $p=\DCoverRandomEpFiftyP$). Both
-are measured against an fp32 null re-probed specifically for this comparison, so
-they are matched on epoch \emph{and} precision. What the data rule out is not
-that these policies are harmful, but the expected \emph{monotone improvement with
-anatomical precision}: their intervals are centred near zero and comfortably
-contain it, while the two cruder policies produce intervals that exclude it.
+We are careful not to overstate this. At the matched epoch 50 neither
+\textsc{anatomy-v2} (CI $\DAnatomyTwoRandomEpFiftyCI$,
+$p=\DAnatomyTwoRandomEpFiftyP$) nor \textsc{cover} (CI
+$\DCoverRandomEpFiftyCI$, $p=\DCoverRandomEpFiftyP$) is \emph{worse} than the
+null; both are indistinguishable from it, and both are measured against an fp32
+null re-probed specifically for this comparison, so they are matched on epoch
+\emph{and} precision. What the epoch-50 data rule out is not that these policies
+are harmful, but the expected \emph{monotone improvement with anatomical
+precision}: their intervals are centred near zero and comfortably contain it,
+while the two cruder policies produce intervals that exclude it.
+
+\paragraph{Carried further, coverage-constrained masking stalls and falls
+behind.} \textsc{cover} is the only segmenter-driven policy we continued past
+epoch 50, and it produces the study's one \emph{negative} result. Its trajectory
+is $\AUCCoverEpTwentySeven$, $\AUCCoverEpThirty$, $\AUCCoverEpThirtyFour$,
+$\AUCCoverEpFifty$, $\AUCCoverEpSeventyThree$, $\AUCCoverEpSeventyFive$: it
+climbs normally to epoch 50 and then stops. From epoch 50 to 75 it moves
+$\DCoverSelfFiftyToSeventyFive$ ($p=\DCoverSelfFiftyToSeventyFiveP$), while the
+null gains $\DRandomSelfFiftyToSeventyFive$. By epoch 75 it sits \emph{below} the
+null by $\DCoverRandomEpSeventyFive$ (CI $\DCoverRandomEpSeventyFiveCI$,
+$p=\DCoverRandomEpSeventyFiveP$), below \textsc{envelope} by
+$\DCoverEnvelopeEpSeventyFive$ and below \textsc{intensity} by
+$\DCoverOracleEpSeventyFive$. Forcing a fixed fraction of tissue to stay visible
+does not merely fail to help; it appears to cap what the encoder can still learn
+once the easy signal is exhausted. Two caveats: these probes are fp32 against
+fp16 comparators, though the measured precision effect is at most
+$2\times10^{-4}$ (Appendix~\ref{app:fp32}), some forty times below this gap; and
+only $f{=}0.21$ was pretrained, so this concerns that floor, not a dose-response.
 
 The strongest policy is the one that uses no segmentation model.
 \textsc{intensity} gives $\DOracleRandomEpHundred$ over the null at epoch 100
@@ -561,12 +580,11 @@ at the matched epoch, and a consistent intensity-located band is worth
 $\DOracleRandomEpHundred$ at epoch 100, with paired intervals excluding zero at
 every epoch measured. A trained segmentation model is not required to obtain this
 benefit, and using one more aggressively --- to shape targets or to maximise
-anatomy coverage --- does not add to it. The practical reading, bounded by the
-caveats below, is that for \emph{this} task the segmentation stage bought us
-nothing we could measure, and a one-line intensity statistic recovered the whole
-benefit at a fraction of the engineering cost. We would not generalise that to
-tasks where anatomy is the output --- layer segmentation, lesion localisation,
-progression --- where segmentation-aware pretraining may well matter.
+anatomy coverage --- does not add to it and can subtract. The practical reading,
+bounded by the caveats below, is that for \emph{this} task the segmentation stage
+bought nothing we could measure, and a one-line intensity statistic recovered the
+whole benefit. We would not generalise that to tasks where anatomy is the output,
+such as layer segmentation or lesion localisation.
 
 \paragraph{What it does not support.}
 We cannot claim anatomy-shaped masking is \emph{harmful}: at the matched epoch it

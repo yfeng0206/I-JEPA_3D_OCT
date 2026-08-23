@@ -73,6 +73,11 @@ def wait_for_gpu_free(reason, timeout_min=420):
 
 
 def refresh(tag, fast=False):
+    # Let the just-finished probe's files settle. eval_downstream writes
+    # test_predictions.npz, then results.json, then plots; starting the
+    # inventory mid-write can silently omit the newest probe from every table.
+    say("settling 90s before refresh so probe outputs are fully written")
+    time.sleep(90)
     say("refreshing manuscript + ZIP (%s)" % tag)
     cmd = [PY, "-u", os.path.join(HERE, "refresh_all.py"), "--out", ZIP]
     if fast:

@@ -333,8 +333,8 @@ not an established ranking over retrainings (Section~\ref{sec:limits}).
 All arms continue from one epoch-25 ancestor (AUC $\AUCAncestor$). $\Delta$ is
 versus \textsc{random} at the \emph{matched} epoch. The upper block is
 precision-matched (fp16 throughout) and carries every headline claim. The lower
-block is fp32 and its $\Delta$ therefore crosses the precision boundary; those
-rows are marked $\ddagger$ and are excluded from headline claims.}
+block is fp32 and its $\Delta$ is taken against an fp32 null re-probed for that
+comparison, so those rows are matched on epoch and precision too.}
 \label{tab:main}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -348,8 +348,8 @@ policy & guidance signal & AUC & $\Delta$ & AUC & $\Delta$ & AUC & $\Delta$ \\
 \textsc{envelope} & segmenter (location only)        & \AUCEnvelopeEpFifty & $\mathbf{\DEnvelopeRandomEpFifty}$ & \AUCEnvelopeEpSeventyFive & $\mathbf{\DEnvelopeRandomEpSeventyFive}$ & \AUCEnvelopeEpHundred & $\mathbf{\DEnvelopeRandomEpHundred}$ \\
 \textsc{intensity}   & intensity centroid, no segmenter & \AUCOracleEpFifty   & $\mathbf{\DOracleRandomEpFifty}$   & \AUCOracleEpSeventyFive   & $\mathbf{\DOracleRandomEpSeventyFive}$   & \textbf{\AUCOracleEpHundred} & $\mathbf{\DOracleRandomEpHundred}$ \\
 \midrule
-\textsc{anatomy-v2} & segmenter (target shape) & \AUCAnatomyTwoEpFifty & $\DAnatomyTwoRandomEpFifty^{\ddagger}$ & --- & --- & --- & --- \\
-\textsc{cover} $f{=}.21$ & segmenter (coverage) & \AUCCoverEpFifty & $\DCoverRandomEpFifty^{\ddagger}$ & --- & --- & \ph{pending} & \ph{pending} \\
+\textsc{anatomy-v2} & segmenter (target shape) & \AUCAnatomyTwoEpFifty & \DAnatomyTwoRandomEpFifty & --- & --- & --- & --- \\
+\textsc{cover} $f{=}.21$ & segmenter (coverage) & \AUCCoverEpFifty & \DCoverRandomEpFifty & --- & --- & \ph{pending} & \ph{pending} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -395,13 +395,11 @@ benefit.
 We are careful not to overstate this. \textsc{anatomy-v2} is not \emph{worse}
 than the null at the matched epoch; it is statistically indistinguishable from
 it (CI $\DAnatomyTwoRandomEpFiftyCI$, $p=\DAnatomyTwoRandomEpFiftyP$), as is
-\textsc{cover} (CI $\DCoverRandomEpFiftyCI$, $p=\DCoverRandomEpFiftyP$). Both of
-those intervals cross the fp16/fp32 boundary and so are quoted with the
-$\ddagger$ caveat of Table~\ref{tab:main}; Section~\ref{sec:precision} shows the
-precision effect is roughly two orders of magnitude smaller than the interval
-width, so the conclusion does not turn on it. What the data rule out is not that
-these policies are harmful, but the expected \emph{monotone improvement with
-anatomical precision}: the intervals are centred near zero and comfortably
+\textsc{cover} (CI $\DCoverRandomEpFiftyCI$, $p=\DCoverRandomEpFiftyP$). Both
+are measured against an fp32 null re-probed specifically for this comparison, so
+they are matched on epoch \emph{and} precision. What the data rule out is not
+that these policies are harmful, but the expected \emph{monotone improvement with
+anatomical precision}: their intervals are centred near zero and comfortably
 contain it, while the two cruder policies produce intervals that exclude it.
 
 The strongest policy is the one that uses no segmentation model.
@@ -426,7 +424,7 @@ training ($\DEnvelopeRandomEpFifty \to \DEnvelopeRandomEpSeventyFive \to
 number of predictor targets contributing to the loss. All values measured. AUC is
 quoted at the \emph{matched} epoch 50, the only epoch at which all five policies
 have a probe, so that the geometry-to-AUC association is not read across mixed
-epochs. The two fp32 arms are marked $\ddagger$ as in Table~\ref{tab:main}.}
+epochs. All five AUCs are at epoch 50.}
 \label{tab:geom}
 \small
 \begin{tabular}{lcccccc}
@@ -436,8 +434,8 @@ policy & anatomy hidden & purity & mask ratio & context kept & loss slots & AUC 
 \textsc{random}   & 52.2\% & 31.6\% & 43.7\% & 42.1\% & 157.7 & \AUCRandomEpFifty \\
 \textsc{intensity}   & 62.2\% & 41.1\% & 40.0\% & 45.6\% & 158.4 & \AUCOracleEpFifty \\
 \textsc{envelope} & 76.9\% & 43.5\% & 46.4\% & 40.5\% & 159.9 & \textbf{\AUCEnvelopeEpFifty} \\
-\textsc{cover}    & 74.1\% & 45.3\% & 43.3\% & 43.5\% & 160.0 & $\AUCCoverEpFifty^{\ddagger}$ \\
-\textsc{anatomy-v2} & 80.3\% & \textbf{97.3\%} & 21.4\% & 67.9\% & 64.0 & $\AUCAnatomyTwoEpFifty^{\ddagger}$ \\
+\textsc{cover}    & 74.1\% & 45.3\% & 43.3\% & 43.5\% & 160.0 & \AUCCoverEpFifty \\
+\textsc{anatomy-v2} & 80.3\% & \textbf{97.3\%} & 21.4\% & 67.9\% & 64.0 & \AUCAnatomyTwoEpFifty \\
 \bottomrule
 \end{tabular}
 \end{table}

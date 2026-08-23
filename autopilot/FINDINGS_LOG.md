@@ -45,3 +45,28 @@ No headline contrast moved by more than 5e-5.
 | oracle-random@ep50 | +0.009933 |
 | oracle-random@ep75 | +0.011333 |
 
+
+## phase-A  -  2026-08-23T04:13:46-07:00
+
+**New probes since last milestone:**
+
+| probe | test AUC |
+|---|---|
+| `cover-f021@ep73@fp32` | 0.864717 |
+| `envelope@ep75@fp32` | 0.880305 |
+| `oracle@ep50@fp32` | 0.874015 |
+| `random@ep50@fp32` | 0.864121 |
+
+No headline contrast moved by more than 5e-5.
+
+**Current headline contrasts:**
+
+| contrast | delta AUC |
+|---|---|
+| envelope-random@ep100 | +0.006276 |
+| envelope-random@ep50 | +0.011942 |
+| envelope-random@ep75 | +0.008005 |
+| oracle-random@ep100 | +0.010808 |
+| oracle-random@ep50 | +0.009894 |
+| oracle-random@ep75 | +0.011333 |
+

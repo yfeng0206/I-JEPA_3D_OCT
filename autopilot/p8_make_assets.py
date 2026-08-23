@@ -111,12 +111,19 @@ def main():
                 if "delong_q_bh" in c:
                     mac("D%s%sQ" % (tag, EPW[ep]), pfmt(c["delong_q_bh"]))
 
-    # fp32 arms at matched epoch 50 (cross-precision -> flagged)
+    # fp32 arms at matched epoch 50. Prefer an fp32 null when one exists, so the
+    # contrast is precision-matched; fall back to the fp16 null otherwise and let
+    # the manuscript flag it.
+    null50 = "random@ep50@fp32" if "random@ep50@fp32" in T else "random@ep50@fp16"
+    mac("NullEpFiftyPrecision", "fp32" if null50.endswith("fp32") else "fp16")
+    mac("HTwoMatched", "yes" if null50.endswith("fp32") else "no")
+    if "random@ep50@fp32" in T:
+        mac("AUCRandomEpFiftyFPthirtytwo", num(T["random@ep50@fp32"]["auc"]))
     for arm, tag in (("anatomy-v2", "AnatomyTwo"), ("cover-f021", "Cover")):
         k = "%s@ep50@fp32" % arm
         if k in T:
             mac("AUC%sEpFifty" % tag, num(T[k]["auc"]))
-            r = delta(k, "random@ep50@fp16")
+            r = delta(k, null50)
             if r:
                 mac("D%sRandomEpFifty" % tag, signed(r[0]))
                 mac("D%sRandomEpFiftyCI" % tag, "[%s,\\,%s]" % (signed(r[1]), signed(r[2])))

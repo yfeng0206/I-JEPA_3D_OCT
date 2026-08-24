@@ -242,7 +242,7 @@ Figure~\ref{fig:policies} shows all six on the same B-scans.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.74\linewidth]{fig1_policies_compact.png}
+\includegraphics[width=0.66\linewidth]{fig1_policies_compact.png}
 \caption{The six masking policies on one identical B-scan, drawn with the
 production samplers. Each predictor target block has its own colour; the green
 contour is the anatomy reference. Anatomical specificity increases along the
@@ -376,7 +376,7 @@ at every epoch we measured, with an interval that excludes zero.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.95\linewidth]{fig_trajectories_ci.png}
+\includegraphics[width=0.88\linewidth]{fig_trajectories_ci.png}
 \caption{\textbf{(a)} Frozen-probe test AUC against pretraining epoch. All arms
 fork from the same epoch-25 checkpoint (open circle) and differ only in masking
 policy. Solid lines are the precision-matched fp16 family; dashed lines are fp32
@@ -473,7 +473,7 @@ observations follow.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.46\linewidth]{fig_precision_paradox.png}
+\includegraphics[width=0.40\linewidth]{fig_precision_paradox.png}
 \caption{Downstream AUC at matched epoch 50 against mask purity, the fraction of
 masked patches lying on retinal tissue. The policy whose masks are $97\%$
 on-tissue does not separate from the null, while policies at $41$--$44\%$ purity
@@ -553,17 +553,21 @@ branch). Only the sex gap is consistent across both views, and it \emph{narrows}
 $p=\SubGenderBranchP$). We do not claim that better masking harms any group, and
 we do not claim it helps equity either.
 
-\paragraph{Early disease improves, but stays hard.} Scoring each severity
-stratum against the shared pool of all negatives, the strongest policy improves
-mild disease from $\SevRandomMild$ to $\SevOracleMild$ ($\SevDeltaMild$ at
-matched epoch 100), moderate by $\SevDeltaModerate$ and severe by
-$\SevDeltaSevere$: mild disease improves \emph{most}. What does not move is the
-difficulty ordering. The severe-to-mild gap is $\SevGapRandom$ for the null and
-$\SevGapOracle$ for the best policy, and stays within $\SeverityGapSpread$ of
-constant across all \NprobesSub{} probes while aggregate AUC spans
-$\SubAUCMin$--$\SubAUCMax$. Target placement lifts the whole curve; it does not
-change its shape. Appendix~\ref{app:subgroup} gives all seven stratifications.
-These are secondary, descriptive analyses; no policy here was designed as a
+\paragraph{Early disease improves most; differential benefit is unresolved.}
+Scoring each severity stratum against the shared pool of all negatives, the
+strongest policy improves mild disease by $\SevDeltaMild$ at matched epoch 100,
+moderate by $\SevDeltaModerate$, severe by $\SevDeltaSevere$. These are paired
+differences on the same subjects and all three intervals exclude zero (mild
+$\PDSevMildCI$, severe $\PDSevSevereCI$), so the ordering is resolved rather than
+a point-estimate artefact. What does not move is the difficulty ordering itself:
+the severe-to-mild gap stays within $\SeverityGapSpread$ of constant across all
+\NprobesSub{} probes while aggregate AUC spans $\SubAUCMin$--$\SubAUCMax$. For
+equity the quantity that matters is the paired \emph{difference} between groups'
+gains; between the worst- and best-served race strata it is $\PDDiffRace$
+(CI $\PDDiffRaceCI$) and by sex $\PDDiffSex$ (CI $\PDDiffSexCI$). Both contain
+zero, so at these subgroup sizes we cannot resolve whether the improvement is
+evenly distributed, and claim neither. Appendix~\ref{app:subgroup} gives every
+stratum. No policy here was designed as a
 fairness intervention and none should be presented as one.
 
 \subsection{Numerical precision is not the effect}
@@ -803,6 +807,17 @@ the whole severity curve --- mild disease most of all --- without altering the
 ordering that makes early disease hard. We note that mild functional loss is
 harder to separate from normal OCT by construction, so this ordering is expected
 clinically; what the data add is that no masking policy we tested changes it.
+
+\begin{table}[h]
+\centering
+\caption{Paired change in subgroup AUC from \textsc{random} to
+\textsc{intensity} at matched epoch 100. Each bootstrap draw resamples subjects
+once and applies the same resampled set to both arms and every stratum, so these
+are paired differences rather than differences of independent estimates.}
+\label{tab:pairedsub}
+\small
+\input{auto/table_paired_subgroup}
+\end{table}
 
 \paragraph{Limitations.} One dataset, one test split, reused throughout this
 programme's history. Because policies, checkpoints and analyses were chosen

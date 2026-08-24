@@ -195,6 +195,13 @@ def main():
             mac("AUCAnatomyTwo%s" % w, r"\ph{pending}")
             mac("DAnatomyTwoRandom%s" % w, r"\ph{pending}")
 
+    # The cross-precision dagger must disappear on its own when the matching
+    # fp32 null lands, otherwise the paper keeps warning about a confound it no
+    # longer has. Emitted as a macro that is either the dagger or empty.
+    for ep, w in (("75", "EpSeventyFive"), ("100", "EpHundred")):
+        prec = M.get("DCoverRandom%sNullPrec" % w)
+        mac("CoverDag%s" % w, "" if prec == "fp32" else r"^{\ddagger}")
+
     # Emit placeholder-valued macros for any COVER cell not yet measured, so the
     # table always compiles and resolves itself the moment the probe lands. This
     # removes a manual edit at the exact moment a headline number arrives, which

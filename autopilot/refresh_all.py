@@ -66,6 +66,7 @@ def main():
         print("\n[4/8] skipped (--fast)", flush=True)
     run("5/8 subgroup gap trends", [PY, os.path.join(HERE, "p7b_gap_trend.py")])
     run("6/8 regenerate macros, tables, figures", [PY, os.path.join(HERE, "p8_make_assets.py")])
+    run("6b/8 regenerate provenance", [PY, os.path.join(HERE, "gen_sources.py")])
     run("7/8 compile manuscript",
         [TECTONIC, "-X", "compile", "main_submission.tex", "--keep-intermediates"],
         cwd=PAPER)

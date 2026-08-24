@@ -170,6 +170,31 @@ def main():
                 mac("DCover%sEpSeventyFive" % tag, signed(r[0]))
                 mac("DCover%sEpSeventyFiveP" % tag, pfmt(r[3]))
 
+    # ---- anatomy-v2 at every epoch it has a VALID probe. Phase C replaces the
+    # precision-spliced ep75/ep92 runs with clean fp32 continuations, so these
+    # macros must appear on their own as soon as those land, without a hand edit.
+    AEPW = {30: "EpThirty", 35: "EpThirtyFive", 40: "EpForty", 50: "EpFifty",
+            75: "EpSeventyFive", 100: "EpHundred"}
+    for ep, w in AEPW.items():
+        k = "anatomy-v2@ep%d@fp32" % ep
+        if k not in T:
+            continue
+        mac("AUCAnatomyTwo%s" % w, num(T[k]["auc"]))
+        nul = next((c for c in ("random@ep%d@fp32" % ep, "random@ep%d@fp16" % ep)
+                    if c in T), None)
+        if nul:
+            r = delta(k, nul)
+            if r:
+                mac("DAnatomyTwoRandom%s" % w, signed(r[0]))
+                mac("DAnatomyTwoRandom%sCI" % w, "[%s,\\,%s]" % (signed(r[1]), signed(r[2])))
+                mac("DAnatomyTwoRandom%sP" % w, pfmt(r[3]))
+                mac("DAnatomyTwoRandom%sNullPrec" % w,
+                    "fp32" if nul.endswith("fp32") else "fp16")
+    for w in ("EpSeventyFive", "EpHundred"):
+        if "AUCAnatomyTwo%s" % w not in M:
+            mac("AUCAnatomyTwo%s" % w, r"\ph{pending}")
+            mac("DAnatomyTwoRandom%s" % w, r"\ph{pending}")
+
     # Emit placeholder-valued macros for any COVER cell not yet measured, so the
     # table always compiles and resolves itself the moment the probe lands. This
     # removes a manual edit at the exact moment a headline number arrives, which

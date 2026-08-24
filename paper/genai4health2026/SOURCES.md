@@ -5,13 +5,13 @@ the manuscript that actually exist, and is rebuilt on every refresh. Do not edit
 it by hand: it will be overwritten, and a hand-edited copy is exactly how it
 drifted from the paper before.
 
-Generated 2026-08-24T03:50:45-07:00
+Generated 2026-08-24T05:56:21-07:00
 
 ## 1. What the built PDF contains
 
 | item | count |
 |---|---|
-| auto-generated numeric macros | 278 |
+| auto-generated numeric macros | 285 |
 | generated tables `\input` into the paper | 6 |
 | figures included | 12 |
 | distinct citation keys | 48 |

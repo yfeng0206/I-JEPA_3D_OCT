@@ -953,6 +953,44 @@ the same family as our precision and epoch-matching checks: a figure that looks
 anatomically meaningful can be an artefact of data storage, and we would rather
 report that than let it stand.
 
+\section{Clinical operating points and calibration}
+\label{app:operating}
+
+AUC is threshold-free, but a screening tool is deployed at a threshold. This
+appendix reports what a reader needs in order to judge that. For each arm the
+threshold is selected on the \emph{validation} split at a fixed target
+specificity and then transferred unchanged to the test split, which is the honest
+simulation of deployment; the achieved test specificity shows whether the
+threshold survives the shift. Cohort prevalence is $\Prevalence$.
+
+\begin{table}[h]
+\centering
+\caption{Operating points at matched epoch 100. The threshold is chosen on
+validation to hit the target specificity and applied unchanged to test. ECE is a
+15-bin expected calibration error.}
+\label{tab:operating}
+\small
+\input{auto/table_operating}
+\end{table}
+
+Two observations. First, the threshold transfers well: a validation target of
+$0.90$ yields test specificity $\SpecAchRandomSpecNinety$ to
+$\SpecAchEnvelopeSpecNinety$, so the operating point is stable across the split.
+Second, the AUC advantage survives as a usable sensitivity gain. At a target
+specificity of $0.90$, \textsc{intensity} detects $\SensIntensitySpecNinety$ of
+cases against $\SensRandomSpecNinety$ for the unguided null, a paired difference
+of $\DSensIntRandSpecNinety$ (CI $\DSensIntRandSpecNinetyCI$, excluding zero). At
+a target of $0.85$ the gain is $\DSensIntRandSpecEightyFive$
+(CI $\DSensIntRandSpecEightyFiveCI$). \textsc{intensity} is also the
+best-calibrated arm (Brier $\BrierIntensity$ versus $\BrierRandom$; ECE
+$\ECEIntensity$ versus $\ECERandom$), which matters because a screening score
+that is used as a probability must be trustworthy as one.
+
+We report this because a $+0.011$ AUC difference is hard to interpret
+clinically, whereas ``two to three more cases detected per hundred at the same
+false-positive rate'' is not. The same caveats apply as everywhere else in this
+paper: one dataset, one split, and one pretraining run per policy.
+
 \section{Broader impact and ethics}
 \label{app:ethics}
 

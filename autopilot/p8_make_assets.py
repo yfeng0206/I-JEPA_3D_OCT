@@ -287,6 +287,54 @@ def main():
         mac("FTRandomBest", num(best_r))
         mac("FTDeltaBest", signed(best_o - best_r))
 
+    # ---- clinical operating points (p8b) -----------------------------------
+    p8b = os.path.join(STATS, "p8b_operating_points.json")
+    if os.path.exists(p8b):
+        op = json.load(open(p8b))
+        AW = {"random": "Random", "envelope": "Envelope", "intensity": "Intensity"}
+        for arm, w in AW.items():
+            a = op["arms"].get(arm)
+            if not a:
+                continue
+            mac("Brier%s" % w, num(a["brier"]))
+            mac("ECE%s" % w, num(a["ece_15bin"]))
+            for k, kw in (("spec85", "SpecEightyFive"), ("spec90", "SpecNinety")):
+                m = a["at"].get(k)
+                if not m:
+                    continue
+                mac("Sens%s%s" % (w, kw), num(m["sensitivity"]))
+                mac("SpecAch%s%s" % (w, kw), num(m["specificity"]))
+                mac("PPV%s%s" % (w, kw), num(m["ppv"]))
+                mac("NPV%s%s" % (w, kw), num(m["npv"]))
+        for pair, pw in (("intensity_minus_random", "IntRand"),
+                         ("envelope_minus_random", "EnvRand")):
+            c = op["contrasts"].get(pair, {})
+            for k, kw in (("spec85", "SpecEightyFive"), ("spec90", "SpecNinety")):
+                v = c.get(k)
+                if not v:
+                    continue
+                mac("DSens%s%s" % (pw, kw), signed(v["delta_sensitivity"]))
+                mac("DSens%s%sCI" % (pw, kw),
+                    "[%s,\\,%s]" % (signed(v["ci95_lo"]), signed(v["ci95_hi"])))
+        mac("Prevalence", num(op["prevalence"]))
+
+        rows = []
+        for arm, w in (("random", "Random"), ("envelope", "Envelope"), ("intensity", "Intensity")):
+            a = op["arms"].get(arm)
+            if not a:
+                continue
+            for k, lbl in (("spec85", "0.85"), ("spec90", "0.90")):
+                m = a["at"][k]
+                rows.append("\\textsc{%s} & %s & %s & %s & %s & %s & %s & %s \\\\" % (
+                    arm, lbl, num(m["sensitivity"]), num(m["specificity"]),
+                    num(m["ppv"]), num(m["npv"]), num(a["brier"]), num(a["ece_15bin"])))
+        tab = [r"\begin{tabular}{llcccccc}", r"\toprule",
+               r"policy & target spec. & sens. & spec. (test) & PPV & NPV & Brier & ECE \\",
+               r"\midrule"] + rows + [r"\bottomrule", r"\end{tabular}"]
+        with open(os.path.join(AUTO, "table_operating.tex"), "w", encoding="utf-8") as f:
+            f.write("\n".join(tab) + "\n")
+        print("wrote table_operating.tex")
+
     # ---- paired subgroup CHANGE intervals (p7c) ----------------------------
     p7c = os.path.join(STATS, "p7c_paired_subgroup.json")
     if os.path.exists(p7c):

@@ -35,12 +35,31 @@ and epoch 100. Phase B is computing them.
 
 | stage | work | ETA | deliverable |
 |---|---|---|---|
-| A | finish frozen probes: COVER ep73, random fp32 ep50 | 2026-08-23 ~03:40 | ZIP refresh, COVER ep73 point |
-| B1 | COVER f=0.21 pretrain ep73 -> 75, probe | 2026-08-23 ~06:40 | COVER ep75 AUC |
-| B2 | COVER f=0.21 pretrain ep75 -> 100, probe | 2026-08-24 ~08:00 | COVER ep100 AUC, arm complete |
-| C1 | blob fp32 ep56 -> 75, probe | 2026-08-25 ~09:00 | clean fp32 ep75, replaces excluded 0.862492 |
-| C2 | blob fp32 ep75 -> 100, probe | 2026-08-26 ~19:00 | clean fp32 ep100, replaces excluded 0.860364 |
-| D | final mock review round, last ZIP | 2026-08-26 ~22:00 | submission-grade package |
+| A | finish frozen probes: COVER ep73, random fp32 ep50 | DONE 2026-08-23 04:06 | ZIP refresh, COVER ep73 = 0.864717 |
+| B1 | COVER f=0.21 pretrain ep73 -> 75, probe | DONE 2026-08-23 07:30 | COVER ep75 = 0.863858 |
+| B2 | COVER f=0.21 pretrain ep75 -> 100, probe | DONE 2026-08-24 14:08 | COVER ep100 = 0.857664, arm complete |
+| B3 | epoch-75 fp32 null | DONE 2026-08-24 14:08 | every contrast now precision-matched |
+| C1 | blob fp32 ep56 -> 75, probe | **2026-08-25 ~20:40** | clean fp32 ep75, replaces excluded 0.862492 |
+| C2 | blob fp32 ep75 -> 100, probe | **2026-08-27 ~11:55** | clean fp32 ep100, replaces excluded 0.860364 |
+| D | final mock review round, last ZIP | **2026-08-27 ~15:00** | submission-grade package |
+
+### Rate revision, 2026-08-24 16:10
+
+Measured blob fp32 rate is **91.0 min/epoch** (epoch 57 took 5463 s) against the
+68 min/epoch projected. That is 34 percent over, past the 20 percent threshold
+that requires this file to be updated.
+
+The cause is understood and expected rather than a fault: the same arm's earlier
+fp16 run took 3763 s/epoch, so fp32 targets cost 1.45x here, consistent with the
+1.66x figure documented in `train_patch.py`. The projection simply carried the
+wrong number.
+
+Consequence: Phase C completes about **17 hours later** than the previous
+estimate of Wed 26 19:00. The deadline is 2026-09-05 AoE, leaving roughly 9 days
+of slack, so nothing is at risk.
+
+COVER's measured rate was 57.5 min/epoch against a 59 min/epoch projection, i.e.
+accurate. Only the fp32 arm was mis-projected.
 
 Measured rates: COVER ~59 min/epoch; blob fp32 ~68 min/epoch (fp32 targets are
 1.66x slower than fp16 per `train_patch.py`); frozen probe 60-80 min.

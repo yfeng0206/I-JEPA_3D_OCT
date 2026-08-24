@@ -158,17 +158,29 @@ def main():
         if r:
             mac("DCoverSelfFiftyToSeventyFive", signed(r[0]))
             mac("DCoverSelfFiftyToSeventyFiveP", pfmt(r[3]))
+    # peak-to-endpoint decline: the arm's own best checkpoint against its last
+    if "cover-f021@ep100@fp32" in T:
+        cands = {k: T[k]["auc"] for k in T if k.startswith("cover-f021@")}
+        peak = max(cands, key=cands.get)
+        mac("CoverPeakEpoch", str(T[peak]["epoch"]))
+        mac("AUCCoverPeak", num(T[peak]["auc"]))
+        r = delta("cover-f021@ep100@fp32", peak)
+        if r:
+            mac("DCoverPeakToHundred", signed(r[0]))
+            mac("DCoverPeakToHundredP", pfmt(r[3]))
     if "random@ep75@fp16" in T and "random@ep50@fp16" in T:
         mac("DRandomSelfFiftyToSeventyFive",
             signed(T["random@ep75@fp16"]["auc"] - T["random@ep50@fp16"]["auc"]))
-    for a, tag in (("envelope", "Envelope"), ("oracle", "Oracle")):
-        k = "cover-f021@ep75@fp32"
-        c = "%s@ep75@fp16" % a
-        if k in T and c in T:
-            r = delta(k, c)
-            if r:
-                mac("DCover%sEpSeventyFive" % tag, signed(r[0]))
-                mac("DCover%sEpSeventyFiveP" % tag, pfmt(r[3]))
+    for ep, epw in ((75, "EpSeventyFive"), (100, "EpHundred")):
+        for a, tag in (("envelope", "Envelope"), ("oracle", "Oracle")):
+            k = "cover-f021@ep%d@fp32" % ep
+            c = next((x for x in ("%s@ep%d@fp32" % (a, ep), "%s@ep%d@fp16" % (a, ep))
+                      if x in T), None)
+            if k in T and c:
+                r = delta(k, c)
+                if r:
+                    mac("DCover%s%s" % (tag, epw), signed(r[0]))
+                    mac("DCover%s%sP" % (tag, epw), pfmt(r[3]))
 
     # ---- anatomy-v2 at every epoch it has a VALID probe. Phase C replaces the
     # precision-spliced ep75/ep92 runs with clean fp32 continuations, so these

@@ -51,10 +51,10 @@ targets, is \emph{indistinguishable from unguided masking} at the matched epoch
 ($\DAnatomyTwoRandomEpFifty$, CI $\DAnatomyTwoRandomEpFiftyCI$), as is a
 coverage-constrained policy ($\DCoverRandomEpFifty$) --- while the two policies
 that merely \emph{place} rectangles on tissue gain an order of magnitude more.
-Carried past epoch 50 the coverage-constrained policy does not merely stall, it
-falls \emph{behind} unguided masking ($\DCoverRandomEpSeventyFive$ at epoch 75,
-CI $\DCoverRandomEpSeventyFiveCI$), so over-constraining where the model may look
-is worse than not guiding it at all. Direct measurement of mask geometry across
+Carried to epoch 100 the coverage-constrained policy does not merely stall, it
+peaks at epoch \CoverPeakEpoch{} and then declines, ending
+$\DCoverRandomEpHundred$ below unguided masking (CI $\DCoverRandomEpHundredCI$),
+so over-constraining where the model may look is worse than not guiding at all. Direct measurement of mask geometry across
 600 slices shows the fraction of anatomy hidden is uncorrelated with downstream
 AUC. The best policy consults no segmentation model at all. A subgroup audit over
 \NprobesSub{} probes finds the same worst-served group every time; gains reach
@@ -411,23 +411,25 @@ are harmful, but the expected \emph{monotone improvement with anatomical
 precision}: their intervals are centred near zero and comfortably contain it,
 while the two cruder policies produce intervals that exclude it.
 
-\paragraph{Carried further, coverage-constrained masking stalls and falls
-behind.} \textsc{cover} is the only segmenter-driven policy we continued past
-epoch 50, and it produces the study's one \emph{negative} result. Its trajectory
-is $\AUCCoverEpTwentySeven$, $\AUCCoverEpThirty$, $\AUCCoverEpThirtyFour$,
-$\AUCCoverEpFifty$, $\AUCCoverEpSeventyThree$, $\AUCCoverEpSeventyFive$: it
-climbs normally to epoch 50 and then stops. From epoch 50 to 75 it moves
-$\DCoverSelfFiftyToSeventyFive$ ($p=\DCoverSelfFiftyToSeventyFiveP$), while the
-null gains $\DRandomSelfFiftyToSeventyFive$. By epoch 75 it sits \emph{below} the
-null by $\DCoverRandomEpSeventyFive$ (CI $\DCoverRandomEpSeventyFiveCI$,
-$p=\DCoverRandomEpSeventyFiveP$), below \textsc{envelope} by
-$\DCoverEnvelopeEpSeventyFive$ and below \textsc{intensity} by
-$\DCoverOracleEpSeventyFive$. Forcing a fixed fraction of tissue to stay visible
-does not merely fail to help; it appears to cap what the encoder can still learn
-once the easy signal is exhausted. Two caveats: these probes are fp32 against
-fp16 comparators, though the measured precision effect is at most
-$2\times10^{-4}$ (Appendix~\ref{app:fp32}), some forty times below this gap; and
-only $f{=}0.21$ was pretrained, so this concerns that floor, not a dose-response.
+\paragraph{Carried to epoch 100, coverage-constrained masking degrades.}
+\textsc{cover} is the only segmenter-driven policy we continued to the full
+horizon, and it produces the study's one \emph{negative} result. It climbs
+normally to epoch 50, peaks at epoch $\CoverPeakEpoch$ ($\AUCCoverPeak$), then
+\emph{falls} to $\AUCCoverEpHundred$, losing $\DCoverPeakToHundred$ from its own
+peak ($p\,\DCoverPeakToHundredP$) while the unguided null keeps improving
+(Figure~\ref{fig:traj}). The gap against the null therefore widens with training:
+$\DCoverRandomEpFifty$ at epoch 50, $\DCoverRandomEpSeventyFive$ at epoch 75, and
+$\DCoverRandomEpHundred$ at epoch 100 (CI $\DCoverRandomEpHundredCI$,
+$p\,\DCoverRandomEpHundredP$), where it also sits $\DCoverOracleEpHundred$ below
+\textsc{intensity}. All contrasts are matched on epoch and precision.
+
+Forcing a fixed fraction of tissue to stay visible does not merely fail to help.
+Once the easy signal is exhausted the constraint appears to cap what the encoder
+can still learn, and continued training then erodes the representation. This is
+the sharpest form of our H2 result: more aggressive use of the segmentation model
+is not neutral here but actively harmful. Caveats: one floor value ($f{=}0.21$),
+so this concerns that floor rather than a dose-response; and a single
+continuation, as everywhere.
 
 The strongest policy is the one that uses no segmentation model.
 \textsc{intensity} gives $\DOracleRandomEpHundred$ over the null at epoch 100
@@ -470,19 +472,6 @@ policy & anatomy hidden & purity & mask ratio & context kept & loss slots & AUC 
 To test H3 we ran each production sampler on 600 held-out slices and measured
 what it actually does (Table~\ref{tab:geom}, Figure~\ref{fig:paradox}). Three
 observations follow.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.40\linewidth]{fig_precision_paradox.png}
-\caption{Downstream AUC at matched epoch 50 against mask purity, the fraction of
-masked patches lying on retinal tissue. The policy whose masks are $97\%$
-on-tissue does not separate from the null, while policies at $41$--$44\%$ purity
-gain the most. The ordering does not support the intuition that more accurate
-anatomical masking yields better representations. With four to five arms this is
-descriptive, not inferential; the same result arranged as a specificity ladder is
-in Appendix~\ref{app:fp32}.}
-\label{fig:paradox}
-\end{figure}
 
 First, \textbf{anatomical targeting does not order the results}. Over the four
 rectangle arms, the Spearman correlation between fraction-of-anatomy-hidden and
@@ -573,13 +562,12 @@ fairness intervention and none should be presented as one.
 \subsection{Numerical precision is not the effect}
 \label{sec:precision}
 
-Because the long-horizon arms and the anatomy arms were probed at different
-autocast settings (Section~\ref{sec:setup}), we measured the precision effect
-rather than assuming it away. Re-encoding the epoch-100 \textsc{intensity} test
-split at fp32 reproduces the reported AUC to $9.8\times10^{-6}$, and a full
-re-fit of the entire probe pipeline at fp32 shifts every long-horizon arm by less
-than $2\times10^{-4}$. Both are two to three orders of magnitude below the
-effects in Table~\ref{tab:main}. Appendix~\ref{app:fp32} gives the numbers.
+The long-horizon and anatomy arms were probed at different autocast settings
+(Section~\ref{sec:setup}), so we measured the precision effect rather than
+assuming it away: a full re-fit of the probe pipeline at fp32 shifts every arm by
+less than $2\times10^{-4}$, two to three orders of magnitude below the effects in
+Table~\ref{tab:main}, and every contrast we report is now matched on precision.
+Appendix~\ref{app:fp32} gives the numbers.
 
 \subsection{Reproducibility}
 
@@ -1091,6 +1079,18 @@ contrast & epoch & $\Delta$ AUC & 95\% CI & $p$ & $q$ \\
 
 \section{Full fp32 re-probe}
 \label{app:fp32}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.46\linewidth]{fig_precision_paradox.png}
+\caption{Downstream AUC at matched epoch 50 against mask purity, the fraction of
+masked patches lying on retinal tissue. The policy whose masks are $97\%$
+on-tissue does not separate from the null, while policies at $41$--$44\%$ purity
+gain the most. The ordering does not support the intuition that more accurate
+anatomical masking yields better representations. With four to five arms this is
+descriptive, not inferential.}
+\label{fig:paradox}
+\end{figure}
 
 \begin{figure}[h]
 \centering

@@ -70,3 +70,48 @@ No headline contrast moved by more than 5e-5.
 | oracle-random@ep50 | +0.009894 |
 | oracle-random@ep75 | +0.011333 |
 
+
+## phase-B-cover-ep75  -  2026-08-24T10:04:19-07:00
+
+**New probes since last milestone:**
+
+| probe | test AUC |
+|---|---|
+| `cover-f021@ep75@fp32` | 0.863858 |
+
+No headline contrast moved by more than 5e-5.
+
+**Current headline contrasts:**
+
+| contrast | delta AUC |
+|---|---|
+| envelope-random@ep100 | +0.006276 |
+| envelope-random@ep50 | +0.011942 |
+| envelope-random@ep75 | +0.008005 |
+| oracle-random@ep100 | +0.010808 |
+| oracle-random@ep50 | +0.009894 |
+| oracle-random@ep75 | +0.011333 |
+
+
+## phase-B-cover-ep100  -  2026-08-24T14:16:21-07:00
+
+**New probes since last milestone:**
+
+| probe | test AUC |
+|---|---|
+| `cover-f021@ep100@fp32` | 0.857664 |
+| `random@ep75@fp32` | 0.872302 |
+
+No headline contrast moved by more than 5e-5.
+
+**Current headline contrasts:**
+
+| contrast | delta AUC |
+|---|---|
+| envelope-random@ep100 | +0.006276 |
+| envelope-random@ep50 | +0.011942 |
+| envelope-random@ep75 | +0.008003 |
+| oracle-random@ep100 | +0.010808 |
+| oracle-random@ep50 | +0.009894 |
+| oracle-random@ep75 | +0.011333 |
+

@@ -5,13 +5,13 @@ the manuscript that actually exist, and is rebuilt on every refresh. Do not edit
 it by hand: it will be overwritten, and a hand-edited copy is exactly how it
 drifted from the paper before.
 
-Generated 2026-08-24T08:01:50-07:00
+Generated 2026-08-24T14:33:43-07:00
 
 ## 1. What the built PDF contains
 
 | item | count |
 |---|---|
-| auto-generated numeric macros | 287 |
+| auto-generated numeric macros | 296 |
 | generated tables `\input` into the paper | 6 |
 | figures included | 12 |
 | distinct citation keys | 48 |
@@ -49,8 +49,8 @@ Figures:
 - test set: N=3000, 1466 positive, 1534 negative, identical across every probe
 - bootstrap: 10,000 resamples, seed 20260822, stratified by class, the same resampled
   index set applied to every arm so all differences are paired
-- primary frozen probes analysed: 28
-- multiplicity: Benjamini-Hochberg within families, confirmatory family size 9, exploratory 17
+- primary frozen probes analysed: 30
+- multiplicity: Benjamini-Hochberg within families, confirmatory family size 9, exploratory 22
 
 ### Probes in the analysis
 
@@ -67,6 +67,7 @@ Figures:
 | cover-f021 | 50 | fp32 | 0.864281 |
 | cover-f021 | 73 | fp32 | 0.864717 |
 | cover-f021 | 75 | fp32 | 0.863858 |
+| cover-f021 | 100 | fp32 | 0.857664 |
 | envelope | 30 | fp32 | 0.853917 |
 | envelope | 50 | fp16 | 0.876064 |
 | envelope | 50 | fp32 | 0.876063 |
@@ -82,6 +83,7 @@ Figures:
 | random | 50 | fp16 | 0.864097 |
 | random | 50 | fp32 | 0.864121 |
 | random | 75 | fp16 | 0.872302 |
+| random | 75 | fp32 | 0.872302 |
 | random | 100 | fp16 | 0.874581 |
 | random | 100 | fp32 | 0.874485 |
 
@@ -113,6 +115,7 @@ setting it false ran fp32. Rather than assume this immaterial, it is measured:
 | oracle | 50 | 0.874030 | 0.874015 | -0.000015 |
 | oracle | 100 | 0.885485 | 0.885293 | -0.000192 |
 | random | 50 | 0.864097 | 0.864121 | +0.000024 |
+| random | 75 | 0.872302 | 0.872302 | -0.000001 |
 | random | 100 | 0.874581 | 0.874485 | -0.000096 |
 
 Largest observed effect 1.92e-04, orders of magnitude below the reported
@@ -121,13 +124,14 @@ SHA-256 hashed before and after and the run is invalidated if it changed.
 
 ## 4. Subgroup analysis
 
-- probes used: 20, drawn from 7 pretraining branches
+- probes used: 22, drawn from 7 pretraining branches
 - exclusion status is taken from the evidence inventory, not from the
   subgroup script's own tag, so runs the paper declares excluded are
   excluded here too
-- 7 technical duplicates collapsed (an fp32 re-probe and its fp16
+- 8 technical duplicates collapsed (an fp32 re-probe and its fp16
   original are the same frozen encoder scored twice):
   - `frozen_meanpool_random_ep50_fp32` same encoder as sweep_random_ep50
+  - `frozen_meanpool_random_ep75_fp32` same encoder as sweep_random_ep75
   - `frozen_meanpool_oracle_ep50_fp32` same encoder as sweep_oracle_ep50
   - `frozen_meanpool_random_ep100_fp32` same encoder as sweep_random_ep100
   - `frozen_meanpool_envelope_fp32_ep50` same encoder as frozen_meanpool_mirage_ep50

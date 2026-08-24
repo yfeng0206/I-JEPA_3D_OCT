@@ -5,7 +5,7 @@ the manuscript that actually exist, and is rebuilt on every refresh. Do not edit
 it by hand: it will be overwritten, and a hand-edited copy is exactly how it
 drifted from the paper before.
 
-Generated 2026-08-23T21:32:52-07:00
+Generated 2026-08-23T23:39:12-07:00
 
 ## 1. What the built PDF contains
 

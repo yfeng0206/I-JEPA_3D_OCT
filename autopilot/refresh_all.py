@@ -67,6 +67,9 @@ def main():
     run("5/8 subgroup gap trends", [PY, os.path.join(HERE, "p7b_gap_trend.py")])
     run("6/8 regenerate macros, tables, figures", [PY, os.path.join(HERE, "p8_make_assets.py")])
     run("6b/8 regenerate provenance", [PY, os.path.join(HERE, "gen_sources.py")])
+    # Gate: the checks below all exist because the corresponding mistake was made
+    # and caught during this run. Non-zero here means a regression, not a nit.
+    run("6c/8 manuscript consistency check", [PY, os.path.join(HERE, "check_manuscript.py")])
     run("7/8 compile manuscript",
         [TECTONIC, "-X", "compile", "main_submission.tex", "--keep-intermediates"],
         cwd=PAPER)

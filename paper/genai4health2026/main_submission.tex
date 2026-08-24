@@ -392,7 +392,7 @@ paired comparison, and would understate the evidence.}
 \textbf{H2 fails.} The arms that use the segmentation model most aggressively ---
 shaping targets to trace the retina, or maximising anatomy coverage under a
 floor --- do not improve on the null. At epoch 50, the only epoch at which all
-five arms have a probe, \textsc{anatomy-v2} gains $+0.0013$ over
+five arms have a probe, \textsc{anatomy-v2} gains $\DAnatomyTwoRandomEpFifty$ over
 \textsc{random} and \textsc{cover} gains $\DCoverRandomEpFifty$, against
 $\DEnvelopeRandomEpFifty$ for \textsc{envelope} and $\DOracleRandomEpFifty$ for
 \textsc{intensity}. The policies that merely \emph{place} rectangles on tissue gain
@@ -682,9 +682,10 @@ Table~\ref{tab:allprobes} lists every frozen MeanPool probe in the study.
 \begin{table}[h]
 \centering
 \caption{Every frozen probe in the study, including runs excluded from the
-analysis and the reasons. Protocol is identical throughout except where the
-precision column says otherwise: FairVision test $N{=}\Ntest$, seed 42, frozen
-encoder, MeanPool + LayerNorm + Linear. ``Precision'' is the probe-time
+analysis and the reasons. The probe protocol is otherwise the same for every
+row --- FairVision test $N{=}\Ntest$, seed 42, frozen encoder, MeanPool +
+LayerNorm + Linear --- and differs only in the precision column.
+``Precision'' is the probe-time
 numerical precision, inferred from the stored prediction dtype, and is distinct
 from the pretraining target precision discussed in
 Appendix~\ref{app:excluded}.}

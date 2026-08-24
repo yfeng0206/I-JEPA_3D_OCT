@@ -61,11 +61,15 @@ def main():
 
     say("waiting for the GPU to be free before the epoch-75 fp32 null")
     t0 = time.time()
+    # Poll fast. The only window in which this probe can start is between Phase B
+    # releasing the GPU and Phase C claiming it, which is the length of one
+    # refresh (about 4-5 minutes). A 300 s poll can miss that window entirely and
+    # then sit behind a two-day training run.
     while gpu_busy():
         if (time.time() - t0) / 3600 > 40:
             say("ABORT: waited 40 h, giving up rather than contending")
             return 1
-        time.sleep(300)
+        time.sleep(20)
     say("GPU free, launching %s" % name)
     rc = subprocess.call([PY, "-u", os.path.join(HERE, "run_guarded_probe.py"), name, ckpt])
     say("%s rc=%d" % (name, rc))

@@ -5,14 +5,14 @@ the manuscript that actually exist, and is rebuilt on every refresh. Do not edit
 it by hand: it will be overwritten, and a hand-edited copy is exactly how it
 drifted from the paper before.
 
-Generated 2026-08-23T23:39:12-07:00
+Generated 2026-08-24T03:50:45-07:00
 
 ## 1. What the built PDF contains
 
 | item | count |
 |---|---|
-| auto-generated numeric macros | 274 |
-| generated tables `\input` into the paper | 5 |
+| auto-generated numeric macros | 278 |
+| generated tables `\input` into the paper | 6 |
 | figures included | 12 |
 | distinct citation keys | 48 |
 
@@ -24,6 +24,7 @@ Generated tables:
 
 - `auto/auto_numbers.tex`
 - `auto/table_allprobes.tex`
+- `auto/table_fp32.tex`
 - `auto/table_operating.tex`
 - `auto/table_paired_subgroup.tex`
 - `auto/table_subgroup_trends.tex`
@@ -162,9 +163,5 @@ threshold selected on the validation split at a fixed target specificity, then t
 
 ## 8. Pending
 
-The following render red with a dagger in the PDF and are not yet measured:
-
-- pending
-- pending
-- fp32 re-probe table pending
+No unresolved placeholders remain.
 

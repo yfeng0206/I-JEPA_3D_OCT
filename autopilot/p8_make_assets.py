@@ -170,6 +170,18 @@ def main():
                 mac("DCover%sEpSeventyFive" % tag, signed(r[0]))
                 mac("DCover%sEpSeventyFiveP" % tag, pfmt(r[3]))
 
+    # Emit placeholder-valued macros for any COVER cell not yet measured, so the
+    # table always compiles and resolves itself the moment the probe lands. This
+    # removes a manual edit at the exact moment a headline number arrives, which
+    # is when a hand edit is most likely to go wrong.
+    for w in ("EpSeventyFive", "EpHundred"):
+        if "AUCCover%s" % w not in M:
+            mac("AUCCover%s" % w, r"\ph{pending}")
+        if "DCoverRandom%s" % w not in M:
+            mac("DCoverRandom%s" % w, r"\ph{pending}")
+            mac("DCoverRandom%sCI" % w, r"\ph{pending}")
+            mac("DCoverRandom%sP" % w, r"\ph{pending}")
+
     mac("AUCAncestor", num(T["ancestor@ep25@fp32"]["auc"]))
 
     # fairness

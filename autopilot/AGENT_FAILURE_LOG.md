@@ -100,3 +100,34 @@ no trainer holds the card.
 **Standing watch:** if an epoch time exceeds about 4200 s (a 20 percent
 regression) while this alert is active, that is genuine paging and the run should
 be paused and diagnosed rather than left to grind.
+
+## 2026-08-24 22:30 PDT - Phase C health verified against the arm's own reference run
+
+The blob fp32 continuation resumes from the same epoch-56 seed the original fp16
+run used, so the two are directly comparable at matched epochs. That gives a
+strong validity check the COVER arm never had.
+
+| epoch | fp32 rerun train / val | fp16 original train / val | val delta |
+|---|---|---|---|
+| 57 | 0.0797 / 0.3338 | 0.0797 / 0.3338 | 0.0000 |
+| 58 | 0.0804 / 0.3312 | 0.0804 / 0.3297 | +0.0015 |
+| 59 | 0.0805 / 0.3355 | 0.0803 / 0.3330 | +0.0025 |
+| 60 | 0.0813 / 0.3373 | 0.0810 / 0.3343 | +0.0030 |
+
+Three conclusions.
+
+1. The rerun is NOT diverging. It reproduces the reference trajectory to within
+   0.003 of validation loss, and the gap grows slowly, which is what two runs
+   that differ only in target precision should do once their numerics separate.
+
+2. The mild upward drift in validation loss is characteristic of this arm rather
+   than a fault: the fp16 original went 0.3338 at epoch 57 to 0.3428 at epoch 75
+   on the same schedule. Rising validation loss is expected for an EMA-target
+   JEPA and is documented for this programme.
+
+3. Speed is explained. 5450 s against 3650 s is 1.49x, matching the cost of fp32
+   targets and the earlier 1.45x estimate. The run is not slow, the original
+   projection simply used the wrong per-epoch figure.
+
+Predicted validation at epoch 75 is therefore about 0.343 if it keeps tracking.
+That is a check to apply, not a claim: the measured value will be reported.

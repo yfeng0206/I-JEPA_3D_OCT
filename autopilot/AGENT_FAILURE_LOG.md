@@ -131,3 +131,19 @@ Three conclusions.
 
 Predicted validation at epoch 75 is therefore about 0.343 if it keeps tracking.
 That is a check to apply, not a claim: the measured value will be reported.
+
+## 2026-08-25 08:28 - Near-miss: GPU 0% read at epoch boundary is NOT a stall
+
+Tick sampled `nvidia-smi` once and saw `0 %, 56C` mid-Phase-C. Looked like a dead trainer.
+
+It was the epoch rollover. Epoch 66 ended 06:58; +91 min puts the boundary at 08:29, and the
+sample was taken 08:27-08:28. Between epochs the GPU idles while the checkpoint is written and
+the 6 dataloader workers respawn. Temperature falls quickly on this card, so a cool reading does
+not rule the artifact out.
+
+Re-sampled 5x over 20s: 99/100/100/100/100 %, 24280 MiB, temp rising 69->73C. Trainer pid 12388
+accumulating CPU (31988s user). Entirely healthy.
+
+RULE for future ticks: never conclude "GPU idle" from a single nvidia-smi sample. Sample at least
+3 times a few seconds apart AND check that the trainer process CPU time is advancing, before
+treating it as a stall. Restarting a healthy chain would destroy in-flight epoch work.

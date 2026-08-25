@@ -79,3 +79,7 @@ Operator challenged whether the ep50/ep75 fp32 probes were needed. Checking p1c_
 
 chain_blob_fp32.py has never executed, and a failure would surface at about 08:00 on 24 August when Phase B releases the GPU, wasting the window. Dry run confirms: the epoch-56 seed exists, campaign_supervisor accepts the argument list (val_baseline_json and baseline_epoch_s are optional), and the generated config differs from configs/patch_anatomy_v2.yaml in exactly 4 of 62 flattened keys, all intended: logging.folder, logging.write_tag, meta.read_checkpoint, meta.amp_target=False. The entire mask section is identical, so the rerun differs from the contaminated original only in EMA-target precision, which is precisely the controlled comparison intended.
 
+## 2026-08-24T18:11:36-07:00 - Write the label-efficiency experiment now but refuse to run it until the GPU campaign ends
+
+The experiment needs no GPU: all four arms cached their epoch-100 frozen features, so it is pure CPU work on 1.8 GB tensors. But system RAM is at 90 to 97 percent while Phase C trains, and my own threshold is to stop memory-heavy work at 85. Loading a 1.8 GB cache now would page out a 2.5-day training run to gain a result that is not on the critical path. The script is written, memory-disciplined (it mean-pools in chunks so the resident array is 18 MB rather than 1.8 GB), and carries a hard RAM guard that refuses to start above the limit; verified refusing at 90 percent. It runs after Phase C, which still leaves about 9 days before the deadline.
+

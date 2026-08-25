@@ -317,6 +317,15 @@
    "expected": "0.2h",
    "owner": "coordinator",
    "started": "2026-08-22T23:41:02-07:00"
+  },
+  "P5-01b": {
+   "status": "blocked",
+   "retries": 0,
+   "phase": "P5",
+   "title": "Label-efficiency curves from cached features (written, gated on RAM, runs after Phase C)",
+   "expected": "1.0h",
+   "owner": "coordinator",
+   "note": "waiting for RAM below 80 pct after Phase C"
   }
  },
  "agents": {
@@ -512,9 +521,14 @@
    "time": "2026-08-23T12:48:40-07:00",
    "decision": "Phase C verified ready by config diff before it runs, rather than discovering a fault when Phase B ends",
    "rationale": "chain_blob_fp32.py has never executed, and a failure would surface at about 08:00 on 24 August when Phase B releases the GPU, wasting the window. Dry run confirms: the epoch-56 seed exists, campaign_supervisor accepts the argument list (val_baseline_json and baseline_epoch_s are optional), and the generated config differs from configs/patch_anatomy_v2.yaml in exactly 4 of 62 flattened keys, all intended: logging.folder, logging.write_tag, meta.read_checkpoint, meta.amp_target=False. The entire mask section is identical, so the rerun differs from the contaminated original only in EMA-target precision, which is precisely the controlled comparison intended."
+  },
+  {
+   "time": "2026-08-24T18:11:36-07:00",
+   "decision": "Write the label-efficiency experiment now but refuse to run it until the GPU campaign ends",
+   "rationale": "The experiment needs no GPU: all four arms cached their epoch-100 frozen features, so it is pure CPU work on 1.8 GB tensors. But system RAM is at 90 to 97 percent while Phase C trains, and my own threshold is to stop memory-heavy work at 85. Loading a 1.8 GB cache now would page out a 2.5-day training run to gain a result that is not on the critical path. The script is written, memory-disciplined (it mean-pools in chunks so the resident array is 18 MB rather than 1.8 GB), and carries a hard RAM guard that refuses to start above the limit; verified refusing at 90 percent. It runs after Phase C, which still leaves about 9 days before the deadline."
   }
  ],
- "updated": "2026-08-23T12:48:40-07:00",
+ "updated": "2026-08-24T18:11:37-07:00",
  "eta": "Final validated ZIP: 2026-08-24 16:00 PDT to 2026-08-25 12:00 PDT",
  "zip_status": "DRAFT_v2 validated 6/6, main content exactly 9 pages, 11.87MB (limit 50MB)"
 }

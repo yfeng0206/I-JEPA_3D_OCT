@@ -1,17 +1,17 @@
 {
  "run_started": "2026-08-22T18:30:39-07:00",
- "updated": "2026-08-23T12:48:40-07:00",
+ "updated": "2026-08-24T18:11:37-07:00",
  "phase": "P-B-training",
  "phase_note": "COVER ep79/100, healthy; review round 2 running; Phase C pre-validated",
  "resources": {
-  "gpu": "util 98%, 78 C, 19938 / 24576 MiB (81.1%)",
-  "ram": "33.5 / 34.3 GB used (97%)",
-  "disk": "C 20.2 GB free (8.1%); D 717.6 GB free (35.9%)"
+  "gpu": "util 100%, 78 C, 24257 / 24576 MiB (98.7%)",
+  "ram": "30.9 / 34.3 GB used (90%)",
+  "disk": "C 19.6 GB free (7.9%); D 700.9 GB free (35.0%)"
  },
  "task_counts": {
   "pending": 9,
   "in_progress": 5,
-  "blocked": 0,
+  "blocked": 1,
   "done": 20,
   "failed": 0,
   "skipped": 0
@@ -339,6 +339,15 @@
    "expected": "0.2h",
    "owner": "coordinator",
    "started": "2026-08-22T23:41:02-07:00"
+  },
+  "P5-01b": {
+   "status": "blocked",
+   "retries": 0,
+   "phase": "P5",
+   "title": "Label-efficiency curves from cached features (written, gated on RAM, runs after Phase C)",
+   "expected": "1.0h",
+   "owner": "coordinator",
+   "note": "waiting for RAM below 80 pct after Phase C"
   }
  },
  "agents": {
@@ -439,5 +448,5 @@
    "recovery_command": "python autopilot\\gpu_queue2.py (idempotent)"
   }
  },
- "decisions": 19
+ "decisions": 20
 }

@@ -1,6 +1,6 @@
 # CURRENT STATUS
 
-Updated: **2026-08-23T12:48:40-07:00**
+Updated: **2026-08-24T18:11:37-07:00**
 Run started: 2026-08-22T18:30:39-07:00
 
 ## Current phase
@@ -37,12 +37,12 @@ Run started: 2026-08-22T18:30:39-07:00
 - `gpu-queue2` pid=14428 gpu_queue2.py -> meanpool_random_ep100_fp32
 
 ## Resources
-- GPU: util 98%, 78 C, 19938 / 24576 MiB (81.1%)
-- RAM: 33.5 / 34.3 GB used (97%)
-- Disk: C 20.2 GB free (8.1%); D 717.6 GB free (35.9%)
+- GPU: util 100%, 78 C, 24257 / 24576 MiB (98.7%)
+- RAM: 30.9 / 34.3 GB used (90%)
+- Disk: C 19.6 GB free (7.9%); D 700.9 GB free (35.0%)
 
 ## Blockers
-- (none)
+- [P5-01b] Label-efficiency curves from cached features (written, gated on RAM, runs after Phase C) - waiting for RAM below 80 pct after Phase C
 
 ## Next three actions
 1. Revision pass addressing every R1 objection

@@ -1,6 +1,6 @@
 # TASK LEDGER
 
-Updated: 2026-08-23T12:48:40-07:00
+Updated: 2026-08-24T18:11:37-07:00
 
 | id | phase | task | status | owner | started | expected | verified | retries | output |
 |---|---|---|---|---|---|---|---|---|---|
@@ -29,6 +29,7 @@ Updated: 2026-08-23T12:48:40-07:00
 | P3-03 | P3 | Trim unnecessary ep75 fp32 probes after ep50 completes | **in_progress** | coordinator | 2026-08-22T23:41:02-07:00 | 0.2h | no | 0 | - |
 | P4-01 | P4 | Extract and cache frozen features for all arms | **pending** | coordinator | - | 4.0h | no | 0 | - |
 | P5-01 | P5 | Label-efficiency curves (1/5/10/25/100%) from cached features | **pending** | coordinator | - | 3.0h | no | 0 | - |
+| P5-01b | P5 | Label-efficiency curves from cached features (written, gated on RAM, runs after Phase C) | **blocked** | coordinator | - | 1.0h | no | 0 | - |
 | P6-01 | P6 | Embedding structure: PCA/UMAP, class separation, Cohen d | **done** | coordinator | - | 4.0h | no | 0 | - |
 | P6-02 | P6 | Integrate existing class-relations evidence into the paper as a mechanism hypothesis | **pending** | coordinator | - | 1.0h | no | 0 | - |
 | P7-01 | P7 | Subgroup / fairness analysis on FairVision metadata | **done** | coordinator | 2026-08-22T18:44:18-07:00 | 3.0h | no | 0 | - |
@@ -42,7 +43,7 @@ Updated: 2026-08-23T12:48:40-07:00
 ## Counts
 - pending: 9
 - in_progress: 5
-- blocked: 0
+- blocked: 1
 - done: 20
 - failed: 0
 - skipped: 0

@@ -226,6 +226,25 @@ def main():
             mac("DCoverRandom%sCI" % w, r"\ph{pending}")
             mac("DCoverRandom%sP" % w, r"\ph{pending}")
 
+    # ---- table-cell macros -------------------------------------------------
+    # A cell must render either a bold math delta or a red pending marker, and
+    # \ph{} cannot sit inside $...$ because it carries its own math. So the cell
+    # macro carries its own formatting rather than the caller wrapping it, which
+    # also guarantees a real math minus rather than a text hyphen.
+    def cell(name, src, dagger=""):
+        v = M.get(src)
+        if v is None or v.startswith(r"\ph{"):
+            mac(name, r"\ph{pending}")
+        else:
+            mac(name, r"$\mathbf{%s}%s$" % (v, dagger))
+
+    for w in ("EpFifty", "EpSeventyFive", "EpHundred"):
+        cell("TCoverRandom" + w, "DCoverRandom" + w, M.get("CoverDag" + w, ""))
+        cell("TAnatomyTwoRandom" + w, "DAnatomyTwoRandom" + w)
+        for src, pre in (("AUCCover", "TAUCCover"), ("AUCAnatomyTwo", "TAUCAnatomyTwo")):
+            v = M.get(src + w)
+            mac(pre + w, v if v else r"\ph{pending}")
+
     mac("AUCAncestor", num(T["ancestor@ep25@fp32"]["auc"]))
 
     # fairness

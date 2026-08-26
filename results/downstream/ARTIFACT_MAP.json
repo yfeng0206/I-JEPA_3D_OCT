@@ -1,0 +1,355 @@
+{
+  "generated": "2026-08-21T05:03:14Z",
+  "generator": "scripts/build_artifact_map.py",
+  "hf_repo": "yfeng0206/ijepa-3d-oct-checkpoints",
+  "test_split": {
+    "name": "FairVision Test",
+    "n": 3000,
+    "positive": 1466,
+    "negative": 1534,
+    "seed": 42
+  },
+  "note": "Frozen entries need encoder_hf + head_hf together. Fine-tuned entries bundle their encoder in the head file.",
+  "runs": [
+    {
+      "run": "finetune_oracle/meanpool",
+      "arm": "oracle",
+      "probe": "MeanPool",
+      "encoder_state": "fine-tuned",
+      "pretrain_epoch": 100,
+      "test_auc": 0.8946676603623906,
+      "val_auc": 0.8721761332484922,
+      "sensitivity": 0.7291950886766713,
+      "specificity": 0.9106910039113429,
+      "artifacts": {
+        "head_local": "results/downstream/finetune_oracle/meanpool_best_model.pt",
+        "head_hf": "downstream-heads/finetuned/oracle-meanpool.pt",
+        "head_sha256": "315ef51f6b579ffb568775a596a59518019c3bc449eba89126a6ec118452f681",
+        "head_bytes": 343437216,
+        "predictions_local": "results/downstream/finetune_oracle/meanpool_test_predictions.npz",
+        "results_json": "results/downstream/finetune_oracle/meanpool_results.json",
+        "encoder_hf": null
+      }
+    },
+    {
+      "run": "finetune_oracle/crossattn",
+      "arm": "oracle",
+      "probe": "CrossAttnPool",
+      "encoder_state": "fine-tuned",
+      "pretrain_epoch": 100,
+      "test_auc": 0.8937171720226036,
+      "val_auc": 0.8712556877528723,
+      "sensitivity": 0.7305593451568895,
+      "specificity": 0.9061277705345502,
+      "artifacts": {
+        "head_local": "results/downstream/finetune_oracle/crossattn_best_model.pt",
+        "head_hf": "downstream-heads/finetuned/oracle-crossattnpool.pt",
+        "head_sha256": "d7aec70033392b4cb84487beb31d484660bd9e7feed490fb63b21bf291b463f0",
+        "head_bytes": 344437100,
+        "predictions_local": "results/downstream/finetune_oracle/crossattn_test_predictions.npz",
+        "results_json": "results/downstream/finetune_oracle/crossattn_results.json",
+        "encoder_hf": null
+      }
+    },
+    {
+      "run": "finetune_oracle/d1",
+      "arm": "oracle",
+      "probe": "Attentive d1",
+      "encoder_state": "fine-tuned",
+      "pretrain_epoch": 100,
+      "test_auc": 0.8900997579200691,
+      "val_auc": 0.8689325633606666,
+      "sensitivity": 0.7496589358799455,
+      "specificity": 0.8826597131681877,
+      "artifacts": {
+        "head_local": "results/downstream/finetune_oracle/d1_best_model.pt",
+        "head_hf": "downstream-heads/finetuned/oracle-attentive.pt",
+        "head_sha256": "0c2cf66fd9e2f2180e798724bf7fd796364224ab42553076288b38c020021cb0",
+        "head_bytes": 372003184,
+        "predictions_local": "results/downstream/finetune_oracle/d1_test_predictions.npz",
+        "results_json": "results/downstream/finetune_oracle/d1_results.json",
+        "encoder_hf": null
+      }
+    },
+    {
+      "run": "finetune_random/attentive",
+      "arm": "random",
+      "probe": "Attentive d1",
+      "encoder_state": "fine-tuned",
+      "pretrain_epoch": 100,
+      "test_auc": 0.88776344646405,
+      "val_auc": 0.8750575278434762,
+      "sensitivity": 0.7407912687585266,
+      "specificity": 0.8767926988265972,
+      "artifacts": {
+        "head_local": "results/downstream/finetune_random/attentive_best_model.pt",
+        "head_hf": "downstream-heads/finetuned/random-attentive.pt",
+        "head_sha256": "f24118f4f5fc2bf0199cd6ce0e6270c17d265234cef1cb1231c06dd4cdaf3653",
+        "head_bytes": 372003184,
+        "predictions_local": "results/downstream/finetune_random/attentive_test_predictions.npz",
+        "results_json": "results/downstream/finetune_random/attentive_results.json",
+        "encoder_hf": null
+      }
+    },
+    {
+      "run": "finetune_random/cross_attn_pool",
+      "arm": "random",
+      "probe": "CrossAttnPool",
+      "encoder_state": "fine-tuned",
+      "pretrain_epoch": 100,
+      "test_auc": 0.8871778122448689,
+      "val_auc": 0.8729064867395819,
+      "sensitivity": 0.8219645293315143,
+      "specificity": 0.7790091264667536,
+      "artifacts": {
+        "head_local": "results/downstream/finetune_random/cross_attn_pool_best_model.pt",
+        "head_hf": "downstream-heads/finetuned/random-crossattnpool.pt",
+        "head_sha256": "8962d19ecbcc911ef0f624551ab09eb4d2479408318088c2c6337fc98ff18c50",
+        "head_bytes": 344437100,
+        "predictions_local": "results/downstream/finetune_random/cross_attn_pool_test_predictions.npz",
+        "results_json": "results/downstream/finetune_random/cross_attn_pool_results.json",
+        "encoder_hf": null
+      }
+    },
+    {
+      "run": "finetune_random/mean_pool",
+      "arm": "random",
+      "probe": "MeanPool",
+      "encoder_state": "fine-tuned",
+      "pretrain_epoch": 100,
+      "test_auc": 0.8867558176556489,
+      "val_auc": 0.8717039046898698,
+      "sensitivity": 0.8267394270122783,
+      "specificity": 0.7685788787483703,
+      "artifacts": {
+        "head_local": "results/downstream/finetune_random/mean_pool_best_model.pt",
+        "head_hf": "downstream-heads/finetuned/random-meanpool.pt",
+        "head_sha256": "22f0a9a3b60b43c9fc18e2e7aab93401f7f661b444e887d5c06655af204e58c5",
+        "head_bytes": 343437216,
+        "predictions_local": "results/downstream/finetune_random/mean_pool_test_predictions.npz",
+        "results_json": "results/downstream/finetune_random/mean_pool_results.json",
+        "encoder_hf": null
+      }
+    },
+    {
+      "run": "meanpool_sweep_oracle/ep100",
+      "arm": "oracle",
+      "probe": "MeanPool",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 100,
+      "test_auc": 0.88548516482246,
+      "val_auc": 0.8635899775491338,
+      "sensitivity": 0.7776261937244202,
+      "specificity": 0.8415906127770535,
+      "artifacts": {
+        "head_local": "results/downstream/meanpool_sweep_oracle/ep100_best_model.pt",
+        "head_hf": "downstream-heads/frozen-meanpool/oracle-ep100-head.pt",
+        "head_sha256": "801e6a5eec6585510ec9ce7eff8c4038c9ca609f0f0ae839819af938d010a0c2",
+        "head_bytes": 11185,
+        "predictions_local": "results/downstream/meanpool_sweep_oracle/ep100_test_predictions.npz",
+        "results_json": "results/downstream/meanpool_sweep_oracle/oracle_ep100.json",
+        "encoder_hf": "oracle-anatomical-100ep/jepa_patch_oracle-ep100.pth.tar"
+      }
+    },
+    {
+      "run": "meanpool_sweep_oracle/ep75",
+      "arm": "oracle",
+      "probe": "MeanPool",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 75,
+      "test_auc": 0.8836355478637025,
+      "val_auc": 0.8624314168057339,
+      "sensitivity": 0.7694406548431105,
+      "specificity": 0.8383311603650587,
+      "artifacts": {
+        "head_local": "results/downstream/meanpool_sweep_oracle/ep75_best_model.pt",
+        "head_hf": "downstream-heads/frozen-meanpool/oracle-ep75-head.pt",
+        "head_sha256": "4cd323568119381a664782bb81fe91a9e393ae3fe7822e87a94310320145d48a",
+        "head_bytes": 11185,
+        "predictions_local": "results/downstream/meanpool_sweep_oracle/ep75_test_predictions.npz",
+        "results_json": "results/downstream/meanpool_sweep_oracle/oracle_ep75.json",
+        "encoder_hf": "oracle-anatomical-100ep/jepa_patch_oracle-ep075.pth.tar"
+      }
+    },
+    {
+      "run": "frozen_random_crossattn/ep100",
+      "arm": "random",
+      "probe": "CrossAttnPool",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 100,
+      "test_auc": 0.8790576402809622,
+      "val_auc": 0.8649506361078763,
+      "sensitivity": 0.791268758526603,
+      "specificity": 0.8083441981747066,
+      "artifacts": {
+        "head_local": "results/downstream/frozen_random_crossattn/ep100_best_model.pt",
+        "head_hf": "downstream-heads/frozen-other/random-ep100-crossattnpool.pt",
+        "head_sha256": "a7af0de3d731bbda953a73f36e6df2cc20732372fd4f93097614462e8250044f",
+        "head_bytes": 1121259,
+        "predictions_local": "results/downstream/frozen_random_crossattn/ep100_test_predictions.npz",
+        "results_json": "results/downstream/frozen_random_crossattn/ep100_results.json",
+        "encoder_hf": "random-posfix-100ep/jepa_patch-ep100.pth.tar"
+      }
+    },
+    {
+      "run": "meanpool_sweep_random/ep100",
+      "arm": "random",
+      "probe": "MeanPool",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 100,
+      "test_auc": 0.8745808957846787,
+      "val_auc": 0.8559082595976453,
+      "sensitivity": 0.7612551159618008,
+      "specificity": 0.8383311603650587,
+      "artifacts": {
+        "head_local": "results/downstream/meanpool_sweep_random/ep100_best_model.pt",
+        "head_hf": "downstream-heads/frozen-meanpool/random-ep100-head.pt",
+        "head_sha256": "1fac2778e0f6390cad44aac5f3e08458d472d4cd1fa679ef4fff74cb9e5816c6",
+        "head_bytes": 11185,
+        "predictions_local": "results/downstream/meanpool_sweep_random/ep100_test_predictions.npz",
+        "results_json": "results/downstream/meanpool_sweep_random/ep100_results.json",
+        "encoder_hf": "random-posfix-100ep/jepa_patch-ep100.pth.tar"
+      }
+    },
+    {
+      "run": "meanpool_sweep_oracle/ep50",
+      "arm": "oracle",
+      "probe": "MeanPool",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 50,
+      "test_auc": 0.8740299460522829,
+      "val_auc": 0.8543915254983413,
+      "sensitivity": 0.7510231923601637,
+      "specificity": 0.8357235984354628,
+      "artifacts": {
+        "head_local": "results/downstream/meanpool_sweep_oracle/ep50_best_model.pt",
+        "head_hf": "downstream-heads/frozen-meanpool/oracle-ep50-head.pt",
+        "head_sha256": "c153c38e4c10994eb879fcc98b8f3f2e37bd907c77e875f47c5e9263652e5a8b",
+        "head_bytes": 11185,
+        "predictions_local": "results/downstream/meanpool_sweep_oracle/ep50_test_predictions.npz",
+        "results_json": "results/downstream/meanpool_sweep_oracle/oracle_ep50.json",
+        "encoder_hf": "oracle-anatomical-100ep/jepa_patch_oracle-ep050.pth.tar"
+      }
+    },
+    {
+      "run": "meanpool_sweep_random/ep75",
+      "arm": "random",
+      "probe": "MeanPool",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 75,
+      "test_auc": 0.8723021694701811,
+      "val_auc": 0.8546256388091836,
+      "sensitivity": 0.7564802182810368,
+      "specificity": 0.848761408083442,
+      "artifacts": {
+        "head_local": "results/downstream/meanpool_sweep_random/ep75_best_model.pt",
+        "head_hf": "downstream-heads/frozen-meanpool/random-ep75-head.pt",
+        "head_sha256": "da01e044f7242a034ab6c74db327d495392aab2da2f4c618af14eeb201245c00",
+        "head_bytes": 11185,
+        "predictions_local": "results/downstream/meanpool_sweep_random/ep75_test_predictions.npz",
+        "results_json": "results/downstream/meanpool_sweep_random/ep75_results.json",
+        "encoder_hf": "random-posfix-100ep/jepa_patch-ep075.pth.tar"
+      }
+    },
+    {
+      "run": "linear_sweep_random_posfix_d1/ep100",
+      "arm": "random",
+      "probe": "Attentive d1",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 100,
+      "test_auc": 0.8705706131683657,
+      "val_auc": 0.8597100996882491,
+      "sensitivity": 0.820600272851296,
+      "specificity": 0.7157757496740548,
+      "artifacts": {
+        "head_local": "results/downstream/linear_sweep_random_posfix_d1/ep100_best_model.pt",
+        "head_hf": "downstream-heads/frozen-other/random-ep100-attentive-d1.pt",
+        "head_sha256": "ab809f332513e0124e442c5f0bb7b94114c1099391a1c984a6504ea8438630d3",
+        "head_bytes": 28687147,
+        "predictions_local": "results/downstream/linear_sweep_random_posfix_d1/ep100_test_predictions.npz",
+        "results_json": "results/downstream/linear_sweep_random_posfix_d1/ep100_results.json",
+        "encoder_hf": "random-posfix-100ep/jepa_patch-ep100.pth.tar"
+      }
+    },
+    {
+      "run": "linear_sweep_random_posfix_d1/ep75",
+      "arm": "random",
+      "probe": "Attentive d1",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 75,
+      "test_auc": 0.8691096403307655,
+      "val_auc": 0.8580472948907272,
+      "sensitivity": 0.772169167803547,
+      "specificity": 0.7907431551499348,
+      "artifacts": {
+        "head_local": "results/downstream/linear_sweep_random_posfix_d1/ep75_best_model.pt",
+        "head_hf": "downstream-heads/frozen-other/random-ep75-attentive-d1.pt",
+        "head_sha256": "21f69ef2e7c3200e04c6953d13c2701d2ba615b437e916c22d521f5475274fc9",
+        "head_bytes": 28687147,
+        "predictions_local": "results/downstream/linear_sweep_random_posfix_d1/ep75_test_predictions.npz",
+        "results_json": "results/downstream/linear_sweep_random_posfix_d1/ep75_results.json",
+        "encoder_hf": "random-posfix-100ep/jepa_patch-ep075.pth.tar"
+      }
+    },
+    {
+      "run": "meanpool_sweep_random/ep50",
+      "arm": "random",
+      "probe": "MeanPool",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 50,
+      "test_auc": 0.8640970649809413,
+      "val_auc": 0.8450730153394241,
+      "sensitivity": 0.7469304229195088,
+      "specificity": 0.8285528031290743,
+      "artifacts": {
+        "head_local": "results/downstream/meanpool_sweep_random/ep50_best_model.pt",
+        "head_hf": "downstream-heads/frozen-meanpool/random-ep50-head.pt",
+        "head_sha256": "b93a208b842126699cdbe044e78c736e9dfe0a344ee5adbf0b635348cbd4ea3c",
+        "head_bytes": 11185,
+        "predictions_local": "results/downstream/meanpool_sweep_random/ep50_test_predictions.npz",
+        "results_json": "results/downstream/meanpool_sweep_random/ep50_results.json",
+        "encoder_hf": "random-posfix-100ep/jepa_patch-ep050.pth.tar"
+      }
+    },
+    {
+      "run": "linear_sweep_random_posfix_d1/ep50",
+      "arm": "random",
+      "probe": "Attentive d1",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 50,
+      "test_auc": 0.8611215362203871,
+      "val_auc": 0.8452250889430485,
+      "sensitivity": 0.8076398362892224,
+      "specificity": 0.7314211212516297,
+      "artifacts": {
+        "head_local": "results/downstream/linear_sweep_random_posfix_d1/ep50_best_model.pt",
+        "head_hf": "downstream-heads/frozen-other/random-ep50-attentive-d1.pt",
+        "head_sha256": "78d1136fbbabb8843628b69f47ce13db9caa450cd7072f8e523cb4365282bb7f",
+        "head_bytes": 28687147,
+        "predictions_local": "results/downstream/linear_sweep_random_posfix_d1/ep50_test_predictions.npz",
+        "results_json": "results/downstream/linear_sweep_random_posfix_d1/ep50_results.json",
+        "encoder_hf": "random-posfix-100ep/jepa_patch-ep050.pth.tar"
+      }
+    },
+    {
+      "run": "linear_sweep_random_posfix_d1/ep25",
+      "arm": "random",
+      "probe": "Attentive d1",
+      "encoder_state": "frozen",
+      "pretrain_epoch": 25,
+      "test_auc": 0.8557992461904871,
+      "val_auc": 0.845971450181888,
+      "sensitivity": 0.6091405184174625,
+      "specificity": 0.910039113428944,
+      "artifacts": {
+        "head_local": "results/downstream/linear_sweep_random_posfix_d1/ep25_best_model.pt",
+        "head_hf": "downstream-heads/frozen-other/random-ep25-attentive-d1.pt",
+        "head_sha256": "5a374243a0390bfa9c0981cab033c74d13d33502b6a3f640bf6aab400ee18fea",
+        "head_bytes": 28687147,
+        "predictions_local": "results/downstream/linear_sweep_random_posfix_d1/ep25_test_predictions.npz",
+        "results_json": "results/downstream/linear_sweep_random_posfix_d1/ep25_results.json",
+        "encoder_hf": "random-posfix-100ep/jepa_patch-ep025.pth.tar"
+      }
+    }
+  ]
+}

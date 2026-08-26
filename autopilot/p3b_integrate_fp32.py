@@ -134,16 +134,23 @@ def main():
         json.dump(out, f, indent=1)
 
     # ---- LaTeX table
+    # The artifact stores the historical arm key; the paper's display name lives
+    # in the \ArmBest macro so a rename is one line. Never emit the raw key.
+    DISP = {"oracle": r"\ArmBest{}"}
+
+    def armtex(a):
+        return DISP.get(a, r"\textsc{%s}" % a)
+
     tl = [r"\begin{tabular}{lccccc}", r"\toprule",
           r"policy & epoch & fp16 AUC & fp32 AUC & $\Delta$ & $p$ \\", r"\midrule"]
     for r in sorted(rows, key=lambda r: (r["arm"], r["epoch"])):
         if "auc_fp16" in r:
-            tl.append("\\textsc{%s} & %d & %.6f & %.6f & %+.6f & %.3f \\\\" % (
-                r["arm"], r["epoch"], r["auc_fp16"], r["auc_fp32"],
+            tl.append("%s & %d & %.6f & %.6f & %+.6f & %.3f \\\\" % (
+                armtex(r["arm"]), r["epoch"], r["auc_fp16"], r["auc_fp32"],
                 r["delta_fp32_minus_fp16"], r["delong_p"]))
         else:
-            tl.append("\\textsc{%s} & %d & --- & %.6f & --- & --- \\\\" % (
-                r["arm"], r["epoch"], r["auc_fp32"]))
+            tl.append("%s & %d & --- & %.6f & --- & --- \\\\" % (
+                armtex(r["arm"]), r["epoch"], r["auc_fp32"]))
     tl += [r"\bottomrule", r"\end{tabular}"]
     with open(os.path.join(AUTO, "table_fp32.tex"), "w", encoding="utf-8") as f:
         f.write("\n".join(tl) + "\n")

@@ -24,9 +24,8 @@
 % ARM DISPLAY NAMES. Defined once so a rename is a one-line change and cannot
 % drift between prose, tables and figure captions. \ArmBest is the strongest
 % arm: it locates a retinal band by a per-column intensity centroid and uses NO
-% segmentation model and NO ground-truth labels. The name is historical; see the
-% definition at first use in Section 3.
-\newcommand{\ArmBest}{\textsc{oracle}}
+% segmentation model and NO ground-truth labels. Named for what it computes.
+\newcommand{\ArmBest}{\textsc{centroid}}
 
 \title{Location Beats Shape: A Controlled Comparison of Anatomy-Guided\\
 Masking for Joint-Embedding Predictive Pretraining\\
@@ -233,12 +232,9 @@ scale and aspect-ratio ranges. They differ only in placement and shape.
 \item[\ArmBest{} (segmentation-free).] A band whose vertical position is
   located per slice by a per-column intensity-weighted row centroid, smoothed
   across columns. It adapts to the retina's position and curvature using a
-  first-order intensity statistic, and consults \textbf{no segmentation model}.
-  It uses no ground-truth annotation of any kind. (The name is historical, from
-  when this policy was intended as an upper bound, and we keep it so that the
-  paper matches the released code and checkpoints. It should not be read as
-  implying label access: despite the name, this arm is \emph{not} an oracle and
-  \emph{not} an upper bound, and reads only the input image.)
+  first-order intensity statistic, consults \textbf{no segmentation model}, and
+  uses no ground-truth annotation of any kind. It is named for the statistic it
+  computes.
 
 \item[\textsc{anatomy-v1} / \textsc{anatomy-v2}.] Ragged connected components
   grown on the MIRAGE score map, so target \emph{shape} follows tissue rather

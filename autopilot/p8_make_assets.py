@@ -27,7 +27,7 @@ STATS = r"D:\jepa_phase0\autopilot_out\p1_stats"
 AUTO = r"C:\Users\Gary\Desktop\jepa\paper\genai4health2026\auto"
 os.makedirs(AUTO, exist_ok=True)
 
-ARM_TEX = {"random": r"\textsc{random}", "oracle": r"\textsc{intensity}",
+ARM_TEX = {"random": r"\textsc{random}", "oracle": r"\ArmBest{}",
            "envelope": r"\textsc{envelope}", "anatomy-v1": r"\textsc{anatomy-v1}",
            "anatomy-v2": r"\textsc{anatomy-v2}", "cover-f021": r"\textsc{cover}",
            "ancestor": r"ancestor"}
@@ -497,7 +497,7 @@ def main():
         except KeyError:
             pass
         tab = [r"\begin{tabular}{llcccc}", r"\toprule",
-               r"labels & $n$ & \textsc{random} & \textsc{oracle} & "
+               r"labels & $n$ & \textsc{random} & \ArmBest{} & "
                r"\textsc{envelope} & \textsc{cover} \\", r"\midrule"] \
             + rows + [r"\bottomrule", r"\end{tabular}"]
         with open(os.path.join(AUTO, "table_labeleff.tex"), "w", encoding="utf-8") as f:

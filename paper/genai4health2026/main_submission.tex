@@ -43,7 +43,7 @@ hidden image regions. Which regions are hidden is a free design choice, and in
 medical imaging there is an intuitive answer: hide the tissue that carries the
 diagnosis. We test that intuition under tightly controlled conditions. Six
 masking policies are continued from a single shared I-JEPA checkpoint on 3D
-retinal OCT, differing \emph{only} in how predictor targets are placed, and
+retinal OCT, differing in how predictor targets are placed, and
 evaluated with a frozen linear-probe protocol for glaucoma classification
 (FairVision, $N{=}\Ntest$). Guidance does help: restricting targets to retinal
 tissue improves AUC by $\DEnvelopeRandomEpFifty$ over unguided masking at the
@@ -219,7 +219,7 @@ become targets.
 \subsection{The six policies}
 
 All policies produce $M{=}4$ target blocks and one context block under identical
-scale and aspect-ratio ranges. They differ only in placement and shape.
+scale and aspect-ratio ranges. The rectangle arms differ only in placement.
 
 \begin{description}
 \item[\textsc{random} (null).] Stock I-JEPA multiblock. Four rectangles placed
@@ -397,8 +397,8 @@ measured, with an interval that excludes zero.
 \centering
 \includegraphics[width=0.88\linewidth]{fig_trajectories_ci.png}
 \caption{\textbf{(a)} Frozen-probe test AUC against pretraining epoch. All arms
-fork from the same epoch-25 checkpoint (open circle) and differ only in masking
-policy. Solid lines are the precision-matched fp16 family; dashed lines are fp32
+fork from the same epoch-25 checkpoint (open circle). Rectangle arms differ
+only in masking policy; the anatomy arms also differ in collation. Solid lines are the precision-matched fp16 family; dashed lines are fp32
 arms and must not be compared vertically against the solid lines.
 \textbf{(b)} The actual inference: paired differences against the unguided null
 on identical test cases, with \Nboot-resample bootstrap intervals. All six
@@ -878,9 +878,9 @@ after repeated inspection of that split, the $p$-values here should be read as
 descriptive rather than as confirmatory inference. Race and ethnicity are
 self-reported categories inherited from FairVision's coding; at these subgroup
 sizes we cannot speak to intersectional groups. All figures are frozen mean-pool
-linear probes with AUC as the only metric; we report no subgroup calibration,
-no sensitivity at a fixed specificity, and no threshold-transfer analysis, so
-this audit should not be read as a complete fairness evaluation. Disparities
+linear probes. Subgroup sensitivity at a transferred threshold is reported in
+Appendix~\ref{app:operating}, but we report no subgroup calibration and no
+intersectional breakdown, so this is not a complete fairness evaluation. Disparities
 could differ under fine-tuning or a stronger head.
 
 \section{Excluded runs}
@@ -1178,9 +1178,14 @@ best-calibrated arm (Brier $\BrierIntensity$ versus $\BrierRandom$; ECE
 $\ECEIntensity$ versus $\ECERandom$), which matters because a screening score
 that is used as a probability must be trustworthy as one.
 
-A $+0.011$ AUC difference is hard to interpret clinically, whereas ``two to
-three more cases detected per hundred at the same false-positive rate'' is not.
-One dataset, one split, one pretraining run per policy.
+A $+0.011$ AUC difference is hard to interpret clinically, whereas a change in
+cases detected at a fixed threshold is not. We state that comparison carefully:
+transferring one threshold moves achieved specificity from $\SpecAchRandomSpecNinety$
+to $\SpecAchIntensitySpecNinety$, so the arms are \emph{not} compared at an
+identical false-positive rate and the sensitivity change partly reflects that
+shift. A deployment-grade comparison would select each arm's threshold on
+validation to meet the same specificity, lock it, and evaluate on an untouched
+cohort. One dataset, one split, one pretraining run per policy.
 
 \paragraph{Who receives the benefit at the deployed threshold.} Subgroup AUC is
 also threshold-free, so it cannot answer the question a deployment actually
@@ -1239,9 +1244,9 @@ contribution. Every masking policy we tested leaves the same groups worst-served
 and the best-performing policy narrows none of them reliably, even though every subgroup point estimate rises. We would regard deployment
 of any encoder reported here, without a dedicated and prospective fairness
 evaluation on the target population, as inappropriate. We also stress that the
-audit is AUC-only: it contains no subgroup calibration, no sensitivity at a fixed
-clinical specificity, no predictive-value analysis and no intersectional
-breakdown, so it should not be mistaken for a complete equity assessment.
+audit is incomplete: beyond AUC and the transferred-threshold sensitivity of
+Appendix~\ref{app:operating}, it contains no subgroup calibration, no
+predictive-value analysis and no intersectional breakdown.
 
 Releasing pretrained weights carries the usual dual-use consideration that they
 may be applied to populations unlike the training cohort. We document the cohort

@@ -499,8 +499,8 @@ lying on tissue --- trends negatively ($-0.40$). Neither is significant at
 $n{=}4$ arms, and we present them as descriptive rather than inferential; but
 neither shows the positive relationship the anatomy-guidance hypothesis predicts.
 The anatomy arm places $97.3\%$ of masked cells on tissue and does not separate
-from the null; \ArmBest{} places $41.1\%$ on tissue and gives the largest
-gain in the study.
+from the null; \ArmBest{} places $41.1\%$ on tissue and reaches the highest
+epoch-100 AUC.
 
 Second, \textbf{the anatomy arms are confounded on several axes simultaneously}.
 They hide only $21.4\%$ of the grid against $40$--$46\%$ for the rectangle arms,
@@ -532,18 +532,19 @@ A masking policy that only helps when labels are plentiful is of limited
 clinical use, so we withdrew supervision and re-fitted the same probe. Protocol
 and label subsets are held fixed --- the subsampling seed depends on the fraction
 and repeat but never on the arm --- and at full supervision this reproduces
-Table~\ref{tab:main} to within $0.0002$.
+Table~\ref{tab:main} to within $0.0003$.
 
-The margin grows sharply as labels are removed. At $5\%$ of the labelled set
+The observed margin is larger with fewer labels. At $5\%$ of the labelled set
 ($n{=}\LENFive$) \ArmBest{} leads the null by $\LEGapFive$
 ($\LEOracleFive$ against $\LERandomFive$), against $\LEGapHundred$ at full
 supervision --- more than four times the advantage. At $1\%$ the separation is
 wider again ($\LEOracleOne$ against $\LERandomOne$), though the spread across
 repeats ($\LESDRandomOne$--$\LESDCoverOne$) is large enough that we read the
-ordering and not its size. The absolute gains at full supervision are small, but
+ordering and not its size. Whether the gap genuinely widens as labels are
+withdrawn we did not test; the ordering across fractions is a point-estimate
+observation. The absolute gains at full supervision are small, but
 the regime that matters for a new imaging site or a rare condition is the one
-with few labels, and that is where choosing \emph{where} to predict pays.
-Appendix~\ref{app:labeleff} gives the full curve.
+with few labels. Appendix~\ref{app:labeleff} gives the full curve.
 
 
 \subsection{Subgroups: the ordering never changes}
@@ -627,7 +628,7 @@ at the matched epoch, and a consistent intensity-located band is worth
 $\DOracleRandomEpHundred$ at epoch 100, with paired intervals excluding zero at
 every epoch measured. Using the segmenter more aggressively --- to shape targets
 or to maximise anatomy coverage --- does not add to that and can subtract. For
-\emph{this} task the segmentation stage bought nothing we could measure, and a
+\emph{this} task the segmentation stage bought no more than location, and a
 one-line intensity statistic recovered the whole benefit. We would not generalise
 that to tasks where anatomy is the output, such as layer segmentation or lesion
 localisation.
@@ -653,7 +654,7 @@ pairwise differences are significant on this test set.
 mistake optimisation noise for method effects. We can bound one component: with
 five probe seeds on two fixed encoders the probe-seed standard deviation is
 $0.0003$ and $0.0018$, and the arms stay fully separated across all five, so
-probe noise is an order of magnitude below the effects in
+probe noise is three to seven times below the effects in
 Table~\ref{tab:main}. Those are \emph{technical} replicates and do not estimate
 pretraining noise, which would need at least three paired continuations from the
 shared checkpoint with the continuation as the unit of replication. That is the
@@ -832,8 +833,8 @@ Instead each positive stratum is scored against the shared pool of all
 \begin{table}[h]
 \centering
 \caption{Severity-stratified AUC at matched epoch 100. Each positive stratum is
-scored against the shared pool of all \Nneg{} negatives. Every stratum improves,
-and mild disease improves most.}
+scored against the shared pool of all \Nneg{} negatives. Every stratum improves;
+the gains were not tested against one another.}
 \label{tab:severity}
 \small
 \begin{tabular}{lccccc}
@@ -995,7 +996,7 @@ decay 0.05, 50 epochs with 5 warmup and cosine decay, and the epoch selected on
 validation AUC. An earlier version of this experiment used a cheaper full-batch
 fit, which put the null at $0.8811$ at full supervision against
 $\AUCRandomEpHundred$ in the primary protocol and so made the two tables
-disagree. Under matched protocols they now agree to within $0.0002$ at full
+disagree. Under matched protocols they now agree to within $0.0003$ at full
 supervision ($\LERandomHundred$ against $\AUCRandomEpHundred$ for the null,
 $\LEOracleHundred$ against $\AUCOracleEpHundred$ for \ArmBest{}), so the curve
 below and the headline table describe one probe, not two.
@@ -1217,7 +1218,7 @@ stratum. Paired bootstrap over positives within each stratum. Epoch 100.}
 \centering
 \includegraphics[width=0.62\linewidth]{fig_roc.png}
 \caption{ROC curves at epoch 100 on the \Ntest{} test volumes. The three arms
-that reach the full horizon are nearly superimposed: the separation reported
+plotted are nearly superimposed: the separation reported
 throughout this paper is a small, consistent shift in the high-specificity
 region rather than a difference visible in the curve as a whole. We include this
 so the effect size is not overstated by tables alone.}

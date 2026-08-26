@@ -38,6 +38,8 @@ TARGET_SPEC = 0.90
 EPOCH = 100
 MIN_N = 50
 MIN_CLASS = 10
+N_BOOT = 10000
+RNG = np.random.default_rng(20260826)
 
 ARMS = {
     "random":    r"results\downstream\meanpool_sweep_random\ep%d_test_predictions.npz",
@@ -132,8 +134,13 @@ def main():
               % (arm, entry["overall"]["sensitivity"],
                  entry["overall"]["specificity"], entry["overall"]["ece"]))
 
-    # change from null to best arm, per subgroup
+    # change from null to best arm, per subgroup, with a paired bootstrap CI.
+    # Without an interval this table invites a disparity reading that the sample
+    # sizes may not support: the strata differ about fivefold in size, so a
+    # smaller point estimate in a smaller group can be noise rather than signal.
     if "random" in per_arm_group and "intensity" in per_arm_group:
+        y_r, p_r = load(os.path.join(REPO, ARMS["random"] % EPOCH))
+        y_i, p_i = load(os.path.join(REPO, ARMS["intensity"] % EPOCH))
         delta = {}
         for col, gname in GROUPS:
             d = {}
@@ -142,17 +149,32 @@ def main():
             for v in a:
                 if a[v].get("underpowered") or b.get(v, {}).get("underpowered"):
                     continue
+                m = np.array([r[col] == v for r in meta])
+                gy, gpr, gpi = y_r[m], p_r[m], p_i[m]
+                pos = np.where(gy == 1)[0]
+                boots = np.empty(N_BOOT)
+                for k in range(N_BOOT):
+                    # resample POSITIVES only: sensitivity is defined on them,
+                    # and the threshold is fixed externally, so this is the
+                    # correct resampling unit for a change in sensitivity.
+                    idx = RNG.choice(pos, size=len(pos), replace=True)
+                    boots[k] = ((gpi[idx] >= thr).mean() - (gpr[idx] >= thr).mean())
+                lo, hi = np.percentile(boots, [2.5, 97.5])
                 d[v] = {"d_sensitivity": b[v]["sensitivity"] - a[v]["sensitivity"],
+                        "ci95_lo": float(lo), "ci95_hi": float(hi),
+                        "excludes_zero": bool(lo > 0 or hi < 0),
                         "d_specificity": b[v]["specificity"] - a[v]["specificity"],
                         "d_ece": b[v]["ece"] - a[v]["ece"],
-                        "n": a[v]["n"]}
+                        "n": a[v]["n"], "n_pos": a[v]["n_pos"]}
             delta[gname] = d
         res["delta_random_to_intensity"] = delta
+        res["n_bootstrap"] = N_BOOT
         print("\nchange from random to intensity at the shared threshold:")
         for gname, d in delta.items():
             for v, s in sorted(d.items()):
-                print("  %-8s %-22s d_sens=%+.4f  d_spec=%+.4f  n=%d"
-                      % (gname, v, s["d_sensitivity"], s["d_specificity"], s["n"]))
+                print("  %-8s %-10s d_sens=%+.4f  CI [%+.4f, %+.4f]  excl0=%-5s n=%d (pos %d)"
+                      % (gname, v, s["d_sensitivity"], s["ci95_lo"], s["ci95_hi"],
+                         s["excludes_zero"], s["n"], s["n_pos"]))
 
     outp = os.path.join(OUT, "p16_subgroup_operating.json")
     with open(outp, "w", encoding="utf-8") as f:

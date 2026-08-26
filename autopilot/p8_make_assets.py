@@ -790,6 +790,42 @@ def main():
     plt.close(fig)
     print("wrote fig_roc.png")
 
+    # ------------------------------------------------------- label efficiency
+    # The strongest clinical result in the paper deserves a figure, not just a
+    # table: the point is the SHAPE of the curve, that the arms converge as
+    # labels are added and separate sharply as they are removed.
+    lep2 = os.path.join(STATS, "p5_label_efficiency.json")
+    if os.path.exists(lep2):
+        le2 = json.load(open(lep2, encoding="utf-8"))
+        order = [("random", "random", "#4c4c4c"),
+                 ("intensity", "centroid", "#c1272d"),
+                 ("envelope", "envelope", "#1f77b4"),
+                 ("cover", "cover", "#2ca02c")]
+        fig, ax = plt.subplots(figsize=(5.4, 2.9))
+        for key, lab, col in order:
+            arm = le2["arms"].get(key)
+            if not arm:
+                continue
+            fr, mu, sd = [], [], []
+            for fk in sorted(arm, key=float):
+                fr.append(float(fk) * 100)
+                mu.append(arm[fk]["auc_mean"])
+                sd.append(arm[fk]["auc_sd"])
+            mu, sd = np.array(mu), np.array(sd)
+            ax.plot(fr, mu, marker="o", ms=3.5, lw=1.6, color=col, label=lab)
+            ax.fill_between(fr, mu - sd, mu + sd, color=col, alpha=0.13, lw=0)
+        ax.set_xscale("log")
+        ax.set_xticks([1, 5, 10, 25, 100])
+        ax.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+        ax.set_xlabel("labelled training set used (%, log scale)")
+        ax.set_ylabel("test AUC")
+        ax.legend(fontsize=7.5, loc="lower right", ncol=2)
+        ax.grid(alpha=0.25, ls=":")
+        fig.tight_layout()
+        fig.savefig(os.path.join(AUTO, "fig_labeleff.png"), dpi=200)
+        plt.close(fig)
+        print("wrote fig_labeleff.png")
+
     # ---------------------------------------------------------- subgroup trends
     trp = os.path.join(STATS, "p7b_gap_trend.json")
     if os.path.exists(trp):

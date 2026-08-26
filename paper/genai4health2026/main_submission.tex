@@ -545,6 +545,7 @@ the regime that matters for a new imaging site or a rare condition is the one
 with few labels, and that is where choosing \emph{where} to predict pays.
 Appendix~\ref{app:labeleff} gives the full curve.
 
+
 \subsection{Subgroups: the ordering never changes}
 \label{sec:subgroup}
 
@@ -1028,6 +1029,16 @@ fraction except at full data, which is deterministic.}
 \small
 \input{auto/table_labeleff}
 \end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.60\linewidth]{fig_labeleff.png}
+\caption{The policies converge as labels are added and separate as they are
+removed. Shading is one standard deviation over \LERepeats{} label subsets, with
+every arm seeing identical subsets. At full supervision the four arms lie within
+$0.027$ of one another; at $5\%$ the spread is $0.085$.}
+\label{fig:labeleff}
+\end{figure}
 
 \section{Occlusion attribution: where the classifier looks}
 \label{app:interp}

@@ -53,9 +53,11 @@ epoch 100 ($\DOracleRandomEpHundredCI$, $p\,\DOracleRandomEpHundredP$). All six
 contrasts against the null, at all three epochs, exclude zero. But
 anatomical \emph{precision} does not help. A policy that places $97\%$ of masked
 patches on tissue, using a trained retinal segmentation model to shape the
-targets, is \emph{indistinguishable from unguided masking} at the matched epoch
-($\DAnatomyTwoRandomEpFifty$, CI $\DAnatomyTwoRandomEpFiftyCI$), as is a
-coverage-constrained policy ($\DCoverRandomEpFifty$) --- while the two policies
+targets, matches unguided masking at epoch 50
+($\DAnatomyTwoRandomEpFifty$) and falls \emph{below} it by epoch 75
+($\DAnatomyTwoRandomEpSeventyFive$, CI
+$\DAnatomyTwoRandomEpSeventyFiveCI$), as does a
+coverage-constrained policy ($\DCoverRandomEpFifty$ at epoch 50) --- while the two policies
 that merely \emph{place} rectangles on tissue gain an order of magnitude more.
 Carried to epoch 100 the coverage-constrained policy does not merely stall, it
 peaks at epoch \CoverPeakEpoch{} and then declines, ending
@@ -107,9 +109,11 @@ optimiser, schedule, and effective batch size, and are evaluated under one
 frozen-probe protocol.
 
 The result contradicts the intuition in an informative way. Guidance helps, but
-the benefit does not increase with anatomical precision --- it disappears. The
+the benefit does not increase with anatomical precision --- it disappears, and
+with continued training it reverses. The
 two policies whose targets track the segmented retina most faithfully are
-statistically indistinguishable from unguided masking at the matched epoch, while
+statistically indistinguishable from unguided masking at epoch 50, and the one we
+carried further falls significantly below it by epoch 75, while
 two policies that merely place ordinary rectangles on tissue gain an order of
 magnitude more. The best performer uses no segmentation model at all, locating a
 band by a per-column intensity centroid.
@@ -299,10 +303,10 @@ Arms differ in how far they were carried, and we do not pretend otherwise.
 \textsc{random}, \ArmBest{} and \textsc{envelope} reach epoch 100.
 \textsc{anatomy-v2} reaches epoch 75 (its epoch-75 and epoch-92 probes under an
 earlier target-precision splice are excluded and replaced by a clean fp32
-continuation, Appendix~\ref{app:excluded}); we stopped that arm after epoch 75,
-because it had already moved from indistinguishable-from-null at epoch 50 to
-significantly below it at epoch 75 and a further 25 epochs would have deepened an
-established deficit rather than tested anything new.
+continuation, Appendix~\ref{app:excluded}); we stopped that arm having seen its
+epoch-75 deficit, which is a selective stopping horizon and a real weakness ---
+a trajectory can recover, so we cannot claim its epoch-100 value would have been
+worse, only that we did not measure it.
 \textsc{anatomy-v1} has only epoch 30. \textsc{cover} $f{=}0.21$ reaches epoch
 100, with an extra probe at its epoch-73 peak. Epoch 50 is therefore the only
 epoch at which
@@ -678,8 +682,8 @@ should target clinically meaningful anatomy. Under matched compute, schedule, an
 a shared ancestor checkpoint, guidance helped --- but anatomical precision did
 not. Restricting targets to retinal tissue improved AUC over unguided masking by
 $\DEnvelopeRandomEpFifty$ at the matched epoch, while shaping targets to trace
-the segmented retina left performance indistinguishable from not guiding at all,
-and the best policy consulted no segmentation model. Mask geometry is
+the segmented retina matched unguided masking at epoch 50 and fell below it by
+epoch 75, and the best policy consulted no segmentation model. Mask geometry is
 uncorrelated with how much anatomy is hidden; a subgroup audit shows every
 disease stage improving with intervals excluding zero, race gains consistent in
 sign, and the difficulty ordering untouched. We suggest the operative variable is
@@ -961,6 +965,18 @@ subsample the labelled training set to fractions of its size, fit the same froze
 linear probe on cached epoch-\LEEpoch{} features, and repeat \LERepeats{} times
 per fraction. The per-fraction seed depends only on fraction and repeat, never on
 arm, so all arms see identical label subsets and the comparison is paired.
+
+\paragraph{These AUCs are not comparable to Table~\ref{tab:main}.} This sweep
+fits a simpler head than the primary protocol --- full-batch, fixed learning
+rate, no validation-based epoch selection --- because it must be repeated
+\LERepeats{} times at each of five fractions. That changes the absolute numbers:
+at full supervision it puts \textsc{random} at $\LERandomHundred$ against
+$\AUCRandomEpHundred$ in the primary protocol, which compresses the
+\ArmBest{}-over-null gap from $\DOracleRandomEpHundred$ to about $+0.004$. Only
+the \emph{within-protocol} comparison across fractions should be read from this
+table. We report the discrepancy rather than suppressing it, because it shows the
+headline margin is sensitive to how the probe is fitted --- a caveat that applies
+to any frozen-probe comparison at this effect size, including ours.
 
 \begin{table}[h]
 \centering

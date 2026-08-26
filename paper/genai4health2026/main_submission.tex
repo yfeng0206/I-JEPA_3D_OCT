@@ -299,8 +299,9 @@ Arms differ in how far they were carried, and we do not pretend otherwise.
 \textsc{random}, \ArmBest{} and \textsc{envelope} reach epoch 100.
 \textsc{anatomy-v2} has valid probes to epoch 50 (later checkpoints follow a
 target-precision splice and are excluded, Appendix~\ref{app:excluded}).
-\textsc{anatomy-v1} has only epoch 30. \textsc{cover} $f{=}0.21$ was
-deliberately halted at epoch 73. Epoch 50 is therefore the only epoch at which
+\textsc{anatomy-v1} has only epoch 30. \textsc{cover} $f{=}0.21$ reaches epoch
+100, with an extra probe at its epoch-73 peak. Epoch 50 is therefore the only
+epoch at which
 five policies are simultaneously available, and it carries every cross-policy
 comparison that involves the anatomy or coverage arms.
 
@@ -649,10 +650,11 @@ modalities, diseases, or segmentation-quality regimes is untested, and the
 anatomy arms depend on MIRAGE's prediction quality on this data, so a better
 segmenter might change the conclusion. Only $f{=}0.21$ was pretrained for
 \textsc{cover}, so we report no dose-response over the visible-tissue floor and
-make no claim that any floor is optimal. That arm also has probes only at epochs
-27, 30, 34, 50 and 73: it was deliberately halted before epoch 100, its later
-probes are marked pending rather than reported, and we draw no conclusion about
-its endpoint. Its epoch-50 value is included because it is a matched-epoch
+make no claim that any floor is optimal. That arm reaches epoch 100, but an
+implementation defect means its delivered masks never realised the coverage it
+was configured for (Appendix~\ref{app:covbug}), so we report its trajectory and
+explicitly decline to interpret it as evidence about aggressive coverage. Its
+epoch-50 value is included because it is a matched-epoch
 comparison against every other arm. Finally, one dataset and one test split were
 reused throughout this programme's history, and policies, checkpoints and
 analyses were chosen after repeated inspection of that split; the intervals we
@@ -855,7 +857,11 @@ could differ under fine-tuning or a stronger head.
 \section{Excluded runs}
 \label{app:excluded}
 
-Four probes of an earlier coverage arm are excluded from all analysis. They were
+Four probes of an earlier \emph{null} run are excluded from all analysis. They
+are unguided-masking controls from a superseded coverage campaign --- the
+inventory lists them under \textsc{random}, and their run tags begin
+\texttt{frozen\_cover\_random} because of that campaign, not because they use a
+coverage policy. They were
 trained with half-precision EMA targets and a different encoder-truncation
 policy from the arms they would be compared against, so their deficit is not
 attributable to masking. We report their existence for completeness and do not

@@ -167,3 +167,21 @@ and the false "unused" entries cleared. Same defect fixed in `p13_build_zip.py`
 RULE: when a checker reports something surprising about its own subject matter,
 suspect the checker before dismissing it as harmless. A warning that is wrong in the
 harmless direction usually means the same logic is also wrong in the dangerous one.
+
+## 2026-08-26 02:40 - Near-miss: plain substring search on PDF text gives false negatives
+
+Verified the new label-efficiency appendix had shipped by searching the compiled PDF for
+"Label efficiency". Result: False. The appendix was in fact present on pages 17-18.
+
+Cause: TeX typesets "ffi" as the single ligature glyph U+FB03, so the extracted text contains
+"Label ef<ffi>ciency" and a plain `in` test fails. Same applies to fi (U+FB01), fl, ff, ffl -
+which is why earlier page dumps showed "beneﬁt" and "difﬁculty".
+
+The tell was that the PDF had grown 25 -> 26 pages, which contradicted the "absent" reading.
+Believing the search would have meant re-adding an appendix that was already there, or worse,
+concluding the build pipeline was broken when it was fine.
+
+RULE: before searching extracted PDF text, normalise ligatures:
+    unicodedata.normalize("NFKD", txt).replace("\ufb00","ff").replace("\ufb01","fi")
+        .replace("\ufb02","fl").replace("\ufb03","ffi").replace("\ufb04","ffl")
+And always cross-check a negative against an independent signal such as page count.

@@ -115,3 +115,39 @@ No headline contrast moved by more than 5e-5.
 | oracle-random@ep50 | +0.009894 |
 | oracle-random@ep75 | +0.011333 |
 
+
+## phase-A  -  2026-08-26T02:20:41-07:00
+
+No new probes since the last milestone.
+
+No headline contrast moved by more than 5e-5.
+
+**Current headline contrasts:**
+
+| contrast | delta AUC |
+|---|---|
+| envelope-random@ep100 | +0.006276 |
+| envelope-random@ep50 | +0.011942 |
+| envelope-random@ep75 | +0.008003 |
+| oracle-random@ep100 | +0.010808 |
+| oracle-random@ep50 | +0.009894 |
+| oracle-random@ep75 | +0.011333 |
+
+
+## phase-B-cover-ep100  -  2026-08-26T02:30:16-07:00
+
+No new probes since the last milestone.
+
+No headline contrast moved by more than 5e-5.
+
+**Current headline contrasts:**
+
+| contrast | delta AUC |
+|---|---|
+| envelope-random@ep100 | +0.006276 |
+| envelope-random@ep50 | +0.011942 |
+| envelope-random@ep75 | +0.008003 |
+| oracle-random@ep100 | +0.010808 |
+| oracle-random@ep50 | +0.009894 |
+| oracle-random@ep75 | +0.011333 |
+

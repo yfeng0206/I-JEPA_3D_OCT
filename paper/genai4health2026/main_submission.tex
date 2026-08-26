@@ -45,7 +45,9 @@ diagnosis. We test that intuition under tightly controlled conditions. Six
 masking policies are continued from a single shared I-JEPA checkpoint on 3D
 retinal OCT, differing in how predictor targets are placed, and
 evaluated with a frozen linear-probe protocol for glaucoma classification
-(FairVision, $N{=}\Ntest$). Guidance does help: restricting targets to retinal
+(FairVision, $N{=}\Ntest$). Each policy was continued once, so what follows
+describes these runs rather than an expected ranking over retrainings. Guidance
+helped: restricting targets to retinal
 tissue improves AUC by $\DEnvelopeRandomEpFifty$ over unguided masking at the
 matched epoch (95\% CI $\DEnvelopeRandomEpFiftyCI$), and a band located by a
 first-order intensity statistic improves it by $\DOracleRandomEpHundred$ at
@@ -1044,7 +1046,9 @@ main text. They characterise what the downstream classifier uses, and they are
 reported here because two of the findings are cautionary rather than positive.
 
 \paragraph{Method.} Attribution is by \emph{occlusion}, which is
-architecture-agnostic and causal. Gradient$\times$input is not used because two of
+architecture-agnostic and interventional on the model. It measures the model's
+sensitivity to deleting a token, not a causal effect of anatomy on disease.
+Gradient$\times$input is not used because two of
 the three probes are non-linear in the slice-token matrix, where gradient
 attribution is misleading. For slice-level attribution each slice token is zeroed
 in turn and $\Delta$logit recorded; for window-level, seven consecutive slices;
@@ -1165,13 +1169,16 @@ unchanged to all arms on test. ECE is a
 \input{auto/table_operating}
 \end{table}
 
-Two observations. First, the threshold transfers well: a validation target of
-$0.90$ yields test specificity $\SpecAchRandomSpecNinety$ to
-$\SpecAchEnvelopeSpecNinety$, so the operating point is stable across the split.
+Two observations. First, the threshold transfers imperfectly: a validation target
+of $0.90$ yields test specificity $\SpecAchIntensitySpecNinety$ to
+$\SpecAchEnvelopeSpecNinety$ across the three arms, so the operating point moves
+by roughly one point between arms and the comparison below is at a shared
+threshold rather than at a shared false-positive rate.
 Second, the AUC advantage survives as a usable sensitivity gain. At a target
 specificity of $0.90$, \ArmBest{} detects $\SensIntensitySpecNinety$ of
 cases against $\SensRandomSpecNinety$ for the unguided null, a paired difference
-of $\DSensIntRandSpecNinety$ (CI $\DSensIntRandSpecNinetyCI$, excluding zero). At
+of $\DSensIntRandSpecNinety$ (CI $\DSensIntRandSpecNinetyCI$, excluding zero),
+with the specificity caveat above. At
 a target of $0.85$ the gain is $\DSensIntRandSpecEightyFive$
 (CI $\DSensIntRandSpecEightyFiveCI$). \ArmBest{} is also the
 best-calibrated arm (Brier $\BrierIntensity$ versus $\BrierRandom$; ECE

@@ -71,6 +71,8 @@ def main():
     # Gate: the checks below all exist because the corresponding mistake was made
     # and caught during this run. Non-zero here means a regression, not a nit.
     run("6c/8 manuscript consistency check", [PY, os.path.join(HERE, "check_manuscript.py")])
+    run("6d/8 number provenance check (no cross-arm attribution)",
+        [PY, os.path.join(HERE, "p15_verify_numbers.py")])
     run("7/8 compile manuscript",
         [TECTONIC, "-X", "compile", "main_submission.tex", "--keep-intermediates"],
         cwd=PAPER)

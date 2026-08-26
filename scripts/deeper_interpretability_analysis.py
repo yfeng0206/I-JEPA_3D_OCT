@@ -25,8 +25,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 
-RESULTS = r'C:\Users\garyfeng\OneDrive - Microsoft\Desktop\I-JEPA_results_presentation'
-ARCHIVE = r'C:\Users\garyfeng\OneDrive - Microsoft\Desktop\I-JEPA_archive'
+RESULTS = os.environ.get('IJEPA_RESULTS_DIR', r'.\\results_presentation')
+ARCHIVE = os.environ.get('IJEPA_ARCHIVE_DIR', r'.\\archive')
 PLOTS   = os.path.join(RESULTS, 'plots')
 TABLES  = os.path.join(RESULTS, 'tables')
 

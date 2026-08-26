@@ -28,8 +28,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-PRESENT = r'C:\Users\garyfeng\OneDrive - Microsoft\Desktop\I-JEPA_results_presentation'
-REPO    = r'C:\Users\garyfeng\OneDrive - Microsoft\Desktop\I-JEPA'
+PRESENT = os.environ.get('IJEPA_RESULTS_DIR', r'.\\results_presentation')
+REPO    = os.environ.get('IJEPA_REPO_DIR', r'.')
 
 PATCH_DIR = os.path.join(PRESENT, 'patch_aggregate')
 OUT_REPO    = os.path.join(REPO, 'results', 'summary', 'heatmap_grid_BC.png')

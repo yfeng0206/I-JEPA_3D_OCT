@@ -942,6 +942,41 @@ per-position reference shows the pretraining signal is not purely positional.
 We therefore report the first link of this mechanism as measured and leave the
 causal chain to downstream AUC open; two ablations would settle it.
 
+\section{Label efficiency}
+\label{app:labeleff}
+
+Guidance that only matters when labels are plentiful is of limited clinical
+interest, so we measured how each policy behaves as supervision is withdrawn. We
+subsample the labelled training set to fractions of its size, fit the same frozen
+linear probe on cached epoch-\LEEpoch{} features, and repeat \LERepeats{} times
+per fraction. The per-fraction seed depends only on fraction and repeat, never on
+arm, so all arms see identical label subsets and the comparison is paired.
+
+\begin{table}[h]
+\centering
+\caption{Label efficiency: frozen-probe test AUC against the fraction of the
+labelled training set used. All values measured, \LERepeats{} repeats per
+fraction except at full data, which is deterministic.}
+\label{tab:labeleff}
+\small
+\input{auto/table_labeleff}
+\end{table}
+
+The advantage of guided masking is concentrated where labels are scarce.
+At $5\%$ of labels ($n{=}\LENFive$) \ArmBest{} leads the null by $\LEGapFive$,
+against $\LEGapHundred$ at full supervision --- roughly a fourfold larger margin.
+\textsc{envelope} behaves similarly ($\LEEnvelopeFive$ against
+$\LERandomFive$). By $10\%$ the ordering has already closed to within noise and
+the arms are indistinguishable.
+
+Two cautions. At $1\%$ the standard deviations are large
+($\LESDRandomOne$--$\LESDCoverOne$ across arms), so the ordering there is not
+separated and we do not read it. And the defective \textsc{cover} arm
+(Appendix~\ref{app:covbug}) is the worst arm at every fraction below $25\%$,
+reaching only $\LECoverOne$ at $1\%$ against $\LERandomOne$ for the null, which
+is consistent with its targets being degraded rather than merely differently
+placed.
+
 \section{Occlusion attribution: where the classifier looks}
 \label{app:interp}
 

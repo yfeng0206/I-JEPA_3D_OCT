@@ -28,14 +28,16 @@ AUTO = r"C:\Users\Gary\Desktop\jepa\paper\genai4health2026\auto"
 os.makedirs(AUTO, exist_ok=True)
 
 ARM_TEX = {"random": r"\textsc{random}", "oracle": r"\ArmBest{}",
+           "intensity": r"\ArmBest{}",
            "envelope": r"\textsc{envelope}", "anatomy-v1": r"\textsc{anatomy-v1}",
            "anatomy-v2": r"\textsc{anatomy-v2}", "cover-f021": r"\textsc{cover}",
            "ancestor": r"ancestor"}
 # Display label for figures. The internal key stays "oracle" because that is the
 # name in the stored artifacts and released checkpoints; only the paper renames.
-ARM_PLOT = {"random": "random", "oracle": "intensity", "envelope": "envelope",
+ARM_PLOT = {"random": "random", "oracle": "centroid", "intensity": "centroid",
+            "envelope": "envelope",
             "anatomy-v1": "anatomy-v1", "anatomy-v2": "anatomy-v2",
-            "cover-f021": "cover-f021", "ancestor": "ancestor"}
+            "cover-f021": "cover", "ancestor": "ancestor"}
 COL = {"random": "#4c4c4c", "oracle": "#c1272d", "envelope": "#1f77b4",
        "anatomy-v1": "#9467bd", "anatomy-v2": "#8c564b", "cover-f021": "#2ca02c",
        "ancestor": "#999999"}
@@ -400,8 +402,9 @@ def main():
                 continue
             for k, lbl in (("spec85", "0.85"), ("spec90", "0.90")):
                 m = a["at"][k]
-                rows.append("\\textsc{%s} & %s & %s & %s & %s & %s & %s & %s \\\\" % (
-                    arm, lbl, num(m["sensitivity"]), num(m["specificity"]),
+                rows.append("%s & %s & %s & %s & %s & %s & %s & %s \\\\" % (
+                    ARM_TEX.get(arm, r"\textsc{%s}" % arm),
+                    lbl, num(m["sensitivity"]), num(m["specificity"]),
                     num(m["ppv"]), num(m["npv"]), num(a["brier"]), num(a["ece_15bin"])))
         tab = [r"\begin{tabular}{llcccccc}", r"\toprule",
                r"policy & target spec. & sens. & spec. (test) & PPV & NPV & Brier & ECE \\",

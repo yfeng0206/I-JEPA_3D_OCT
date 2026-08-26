@@ -39,6 +39,13 @@ BANNED = [
     ("identical throughout", "precision is not identical across probes"),
 ]
 
+# Raw artifact arm keys that must never be rendered as a display name. The paper
+# shows the best arm as \ArmBest; the stored JSON still calls it oracle or
+# intensity, and a generator that forgets the macro leaks the old key into a
+# table. A blind reviewer caught exactly that in table_operating.tex and called
+# the inconsistent naming an auditability defect, so it is now a build failure.
+LEAKED_ARM_KEYS = ["intensity", "oracle"]
+
 
 def main():
     tex = open(os.path.join(PAPER, "main_submission.tex"), encoding="utf-8").read()
@@ -129,6 +136,19 @@ def main():
     for phrase, why in BANNED:
         if phrase.lower() in body.lower():
             fails.append("banned phrase '%s' reappeared (%s)" % (phrase, why))
+
+    # ---- 9: leaked raw arm keys in any generated table
+    # The .tex body legitimately says "intensity centroid" in prose, so only the
+    # generated tables are scanned, and only for the \textsc{...} display form.
+    for fn in sorted(os.listdir(AUTO)):
+        if not fn.startswith("table_") or not fn.endswith(".tex"):
+            continue
+        txt = open(os.path.join(AUTO, fn), encoding="utf-8").read()
+        for key in LEAKED_ARM_KEYS:
+            if ("\\textsc{%s}" % key) in txt.lower():
+                fails.append("auto/%s renders the raw arm key '%s' instead of "
+                             "\\ArmBest - a generator is bypassing the display "
+                             "macro" % (fn, key))
 
     print("=" * 72)
     print("MANUSCRIPT CONSISTENCY CHECK")

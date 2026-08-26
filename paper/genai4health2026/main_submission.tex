@@ -100,7 +100,7 @@ than at arbitrary image regions.}
 We test this hypothesis directly and at several strengths. Rather than proposing
 one anatomy-aware method and reporting that it beats a baseline, we construct a
 \emph{ladder} of masking policies of increasing anatomical specificity --- from
-unguided rectangles, through rectangles constrained to lie on tissue, to ragged
+unguided rectangles, through rectangles aimed at tissue, to ragged
 targets whose shape follows the segmented retina --- and hold everything else
 fixed. All arms continue from one shared pretrained checkpoint, use identical
 optimiser, schedule, and effective batch size, and are evaluated under one
@@ -120,7 +120,7 @@ band by a per-column intensity centroid.
       shared ancestor checkpoint and a single evaluation protocol (21 frozen
       probes).
 \item Evidence that guidance helps but anatomical precision does not, including the
-      specific control --- rectangles restricted to retinal tissue --- that
+      specific control --- rectangles aimed at retinal tissue --- that
       separates ``avoid background'' from ``target anatomy''.
 \item Direct measurement of mask geometry for every policy on 600 slices,
       showing that fraction-of-anatomy-hidden does not order downstream AUC, and
@@ -242,7 +242,9 @@ scale and aspect-ratio ranges. They differ only in placement and shape.
 
 \item[\textsc{cover} $f$.] Targets chosen greedily to cover the anatomy subject
   to a hard floor leaving a fraction $f$ of tissue visible in the context. We
-  pretrain $f{=}0.21$.
+  pretrain $f{=}0.21$. The name describes the \emph{intent}: an implementation
+  defect means the delivered masks do not reach that coverage, and we report the
+  arm accordingly (Appendix~\ref{app:covbug}).
 \end{description}
 
 Figure~\ref{fig:policies} shows all six on the same B-scans.
@@ -376,11 +378,13 @@ Appendix~\ref{app:contrasts} the full paired inference for all nine
 precision-matched contrasts, and Figure~\ref{fig:traj} the trajectories. All six
 contrasts against the null survive Benjamini--Hochberg correction over that
 family of nine ($q \leq \DEnvelopeRandomEpHundredQ$ throughout).
-\textbf{H1 holds}: constraining the same rectangles to lie on retinal tissue
+\textbf{H1 holds}: aiming the same rectangles at retinal tissue
 (\textsc{envelope}) beats unguided masking by $\DEnvelopeRandomEpFifty$ at epoch
 50 (CI $\DEnvelopeRandomEpFiftyCI$) and by $\DEnvelopeRandomEpHundred$ at epoch
-100 (CI $\DEnvelopeRandomEpHundredCI$). Avoiding background is worth something,
-at every epoch we measured, with an interval that excludes zero.
+100 (CI $\DEnvelopeRandomEpHundredCI$). Aiming is not containment: the rectangles
+are large, so only $43.5\%$ of \textsc{envelope}'s masked cells land on tissue
+(Table~\ref{tab:geom}). Avoiding background is worth something at every epoch we
+measured, with an interval that excludes zero.
 
 \begin{figure}[t]
 \centering

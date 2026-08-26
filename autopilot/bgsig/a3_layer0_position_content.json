@@ -1,0 +1,85 @@
+{
+  "n_slices": 96,
+  "n_volumes": 12,
+  "pos_embed_unique_rows_of_256": 256,
+  "pos_embed_row_norm_mean": 19.595916748046875,
+  "pos_embed_row_norm_std": 1.8809871562552871e-06,
+  "patch_intensity_bg_threshold": 0.06,
+  "patch_intensity_anat_threshold": 0.3,
+  "frac_cells_below_bg_threshold": 0.020792643229166668,
+  "frac_cells_above_anat_threshold": 0.06400553385416667,
+  "ckpts": {
+    "random_ep50": {
+      "checkpoint": "D:\\jepa_phase0\\checkpoints_hf\\random-posfix-100ep\\jepa_patch-ep050.pth.tar",
+      "content_norm_mean_background": 48.083927154541016,
+      "content_norm_mean_anatomy": 21.725576400756836,
+      "pos_norm_over_content_norm_background": 0.40753569659703326,
+      "pos_norm_over_content_norm_anatomy": 0.9019745385150854,
+      "background_cells": {
+        "n_slices_used": 24,
+        "var_content": 6.822386128878861,
+        "var_position": 39.4490958849589,
+        "var_total": 46.27602116266886,
+        "cov_content_position_x2": 0.004538575863989536,
+        "position_share_of_layer0_variance": 0.8524738059542318,
+        "content_share_of_layer0_variance": 0.1474281054738241
+      },
+      "anatomy_cells": {
+        "n_slices_used": 69,
+        "var_content": 282.87356036642325,
+        "var_position": 50.68754281859467,
+        "var_total": 333.4185967929121,
+        "position_share_of_layer0_variance": 0.1520237422451782,
+        "content_share_of_layer0_variance": 0.848403667603812
+      }
+    },
+    "random_ep100": {
+      "checkpoint": "D:\\jepa_phase0\\checkpoints_hf\\random-posfix-100ep\\jepa_patch-ep100.pth.tar",
+      "content_norm_mean_background": 24.955223083496094,
+      "content_norm_mean_anatomy": 11.966548919677734,
+      "pos_norm_over_content_norm_background": 0.7852431005117503,
+      "pos_norm_over_content_norm_anatomy": 1.6375579024144082,
+      "background_cells": {
+        "n_slices_used": 24,
+        "var_content": 2.1682516596708106,
+        "var_position": 39.4490958849589,
+        "var_total": 41.61595010757446,
+        "cov_content_position_x2": -0.0013980600697323098,
+        "position_share_of_layer0_variance": 0.9479321217702734,
+        "content_share_of_layer0_variance": 0.05210145759176528
+      },
+      "anatomy_cells": {
+        "n_slices_used": 69,
+        "var_content": 87.32375700577445,
+        "var_position": 50.68754281859467,
+        "var_total": 137.86856079101562,
+        "position_share_of_layer0_variance": 0.3676512072642002,
+        "content_share_of_layer0_variance": 0.6333841196626535
+      }
+    },
+    "oracle_ep100": {
+      "checkpoint": "D:\\jepa_phase0\\checkpoints_hf\\oracle-anatomical-100ep\\jepa_patch_oracle-ep100.pth.tar",
+      "content_norm_mean_background": 25.637224197387695,
+      "content_norm_mean_anatomy": 12.24168586730957,
+      "pos_norm_over_content_norm_background": 0.7643540734820894,
+      "pos_norm_over_content_norm_anatomy": 1.6007531119856768,
+      "background_cells": {
+        "n_slices_used": 24,
+        "var_content": 2.261474098581251,
+        "var_position": 39.4490958849589,
+        "var_total": 41.721633752187095,
+        "cov_content_position_x2": 0.011063014029787155,
+        "position_share_of_layer0_variance": 0.9455309473083837,
+        "content_share_of_layer0_variance": 0.05420387207302739
+      },
+      "anatomy_cells": {
+        "n_slices_used": 69,
+        "var_content": 92.01250021008478,
+        "var_position": 50.68754281859467,
+        "var_total": 142.53475211323172,
+        "position_share_of_layer0_variance": 0.35561532936422224,
+        "content_share_of_layer0_variance": 0.6455443240746558
+      }
+    }
+  }
+}

@@ -1,0 +1,538 @@
+{
+  "source_mask_cache": "D:\\jepa_phase0\\reports\\anatomy_mask_cache\\Test_s100_r256.npz",
+  "n_volumes": 3000,
+  "n_slices_per_volume": 100,
+  "n_slice_instances": 300000,
+  "global_anatomy_rate": 0.233496015625,
+  "per_cell_anatomy_freq_grid_16x16": [
+    [
+      0.08848,
+      0.06583,
+      0.0475,
+      0.03531,
+      0.02555,
+      0.01898,
+      0.01486,
+      0.01343,
+      0.01371,
+      0.0162,
+      0.02055,
+      0.02773,
+      0.03887,
+      0.05457,
+      0.07997,
+      0.10898
+    ],
+    [
+      0.17029,
+      0.13754,
+      0.10684,
+      0.08403,
+      0.06581,
+      0.05482,
+      0.04684,
+      0.04307,
+      0.04372,
+      0.04944,
+      0.05802,
+      0.07103,
+      0.09307,
+      0.12297,
+      0.15458,
+      0.19226
+    ],
+    [
+      0.26595,
+      0.22697,
+      0.19337,
+      0.16428,
+      0.14116,
+      0.12438,
+      0.11326,
+      0.10689,
+      0.10724,
+      0.11667,
+      0.13174,
+      0.15103,
+      0.17775,
+      0.20759,
+      0.2433,
+      0.28011
+    ],
+    [
+      0.3528,
+      0.32927,
+      0.30275,
+      0.28207,
+      0.26261,
+      0.24607,
+      0.22918,
+      0.21909,
+      0.22128,
+      0.23946,
+      0.25804,
+      0.27105,
+      0.29253,
+      0.31682,
+      0.34606,
+      0.37121
+    ],
+    [
+      0.44031,
+      0.42547,
+      0.41393,
+      0.39929,
+      0.39227,
+      0.39272,
+      0.37981,
+      0.36156,
+      0.36408,
+      0.38712,
+      0.40543,
+      0.40963,
+      0.4194,
+      0.43261,
+      0.43792,
+      0.44052
+    ],
+    [
+      0.47888,
+      0.48899,
+      0.50181,
+      0.50958,
+      0.51786,
+      0.52074,
+      0.50946,
+      0.48264,
+      0.48208,
+      0.51208,
+      0.52762,
+      0.51914,
+      0.51247,
+      0.50231,
+      0.48787,
+      0.46622
+    ],
+    [
+      0.47781,
+      0.50062,
+      0.5296,
+      0.55155,
+      0.57302,
+      0.59101,
+      0.58451,
+      0.55324,
+      0.55137,
+      0.58341,
+      0.58933,
+      0.56101,
+      0.53891,
+      0.51087,
+      0.47862,
+      0.44413
+    ],
+    [
+      0.42828,
+      0.45383,
+      0.49228,
+      0.52961,
+      0.56114,
+      0.58779,
+      0.59308,
+      0.55537,
+      0.55437,
+      0.58483,
+      0.57989,
+      0.54468,
+      0.51562,
+      0.47527,
+      0.43247,
+      0.39616
+    ],
+    [
+      0.35237,
+      0.37199,
+      0.40354,
+      0.43961,
+      0.4739,
+      0.50625,
+      0.51822,
+      0.48478,
+      0.48225,
+      0.50988,
+      0.49852,
+      0.4601,
+      0.42636,
+      0.39216,
+      0.35869,
+      0.33285
+    ],
+    [
+      0.2643,
+      0.27283,
+      0.28972,
+      0.31046,
+      0.33258,
+      0.36031,
+      0.3815,
+      0.36291,
+      0.35794,
+      0.3725,
+      0.35507,
+      0.32223,
+      0.29928,
+      0.27766,
+      0.25939,
+      0.24329
+    ],
+    [
+      0.17336,
+      0.17456,
+      0.18023,
+      0.18801,
+      0.1971,
+      0.21532,
+      0.23697,
+      0.23777,
+      0.23464,
+      0.23132,
+      0.21064,
+      0.19148,
+      0.18443,
+      0.17548,
+      0.16888,
+      0.16328
+    ],
+    [
+      0.10492,
+      0.10145,
+      0.10092,
+      0.10282,
+      0.10456,
+      0.11582,
+      0.14052,
+      0.16061,
+      0.15701,
+      0.13736,
+      0.11176,
+      0.10032,
+      0.10185,
+      0.10302,
+      0.10229,
+      0.10131
+    ],
+    [
+      0.05671,
+      0.0518,
+      0.05036,
+      0.04829,
+      0.04727,
+      0.0533,
+      0.07739,
+      0.10995,
+      0.10848,
+      0.07831,
+      0.05427,
+      0.04782,
+      0.04939,
+      0.05139,
+      0.05394,
+      0.05617
+    ],
+    [
+      0.02819,
+      0.02474,
+      0.02202,
+      0.01957,
+      0.0183,
+      0.01998,
+      0.03866,
+      0.07157,
+      0.072,
+      0.04199,
+      0.02346,
+      0.02063,
+      0.02256,
+      0.02315,
+      0.02493,
+      0.02713
+    ],
+    [
+      0.01221,
+      0.00971,
+      0.00847,
+      0.00665,
+      0.00584,
+      0.00683,
+      0.0181,
+      0.04075,
+      0.04123,
+      0.01992,
+      0.00852,
+      0.00753,
+      0.00862,
+      0.00997,
+      0.01111,
+      0.01181
+    ],
+    [
+      0.00493,
+      0.00435,
+      0.00378,
+      0.0025,
+      0.00165,
+      0.00203,
+      0.00615,
+      0.01636,
+      0.01649,
+      0.00667,
+      0.00247,
+      0.00249,
+      0.00309,
+      0.00417,
+      0.00492,
+      0.00616
+    ]
+  ],
+  "row_anatomy_freq": [
+    0.04191,
+    0.0934,
+    0.17198,
+    0.28377,
+    0.40638,
+    0.50123,
+    0.53869,
+    0.51779,
+    0.43822,
+    0.31637,
+    0.19772,
+    0.11541,
+    0.06218,
+    0.03118,
+    0.0142,
+    0.00551
+  ],
+  "col_anatomy_freq": [
+    0.23124,
+    0.2275,
+    0.22795,
+    0.2296,
+    0.23254,
+    0.23852,
+    0.24303,
+    0.23875,
+    0.23799,
+    0.24295,
+    0.23971,
+    0.23174,
+    0.23026,
+    0.22875,
+    0.22781,
+    0.2276
+  ],
+  "n_cells_anatfreq_le_0.01": 23,
+  "n_cells_anatfreq_le_0.05": 65,
+  "n_cells_anatfreq_le_0.1": 87,
+  "arms": {
+    "random": {
+      "total_absmean_mass": 1.4548477401234723,
+      "pearson_absattr_vs_anatfreq": [
+        -0.39454782711210423,
+        5.773211737223998e-11
+      ],
+      "spearman_absattr_vs_anatfreq": [
+        -0.4645399404898145,
+        4.154371044253168e-15
+      ],
+      "mean_absattr_all_cells": 0.005682998984857314,
+      "share_of_absmass_on_cells_anatfreq_le_0.01": 0.09823761899405081,
+      "cellfrac_anatfreq_le_0.01": 0.08984375,
+      "mean_absattr_on_cells_anatfreq_le_0.01": 0.006213946869069805,
+      "enrichment_anatfreq_le_0.01": 1.093427411412044,
+      "share_of_absmass_on_cells_anatfreq_le_0.05": 0.26630765200462825,
+      "cellfrac_anatfreq_le_0.05": 0.25390625,
+      "mean_absattr_on_cells_anatfreq_le_0.05": 0.005960570549177254,
+      "enrichment_anatfreq_le_0.05": 1.048842444818228,
+      "share_of_absmass_on_cells_anatfreq_le_0.1": 0.3556497003177876,
+      "cellfrac_anatfreq_le_0.1": 0.33984375,
+      "mean_absattr_on_cells_anatfreq_le_0.1": 0.005947312215895672,
+      "enrichment_anatfreq_le_0.1": 1.0465094630040646,
+      "n_cells_anatfreq_ge_0.5": 36,
+      "mean_absattr_on_cells_anatfreq_ge_0.5": 0.004814169105166356,
+      "ratio_meanabs_alwaysbg_over_mostlyanat": 1.2907620678304113,
+      "within_alwaysbg_cv_of_absattr": 0.08503822416184795,
+      "within_alwaysbg_spearman_vs_row": [
+        -0.3760507165451775,
+        0.0769816320351358
+      ],
+      "within_alwaysbg_spearman_vs_col": [
+        -0.008417946127463308,
+        0.9695918373203609
+      ],
+      "anatomy_centre_of_mass_rc": [
+        6.239345402820153,
+        7.495138991821216
+      ],
+      "within_alwaysbg_spearman_absattr_vs_dist_to_anat_com": [
+        -0.4426877470355731,
+        0.03439818580090385
+      ],
+      "allcells_spearman_absattr_vs_dist_to_anat_com": [
+        0.5278574902723734,
+        9.080251300409858e-20
+      ],
+      "signed_patch_mean_sum": -0.16076261162223637,
+      "signed_patch_mean_on_alwaysbg_sum": -0.010551825028422173
+    },
+    "oracle": {
+      "total_absmean_mass": 1.7176559902018695,
+      "pearson_absattr_vs_anatfreq": [
+        0.13644044748976955,
+        0.029066716891494978
+      ],
+      "spearman_absattr_vs_anatfreq": [
+        0.13810583085374223,
+        0.027141438630875273
+      ],
+      "mean_absattr_all_cells": 0.006709593711726053,
+      "share_of_absmass_on_cells_anatfreq_le_0.01": 0.07787656144955755,
+      "cellfrac_anatfreq_le_0.01": 0.08984375,
+      "mean_absattr_on_cells_anatfreq_le_0.01": 0.0058158757508763705,
+      "enrichment_anatfreq_le_0.01": 0.8667999883081189,
+      "share_of_absmass_on_cells_anatfreq_le_0.05": 0.2457281614374335,
+      "cellfrac_anatfreq_le_0.05": 0.25390625,
+      "mean_absattr_on_cells_anatfreq_le_0.05": 0.006493483822373841,
+      "enrichment_anatfreq_le_0.05": 0.9677909127381996,
+      "share_of_absmass_on_cells_anatfreq_le_0.1": 0.33091987067782846,
+      "cellfrac_anatfreq_le_0.1": 0.33984375,
+      "mean_absattr_on_cells_anatfreq_le_0.1": 0.006533408024673564,
+      "enrichment_anatfreq_le_0.1": 0.9737412286611964,
+      "n_cells_anatfreq_ge_0.5": 36,
+      "mean_absattr_on_cells_anatfreq_ge_0.5": 0.00691012400560132,
+      "ratio_meanabs_alwaysbg_over_mostlyanat": 0.8416456414041259,
+      "within_alwaysbg_cv_of_absattr": 0.26624275350003734,
+      "within_alwaysbg_spearman_vs_row": [
+        -0.3760507165451775,
+        0.0769816320351358
+      ],
+      "within_alwaysbg_spearman_vs_col": [
+        0.14756164388141563,
+        0.5016416148051909
+      ],
+      "anatomy_centre_of_mass_rc": [
+        6.239345402820153,
+        7.495138991821216
+      ],
+      "within_alwaysbg_spearman_absattr_vs_dist_to_anat_com": [
+        0.2816205533596838,
+        0.19297677326766197
+      ],
+      "allcells_spearman_absattr_vs_dist_to_anat_com": [
+        -0.233271343556878,
+        0.00016577402655033462
+      ],
+      "signed_patch_mean_sum": -0.07748834084253667,
+      "signed_patch_mean_on_alwaysbg_sum": 0.07367363282006772
+    },
+    "envelope": {
+      "total_absmean_mass": 1.7354580877477692,
+      "pearson_absattr_vs_anatfreq": [
+        0.30047824677426926,
+        9.692848985813768e-07
+      ],
+      "spearman_absattr_vs_anatfreq": [
+        0.4161242561226825,
+        3.8431225497794345e-12
+      ],
+      "mean_absattr_all_cells": 0.0067791331552647235,
+      "share_of_absmass_on_cells_anatfreq_le_0.01": 0.08724861920350643,
+      "cellfrac_anatfreq_le_0.01": 0.08984375,
+      "mean_absattr_on_cells_anatfreq_le_0.01": 0.006583318340936981,
+      "enrichment_anatfreq_le_0.01": 0.971115065917289,
+      "share_of_absmass_on_cells_anatfreq_le_0.05": 0.23774454105288703,
+      "cellfrac_anatfreq_le_0.05": 0.25390625,
+      "mean_absattr_on_cells_anatfreq_le_0.05": 0.006347625947509452,
+      "enrichment_anatfreq_le_0.05": 0.9363477309159859,
+      "share_of_absmass_on_cells_anatfreq_le_0.1": 0.3211101504233658,
+      "cellfrac_anatfreq_le_0.1": 0.33984375,
+      "mean_absattr_on_cells_anatfreq_le_0.1": 0.0064054391679325634,
+      "enrichment_anatfreq_le_0.1": 0.9448758449239271,
+      "n_cells_anatfreq_ge_0.5": 36,
+      "mean_absattr_on_cells_anatfreq_ge_0.5": 0.0073534032007119094,
+      "ratio_meanabs_alwaysbg_over_mostlyanat": 0.8952750394945875,
+      "within_alwaysbg_cv_of_absattr": 0.24837247126769216,
+      "within_alwaysbg_spearman_vs_row": [
+        0.013430382733756338,
+        0.9515022205974764
+      ],
+      "within_alwaysbg_spearman_vs_col": [
+        -0.06090631609870511,
+        0.7824993967649327
+      ],
+      "anatomy_centre_of_mass_rc": [
+        6.239345402820153,
+        7.495138991821216
+      ],
+      "within_alwaysbg_spearman_absattr_vs_dist_to_anat_com": [
+        0.7895256916996048,
+        7.496154189589326e-06
+      ],
+      "allcells_spearman_absattr_vs_dist_to_anat_com": [
+        -0.055419575417715715,
+        0.37720782229320193
+      ],
+      "signed_patch_mean_sum": -0.10431480529461801,
+      "signed_patch_mean_on_alwaysbg_sum": 0.09765531711192854
+    },
+    "blob": {
+      "total_absmean_mass": 1.7750030341521308,
+      "pearson_absattr_vs_anatfreq": [
+        0.4876518097891307,
+        1.0669728418538526e-16
+      ],
+      "spearman_absattr_vs_anatfreq": [
+        0.43597004463263894,
+        2.6639456648384794e-13
+      ],
+      "mean_absattr_all_cells": 0.006933605602156761,
+      "share_of_absmass_on_cells_anatfreq_le_0.01": 0.08729387147421423,
+      "cellfrac_anatfreq_le_0.01": 0.08984375,
+      "mean_absattr_on_cells_anatfreq_le_0.01": 0.006736821162157235,
+      "enrichment_anatfreq_le_0.01": 0.9716187433651671,
+      "share_of_absmass_on_cells_anatfreq_le_0.05": 0.2315848971929842,
+      "cellfrac_anatfreq_le_0.05": 0.25390625,
+      "mean_absattr_on_cells_anatfreq_le_0.05": 0.006324059925867018,
+      "enrichment_anatfreq_le_0.05": 0.9120882104831377,
+      "share_of_absmass_on_cells_anatfreq_le_0.1": 0.3091542000126475,
+      "cellfrac_anatfreq_le_0.1": 0.33984375,
+      "mean_absattr_on_cells_anatfreq_le_0.1": 0.006307467161417517,
+      "enrichment_anatfreq_le_0.1": 0.9096951172785949,
+      "n_cells_anatfreq_ge_0.5": 36,
+      "mean_absattr_on_cells_anatfreq_ge_0.5": 0.008335938432963607,
+      "ratio_meanabs_alwaysbg_over_mostlyanat": 0.8081658971372884,
+      "within_alwaysbg_cv_of_absattr": 0.18511578698372913,
+      "within_alwaysbg_spearman_vs_row": [
+        -0.5640760748177663,
+        0.0050546966204199646
+      ],
+      "within_alwaysbg_spearman_vs_col": [
+        -0.11141399286348497,
+        0.612782289863718
+      ],
+      "anatomy_centre_of_mass_rc": [
+        6.239345402820153,
+        7.495138991821216
+      ],
+      "within_alwaysbg_spearman_absattr_vs_dist_to_anat_com": [
+        -0.30335968379446643,
+        0.15938398757611172
+      ],
+      "allcells_spearman_absattr_vs_dist_to_anat_com": [
+        -0.3148539425497825,
+        2.683134133171146e-07
+      ],
+      "signed_patch_mean_sum": -0.09797787338061248,
+      "signed_patch_mean_on_alwaysbg_sum": 0.04365417798386625
+    }
+  }
+}

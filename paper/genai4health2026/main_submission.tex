@@ -158,15 +158,14 @@ AnatomyMAE~\citep{ceballosarroyo2026anatomymae},
 MSMAE~\citep{mao2023msmae}, and VasoMIM~\citep{huang2026vasomim} explicitly
 steer masking toward anatomy, and \citet{wang2025maskwhatmatters} argue directly
 for masking clinically relevant regions. Our study is a controlled test of that
-family's central premise on one task, and finds it does not hold in the direction
-usually assumed.
+family's central premise on one task.
 
 \paragraph{Evidence that informed masking is not uniformly better.}
-The picture is less one-sided than the paragraph above suggests. The original
-masked-modelling papers already report that random sampling is hard to beat:
-MAE's ablation puts random-75 at $73.5$ linear against block-75 at
-$63.9$~\citep{he2022mae}, and SimMIM finds random beats its best block
-variant~\citep{xie2022simmim}. Among informed schemes, AttMask sits within $0.2$
+The picture is less one-sided than that suggests. The original masked-modelling
+papers report that random sampling is hard to beat: MAE's ablation puts
+random-75 at $73.5$ linear against block-75 at $63.9$~\citep{he2022mae}, and
+SimMIM finds random beats its best block variant~\citep{xie2022simmim}. Among
+informed schemes, AttMask sits within $0.2$
 points of random~\citep{kakogeorgiou2022attmask}, AutoMAE ties MAE under full
 fine-tuning~\citep{chen2023automae}, HPM gains only when randomness is retained
 and \emph{loses} when restricted to the hardest patches~\citep{wang2023hpm}, and
@@ -189,7 +188,7 @@ where a \emph{trained medical segmentation model} falls on that spectrum when
 everything else is held fixed, in a setting --- 3D retinal OCT, joint-embedding
 prediction, frozen probe --- where we could find no prior controlled comparison.
 
-\paragraph{Retinal foundation models and OCT.}
+\paragraph{Retinal foundation models, OCT, and fairness.}
 RETFound~\citep{zhou2023retfound}, VisionFM~\citep{qiu2024visionfm},
 URFound~\citep{yu2024urfound}, and OCTCube~\citep{liu2026octcube} pretrain on
 large retinal corpora; OCT-specific masked modelling is explored by
@@ -197,8 +196,6 @@ large retinal corpora; OCT-specific masked modelling is explored by
 OCT segmentation and supplies the anatomical guidance used by several of our
 arms. Deep glaucoma detection from OCT is
 established~\citep{maetschke2019glaucoma,ran2019glaucoma,noury2022glaucoma}.
-
-\paragraph{Fairness in medical imaging.}
 Performance disparities across demographic groups are widely
 documented~\citep{seyyedkalantari2021underdiagnosis,larrazabal2020gender,gichoya2022race}.
 FairVision~\citep{luo2024fairvision} and Harvard-GF~\citep{luo2024harvardgf}
@@ -351,7 +348,7 @@ subjects for a \emph{fixed} pair of score vectors, not seed-to-seed variance of
 pretraining. Read every comparison here as a controlled single-run observation,
 not an established ranking over retrainings (Section~\ref{sec:limits}).
 
-\subsection{H1 holds, H2 fails}
+\subsection{Guidance helps; anatomical precision does not}
 
 \begin{table}[t]
 \centering
@@ -434,29 +431,23 @@ this comparison, so they are matched on epoch \emph{and} precision. What the
 data rule out is not harm but the expected \emph{monotone improvement with
 anatomical precision}.
 
-\paragraph{Carried to epoch 100 the coverage arm degrades, but a defect blocks
-the natural reading.}
+\paragraph{Carried to epoch 100 the coverage arm degrades.}
 \textsc{cover} is the only segmenter-driven policy we continued to the full
 horizon, and it produces the study's one \emph{negative} result. It climbs
 normally to epoch 50, peaks at epoch $\CoverPeakEpoch$ ($\AUCCoverPeak$), then
 \emph{falls} to $\AUCCoverEpHundred$, losing $\DCoverPeakToHundred$ from its own
 peak ($p\,\DCoverPeakToHundredP$) while the unguided null keeps improving
-(Figure~\ref{fig:traj}). The gap against the null therefore widens with training:
+(Figure~\ref{fig:traj}). The gap against the null widens with training:
 $\DCoverRandomEpFifty$ at epoch 50, $\DCoverRandomEpSeventyFive$ at epoch 75, and
 $\DCoverRandomEpHundred$ at epoch 100 (CI $\DCoverRandomEpHundredCI$,
-$p\,\DCoverRandomEpHundredP$), where it also sits $\DCoverOracleEpHundred$ below
-\ArmBest{}. All contrasts are matched on epoch and precision.
+$p\,\DCoverRandomEpHundredP$).
 
-The obvious reading --- that pushing coverage higher is actively harmful --- is
-\emph{not} available to us. An audit (Appendix~\ref{app:covbug}) found the
-collator shortens every predictor target \emph{after} \textsc{cover} chooses its
-placement, defeating its greedy optimisation: delivered masks hide $73.1\%$ of
-anatomy, \emph{less} than \textsc{envelope}'s $77.6\%$, not the $78.6\%$ the
-placement achieved. \textsc{cover} never realised the aggressive coverage it was
-built to test, so its decline cannot be attributed to over-covering anatomy, and
-because coverage was logged before truncation every training log reported the
-intent. What survives is narrower: a coverage-seeking policy whose targets are
-shortened and top-biased peaks early and then erodes while the null improves.
+We cannot read this as evidence that high coverage is harmful. An audit found
+that the collator shortens predictor targets \emph{after} \textsc{cover} chooses
+its placement, so its delivered masks hide $73.1\%$ of anatomy --- less than
+\textsc{envelope}'s $77.6\%$ --- and the arm never realised the coverage it was
+configured for. Appendix~\ref{app:covbug} gives the full account and states
+exactly which of its numbers remain usable.
 
 The strongest policy is the one that uses no segmentation model.
 \ArmBest{} gives $\DOracleRandomEpHundred$ over the null at epoch 100
@@ -466,11 +457,11 @@ $q=\DOracleRandomEpHundredQ$), with a margin that is stable across training
 the segmenter-guided \textsc{envelope} arm at epoch 100 by
 $\DOracleEnvelopeEpHundred$ (CI $\DOracleEnvelopeEpHundredCI$,
 $p=\DOracleEnvelopeEpHundredP$), though the two are indistinguishable at epochs 50
-and 75. Notably, \textsc{envelope}'s margin over the null \emph{decays} with
+and 75. \textsc{envelope}'s margin over the null \emph{decays} with
 training ($\DEnvelopeRandomEpFifty \to \DEnvelopeRandomEpSeventyFive \to
 \DEnvelopeRandomEpHundred$) while \ArmBest{}'s does not.
 
-\subsection{H3: it is not anatomical targeting}
+\subsection{Mask geometry does not explain the ordering}
 \label{sec:results-h3}
 
 \begin{table}[t]
@@ -520,7 +511,7 @@ invoking target shape at all. We therefore do \emph{not} claim that irregular
 target shape is harmful; that comparison is not identified by this design.
 Figure~\ref{fig:geom} makes the four-way divergence explicit.
 
-Crucially, these are not consequences of blob geometry: the anatomy arms resample
+These are not consequences of blob geometry: the anatomy arms resample
 every target to a fixed $K{=}16$ cells, so $4\times16=64$ loss slots follows by
 construction, while the rectangle arms do not set $K$. The two families are
 collated differently, which weakens ``everything else held fixed'' for the
@@ -534,7 +525,27 @@ asks the encoder to represent the same region of the image. This suggests a
 mechanism other than anatomical correctness --- consistency of the predictive
 task --- which we return to in Section~\ref{sec:limits}.
 
-\subsection{Subgroup analysis}
+\subsection{The advantage concentrates where labels are scarce}
+\label{sec:labeleff}
+
+A masking policy that only helps when labels are plentiful is of limited
+clinical use, so we withdrew supervision and re-fitted the same probe. Protocol
+and label subsets are held fixed --- the subsampling seed depends on the fraction
+and repeat but never on the arm --- and at full supervision this reproduces
+Table~\ref{tab:main} to within $0.0002$.
+
+The margin grows sharply as labels are removed. At $5\%$ of the labelled set
+($n{=}\LENFive$) \ArmBest{} leads the null by $\LEGapFive$
+($\LEOracleFive$ against $\LERandomFive$), against $\LEGapHundred$ at full
+supervision --- more than four times the advantage. At $1\%$ the separation is
+wider again ($\LEOracleOne$ against $\LERandomOne$), though the spread across
+repeats ($\LESDRandomOne$--$\LESDCoverOne$) is large enough that we read the
+ordering and not its size. The absolute gains at full supervision are small, but
+the regime that matters for a new imaging site or a rare condition is the one
+with few labels, and that is where choosing \emph{where} to predict pays.
+Appendix~\ref{app:labeleff} gives the full curve.
+
+\subsection{Subgroups: the ordering never changes}
 \label{sec:subgroup}
 
 Joining saved test predictions to the released FairVision metadata in
@@ -595,23 +606,17 @@ evenly distributed, and claim neither. Appendix~\ref{app:subgroup} gives every
 stratum. No policy here was designed as a
 fairness intervention and none should be presented as one.
 
-\subsection{Numerical precision is not the effect}
+\subsection{Controls}
 \label{sec:precision}
 
-The long-horizon and anatomy arms were probed at different autocast settings
-(Section~\ref{sec:setup}), so we measured the precision effect rather than
-assuming it away: a full re-fit of the probe pipeline at fp32 shifts every arm by
-less than $2\times10^{-4}$, two to three orders of magnitude below the effects in
-Table~\ref{tab:main}, and every contrast we report is now matched on precision.
-Appendix~\ref{app:fp32} gives the numbers.
-
-\subsection{Reproducibility}
-
-The epoch-100 \ArmBest{} encoder and its trained probe head will be
-released, together with the stored per-case predictions for every probe in this
-paper. Links are withheld here for anonymity. Every number in this paper is
-emitted by a single script from those stored predictions, so tables, figures and
-prose cannot disagree; that script is released with the code.
+A full re-fit of the probe pipeline at fp32 shifts every arm by less than
+$2\times10^{-4}$, orders of magnitude below the effects in
+Table~\ref{tab:main}, so the differing autocast settings of
+Section~\ref{sec:setup} are not the effect and every contrast is matched on
+precision (Appendix~\ref{app:fp32}). Every number here is emitted by one script
+from stored per-case predictions, so prose, tables and figures cannot disagree;
+that script, the epoch-100 \ArmBest{} encoder, its head, and the stored
+predictions are released with the code, links withheld for anonymity.
 
 \section{Discussion and limitations}
 \label{sec:limits}
@@ -941,6 +946,12 @@ and are unaffected; the anatomy-versus-rectangle contrast is not, and we treat i
 accordingly in Section~\ref{sec:results}. A corrected coverage arm must be
 retrained from the shared ancestor, since patching mid-trajectory would splice
 two masking policies into one curve.
+
+\paragraph{Status of a corrected run.} At submission the corrected arm is
+\CoverFixedStatus{}. Until it exists, the question this arm was built to answer
+--- whether hiding most of the anatomy is harmful --- is \emph{open}, and nothing
+in this paper should be read as answering it. We report the arm we ran, not the
+arm we intended.
 
 \section{Why unguided masking is such a strong baseline}
 \label{app:bg}

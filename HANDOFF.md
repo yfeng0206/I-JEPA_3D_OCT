@@ -25,14 +25,7 @@ undefined macros, dangling references, banned phrases, or hand-typed numbers.
 
 ## Placeholders currently in the paper
 
-These 4 macros render in red with a dagger and are NOT measured.
-They are wired into the tables already, so supplying the underlying run
-is sufficient - no LaTeX edit is needed.
-
-- `\AUCAnatomyTwoEpHundred`
-- `\DAnatomyTwoRandomEpHundred`
-- `\TAUCAnatomyTwoEpHundred`
-- `\TAnatomyTwoRandomEpHundred`
+None. Every macro in the paper currently resolves to a measured value.
 
 ## Every probe behind the paper
 
@@ -111,6 +104,41 @@ is sufficient - no LaTeX edit is needed.
 - **anatomy-v2 ep75/ep92**: SOURCES.md 5.2 - EMA-target precision splice at ep56 (scripts/campaign_chain.py:179 hardcodes amp_target=True)
 
 ## Adding your own runs
+
+### Priority: the corrected COVER arm
+
+This is the single highest-value contribution to this paper. The shipped
+`cover-f021` arm never realised the coverage it was configured for: the
+collator truncates every predictor target to the shortest in the microbatch
+AFTER the sampler has chosen placement, so delivered masks hide about 73.1
+percent of anatomy against `envelope`'s 77.6. Full account in
+`autopilot/COVER_AUDIT.md`.
+
+What a corrected run needs:
+
+1. Score and enforce coverage against the prefix-truncated shapes that
+   actually reach the model, not the full rectangles. The truncation is at
+   `src/masks/curriculum.py`, the `global_min_pred` branch.
+2. Log coverage again AFTER collation. It is currently logged before, which
+   is why every training log reported the intended figure.
+3. Restart from the shared epoch-25 ancestor. Patching mid-trajectory would
+   splice two masking policies into one curve. Roughly 82 GPU-hours at the
+   measured 57.7 min/epoch, plus about 8 hours of probes.
+
+Where to put the results:
+
+```
+D:\jepa_phase0\runs\frozen_meanpool_coverfix_ep<N>\test_predictions.npz
+```
+
+Then run `refresh_all.py`. The paper has an inert slot for this: the macros
+`\AUCCoverFixed*` and `\CoverFixedStatus` currently render `---` and
+`not run`, and the appendix states plainly that the over-coverage question
+is OPEN. When your run lands they resolve and that paragraph activates. The
+paper does not assert the conclusion your data is expected to support, and
+it should not be edited to do so before the data exists.
+
+### Any other run
 
 The inventory discovers probes by scanning run directories for saved
 per-case test predictions. Follow the existing naming convention visible in

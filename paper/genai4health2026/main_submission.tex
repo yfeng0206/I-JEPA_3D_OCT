@@ -60,8 +60,9 @@ coverage-constrained policy ($\DCoverRandomEpFifty$) --- while the two policies
 that merely \emph{place} rectangles on tissue gain an order of magnitude more.
 Carried to epoch 100 the coverage-constrained policy does not merely stall, it
 peaks at epoch \CoverPeakEpoch{} and then declines, ending
-$\DCoverRandomEpHundred$ below unguided masking (CI $\DCoverRandomEpHundredCI$),
-so over-constraining where the model may look is worse than not guiding at all. Direct measurement of mask geometry across
+$\DCoverRandomEpHundred$ below unguided masking (CI $\DCoverRandomEpHundredCI$);
+an audit found its targets are shortened after placement, so it does not test
+aggressive coverage. Direct measurement of mask geometry across
 600 slices shows the fraction of anatomy hidden is uncorrelated with downstream
 AUC. The best policy consults no segmentation model at all. A subgroup audit over
 \NprobesSub{} probes finds the same worst-served group every time; gains reach
@@ -329,6 +330,7 @@ as such and excluded from headline claims. Section~\ref{sec:precision} reports a
 direct measurement of how large the precision effect actually is.
 
 \section{Results}
+\label{sec:results}
 
 \emph{What these numbers can and cannot establish.} Each policy was pretrained
 exactly once, so policy is perfectly confounded with one stochastic optimisation
@@ -419,7 +421,8 @@ are harmful, but the expected \emph{monotone improvement with anatomical
 precision}: their intervals are centred near zero and comfortably contain it,
 while the two cruder policies produce intervals that exclude it.
 
-\paragraph{Carried to epoch 100, coverage-constrained masking degrades.}
+\paragraph{Carried to epoch 100, the coverage-constrained policy degrades ---
+but an implementation defect blocks the natural reading.}
 \textsc{cover} is the only segmenter-driven policy we continued to the full
 horizon, and it produces the study's one \emph{negative} result. It climbs
 normally to epoch 50, peaks at epoch $\CoverPeakEpoch$ ($\AUCCoverPeak$), then
@@ -431,13 +434,16 @@ $\DCoverRandomEpHundred$ at epoch 100 (CI $\DCoverRandomEpHundredCI$,
 $p\,\DCoverRandomEpHundredP$), where it also sits $\DCoverOracleEpHundred$ below
 \ArmBest{}. All contrasts are matched on epoch and precision.
 
-Forcing a fixed fraction of tissue to stay visible does not merely fail to help.
-Once the easy signal is exhausted the constraint appears to cap what the encoder
-can still learn, and continued training then erodes the representation. This is
-the sharpest form of our H2 result: more aggressive use of the segmentation model
-is not neutral here but actively harmful. Caveats: one floor value ($f{=}0.21$),
-so this concerns that floor rather than a dose-response; and a single
-continuation, as everywhere.
+The obvious reading --- that pushing coverage higher is actively harmful --- is
+\emph{not} available to us. An audit (Appendix~\ref{app:covbug}) found the
+collator shortens every predictor target \emph{after} \textsc{cover} chooses its
+placement, defeating its greedy optimisation: delivered masks hide $73.1\%$ of
+anatomy, \emph{less} than \textsc{envelope}'s $77.6\%$, not the $78.6\%$ the
+placement achieved. \textsc{cover} never realised the aggressive coverage it was
+built to test, so its decline cannot be attributed to over-covering anatomy, and
+because coverage was logged before truncation every training log reported the
+intent. What survives is narrower: a coverage-seeking policy whose targets are
+shortened and top-biased peaks early and then erodes while the null improves.
 
 The strongest policy is the one that uses no segmentation model.
 \ArmBest{} gives $\DOracleRandomEpHundred$ over the null at epoch 100
@@ -493,14 +499,20 @@ from the null; \ArmBest{} places $41.1\%$ on tissue and gives the largest
 gain in the study.
 
 Second, \textbf{the anatomy arms are confounded on several axes simultaneously},
-and we state this rather than attributing their deficit to shape. Because their
-targets are compact tissue blobs rather than large rectangles, they hide only
+and we state this rather than attributing their deficit to shape. They hide only
 $21.4\%$ of the grid against $40$--$46\%$ for the rectangle arms, leave $67.9\%$
 of tokens visible as context against $40$--$46\%$, and supply $64$ predictor loss
 slots against $158$--$160$. Any of these could account for their deficit without
 invoking target shape at all. We therefore do \emph{not} claim that irregular
 target shape is harmful; that comparison is not identified by this design.
 Figure~\ref{fig:geom} makes the four-way divergence explicit.
+
+Crucially, these are not consequences of blob geometry: the anatomy arms resample
+every target to a fixed $K{=}16$ cells, so $4\times16=64$ loss slots follows by
+construction, while the rectangle arms do not set $K$. The two families are
+collated differently, which weakens ``everything else held fixed'' for the
+anatomy-versus-rectangle comparison specifically; contrasts within the rectangle
+family are unaffected (Appendix~\ref{app:covbug}).
 
 Third, \ArmBest{} is the most \emph{spatially consistent} policy we
 measured. Its per-cell hit map is the most concentrated of any arm (Gini
@@ -838,6 +850,52 @@ use them to support any claim. Similarly, the \textsc{anatomy-v2} probes at
 epochs 75 and 92 follow a change of target precision partway through that arm's
 training; they are listed in Table~\ref{tab:allprobes} but excluded from the
 matched-epoch comparisons in Table~\ref{tab:main}.
+
+\section{A collation defect in the coverage arm, and what it invalidates}
+\label{app:covbug}
+
+We audited the \textsc{cover} sampler after its epoch-100 result and found a
+defect that changes how that arm may be interpreted. We report it in full because
+it invalidates the reading we would otherwise have given, and because the same
+mechanism silently weakens one cross-family comparison.
+
+\paragraph{The defect.} Predictor targets are collated by truncating every target
+to the length of the shortest target anywhere in the microbatch. \textsc{cover}
+chooses its placement \emph{before} this happens: it greedily maximises hidden
+anatomy subject to a visible-tissue floor, evaluated on full rectangles, and the
+collator then shortens those rectangles. The optimisation is therefore defeated
+after the fact.
+
+\paragraph{Measured consequences.} On held-out slices, \textsc{cover}'s placement
+hides $78.6\%$ of anatomy mass, close to its configured target, but the masks
+actually delivered hide $73.9\%$; an independent sweep over $6{,}137$ slices
+gives $73.1\%$ against $77.6\%$ for \textsc{envelope}. The arm intended to hide
+\emph{more} anatomy than \textsc{envelope} in fact hides \emph{less}. Only
+$32.5\%$ of images retain all four rectangular targets, the mean being $2.51$ of
+$4$, and across $24{,}000$ emitted targets only $73.4\%$ remain perfect
+rectangles. Because target cells are enumerated row-major, truncation keeps the
+top of each rectangle and discards the bottom, so the loss is directional rather
+than a neutral shrink.
+
+\paragraph{Why it went unnoticed.} Realised coverage is recorded before
+truncation. Every training log therefore reported the intended figure, and the
+instrument agreed with the design rather than with the data.
+
+\paragraph{What it invalidates.} We cannot claim that \textsc{cover} tests
+aggressive anatomy coverage, nor that its decline shows over-covering anatomy is
+harmful; on delivered masks it does not out-cover \textsc{envelope}. Its measured
+trajectory remains a real property of the policy as implemented. The mask
+geometry in Table~\ref{tab:geom} is unaffected, having been measured on delivered
+masks.
+
+\paragraph{Scope.} \textsc{envelope} shares the same collation path and the same
+directional clipping, but sets no exact coverage target, so it has no comparable
+optimisation to defeat. The anatomy arms instead resample every target to a fixed
+$K{=}16$ cells. Contrasts within the rectangle family are collated identically
+and are unaffected; the anatomy-versus-rectangle contrast is not, and we treat it
+accordingly in Section~\ref{sec:results}. A corrected coverage arm must be
+retrained from the shared ancestor, since patching mid-trajectory would splice
+two masking policies into one curve.
 
 \section{Occlusion attribution: where the classifier looks}
 \label{app:interp}

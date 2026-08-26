@@ -14,12 +14,33 @@ What changes is *where* the blocks go: they are placed greedily so that nearly
 all anatomy is hidden, leaving only a small visible remainder.  Overlap between
 blocks is allowed, and blocks are allowed to spill onto background.
 
-Rationale.  ``mirage_envelope`` aims rectangles at the retina but only reaches
-~46% masking of the anatomy; ``mirage_anatomy`` hides the right cells but pays
-for it with irregular, much smaller targets (2.5x less supervision per epoch).
-COVER keeps the envelope's target geometry and supervision volume while pushing
-the hidden fraction of anatomy up to ~85%, which is the variable we actually
-want to test.
+Rationale.  ``mirage_envelope`` aims rectangles at the retina; ``mirage_anatomy``
+hides the right cells but pays for it with irregular, much smaller targets.
+COVER was intended to keep the envelope's target geometry and supervision volume
+while pushing the hidden fraction of anatomy higher, which is the variable we
+actually want to test.
+
+WARNING - THIS INTENT IS NOT REALISED.  See autopilot/COVER_AUDIT.md.
+The collator truncates every predictor target to the shortest target in the
+microbatch (curriculum.py, the ``global_min_pred`` branch), and it does so AFTER
+this module has chosen placement.  The greedy optimisation below is therefore
+computed on full rectangles and then defeated.  Measured on delivered masks:
+
+    policy            anatomy hidden
+    random                 53.1%
+    oracle                 61.6%
+    cover  f=0.21          73.1%     <- placement achieved 78.6% before truncation
+    envelope               77.6%
+
+So COVER as shipped hides LESS anatomy than envelope, inverting its purpose.  Do
+not cite this arm as an over-coverage condition.  Note also that realised
+coverage is logged BEFORE truncation, so the training logs report the intent
+(~78.5%) rather than what the model received.
+
+Fixing it requires scoring coverage against the prefix-truncated shapes that
+will actually reach the model, and re-logging coverage after collation.  Setting
+``pred_target_k`` on this arm is not a fix: it would cut the rectangle arms from
+~158 loss slots to 64 and change what they measure.
 
 Greedy placement is *exact* here rather than a heuristic: a 16x16 grid admits at
 most 256 candidate windows per block, so every one is evaluated via a

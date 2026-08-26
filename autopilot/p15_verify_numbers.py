@@ -63,6 +63,12 @@ def main():
         if "\\ph{" in val:
             skipped += 1
             continue
+        # "---" is the not-run marker: the cell asserts no value, so there is
+        # nothing to verify. Skip it BEFORE the inventory lookup, otherwise it
+        # is misreported as a macro claiming a probe that does not exist.
+        if val.strip().strip("$").replace("\\mathbf{", "").strip("{}") in ("---", "--", ""):
+            skipped += 1
+            continue
         arm, epoch = ARM[m.group(1)], EPOCH[m.group(2)]
         cand = truth.get((arm, epoch))
         if not cand:

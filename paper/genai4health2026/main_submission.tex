@@ -297,8 +297,12 @@ thereafter. The \emph{only} difference between arms is the mask sampler.
 
 Arms differ in how far they were carried, and we do not pretend otherwise.
 \textsc{random}, \ArmBest{} and \textsc{envelope} reach epoch 100.
-\textsc{anatomy-v2} has valid probes to epoch 50 (later checkpoints follow a
-target-precision splice and are excluded, Appendix~\ref{app:excluded}).
+\textsc{anatomy-v2} reaches epoch 75 (its epoch-75 and epoch-92 probes under an
+earlier target-precision splice are excluded and replaced by a clean fp32
+continuation, Appendix~\ref{app:excluded}); we stopped that arm after epoch 75,
+because it had already moved from indistinguishable-from-null at epoch 50 to
+significantly below it at epoch 75 and a further 25 epochs would have deepened an
+established deficit rather than tested anything new.
 \textsc{anatomy-v1} has only epoch 30. \textsc{cover} $f{=}0.21$ reaches epoch
 100, with an extra probe at its epoch-73 peak. Epoch 50 is therefore the only
 epoch at which

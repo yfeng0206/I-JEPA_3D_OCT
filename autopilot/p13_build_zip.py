@@ -97,8 +97,20 @@ def build(out_zip, allow_ph):
             missing_gfx.append(g)
 
     # ---- 5. placeholders
-    placeholders = re.findall(r"\\ph\{([^}]*)\}", tex)
-    placeholders = [p for p in placeholders if "newcommand" not in p]
+    # A \ph{} almost never appears literally in the manuscript: it lives in a
+    # \newcommand inside auto/auto_numbers.tex and reaches the page through a
+    # macro. Scanning only main_submission.tex therefore returned zero and
+    # passed this check while Table 1 was visibly rendering red placeholder
+    # cells. Resolve macros first, then report only those actually referenced.
+    placeholders = [p for p in re.findall(r"\\ph\{([^}]*)\}", tex)
+                    if "newcommand" not in p]
+    auto_p = os.path.join(PAPER, "auto", "auto_numbers.tex")
+    if os.path.exists(auto_p):
+        auto_txt = open(auto_p, encoding="utf-8").read()
+        for name, val in re.findall(r"\\newcommand\{\\(\w+)\}\{([^}]*\\ph\{[^}]*\}[^}]*)\}",
+                                    auto_txt):
+            if re.search(r"\\%s\b" % name, tex):
+                placeholders.append("%s (macro used in manuscript)" % name)
 
     # ---- 1. standalone compile
     rc = subprocess.call([TECTONIC, "-X", "compile", "main.tex", "--keep-logs",

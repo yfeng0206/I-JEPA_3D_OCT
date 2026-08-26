@@ -204,10 +204,18 @@ def main():
                 mac("DAnatomyTwoRandom%sP" % w, pfmt(r[3]))
                 mac("DAnatomyTwoRandom%sNullPrec" % w,
                     "fp32" if nul.endswith("fp32") else "fp16")
+    # Epochs this arm was never carried to. The blob/anatomy-v2 fp32 continuation
+    # was stopped after the epoch-75 milestone: at ep50 the arm was +0.0013 and
+    # indistinguishable from the null, by ep75 it was -0.0111 and clearly below
+    # it, so ep100 would have deepened an already-established deficit rather than
+    # testing anything new. "not run" is the honest rendering; \ph{pending}
+    # would imply a result is still coming.
+    NOT_RUN = {"EpHundred"}
     for w in ("EpSeventyFive", "EpHundred"):
         if "AUCAnatomyTwo%s" % w not in M:
-            mac("AUCAnatomyTwo%s" % w, r"\ph{pending}")
-            mac("DAnatomyTwoRandom%s" % w, r"\ph{pending}")
+            filler = "---" if w in NOT_RUN else r"\ph{pending}"
+            mac("AUCAnatomyTwo%s" % w, filler)
+            mac("DAnatomyTwoRandom%s" % w, filler)
 
     # The cross-precision dagger must disappear on its own when the matching
     # fp32 null lands, otherwise the paper keeps warning about a confound it no
@@ -237,6 +245,10 @@ def main():
         v = M.get(src)
         if v is None or v.startswith(r"\ph{"):
             mac(name, r"\ph{pending}")
+        elif v == "---":
+            # "not run" is not a quantity; keep it out of math mode so it renders
+            # as an em dash rather than three minus signs.
+            mac(name, "---")
         else:
             mac(name, r"$\mathbf{%s}%s$" % (v, dagger))
 

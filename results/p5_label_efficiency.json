@@ -1,0 +1,143 @@
+{
+ "generated": "2026-08-26T02:10:34-07:00",
+ "epoch": 100,
+ "fractions": [
+  0.01,
+  0.05,
+  0.1,
+  0.25,
+  1.0
+ ],
+ "repeats": 5,
+ "method": "features mean-pooled from the cached frozen probe; identical patient subset per fraction across arms, so arms are paired; LayerNorm + linear head refitted per subset",
+ "arms": {
+  "random": {
+   "0.01": {
+    "n_train": 60,
+    "auc_mean": 0.7264385168557712,
+    "auc_sd": 0.025023720517162267,
+    "n_repeats": 5
+   },
+   "0.05": {
+    "n_train": 300,
+    "auc_mean": 0.7924530114138643,
+    "auc_sd": 0.025883006680305406,
+    "n_repeats": 5
+   },
+   "0.10": {
+    "n_train": 600,
+    "auc_mean": 0.8197806072808964,
+    "auc_sd": 0.01113048844970037,
+    "n_repeats": 5
+   },
+   "0.25": {
+    "n_train": 1500,
+    "auc_mean": 0.8533374480399708,
+    "auc_sd": 0.009239215716906715,
+    "n_repeats": 5
+   },
+   "1.00": {
+    "n_train": 6000,
+    "auc_mean": 0.8811184768707834,
+    "auc_sd": 0.0,
+    "n_repeats": 1
+   }
+  },
+  "intensity": {
+   "0.01": {
+    "n_train": 60,
+    "auc_mean": 0.7435574899815195,
+    "auc_sd": 0.031563741367252464,
+    "n_repeats": 5
+   },
+   "0.05": {
+    "n_train": 300,
+    "auc_mean": 0.810754014062336,
+    "auc_sd": 0.010321753427638978,
+    "n_repeats": 5
+   },
+   "0.10": {
+    "n_train": 600,
+    "auc_mean": 0.8165999953754017,
+    "auc_sd": 0.009873274305038798,
+    "n_repeats": 5
+   },
+   "0.25": {
+    "n_train": 1500,
+    "auc_mean": 0.8605137128231215,
+    "auc_sd": 0.011690927900256248,
+    "n_repeats": 5
+   },
+   "1.00": {
+    "n_train": 6000,
+    "auc_mean": 0.8849520020063641,
+    "auc_sd": 0.0,
+    "n_repeats": 1
+   }
+  },
+  "envelope": {
+   "0.01": {
+    "n_train": 60,
+    "auc_mean": 0.7429040431439441,
+    "auc_sd": 0.028381249093658897,
+    "n_repeats": 5
+   },
+   "0.05": {
+    "n_train": 300,
+    "auc_mean": 0.808020609699917,
+    "auc_sd": 0.010127785097426097,
+    "n_repeats": 5
+   },
+   "0.10": {
+    "n_train": 600,
+    "auc_mean": 0.8183944284263381,
+    "auc_sd": 0.0073876969025130695,
+    "n_repeats": 5
+   },
+   "0.25": {
+    "n_train": 1500,
+    "auc_mean": 0.8523409805215479,
+    "auc_sd": 0.008370705188162901,
+    "n_repeats": 5
+   },
+   "1.00": {
+    "n_train": 6000,
+    "auc_mean": 0.8806738039632807,
+    "auc_sd": 0.0,
+    "n_repeats": 1
+   }
+  },
+  "cover": {
+   "0.01": {
+    "n_train": 60,
+    "auc_mean": 0.6800014140598459,
+    "auc_sd": 0.04328960565521163,
+    "n_repeats": 5
+   },
+   "0.05": {
+    "n_train": 300,
+    "auc_mean": 0.7768242706030298,
+    "auc_sd": 0.012625759895453646,
+    "n_repeats": 5
+   },
+   "0.10": {
+    "n_train": 600,
+    "auc_mean": 0.8123581271088612,
+    "auc_sd": 0.004288131715230093,
+    "n_repeats": 5
+   },
+   "0.25": {
+    "n_train": 1500,
+    "auc_mean": 0.8545581641056472,
+    "auc_sd": 0.007444781180721582,
+    "n_repeats": 5
+   },
+   "1.00": {
+    "n_train": 6000,
+    "auc_mean": 0.8785073575579275,
+    "auc_sd": 0.0,
+    "n_repeats": 1
+   }
+  }
+ }
+}

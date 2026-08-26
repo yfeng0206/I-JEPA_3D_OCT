@@ -197,6 +197,20 @@ def build(out_zip, allow_ph):
     if missing_gfx:
         print("  missing graphics     : %s" % missing_gfx)
     print("\n  archive: %s (%.2f MB)" % (out_zip, os.path.getsize(out_zip) / 1e6))
+
+    # Publish the validated PDF back into the repo. Without this the ZIP and
+    # paper/main_submission.pdf drift apart, because this script compiles in a
+    # scratch directory. A mock reviewer read the stale repo PDF and reported a
+    # missing appendix and a page-limit violation that the real artifact did not
+    # have, so the staleness cost a review round.
+    if compiled:
+        repo_pdf = os.path.join(PAPER, "main_submission.pdf")
+        try:
+            shutil.copy(pdf, repo_pdf)
+            print("  published validated PDF -> %s" % repo_pdf)
+        except Exception as e:
+            print("  [warn] could not publish PDF: %s" % e)
+
     print("  ALL_PASS = %s" % ok)
     return 0 if ok else 1
 

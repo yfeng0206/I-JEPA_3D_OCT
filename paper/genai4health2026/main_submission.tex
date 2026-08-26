@@ -733,9 +733,9 @@ band and therefore change shape from slice to slice.}
 intervals. The black subgroup is lowest under every policy, but note that
 \emph{every} group improves from \textsc{random} to \ArmBest{}.
 \textbf{Right:} max--min race gap against aggregate AUC across \NprobesSub{}
-checkpoints. The fitted slope is positive but does not survive multiplicity
-correction or branch-level aggregation (Table~\ref{tab:subtrends}), so we draw
-no trend conclusion from it.}
+checkpoints. The fitted slope is positive and passes multiplicity correction at
+checkpoint level, but does not survive branch-level aggregation
+(Table~\ref{tab:subtrends}), so we draw no trend conclusion from it.}
 \label{fig:fair}
 \end{figure}
 
@@ -760,8 +760,12 @@ disagree, the branch-level figure is the one to believe.
 \caption{Subgroup gap trends. ``gap range'' is the max--min subgroup AUC gap
 observed across the \NprobesSub{} valid probes. $q$ is Benjamini--Hochberg
 across the seven attributes tested, which is necessary because seven trends were
-examined. Only the sex gap and the severity gap survive correction, and both
-\emph{narrow} as aggregate AUC rises.}
+examined. Three attributes survive correction at checkpoint level: sex and
+disease severity, both of which \emph{narrow} as aggregate AUC rises, and race,
+which widens. Race is the one attribute whose checkpoint-level trend does not
+persist under branch aggregation ($p{=}0.4821$), where the effective sample is
+\NbranchesSub{} independent branches rather than \NprobesSub{} probes; we
+therefore draw no trend conclusion for race.}
 \label{tab:subtrends}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -778,9 +782,12 @@ nonetheless widens slightly, because the asian subgroup --- already the
 highest --- gains most ($\RaceRandomAsian \to \RaceOracleAsian$). A widening
 max--min gap with universally rising subgroup AUCs is not evidence of harm, and
 we do not present it as such. The checkpoint-level correlation between aggregate
-AUC and racial gap is $\rho{=}\SubRaceRho$ ($p{=}\SubRaceRhoP$), which fails BH
-correction ($q{=}\SubRaceQ$) and vanishes at branch level
-($\rho{=}\SubRaceBranchRho$, $p{=}\SubRaceBranchP$). We therefore explicitly do
+AUC and racial gap is $\rho{=}\SubRaceRho$ ($p{=}\SubRaceRhoP$). It passes
+Benjamini--Hochberg ($q{=}\SubRaceQ$) but vanishes once probes are aggregated to
+their pretraining branches ($\rho{=}\SubRaceBranchRho$,
+$p{=}\SubRaceBranchP$), and the checkpoint-level test is pseudo-replicated
+because the \NprobesSub{} probes come from only \NbranchesSub{} branches. The
+branch-level figure is the one to believe. We therefore explicitly do
 \emph{not} claim that more accurate models are less fair.
 
 \paragraph{Disease severity.} FairVision's label is defined by visual-field mean

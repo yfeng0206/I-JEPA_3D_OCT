@@ -65,9 +65,11 @@ an audit found its targets are shortened after placement, so it does not test
 aggressive coverage. Direct measurement of mask geometry across
 600 slices shows the fraction of anatomy hidden is uncorrelated with downstream
 AUC. The best policy consults no segmentation model at all. A subgroup audit over
-\NprobesSub{} probes finds the same worst-served group every time; gains reach
-every group and every disease stage, mild disease most of all
-($\SevDeltaMild$), but the difficulty ordering is untouched: the severe-to-mild
+\NprobesSub{} probes finds the same worst-served group every time; every disease
+stage improves with intervals excluding zero (largest for mild, $\SevDeltaMild$,
+though the gains are not separated from one another), while among race groups
+only the white subgroup's gain excludes zero. The difficulty ordering is
+untouched: the severe-to-mild
 gap stays within $\SeverityGapSpread$ of constant across every policy. Because
 each policy was pretrained once, we report these as single-run observations
 rather than an established ranking.
@@ -399,30 +401,29 @@ paired comparison, and would understate the evidence.}
 \label{fig:traj}
 \end{figure}
 
-\textbf{H2 fails.} The arms that use the segmentation model most aggressively ---
-shaping targets to trace the retina, or maximising anatomy coverage under a
-floor --- do not improve on the null. At epoch 50, the only epoch at which all
-five arms have a probe, \textsc{anatomy-v2} gains $\DAnatomyTwoRandomEpFifty$ over
-\textsc{random} and \textsc{cover} gains $\DCoverRandomEpFifty$, against
-$\DEnvelopeRandomEpFifty$ for \textsc{envelope} and $\DOracleRandomEpFifty$ for
-\ArmBest{}. The policies that merely \emph{place} rectangles on tissue gain
-roughly an order of magnitude more than the policies that shape targets to match
-it. Increasing anatomical fidelity past ``rectangles on tissue'' does not add
-benefit.
+\textbf{H2 fails.} H2 predicts the anatomy arms exceed \textsc{envelope}; they do
+not, transitively through the shared null. At epoch 50 --- the only epoch at
+which all five arms have a probe --- \textsc{envelope} beats \textsc{random} by
+$\DEnvelopeRandomEpFifty$ with an interval excluding zero, while
+\textsc{anatomy-v2} gains only $\DAnatomyTwoRandomEpFifty$ and \textsc{cover}
+$\DCoverRandomEpFifty$, both indistinguishable from that null. An arm that does
+not separate from the null cannot exceed one that beats it, so H2 is refuted
+without a separate anatomy-versus-envelope contrast. Against
+$\DOracleRandomEpFifty$ for \ArmBest{}, policies that merely \emph{place}
+rectangles on tissue gain roughly an order of magnitude more than those shaping
+targets to match it.
 
 We are careful not to overstate this. At the matched epoch 50 neither
 \textsc{anatomy-v2} (CI $\DAnatomyTwoRandomEpFiftyCI$,
 $p=\DAnatomyTwoRandomEpFiftyP$) nor \textsc{cover} (CI
 $\DCoverRandomEpFiftyCI$, $p=\DCoverRandomEpFiftyP$) is \emph{worse} than the
-null; both are indistinguishable from it, and both are measured against an fp32
-null re-probed specifically for this comparison, so they are matched on epoch
-\emph{and} precision. What the epoch-50 data rule out is not that these policies
-are harmful, but the expected \emph{monotone improvement with anatomical
-precision}: their intervals are centred near zero and comfortably contain it,
-while the two cruder policies produce intervals that exclude it.
+null; both are indistinguishable from it, against an fp32 null re-probed for
+this comparison, so they are matched on epoch \emph{and} precision. What the
+data rule out is not harm but the expected \emph{monotone improvement with
+anatomical precision}.
 
-\paragraph{Carried to epoch 100, the coverage-constrained policy degrades ---
-but an implementation defect blocks the natural reading.}
+\paragraph{Carried to epoch 100 the coverage arm degrades, but a defect blocks
+the natural reading.}
 \textsc{cover} is the only segmenter-driven policy we continued to the full
 horizon, and it produces the study's one \emph{negative} result. It climbs
 normally to epoch 50, peaks at epoch $\CoverPeakEpoch$ ($\AUCCoverPeak$), then
@@ -541,12 +542,15 @@ different epochs of one branch, so they are \emph{not} independent; we report
 this as a descriptive regularity and attach no $p$-value. What it shows is that
 the disparity is not introduced by any policy we tried.
 
-\paragraph{Every group improves; no gap reliably moves.} A widening max--min gap
-is easy to misread as harm. It is not. At epoch 100 the strongest policy
-improves \emph{every} race stratum over the null --- black
-$\RaceRandomBlack \to \RaceOracleBlack$ ($\BlackGainOracle$, a larger gain than
-white's $\RaceRandomWhite \to \RaceOracleWhite$) --- and the max--min gap widens
-only because the already-best asian subgroup gains most. Nor is there a
+\paragraph{Point estimates rise everywhere; few gaps reliably move.} A widening
+max--min gap is easy to misread as harm. It is not. At epoch 100 the strongest
+policy raises the point estimate for \emph{every} race stratum over the null,
+and the max--min gap widens only because the already-best asian subgroup gains
+most. Paired resampling, however, separates only the white subgroup's gain from
+zero ($\PDRaceWhiteDelta$, CI $\PDRaceWhiteCI$); the black
+($\PDRaceBlackDelta$, CI $\PDRaceBlackCI$) and asian intervals include it, the
+smaller strata being noisier. The gains are therefore consistent in sign across
+race, not provably positive in every group. Nor is there a
 defensible gap \emph{trend}. Across checkpoints the race gap correlates with
 aggregate AUC at $\rho=\SubRaceRho$ ($p=\SubRaceRhoP$, $q=\SubRaceQ$ after
 Benjamini--Hochberg over the seven attributes tested), but those checkpoints are
@@ -668,14 +672,12 @@ should target clinically meaningful anatomy. Under matched compute, schedule, an
 a shared ancestor checkpoint, guidance helped --- but anatomical precision did
 not. Restricting targets to retinal tissue improved AUC over unguided masking by
 $\DEnvelopeRandomEpFifty$ at the matched epoch, while shaping targets to trace
-the segmented retina, or maximising anatomy coverage, left performance
-indistinguishable from not guiding at all; and the best policy consulted no
-segmentation model. Mask geometry is uncorrelated with how much anatomy is
-hidden, and a subgroup audit over \NprobesSub{} probes shows every group and
-every disease stage improving --- mild disease most of all --- while the
-difficulty ordering between them is untouched. We suggest the
-operative variable is the consistency of the predictive task rather than its
-anatomical correctness, and will release weights and the reproduction protocol.
+the segmented retina left performance indistinguishable from not guiding at all,
+and the best policy consulted no segmentation model. Mask geometry is
+uncorrelated with how much anatomy is hidden; a subgroup audit shows every
+disease stage improving with intervals excluding zero, race gains consistent in
+sign, and the difficulty ordering untouched. We suggest the operative variable is
+the consistency of the predictive task rather than its anatomical correctness.
 
 \bibliographystyle{plainnat}
 \bibliography{references}
@@ -819,10 +821,14 @@ The severe-to-mild gap is $\SevGapRandom$ for the null and $\SevGapOracle$ for
 the strongest policy, and stays within $\SeverityGapSpread$
 ($\SubSeverityGapMin$--$\SubSeverityGapMax$) across all \NprobesSub{} probes
 while aggregate AUC spans $\SubAUCMin$--$\SubAUCMax$. Target placement raises
-the whole severity curve --- mild disease most of all --- without altering the
-ordering that makes early disease hard. We note that mild functional loss is
-harder to separate from normal OCT by construction, so this ordering is expected
-clinically; what the data add is that no masking policy we tested changes it.
+the whole severity curve, all three strata separated from zero under paired
+resampling, the largest point estimate at mild disease ($\PDSevMildDelta$, CI
+$\PDSevMildCI$) and the smallest at severe ($\PDSevSevereDelta$). That ordering
+is descriptive only: we did not test the paired \emph{difference} between
+strata, so it does not establish that mild disease benefits most. We note that
+mild functional loss is harder to separate from normal OCT by construction, so
+the difficulty ordering is expected clinically; what the data add is that no
+masking policy we tested changes it.
 
 \begin{table}[h]
 \centering

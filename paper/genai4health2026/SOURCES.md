@@ -5,14 +5,14 @@ the manuscript that actually exist, and is rebuilt on every refresh. Do not edit
 it by hand: it will be overwritten, and a hand-edited copy is exactly how it
 drifted from the paper before.
 
-Generated 2026-08-26T02:29:49-07:00
+Generated 2026-08-26T09:23:05-07:00
 
 ## 1. What the built PDF contains
 
 | item | count |
 |---|---|
-| auto-generated numeric macros | 357 |
-| generated tables `\input` into the paper | 7 |
+| auto-generated numeric macros | 388 |
+| generated tables `\input` into the paper | 8 |
 | figures included | 12 |
 | distinct citation keys | 48 |
 
@@ -28,6 +28,7 @@ Generated tables:
 - `auto/table_labeleff.tex`
 - `auto/table_operating.tex`
 - `auto/table_paired_subgroup.tex`
+- `auto/table_subgroup_operating.tex`
 - `auto/table_subgroup_trends.tex`
 
 Figures:
@@ -50,8 +51,8 @@ Figures:
 - test set: N=3000, 1466 positive, 1534 negative, identical across every probe
 - bootstrap: 10,000 resamples, seed 20260822, stratified by class, the same resampled
   index set applied to every arm so all differences are paired
-- primary frozen probes analysed: 30
-- multiplicity: Benjamini-Hochberg within families, confirmatory family size 9, exploratory 22
+- primary frozen probes analysed: 31
+- multiplicity: Benjamini-Hochberg within families, confirmatory family size 9, exploratory 25
 
 ### Probes in the analysis
 
@@ -61,6 +62,7 @@ Figures:
 | anatomy-v2 | 35 | fp32 | 0.866129 |
 | anatomy-v2 | 40 | fp32 | 0.868251 |
 | anatomy-v2 | 50 | fp32 | 0.865386 |
+| anatomy-v2 | 75 | fp32 | 0.861246 |
 | ancestor | 25 | fp32 | 0.848680 |
 | cover-f021 | 27 | fp32 | 0.848347 |
 | cover-f021 | 30 | fp32 | 0.852249 |

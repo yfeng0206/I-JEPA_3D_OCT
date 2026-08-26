@@ -1126,6 +1126,38 @@ clinically, whereas ``two to three more cases detected per hundred at the same
 false-positive rate'' is not. The same caveats apply as everywhere else in this
 paper: one dataset, one split, and one pretraining run per policy.
 
+\paragraph{Who receives the benefit at the deployed threshold.} Subgroup AUC is
+also threshold-free, so it cannot answer the question a deployment actually
+raises: a screen ships \emph{one} threshold shared by everyone, and a model can
+lift every subgroup's AUC while delivering the gain unevenly at that single
+operating point. We therefore fix the threshold on validation at specificity
+$\SOPSpecTarget$ ($\SOPThreshold$), transfer it unchanged, and measure the
+change in sensitivity within each stratum
+(Table~\ref{tab:subop}). Overall sensitivity rises from $\SOPSensRandom$ to
+$\SOPSensOracle$.
+
+The point estimates alone suggest the gain is concentrated in the largest group:
+$\SOPDWhite$ for white patients against $\SOPDBlack$ for black patients, an
+apparent ninefold difference. \textbf{The intervals do not support that reading.}
+The black interval ($\SOPDBlackCI$) reaches almost exactly the white point
+estimate, so the two are not separated; what distinguishes them is positive
+count ($\SOPNWhitePos$ versus $\SOPNBlackPos$), not demonstrated benefit. Only
+the white, female and male gains exclude zero, and those are the three largest
+strata. We therefore report this as a \emph{power} limitation of the cohort ---
+this study cannot certify that the smaller strata benefit --- and explicitly not
+as evidence that they do not. Certifying subgroup benefit at a deployed
+threshold would need a cohort with more positives in the smaller strata.
+
+\begin{table}[h]
+\centering
+\caption{Change in sensitivity from \textsc{random} to \ArmBest{} at one shared
+deployed threshold (validation-selected, specificity $\SOPSpecTarget$), by
+stratum. Paired bootstrap over positives within each stratum. Epoch 100.}
+\label{tab:subop}
+\small
+\input{auto/table_subgroup_operating}
+\end{table}
+
 \section{Broader impact and ethics}
 \label{app:ethics}
 

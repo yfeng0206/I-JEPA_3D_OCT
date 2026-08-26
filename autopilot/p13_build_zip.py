@@ -15,6 +15,7 @@ Usage:
   python p13_build_zip.py [--allow-placeholders] [--out PATH]
 """
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -222,6 +223,61 @@ def build(out_zip, allow_ph):
             print("  published validated PDF -> %s" % repo_pdf)
         except Exception as e:
             print("  [warn] could not publish PDF: %s" % e)
+
+    # Publish a loose-file mirror alongside the archive. Re-uploading a whole ZIP
+    # forces Overleaf to rebuild the project every time; replacing the two or
+    # three files that actually changed does not. CHANGED.txt is computed by
+    # content hash against the previous publish, so it lists exactly what needs
+    # re-uploading and nothing else.
+    if ok:
+        mirror = os.path.splitext(out_zip)[0] + "_files"
+        prev = {}
+        man = os.path.join(mirror, ".manifest.json")
+        if os.path.exists(man):
+            try:
+                prev = json.load(open(man, encoding="utf-8"))
+            except Exception:
+                prev = {}
+        changed, now = [], {}
+        for root, _dirs, files in os.walk(stage):
+            for fn in files:
+                if fn.endswith((".aux", ".log", ".out", ".blg", ".synctex.gz")):
+                    continue
+                full = os.path.join(root, fn)
+                rel = os.path.relpath(full, stage).replace("\\", "/")
+                h = hashlib.sha256(open(full, "rb").read()).hexdigest()
+                now[rel] = h
+                if prev.get(rel) != h:
+                    changed.append(rel)
+                dst = os.path.join(mirror, rel)
+                os.makedirs(os.path.dirname(dst), exist_ok=True)
+                shutil.copy(full, dst)
+        removed = sorted(set(prev) - set(now))
+        with open(man, "w", encoding="utf-8") as f:
+            json.dump(now, f, indent=1, sort_keys=True)
+        with open(os.path.join(mirror, "CHANGED.txt"), "w", encoding="utf-8") as f:
+            f.write("Files changed since the previous publish (%s)\n"
+                    % datetime.now().strftime("%Y-%m-%d %H:%M"))
+            f.write("Upload only these to Overleaf; the rest are unchanged.\n")
+            f.write("main.pdf and main.bbl are build outputs - Overleaf makes\n")
+            f.write("its own, so they never need uploading. main.pdf differs on\n")
+            f.write("every build because it embeds a timestamp.\n\n")
+            need = [c for c in sorted(changed)
+                    if c not in ("main.pdf", "main.bbl")]
+            if need:
+                f.write("UPLOAD THESE (%d):\n" % len(need))
+                for c in need:
+                    f.write("  %s\n" % c)
+            else:
+                f.write("UPLOAD THESE: nothing. No source file changed.\n")
+            if removed:
+                f.write("\nNo longer part of the project, delete in Overleaf:\n")
+                for r in removed:
+                    f.write("  %s\n" % r)
+        print("  loose files      -> %s" % mirror)
+        need_n = [c for c in changed if c not in ("main.pdf", "main.bbl")]
+        print("  needs re-upload  : %s"
+              % (", ".join(sorted(need_n)) if need_n else "nothing"))
 
     print("  ALL_PASS = %s" % ok)
     return 0 if ok else 1

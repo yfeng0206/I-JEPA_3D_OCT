@@ -297,7 +297,9 @@ patch size 16, predictor depth 6, EMA target encoder. \textbf{Every arm resumes
 from the same epoch-25 checkpoint} and continues with identical optimiser,
 learning-rate and weight-decay schedules, and effective batch size (512 for all
 arms). Guidance is ramped linearly from epoch 25 to 30 and held at full strength
-thereafter. The \emph{only} difference between arms is the mask sampler.
+thereafter. Within the rectangle family the \emph{only} difference between arms
+is the mask sampler; the anatomy family additionally differs in collation, and
+we quantify that in Section~\ref{sec:results}.
 
 Arms differ in how far they were carried, and we do not pretend otherwise.
 \textsc{random}, \ArmBest{} and \textsc{envelope} reach epoch 100.
@@ -410,17 +412,17 @@ paired comparison, and would understate the evidence.}
 \label{fig:traj}
 \end{figure}
 
-\textbf{H2 fails.} H2 predicts the anatomy arms exceed \textsc{envelope}; they do
-not, transitively through the shared null. At epoch 50 --- the only epoch at
-which all five arms have a probe --- \textsc{envelope} beats \textsc{random} by
-$\DEnvelopeRandomEpFifty$ with an interval excluding zero, while
-\textsc{anatomy-v2} gains only $\DAnatomyTwoRandomEpFifty$ and \textsc{cover}
-$\DCoverRandomEpFifty$, both indistinguishable from that null. An arm that does
-not separate from the null cannot exceed one that beats it, so H2 is refuted
-without a separate anatomy-versus-envelope contrast. Against
-$\DOracleRandomEpFifty$ for \ArmBest{}, policies that merely \emph{place}
-rectangles on tissue gain roughly an order of magnitude more than those shaping
-targets to match it.
+\textbf{H2 fails.} H2 predicts the anatomy arms exceed \textsc{envelope}. Tested
+directly at epoch 50 --- the only epoch at which all five arms have a probe ---
+\textsc{anatomy-v2} sits $\DAnatomyTwoEnvelopeEpFifty$ \emph{below}
+\textsc{envelope} (CI $\DAnatomyTwoEnvelopeEpFiftyCI$,
+$p=\DAnatomyTwoEnvelopeEpFiftyP$), refuting the prediction in the opposite
+direction rather than merely failing to support it. Against the shared null,
+\textsc{envelope} gains $\DEnvelopeRandomEpFifty$ while \textsc{anatomy-v2} gains
+$\DAnatomyTwoRandomEpFifty$ and \textsc{cover} $\DCoverRandomEpFifty$, neither
+separable from it; \ArmBest{} gains $\DOracleRandomEpFifty$. Policies that merely
+\emph{place} rectangles on tissue gain roughly an order of magnitude more than
+those shaping targets to match it.
 
 We are careful not to overstate this. At the matched epoch 50 neither
 \textsc{anatomy-v2} (CI $\DAnatomyTwoRandomEpFiftyCI$,
@@ -432,7 +434,8 @@ data rule out is not harm but the expected \emph{monotone improvement with
 anatomical precision}.
 
 \paragraph{Carried to epoch 100 the coverage arm degrades.}
-\textsc{cover} is the only segmenter-driven policy we continued to the full
+\textsc{cover} is the only policy that uses the segmenter to choose \emph{how
+much} to hide, and we continued it to the full
 horizon, and it produces the study's one \emph{negative} result. It climbs
 normally to epoch 50, peaks at epoch $\CoverPeakEpoch$ ($\AUCCoverPeak$), then
 \emph{falls} to $\AUCCoverEpHundred$, losing $\DCoverPeakToHundred$ from its own
@@ -590,13 +593,15 @@ branch). Only the sex gap is consistent across both views, and it \emph{narrows}
 $p=\SubGenderBranchP$). We do not claim that better masking harms any group, and
 we do not claim it helps equity either.
 
-\paragraph{Early disease improves most; differential benefit is unresolved.}
+\paragraph{Every severity stratum improves; differential benefit is unresolved.}
 Scoring each severity stratum against the shared pool of all negatives, the
 strongest policy improves mild disease by $\SevDeltaMild$ at matched epoch 100,
 moderate by $\SevDeltaModerate$, severe by $\SevDeltaSevere$. These are paired
 differences on the same subjects and all three intervals exclude zero (mild
-$\PDSevMildCI$, severe $\PDSevSevereCI$), so the ordering is resolved rather than
-a point-estimate artefact. What does not move is the difficulty ordering itself:
+$\PDSevMildCI$, severe $\PDSevSevereCI$), so each stratum improves. Whether mild
+improves \emph{more} we did not test: that needs a paired contrast between the
+gains, not three contrasts against zero. What does not move is the difficulty
+ordering itself:
 the severe-to-mild gap stays within $\SeverityGapSpread$ of constant across all
 \NprobesSub{} probes while aggregate AUC spans $\SubAUCMin$--$\SubAUCMax$. For
 equity the quantity that matters is the paired \emph{difference} between groups'
@@ -1273,7 +1278,7 @@ papers; metrics differ across rows and are not comparable between rows.}
 \label{tab:counter}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{lllp{4.1cm}}
+\begin{tabular}{p{2.1cm}p{3.0cm}p{4.0cm}p{3.6cm}}
 \toprule
 study & baseline & informed variant & interpretation \\
 \midrule

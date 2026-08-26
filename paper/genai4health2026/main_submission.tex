@@ -897,6 +897,38 @@ accordingly in Section~\ref{sec:results}. A corrected coverage arm must be
 retrained from the shared ancestor, since patching mid-trajectory would splice
 two masking policies into one curve.
 
+\section{Why unguided masking is such a strong baseline}
+\label{app:bg}
+
+Unguided masking spends most of its predictor targets on background, yet it
+reaches within $\DOracleRandomEpHundred$ of the best policy. We investigated
+whether background carries diagnostic signal, and whether position embeddings are
+the mechanism.
+
+\paragraph{Background is a real \emph{pretraining} signal.} At epoch 100 the
+random arm's predictor beats a per-position, no-context reference by $0.680$ on
+background targets, above its $0.633$ on anatomy targets: predicting a background
+token requires more than knowing where it is. Pretraining also spends capacity
+reorganising background --- background self-similarity falls from $0.784$
+untrained to $0.346$ at epoch 100, while tissue contrast collapses.
+
+\paragraph{But it does not help the classifier.} Pooled background features are
+$95.2\%$ linearly reconstructible from pooled anatomy features. Residualised,
+background predicts glaucoma at test AUC $0.5515$ (CI $[0.5165, 0.5893]$).
+Appending background to anatomy \emph{lowers} test AUC by $0.0076$
+(CI $[-0.0139, -0.0012]$) for the random arm and moves it under $\pm0.002$ for
+every other. A background-only probe scores $0.867$, but that is attention
+leakage rather than background signal.
+
+\paragraph{Position dominates background tokens, but is not the whole story.} At
+layer 0, $90.8\%$ of the across-position variance of the encoder input at
+background cells comes from \texttt{pos\_embed}, against $40.8\%$ at tissue cells
+(stable across six thresholds and both checkpoints). Mechanically a background
+token is close to its position code. That the predictor still beats a
+per-position reference shows the pretraining signal is not purely positional.
+We therefore report the first link of this mechanism as measured and leave the
+causal chain to downstream AUC open; two ablations would settle it.
+
 \section{Occlusion attribution: where the classifier looks}
 \label{app:interp}
 

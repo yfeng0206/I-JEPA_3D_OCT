@@ -78,6 +78,8 @@ rather than an established ranking.
 
 \section{Introduction}
 
+
+
 Self-supervised learning has become the default route to representation quality
 in medical imaging, where expert annotation is expensive and pathology is
 rare~\citep{azizi2021big,zhou2023retfound,qiu2024visionfm}. Joint-embedding
@@ -252,6 +254,7 @@ scale and aspect-ratio ranges. They differ only in placement and shape.
 \end{description}
 
 Figure~\ref{fig:policies} shows all six on the same B-scans.
+
 
 \begin{figure}[t]
 \centering
@@ -715,6 +718,21 @@ Appendix~\ref{app:excluded}.}
 \end{table}
 
 \section{Masking policies across the volume}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figS5_mask_statistics.png}
+\caption{What each sampler actually does, measured on the 6,137-slice sweep
+(\textsc{anatomy-v2} on $n{=}1{,}534$). Panel (a) is the quantity the
+\textsc{cover} arm was built to maximise: it reaches $73.1\%$, \emph{below}
+\textsc{envelope}'s $77.6\%$, which is the discrepancy Appendix~\ref{app:covbug}
+explains. Panel (b) shows the ordering that motivates this paper: target purity
+rises monotonically from \textsc{random} to \textsc{anatomy-v2}, while downstream
+AUC does not follow it. Panels (c)--(f) give the confounds we decline to
+disentangle --- how much anatomy survives in the context, the context budget, and
+how often a slice is left with no anatomy visible at all.}
+\label{fig:maskstats}
+\end{figure}
 
 Figure~\ref{fig:policies} shows one B-scan for legibility.
 Figure~\ref{fig:policies5} repeats the same rendering on five B-scans sampled
@@ -1180,6 +1198,17 @@ stratum. Paired bootstrap over positives within each stratum. Epoch 100.}
 \small
 \input{auto/table_subgroup_operating}
 \end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.62\linewidth]{fig_roc.png}
+\caption{ROC curves at epoch 100 on the \Ntest{} test volumes. The three arms
+that reach the full horizon are nearly superimposed: the separation reported
+throughout this paper is a small, consistent shift in the high-specificity
+region rather than a difference visible in the curve as a whole. We include this
+so the effect size is not overstated by tables alone.}
+\label{fig:roc}
+\end{figure}
 
 \section{Broader impact and ethics}
 \label{app:ethics}

@@ -45,10 +45,13 @@ COLORS = {
 }
 LABEL = {
     "random": "random",
-    "oracle": "oracle",
+    # Display names must match the paper, which resolves them through \ArmBest.
+    # The stored artifacts keep their historical keys (oracle, blob) so the JSON
+    # is not rewritten; only the rendered label changes.
+    "oracle": "centroid",
     "envelope": "envelope",
     "cover_f021": "COVER $f{=}.21$",
-    "blob": "blob",
+    "blob": "anatomy-v2",
 }
 ANAT_C = "#c53030"
 BG_C = "#4a5568"
@@ -337,7 +340,7 @@ def fig_mask_stats():
             ax.text(i, r[key], f"{r[key]:.1f}", ha="center", va="bottom", fontsize=5.8)
         ax.margins(y=0.18)
     fig.suptitle("Masking statistics by arm, ordered by anatomy placed in targets "
-                 "(blob measured on $n{=}1{,}534$; others on the 6,137-slice sweep)",
+                 "(anatomy-v2 measured on $n{=}1{,}534$; others on the 6,137-slice sweep)",
                  fontsize=7.6, y=1.01)
     fig.tight_layout()
     save(fig, "figS5_mask_statistics")

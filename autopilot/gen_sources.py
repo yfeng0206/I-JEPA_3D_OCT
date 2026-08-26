@@ -36,7 +36,7 @@ def main():
     macros = re.findall(r"\\newcommand\{\\(\w+)\}", open(
         os.path.join(AUTO, "auto_numbers.tex"), encoding="utf-8").read())
     figs = sorted(set(re.findall(r"\\includegraphics\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}",
-                                 re.sub(r"%[^\n]*\n\s*", "", tex))))
+                                 re.sub(r"(?<!\\)%[^\n]*\n\s*", "", tex))))
     inputs = sorted(set(re.findall(r"\\input\{([^}]+)\}", tex)))
     cites = set()
     for m in re.finditer(r"\\cite[a-zA-Z]*\*?(?:\[[^\]]*\])*\{([^}]+)\}", tex):

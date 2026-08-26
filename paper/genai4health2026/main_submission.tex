@@ -21,6 +21,13 @@
 % number below is typed by hand, so prose, tables and figures cannot disagree.
 \input{auto/auto_numbers}
 
+% ARM DISPLAY NAMES. Defined once so a rename is a one-line change and cannot
+% drift between prose, tables and figure captions. \ArmBest is the strongest
+% arm: it locates a retinal band by a per-column intensity centroid and uses NO
+% segmentation model and NO ground-truth labels. The name is historical; see the
+% definition at first use in Section 3.
+\newcommand{\ArmBest}{\textsc{oracle}}
+
 \title{Location Beats Shape: A Controlled Comparison of Anatomy-Guided\\
 Masking for Joint-Embedding Predictive Pretraining\\
 on Retinal OCT}
@@ -220,14 +227,15 @@ scale and aspect-ratio ranges. They differ only in placement and shape.
   \emph{location} changes. This is the control that separates ``stop wasting
   targets on background'' from ``target anatomy specifically''.
 
-\item[\textsc{intensity} (segmentation-free).] A band whose vertical position is
+\item[\ArmBest{} (segmentation-free).] A band whose vertical position is
   located per slice by a per-column intensity-weighted row centroid, smoothed
   across columns. It adapts to the retina's position and curvature using a
   first-order intensity statistic, and consults \textbf{no segmentation model}.
-  It uses no ground-truth annotation of any kind. (Our released code and
-  checkpoints label this policy \texttt{oracle}, a historical name from when it
-  was intended as an upper bound. We rename it here because it is neither an
-  oracle nor an upper bound: it reads only the input image.)
+  It uses no ground-truth annotation of any kind. (The name is historical, from
+  when this policy was intended as an upper bound, and we keep it so that the
+  paper matches the released code and checkpoints. It should not be read as
+  implying label access: despite the name, this arm is \emph{not} an oracle and
+  \emph{not} an upper bound, and reads only the input image.)
 
 \item[\textsc{anatomy-v1} / \textsc{anatomy-v2}.] Ragged connected components
   grown on the MIRAGE score map, so target \emph{shape} follows tissue rather
@@ -287,7 +295,7 @@ arms). Guidance is ramped linearly from epoch 25 to 30 and held at full strength
 thereafter. The \emph{only} difference between arms is the mask sampler.
 
 Arms differ in how far they were carried, and we do not pretend otherwise.
-\textsc{random}, \textsc{intensity} and \textsc{envelope} reach epoch 100.
+\textsc{random}, \ArmBest{} and \textsc{envelope} reach epoch 100.
 \textsc{anatomy-v2} has valid probes to epoch 50 (later checkpoints follow a
 target-precision splice and are excluded, Appendix~\ref{app:excluded}).
 \textsc{anatomy-v1} has only epoch 30. \textsc{cover} $f{=}0.21$ was
@@ -309,7 +317,7 @@ required~\citep{obuchowski1997clusteredroc,rutter2000clusterbootstrap}. We follo
 alongside AUC rather than AUC alone (Appendix~\ref{app:allprobes}).
 
 \paragraph{Numerical precision, and how we handle it.} The probe harness
-defaults to mixed precision. The \textsc{random}, \textsc{intensity} and
+defaults to mixed precision. The \textsc{random}, \ArmBest{} and
 \textsc{envelope} long-horizon probes were fitted under that default (fp16);
 the \textsc{anatomy-v1}, \textsc{anatomy-v2}, \textsc{cover} and ancestor probes
 were fitted with autocast explicitly disabled (fp32). We therefore do
@@ -354,7 +362,7 @@ policy & guidance signal & AUC & $\Delta$ & AUC & $\Delta$ & AUC & $\Delta$ \\
 \midrule
 \textsc{random}   & none (null)                      & \AUCRandomEpFifty  & ---                              & \AUCRandomEpSeventyFive  & ---                              & \AUCRandomEpHundred  & ---  \\
 \textsc{envelope} & segmenter (location only)        & \AUCEnvelopeEpFifty & $\mathbf{\DEnvelopeRandomEpFifty}$ & \AUCEnvelopeEpSeventyFive & $\mathbf{\DEnvelopeRandomEpSeventyFive}$ & \AUCEnvelopeEpHundred & $\mathbf{\DEnvelopeRandomEpHundred}$ \\
-\textsc{intensity}   & intensity centroid, no segmenter & \AUCOracleEpFifty   & $\mathbf{\DOracleRandomEpFifty}$   & \AUCOracleEpSeventyFive   & $\mathbf{\DOracleRandomEpSeventyFive}$   & \textbf{\AUCOracleEpHundred} & $\mathbf{\DOracleRandomEpHundred}$ \\
+\ArmBest{}   & intensity centroid, no segmenter & \AUCOracleEpFifty   & $\mathbf{\DOracleRandomEpFifty}$   & \AUCOracleEpSeventyFive   & $\mathbf{\DOracleRandomEpSeventyFive}$   & \textbf{\AUCOracleEpHundred} & $\mathbf{\DOracleRandomEpHundred}$ \\
 \midrule
 \textsc{anatomy-v2} & segmenter (target shape) & \TAUCAnatomyTwoEpFifty & \TAnatomyTwoRandomEpFifty & \TAUCAnatomyTwoEpSeventyFive & \TAnatomyTwoRandomEpSeventyFive & \TAUCAnatomyTwoEpHundred & \TAnatomyTwoRandomEpHundred \\
 \textsc{cover} $f{=}.21$ & segmenter (coverage) & \TAUCCoverEpFifty & \TCoverRandomEpFifty & \TAUCCoverEpSeventyFive & \TCoverRandomEpSeventyFive & \TAUCCoverEpHundred & \TCoverRandomEpHundred \\
@@ -395,7 +403,7 @@ floor --- do not improve on the null. At epoch 50, the only epoch at which all
 five arms have a probe, \textsc{anatomy-v2} gains $\DAnatomyTwoRandomEpFifty$ over
 \textsc{random} and \textsc{cover} gains $\DCoverRandomEpFifty$, against
 $\DEnvelopeRandomEpFifty$ for \textsc{envelope} and $\DOracleRandomEpFifty$ for
-\textsc{intensity}. The policies that merely \emph{place} rectangles on tissue gain
+\ArmBest{}. The policies that merely \emph{place} rectangles on tissue gain
 roughly an order of magnitude more than the policies that shape targets to match
 it. Increasing anatomical fidelity past ``rectangles on tissue'' does not add
 benefit.
@@ -421,7 +429,7 @@ peak ($p\,\DCoverPeakToHundredP$) while the unguided null keeps improving
 $\DCoverRandomEpFifty$ at epoch 50, $\DCoverRandomEpSeventyFive$ at epoch 75, and
 $\DCoverRandomEpHundred$ at epoch 100 (CI $\DCoverRandomEpHundredCI$,
 $p\,\DCoverRandomEpHundredP$), where it also sits $\DCoverOracleEpHundred$ below
-\textsc{intensity}. All contrasts are matched on epoch and precision.
+\ArmBest{}. All contrasts are matched on epoch and precision.
 
 Forcing a fixed fraction of tissue to stay visible does not merely fail to help.
 Once the easy signal is exhausted the constraint appears to cap what the encoder
@@ -432,7 +440,7 @@ so this concerns that floor rather than a dose-response; and a single
 continuation, as everywhere.
 
 The strongest policy is the one that uses no segmentation model.
-\textsc{intensity} gives $\DOracleRandomEpHundred$ over the null at epoch 100
+\ArmBest{} gives $\DOracleRandomEpHundred$ over the null at epoch 100
 (95\% CI $\DOracleRandomEpHundredCI$, $p\,\DOracleRandomEpHundredP$,
 $q=\DOracleRandomEpHundredQ$), with a margin that is stable across training
 ($\DOracleRandomEpFifty$, $\DOracleRandomEpSeventyFive$, $\DOracleRandomEpHundred$). It exceeds
@@ -441,7 +449,7 @@ $\DOracleEnvelopeEpHundred$ (CI $\DOracleEnvelopeEpHundredCI$,
 $p=\DOracleEnvelopeEpHundredP$), though the two are indistinguishable at epochs 50
 and 75. Notably, \textsc{envelope}'s margin over the null \emph{decays} with
 training ($\DEnvelopeRandomEpFifty \to \DEnvelopeRandomEpSeventyFive \to
-\DEnvelopeRandomEpHundred$) while \textsc{intensity}'s does not.
+\DEnvelopeRandomEpHundred$) while \ArmBest{}'s does not.
 
 \subsection{H3: it is not anatomical targeting}
 \label{sec:results-h3}
@@ -461,7 +469,7 @@ epochs. All five AUCs are at epoch 50.}
 policy & anatomy hidden & purity & mask ratio & context kept & loss slots & AUC @ep50 \\
 \midrule
 \textsc{random}   & 52.2\% & 31.6\% & 43.7\% & 42.1\% & 157.7 & \AUCRandomEpFifty \\
-\textsc{intensity}   & 62.2\% & 41.1\% & 40.0\% & 45.6\% & 158.4 & \AUCOracleEpFifty \\
+\ArmBest{}   & 62.2\% & 41.1\% & 40.0\% & 45.6\% & 158.4 & \AUCOracleEpFifty \\
 \textsc{envelope} & 76.9\% & 43.5\% & 46.4\% & 40.5\% & 159.9 & \textbf{\AUCEnvelopeEpFifty} \\
 \textsc{cover}    & 74.1\% & 45.3\% & 43.3\% & 43.5\% & 160.0 & \AUCCoverEpFifty \\
 \textsc{anatomy-v2} & 80.3\% & \textbf{97.3\%} & 21.4\% & 67.9\% & 64.0 & \AUCAnatomyTwoEpFifty \\
@@ -481,7 +489,7 @@ lying on tissue --- trends negatively ($-0.40$). Neither is significant at
 $n{=}4$ arms, and we present them as descriptive rather than inferential; but
 neither shows the positive relationship the anatomy-guidance hypothesis predicts.
 The anatomy arm places $97.3\%$ of masked cells on tissue and does not separate
-from the null; \textsc{intensity} places $41.1\%$ on tissue and gives the largest
+from the null; \ArmBest{} places $41.1\%$ on tissue and gives the largest
 gain in the study.
 
 Second, \textbf{the anatomy arms are confounded on several axes simultaneously},
@@ -494,7 +502,7 @@ invoking target shape at all. We therefore do \emph{not} claim that irregular
 target shape is harmful; that comparison is not identified by this design.
 Figure~\ref{fig:geom} makes the four-way divergence explicit.
 
-Third, \textsc{intensity} is the most \emph{spatially consistent} policy we
+Third, \ArmBest{} is the most \emph{spatially consistent} policy we
 measured. Its per-cell hit map is the most concentrated of any arm (Gini
 $0.400$ versus $0.316$--$0.338$ for the other rectangle arms): it repeatedly
 asks the encoder to represent the same region of the image. This suggests a
@@ -571,7 +579,7 @@ Appendix~\ref{app:fp32} gives the numbers.
 
 \subsection{Reproducibility}
 
-The epoch-100 \textsc{intensity} encoder and its trained probe head will be
+The epoch-100 \ArmBest{} encoder and its trained probe head will be
 released, together with the stored per-case predictions for every probe in this
 paper. Links are withheld here for anonymity. Every number in this paper is
 emitted by a single script from those stored predictions, so tables, figures and
@@ -598,7 +606,7 @@ sits $\DAnatomyTwoRandomEpFifty$ from the null with an interval
 ($\DAnatomyTwoRandomEpFiftyCI$) that comfortably contains zero, so it is
 indistinguishable rather than worse. Nor can we claim target \emph{shape} is the
 operative variable, for the reasons in Table~\ref{tab:geom}. Nor can we claim the
-mechanism behind \textsc{intensity}'s advantage. Two explanations remain live:
+mechanism behind \ArmBest{}'s advantage. Two explanations remain live:
 consistency of location (the encoder is repeatedly forced to represent the same
 region), and masking ratio or task difficulty. Distinguishing them requires an
 arm that randomises the band's vertical position while holding area and context
@@ -711,7 +719,7 @@ band and therefore change shape from slice to slice.}
 \includegraphics[width=\linewidth]{fig_fairness.png}
 \caption{\textbf{Left:} race-stratified AUC at epoch 100 with bootstrap
 intervals. The black subgroup is lowest under every policy, but note that
-\emph{every} group improves from \textsc{random} to \textsc{intensity}.
+\emph{every} group improves from \textsc{random} to \ArmBest{}.
 \textbf{Right:} max--min race gap against aggregate AUC across \NprobesSub{}
 checkpoints. The fitted slope is positive but does not survive multiplicity
 correction or branch-level aggregation (Table~\ref{tab:subtrends}), so we draw
@@ -752,7 +760,7 @@ examined. Only the sex gap and the severity gap survive correction, and both
 \NprobesSub{} probes ($n{=}\NBlack$ black, $n{=}\NAsian$ asian, $n{=}\NWhite$
 white). At matched epoch 100 the black subgroup improves from
 $\RaceRandomBlack$ under \textsc{random} to $\RaceOracleBlack$ under
-\textsc{intensity} ($\BlackGainOracle$), a larger absolute gain than the white
+\ArmBest{} ($\BlackGainOracle$), a larger absolute gain than the white
 subgroup's ($\RaceRandomWhite \to \RaceOracleWhite$). The max--min gap
 nonetheless widens slightly, because the asian subgroup --- already the
 highest --- gains most ($\RaceRandomAsian \to \RaceOracleAsian$). A widening
@@ -779,7 +787,7 @@ and mild disease improves most.}
 \small
 \begin{tabular}{lccccc}
 \toprule
-stratum & $n_{+}$ & \textsc{random} & \textsc{envelope} & \textsc{intensity} & $\Delta$ \\
+stratum & $n_{+}$ & \textsc{random} & \textsc{envelope} & \ArmBest{} & $\Delta$ \\
 \midrule
 severe (md $\leq -12$)          & 334 & \SevRandomSevere   & \SevEnvelopeSevere   & \SevOracleSevere   & \SevDeltaSevere \\
 moderate ($-12 <$ md $\leq -6$) & 460 & \SevRandomModerate & \SevEnvelopeModerate & \SevOracleModerate & \SevDeltaModerate \\
@@ -800,7 +808,7 @@ clinically; what the data add is that no masking policy we tested changes it.
 \begin{table}[h]
 \centering
 \caption{Paired change in subgroup AUC from \textsc{random} to
-\textsc{intensity} at matched epoch 100. Each bootstrap draw resamples subjects
+\ArmBest{} at matched epoch 100. Each bootstrap draw resamples subjects
 once and applies the same resampled set to both arms and every stratum, so these
 are paired differences rather than differences of independent estimates.}
 \label{tab:pairedsub}
@@ -966,11 +974,11 @@ Two observations. First, the threshold transfers well: a validation target of
 $0.90$ yields test specificity $\SpecAchRandomSpecNinety$ to
 $\SpecAchEnvelopeSpecNinety$, so the operating point is stable across the split.
 Second, the AUC advantage survives as a usable sensitivity gain. At a target
-specificity of $0.90$, \textsc{intensity} detects $\SensIntensitySpecNinety$ of
+specificity of $0.90$, \ArmBest{} detects $\SensIntensitySpecNinety$ of
 cases against $\SensRandomSpecNinety$ for the unguided null, a paired difference
 of $\DSensIntRandSpecNinety$ (CI $\DSensIntRandSpecNinetyCI$, excluding zero). At
 a target of $0.85$ the gain is $\DSensIntRandSpecEightyFive$
-(CI $\DSensIntRandSpecEightyFiveCI$). \textsc{intensity} is also the
+(CI $\DSensIntRandSpecEightyFiveCI$). \ArmBest{} is also the
 best-calibrated arm (Brier $\BrierIntensity$ versus $\BrierRandom$; ECE
 $\ECEIntensity$ versus $\ECERandom$), which matters because a screening score
 that is used as a probability must be trustworthy as one.
@@ -1066,13 +1074,13 @@ contrast & epoch & $\Delta$ AUC & 95\% CI & $p$ & $q$ \\
 \textsc{envelope} $-$ \textsc{random} & 75  & \DEnvelopeRandomEpSeventyFive  & \DEnvelopeRandomEpSeventyFiveCI  & \DEnvelopeRandomEpSeventyFiveP  & \DEnvelopeRandomEpSeventyFiveQ \\
 \textsc{envelope} $-$ \textsc{random} & 100 & \DEnvelopeRandomEpHundred & \DEnvelopeRandomEpHundredCI & \DEnvelopeRandomEpHundredP & \DEnvelopeRandomEpHundredQ \\
 \addlinespace
-\textsc{intensity} $-$ \textsc{random}   & 50  & \DOracleRandomEpFifty    & \DOracleRandomEpFiftyCI    & \DOracleRandomEpFiftyP    & \DOracleRandomEpFiftyQ \\
-\textsc{intensity} $-$ \textsc{random}   & 75  & \DOracleRandomEpSeventyFive    & \DOracleRandomEpSeventyFiveCI    & \DOracleRandomEpSeventyFiveP    & \DOracleRandomEpSeventyFiveQ \\
-\textsc{intensity} $-$ \textsc{random}   & 100 & \DOracleRandomEpHundred   & \DOracleRandomEpHundredCI   & \DOracleRandomEpHundredP   & \DOracleRandomEpHundredQ \\
+\ArmBest{} $-$ \textsc{random}   & 50  & \DOracleRandomEpFifty    & \DOracleRandomEpFiftyCI    & \DOracleRandomEpFiftyP    & \DOracleRandomEpFiftyQ \\
+\ArmBest{} $-$ \textsc{random}   & 75  & \DOracleRandomEpSeventyFive    & \DOracleRandomEpSeventyFiveCI    & \DOracleRandomEpSeventyFiveP    & \DOracleRandomEpSeventyFiveQ \\
+\ArmBest{} $-$ \textsc{random}   & 100 & \DOracleRandomEpHundred   & \DOracleRandomEpHundredCI   & \DOracleRandomEpHundredP   & \DOracleRandomEpHundredQ \\
 \addlinespace
-\textsc{intensity} $-$ \textsc{envelope} & 50  & \DOracleEnvelopeEpFifty  & \DOracleEnvelopeEpFiftyCI  & \DOracleEnvelopeEpFiftyP  & \DOracleEnvelopeEpFiftyQ \\
-\textsc{intensity} $-$ \textsc{envelope} & 75  & \DOracleEnvelopeEpSeventyFive  & \DOracleEnvelopeEpSeventyFiveCI  & \DOracleEnvelopeEpSeventyFiveP  & \DOracleEnvelopeEpSeventyFiveQ \\
-\textsc{intensity} $-$ \textsc{envelope} & 100 & \DOracleEnvelopeEpHundred & \DOracleEnvelopeEpHundredCI & \DOracleEnvelopeEpHundredP & \DOracleEnvelopeEpHundredQ \\
+\ArmBest{} $-$ \textsc{envelope} & 50  & \DOracleEnvelopeEpFifty  & \DOracleEnvelopeEpFiftyCI  & \DOracleEnvelopeEpFiftyP  & \DOracleEnvelopeEpFiftyQ \\
+\ArmBest{} $-$ \textsc{envelope} & 75  & \DOracleEnvelopeEpSeventyFive  & \DOracleEnvelopeEpSeventyFiveCI  & \DOracleEnvelopeEpSeventyFiveP  & \DOracleEnvelopeEpSeventyFiveQ \\
+\ArmBest{} $-$ \textsc{envelope} & 100 & \DOracleEnvelopeEpHundred & \DOracleEnvelopeEpHundredCI & \DOracleEnvelopeEpHundredP & \DOracleEnvelopeEpHundredQ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1111,7 +1119,7 @@ slots --- which is why we decline to attribute its deficit to target shape.}
 \label{fig:geom}
 \end{figure}
 
-The \textsc{random}, \textsc{intensity} and \textsc{envelope} long-horizon probes
+The \textsc{random}, \ArmBest{} and \textsc{envelope} long-horizon probes
 were originally fitted under the harness default, which enables autocast. To
 remove any doubt that the headline effect is a precision artifact, we re-ran the
 complete probe pipeline for those arms with autocast disabled, so that feature
@@ -1134,7 +1142,7 @@ appear as the re-probes complete.}
 
 \section{Fine-tuning narrows but does not erase the gap}
 
-Under full fine-tuning rather than a frozen probe, \textsc{intensity} reaches
+Under full fine-tuning rather than a frozen probe, \ArmBest{} reaches
 $\FTOracleMeanpool$ (mean-pool head) against \textsc{random}'s
 $\FTRandomMeanpool$, a gap of $\FTDelta$ compared with $\DOracleRandomEpHundred$
 frozen. Taking each arm's best head instead, the gap is $\FTDeltaBest$. The
@@ -1155,9 +1163,9 @@ probes and never pooled with them.}
 \toprule
 policy & head & test AUC \\
 \midrule
-\textsc{intensity} & mean-pool & 0.894668 \\
-\textsc{intensity} & cross-attention & 0.893717 \\
-\textsc{intensity} & attentive & 0.890100 \\
+\ArmBest{} & mean-pool & 0.894668 \\
+\ArmBest{} & cross-attention & 0.893717 \\
+\ArmBest{} & attentive & 0.890100 \\
 \textsc{random} & attentive & 0.887763 \\
 \textsc{random} & cross-attention & 0.887178 \\
 \textsc{random} & mean-pool & 0.886756 \\

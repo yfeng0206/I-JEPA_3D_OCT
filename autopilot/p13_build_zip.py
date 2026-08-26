@@ -46,7 +46,7 @@ def used_graphics(tex_text):
     A naive regex silently misses those and produces a false PASS on the
     "all graphics present" check.
     """
-    folded = re.sub(r"%[^\n]*\n\s*", "", tex_text)
+    folded = re.sub(r"(?<!\\)%[^\n]*\n\s*", "", tex_text)
     return set(re.findall(r"\\includegraphics\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}", folded))
 
 

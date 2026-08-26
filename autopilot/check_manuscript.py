@@ -42,7 +42,11 @@ BANNED = [
 
 def main():
     tex = open(os.path.join(PAPER, "main_submission.tex"), encoding="utf-8").read()
-    body = re.sub(r"%[^\n]*", "", tex)
+    # Strip TeX comments, but NOT escaped percents: "43.7\%" is a literal
+    # percent sign, not a comment. A naive %[^\n]* deleted the rest of any line
+    # containing a percentage, which blinded every check below to the
+    # percent-dense geometry table and could hide an undefined macro there.
+    body = re.sub(r"(?<!\\)%[^\n]*", "", tex)
     auto = open(os.path.join(AUTO, "auto_numbers.tex"), encoding="utf-8").read()
 
     fails, warns = [], []

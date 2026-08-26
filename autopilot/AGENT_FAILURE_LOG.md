@@ -147,3 +147,23 @@ accumulating CPU (31988s user). Entirely healthy.
 RULE for future ticks: never conclude "GPU idle" from a single nvidia-smi sample. Sample at least
 3 times a few seconds apart AND check that the trainer process CPU time is advancing, before
 treating it as a stall. Restarting a healthy chain would destroy in-flight epoch work.
+
+## 2026-08-26 - Consistency gate was blind to any line containing a percent sign
+
+`check_manuscript.py` stripped TeX comments with `re.sub(r"%[^\n]*", "", tex)`.
+That treats the escaped literal percent in `43.7\%` as the start of a comment and
+deletes the remainder of the line before any check runs.
+
+Impact: every check in the gate (undefined macros, banned phrases, macro usage) was
+blind to the tail of any line containing a percentage. The measured mask-geometry
+table is the most percent-dense table in the paper, so precisely the table the new
+narrative depends on was the least protected. Detected because the gate reported
+`AUCCoverEpFifty` as unused while it is plainly present at main_submission.tex:474.
+
+Fix: negative lookbehind, `(?<!\\)%[^\n]*`. Macro usage detection went 147 -> 149
+and the false "unused" entries cleared. Same defect fixed in `p13_build_zip.py`
+(ZIP graphics validation) and `gen_sources.py`.
+
+RULE: when a checker reports something surprising about its own subject matter,
+suspect the checker before dismissing it as harmless. A warning that is wrong in the
+harmless direction usually means the same logic is also wrong in the dangerous one.

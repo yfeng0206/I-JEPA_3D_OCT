@@ -23,9 +23,9 @@ print("edit blocks in report:", len(pairs))
 pending = applied = problems = 0
 for i, (old, new) in enumerate(pairs, 1):
     n_old, n_new = tex.count(old), tex.count(new)
-    if n_old == 1 and n_new == 0:
+    if n_old == 1:
         pending += 1
-    elif n_old == 0 and n_new == 1:
+    elif n_old == 0 and n_new >= 1:
         applied += 1
     else:
         problems += 1

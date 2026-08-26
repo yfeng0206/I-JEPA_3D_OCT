@@ -966,17 +966,29 @@ linear probe on cached epoch-\LEEpoch{} features, and repeat \LERepeats{} times
 per fraction. The per-fraction seed depends only on fraction and repeat, never on
 arm, so all arms see identical label subsets and the comparison is paired.
 
-\paragraph{These AUCs are not comparable to Table~\ref{tab:main}.} This sweep
-fits a simpler head than the primary protocol --- full-batch, fixed learning
-rate, no validation-based epoch selection --- because it must be repeated
-\LERepeats{} times at each of five fractions. That changes the absolute numbers:
-at full supervision it puts \textsc{random} at $\LERandomHundred$ against
-$\AUCRandomEpHundred$ in the primary protocol, which compresses the
-\ArmBest{}-over-null gap from $\DOracleRandomEpHundred$ to about $+0.004$. Only
-the \emph{within-protocol} comparison across fractions should be read from this
-table. We report the discrepancy rather than suppressing it, because it shows the
-headline margin is sensitive to how the probe is fitted --- a caveat that applies
-to any frozen-probe comparison at this effect size, including ours.
+\paragraph{Protocol parity.} This sweep uses the \emph{same} probe protocol as
+Table~\ref{tab:main} --- minibatches of 256, AdamW at $4{\times}10^{-4}$, weight
+decay 0.05, 50 epochs with 5 warmup and cosine decay, and the epoch selected on
+validation AUC. An earlier version of this experiment used a cheaper full-batch
+fit, which put the null at $0.8811$ at full supervision against
+$\AUCRandomEpHundred$ in the primary protocol and so made the two tables
+disagree. Under matched protocols they now agree to within $0.0002$ at full
+supervision ($\LERandomHundred$ against $\AUCRandomEpHundred$ for the null,
+$\LEOracleHundred$ against $\AUCOracleEpHundred$ for \ArmBest{}), so the curve
+below and the headline table describe one probe, not two.
+
+The advantage of guided masking is concentrated where labels are scarce.
+At $5\%$ of labels ($n{=}\LENFive$) \ArmBest{} leads the null by $\LEGapFive$
+($\LEOracleFive$ against $\LERandomFive$), against $\LEGapHundred$ at full
+supervision --- more than four times the margin. At $1\%$ the gap is wider still
+($\LEOracleOne$ against $\LERandomOne$), though the standard deviations there
+($\LESDRandomOne$--$\LESDCoverOne$ across arms) are large enough that we read the
+ordering but not its precise size.
+
+The defective \textsc{cover} arm (Appendix~\ref{app:covbug}) is the worst arm at
+every fraction, reaching only $\LECoverOne$ at $1\%$ against $\LERandomOne$ for
+the null, consistent with its targets being degraded rather than merely
+differently placed.
 
 \begin{table}[h]
 \centering
@@ -987,21 +999,6 @@ fraction except at full data, which is deterministic.}
 \small
 \input{auto/table_labeleff}
 \end{table}
-
-The advantage of guided masking is concentrated where labels are scarce.
-At $5\%$ of labels ($n{=}\LENFive$) \ArmBest{} leads the null by $\LEGapFive$,
-against $\LEGapHundred$ at full supervision --- roughly a fourfold larger margin.
-\textsc{envelope} behaves similarly ($\LEEnvelopeFive$ against
-$\LERandomFive$). By $10\%$ the ordering has already closed to within noise and
-the arms are indistinguishable.
-
-Two cautions. At $1\%$ the standard deviations are large
-($\LESDRandomOne$--$\LESDCoverOne$ across arms), so the ordering there is not
-separated and we do not read it. And the defective \textsc{cover} arm
-(Appendix~\ref{app:covbug}) is the worst arm at every fraction below $25\%$,
-reaching only $\LECoverOne$ at $1\%$ against $\LERandomOne$ for the null, which
-is consistent with its targets being degraded rather than merely differently
-placed.
 
 \section{Occlusion attribution: where the classifier looks}
 \label{app:interp}

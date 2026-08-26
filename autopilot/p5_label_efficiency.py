@@ -28,6 +28,7 @@ import argparse
 import ctypes
 import glob
 import json
+import math
 import os
 import sys
 
@@ -77,12 +78,30 @@ def load_pooled(run_dir, split):
     return f.numpy().astype(np.float64), y.numpy().astype(int)
 
 
-def fit_logreg(Xtr, ytr, Xte, seed, epochs=200, lr=0.05, wd=0.05):
-    """LayerNorm + linear head, matching the probe's head, fitted with Adam."""
+def fit_logreg(Xtr, ytr, Xte, seed, Xva=None, yva=None,
+               epochs=50, lr=4e-4, wd=0.05, batch_size=256, warmup_epochs=5):
+    """LayerNorm + linear head fitted with the PRIMARY probe protocol.
+
+    An earlier version used a full-batch fit at lr=0.05 for 200 epochs with no
+    validation selection, because it is cheap enough to repeat 25 times. That
+    produced a different operating point from the primary probe: at full
+    supervision it put the null at 0.8811 against 0.8746, which compressed the
+    headline gap and made the two tables disagree without either being wrong.
+    Matching the primary protocol removes that discrepancy at the cost of a
+    slower fit, which is worth paying to keep one probe definition in the paper.
+
+    Protocol taken from the shipped probe configs: batch 256, AdamW at 4e-4,
+    weight decay 0.05, 50 epochs, 5 warmup epochs, cosine decay, and the epoch
+    chosen by validation AUC rather than the last epoch.
+    """
     g = torch.Generator().manual_seed(seed)
     xt = torch.tensor(Xtr, dtype=torch.float32)
     yt = torch.tensor(ytr, dtype=torch.float32)
     xe = torch.tensor(Xte, dtype=torch.float32)
+    use_val = Xva is not None and yva is not None and len(np.unique(yva)) > 1
+    if use_val:
+        xv = torch.tensor(Xva, dtype=torch.float32)
+
     model = torch.nn.Sequential(torch.nn.LayerNorm(xt.shape[1]),
                                 torch.nn.Linear(xt.shape[1], 1))
     for m in model:
@@ -91,11 +110,39 @@ def fit_logreg(Xtr, ytr, Xte, seed, epochs=200, lr=0.05, wd=0.05):
             torch.nn.init.zeros_(m.bias)
     opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=wd)
     lossf = torch.nn.BCEWithLogitsLoss()
+
+    n = xt.shape[0]
+    steps_per_epoch = max(1, (n + batch_size - 1) // batch_size)
+    total_steps = epochs * steps_per_epoch
+    warmup_steps = warmup_epochs * steps_per_epoch
+    sched = torch.optim.lr_scheduler.LambdaLR(opt, lambda s: (
+        float(s) / float(max(1, warmup_steps)) if s < warmup_steps else
+        0.5 * (1.0 + math.cos(math.pi * float(s - warmup_steps) /
+                              float(max(1, total_steps - warmup_steps))))))
+
+    best_val, best_pred = -1.0, None
     for _ in range(epochs):
-        opt.zero_grad()
-        loss = lossf(model(xt).squeeze(-1), yt)
-        loss.backward()
-        opt.step()
+        perm = torch.randperm(n, generator=g)
+        model.train()
+        for i in range(0, n, batch_size):
+            idx = perm[i:i + batch_size]
+            opt.zero_grad()
+            lossf(model(xt[idx]).squeeze(-1), yt[idx]).backward()
+            opt.step()
+            sched.step()
+        if use_val:
+            model.eval()
+            with torch.no_grad():
+                pv = torch.sigmoid(model(xv).squeeze(-1)).numpy().astype(np.float64)
+                va = auc(np.asarray(yva, dtype=int), pv)
+            if va > best_val:
+                best_val = va
+                with torch.no_grad():
+                    best_pred = torch.sigmoid(model(xe).squeeze(-1)).numpy().astype(np.float64)
+
+    if best_pred is not None:
+        return best_pred
+    model.eval()
     with torch.no_grad():
         return torch.sigmoid(model(xe).squeeze(-1)).numpy().astype(np.float64)
 
@@ -133,10 +180,17 @@ def main():
     for arm, run in ARMS.items():
         Xtr, ytr = load_pooled(run, "Training")
         Xte, yte = load_pooled(run, "Test")
+        Xva, yva = load_pooled(run, "Validation")
         if Xtr is None or Xte is None:
             print("  %s: cache missing, skipped" % arm)
             continue
-        print("%s: train %s test %s" % (arm, Xtr.shape, Xte.shape), flush=True)
+        if Xva is None:
+            print("  %s: NO validation cache - falling back to last-epoch "
+                  "selection, which breaks protocol parity with the primary "
+                  "probe. Reporting it rather than hiding it." % arm)
+        print("%s: train %s val %s test %s"
+              % (arm, Xtr.shape, (Xva.shape if Xva is not None else None),
+                 Xte.shape), flush=True)
         curve = {}
         for frac in a.fractions:
             aucs = []
@@ -148,7 +202,8 @@ def main():
                 idx = rng.choice(len(ytr), n, replace=False)
                 if len(np.unique(ytr[idx])) < 2:
                     continue
-                p = fit_logreg(Xtr[idx], ytr[idx], Xte, seed=1000 + rep)
+                p = fit_logreg(Xtr[idx], ytr[idx], Xte, seed=1000 + rep,
+                               Xva=Xva, yva=yva)
                 aucs.append(auc(yte, p))
             if aucs:
                 curve["%.2f" % frac] = {"n_train": int(round(frac * len(ytr))),

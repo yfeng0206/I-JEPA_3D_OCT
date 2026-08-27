@@ -493,11 +493,12 @@ Second, \textbf{the anatomy arms are confounded on several axes simultaneously}.
 \textsc{anatomy-v2} retains more context still, but it also hides far less of the
 grid and collapses to
 $64$ predictor loss slots against about $159$ for every rectangle arm
-(Table~\ref{tab:geom}) --- a much easier prediction task. Any of these could
+(Table~\ref{tab:geom}, Figure~\ref{fig:geom}) --- a much easier prediction task. They and \textsc{cover}
+also differ from \textsc{envelope} in guide provenance
+(Appendix~\ref{app:repro}). Any of these could
 account for its deficit without invoking target shape at all. \textbf{H3 is
 therefore not identified by this design}, and we do \emph{not} claim that
-irregular target shape is harmful. Figure~\ref{fig:geom} makes the four-way
-divergence explicit.
+irregular target shape is harmful.
 
 These are not consequences of blob geometry: the anatomy arms resample
 every target to a fixed $K{=}16$ cells, so $4\times16=64$ loss slots follows by
@@ -1636,6 +1637,21 @@ orders of magnitude below the effects reported in Table~\ref{tab:main}.}
 
 \section{Reproducibility and numeric provenance}
 \label{app:repro}
+
+\paragraph{Guide provenance differs across the segmenter arms.} The three
+segmenter-driven policies do not all read the same anatomy guide.
+\textsc{envelope} samples the unmodified MIRAGE occupancy map.
+\textsc{anatomy-v1} and \textsc{cover} instead read pre-computed \emph{soft}
+guides produced by a MIRAGE whose segmentation path carries a frozen residual
+adapter, trained label-free to align MIRAGE's patch-similarity structure with the
+pretraining teacher's. That adapter was an abandoned line of work --- it reduced
+its own training objective but never improved segmentation, and the experiment
+that would have settled its downstream effect was not run --- so we make no claim
+about it here. We record it because it is a further axis on which the anatomy
+arms and \textsc{cover} differ from \textsc{envelope}, beyond the geometric axes
+in Section~\ref{sec:results-h3}, and because the guide directory names embed the
+adapter configuration and would otherwise be unexplained to anyone reproducing
+this work. \ArmBest{} and \textsc{random} consult no guide of either kind.
 
 \paragraph{What is checked mechanically.} Every quantity in this paper resolves
 through a generated macro file produced by one script from stored per-case

@@ -66,7 +66,7 @@ BASE_KW = dict(
 CURR_COMMON = dict(T_warm=25, T_total=30, r_max=1.0, ramp_shape="linear")
 
 
-def build_arms(guide_dir):
+def build_arms(guide_dir, cover_floor=0.15):
     """Instantiate one mask generator per arm, all ramped to r_t = 1.0."""
     arms = {}
     arms["random"] = MaskCollator(**BASE_KW)
@@ -110,7 +110,7 @@ def build_arms(guide_dir):
             mirage_max_attempts=30, mirage_spread=True,
             mirage_overlap_tolerance=0.25,
             anatomy_tau=0.1,
-            cover_leave_frac=0.15, cover_min_visible_frac=0.15,
+            cover_leave_frac=cover_floor, cover_min_visible_frac=cover_floor,
             cover_min_visible_cells=4, cover_transition=True, **CURR_COMMON,
         ),
     )
@@ -212,8 +212,15 @@ def main():
     ap.add_argument("--split", default="Training")
     ap.add_argument("--volumes", type=int, default=100)
     ap.add_argument("--num_slices", type=int, default=100)
+    ap.add_argument("--slices_per_volume", type=int, default=0,
+                    help="stride-subsample this many slices per volume "
+                         "(0 = take all num_slices, the original behaviour)")
     ap.add_argument("--batch_size", type=int, default=64)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--cover_floor", type=float, default=0.15,
+                    help="cover_leave_frac / cover_min_visible_frac; the "
+                         "trained COVER arm used 0.21 "
+                         "(configs/patch_cover_f021_ep25.yaml)")
     ap.add_argument("--out", default=r"D:\jepa_phase0\reports\mask_stats_fairvision.json")
     args = ap.parse_args()
 
@@ -241,11 +248,14 @@ def main():
     print(f"dataset: {len(ds)} slices from {n_vol} volumes", flush=True)
 
     vols = sorted(random.sample(range(n_vol), min(args.volumes, n_vol)))
+    spv = args.slices_per_volume or args.num_slices
+    step = max(1, args.num_slices // spv)
     idxs = [v * args.num_slices + s
-            for v in vols for s in range(args.num_slices)]
+            for v in vols for s in range(0, args.num_slices, step)][
+        : len(vols) * spv]
     print(f"sampling {len(vols)} volumes -> {len(idxs)} slices", flush=True)
 
-    arms = build_arms(args.guide_dir)
+    arms = build_arms(args.guide_dir, cover_floor=args.cover_floor)
     rows = {k: [] for k in arms}
 
     done = 0
@@ -278,6 +288,8 @@ def main():
     res["_meta"] = dict(
         dataset="FairVision-glaucoma", split=args.split,
         volumes=len(vols), slices=len(idxs), seed=args.seed,
+        slices_per_volume=spv, batch_size=args.batch_size,
+        cover_floor=args.cover_floor,
         occupancy_threshold=OCC_THRESHOLD, guide_dir=args.guide_dir,
         anatomy_reference="MIRAGE guide occupancy channel 0 >= 0.25",
         grid=f"{GRID}x{GRID}", total_patches=NPATCH,

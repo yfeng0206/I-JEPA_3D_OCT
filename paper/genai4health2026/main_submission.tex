@@ -459,7 +459,7 @@ training ($\DEnvelopeRandomEpFifty \to \DEnvelopeRandomEpSeventyFive \to
 
 \begin{table}[t]
 \centering
-\caption{Measured mask geometry, 600 held-out slices, production samplers.
+\caption{Measured mask geometry, 600 training slices, production samplers.
 ``purity'' is the fraction of masked cells lying on tissue; ``loss slots'' is the
 number of predictor targets contributing to the loss. AUC is quoted at the
 \emph{matched} epoch 50, so the geometry-to-AUC association is not read across
@@ -479,7 +479,7 @@ policy & anatomy hidden & purity & mask ratio & context kept & loss slots & AUC 
 \end{tabular}
 \end{table}
 
-To test H3 we ran each production sampler on 600 held-out slices and measured
+To test H3 we ran each production sampler on 600 training slices and measured
 what it actually does (Table~\ref{tab:geom}, Figures~\ref{fig:paradox}
 and~\ref{fig:ladder}). Three observations follow.
 
@@ -904,7 +904,7 @@ anatomy subject to a visible-tissue floor, evaluated on full rectangles, and the
 collator then shortens those rectangles. The optimisation is therefore defeated
 after the fact.
 
-\paragraph{Measured consequences.} On held-out slices, \textsc{cover}'s placement
+\paragraph{Measured consequences.} On training slices, \textsc{cover}'s placement
 hides $78.6\%$ of anatomy mass, close to its configured target, but the masks
 actually delivered hide $73.9\%$; an independent sweep over $6{,}137$ slices
 gives $73.1\%$ against $77.6\%$ for \textsc{envelope}. The arm intended to hide
@@ -1352,7 +1352,7 @@ anatomical specificity. Companion to Figure~\ref{fig:paradox}.}
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_geometry_panel.png}
-\caption{Measured mask geometry per policy, 600 held-out slices. The four
+\caption{Measured mask geometry per policy, 600 training slices. The four
 rectangle policies are closely matched on every axis, so their comparison is
 near single-variable. The anatomy policy diverges on all four simultaneously ---
 half the masking ratio, $1.6\times$ the context, $0.4\times$ the predictor loss

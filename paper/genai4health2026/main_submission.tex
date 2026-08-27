@@ -38,16 +38,13 @@ Predictive Pretraining on Retinal OCT}
 \maketitle
 
 \begin{abstract}
-Masked predictive pretraining asks a model to reconstruct the representation of
-hidden image regions. Which regions are hidden is a free design choice, and in
-medical imaging there is an intuitive answer: hide the tissue that carries the
-diagnosis. We test that intuition from one shared ancestor checkpoint under a
-matched schedule and probe protocol. Six
-masking policies are continued from a single shared I-JEPA checkpoint on 3D
-retinal OCT, differing in how predictor targets are placed, and
-evaluated with a frozen linear-probe protocol for glaucoma classification
-(FairVision, $N{=}\Ntest$). Each policy was continued once, so what follows
-describes these runs rather than an expected ranking over retrainings.
+In 3D retinal OCT, we test whether masked predictive pretraining benefits from
+directing predictor targets toward the tissue that carries the diagnosis. From
+one shared I-JEPA checkpoint, we continue six masking policies under a matched
+schedule, varying target placement, and evaluate each encoder with the same
+frozen linear-probe protocol for glaucoma classification (FairVision,
+$N{=}\Ntest$). Because each policy was continued once, the results describe
+these runs rather than an expected ranking over retrainings.
 \emph{Region} matters: aiming the same rectangles --- same shapes, sizes and
 counts --- at retinal tissue rather than at the whole frame improves AUC by
 $\DEnvelopeRandomEpFifty$ over unguided masking at the matched epoch, and a band
@@ -127,9 +124,9 @@ segmentation model.
 \item The most anatomically precise policy is not the best performer, from
       direct measurement of mask geometry on 600 slices, with an explicit
       accounting of the axes on which the anatomy arms are confounded.
-\item The subgroup ordering survives every policy tried, and the headline result
-      reproduces to $10^{-5}$ from public weights on different hardware and
-      precision.
+\item The subgroup audit is a caution: every policy leaves the same groups
+      worst-served. Public-weight reproduction matches the headline result to
+      $10^{-5}$ across hardware and precision.
 \end{itemize}
 
 \section{Related work}

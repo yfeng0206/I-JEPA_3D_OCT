@@ -2,7 +2,7 @@
  "version": 1,
  "_comment": "SHA-256 of every file this repository manages in the Overleaf project, as of the last agreed sync. Used to tell an unseen remote edit apart from a stale remote. Hashes only - safe to commit.",
  "project": "868079f07aa2a3d7",
- "updated_utc": "2026-08-27T07:02:12+00:00",
+ "updated_utc": "2026-08-27T08:36:44+00:00",
  "last_action": "push",
  "files": {
   "auto/auto_numbers.tex": {
@@ -222,8 +222,8 @@
    "local_sha256": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6"
   },
   "main.tex": {
-   "remote_sha256": "be2303d18960ad3893b245d30c0466b442398668ccdc637b9fb6c1ef03dc2994",
-   "local_sha256": "be2303d18960ad3893b245d30c0466b442398668ccdc637b9fb6c1ef03dc2994"
+   "remote_sha256": "c8158a583576447c344984da719442a905337bbe4270adac90743fb9a1385b0a",
+   "local_sha256": "c8158a583576447c344984da719442a905337bbe4270adac90743fb9a1385b0a"
   },
   "neurips_2026.sty": {
    "remote_sha256": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a",

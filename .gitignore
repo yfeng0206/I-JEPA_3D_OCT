@@ -46,3 +46,10 @@ results/**/*.npz
 paper/dist/*.zip
 paper/dist/archive/
 
+# The two patterns above did not actually match in practice - 29.7 MB of
+# superseded Overleaf ZIPs accumulated under paper/ anyway. Match at any depth
+# instead. The submission PDF is tracked deliberately and is not a ZIP, so it
+# is unaffected.
+paper/**/*.zip
+.pytest_cache/
+

@@ -10,10 +10,12 @@
 *.toc
 
 # Loose Overleaf bundles in this directory are scratch builds.
-# Committed, downloadable copies live in paper/dist/ - see paper/dist/README.md
+# The negations that used to re-enable dist/ are gone: the root .gitignore
+# records that superseded dist copies leaked a personal path in an embedded
+# EVIDENCE.md, so they must NOT be tracked. Leaving the negations here
+# overrode that rule and let 29.7 MB of superseded bundles accumulate. The
+# validated ZIP is delivered to Downloads instead.
 *.zip
-!dist/*.zip
-!dist/archive/*.zip
 
 # Backups
 *.bak

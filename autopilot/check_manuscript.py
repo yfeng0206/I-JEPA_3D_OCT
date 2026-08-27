@@ -125,7 +125,10 @@ def main():
         if m and int(m.group(1)) != tr["n_probes"]:
             fails.append("NprobesSub macro %s but p7b has %d"
                          % (m.group(1), tr["n_probes"]))
-        for bad in re.findall(r"\b(\d{1,2}) (?:frozen )?probes\b", body):
+        # The digits must not be preceded by a hyphen or word character, or
+        # "epoch-92 probes" is read as a claim of 92 probes: \b matches between
+        # the hyphen and the 9, since a hyphen is not a word character.
+        for bad in re.findall(r"(?<![-\w])(\d{1,2}) (?:frozen )?probes\b", body):
             if int(bad) not in (len(st["table"]), tr["n_probes"],
                                 tr["trends"]["race"]["n_branches"]):
                 warns.append("literal '%s probes' in text; artifacts say %d analysed "

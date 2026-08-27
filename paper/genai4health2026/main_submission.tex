@@ -421,8 +421,10 @@ policy & guidance signal & AUC & $\Delta$ & AUC & $\Delta$ & AUC & $\Delta$ \\
 
 
 \textbf{H1 holds, and the study's cleanest control carries it.}
-\textsc{envelope} differs from the unguided null in \emph{location alone}
-(Section~\ref{sec:policies}). Moving the same rectangles onto tissue is worth
+\textsc{envelope}'s \emph{policy} differs from the unguided null in location
+alone (Section~\ref{sec:policies}), though aiming makes the rectangles overlap,
+so delivered context moves with it ($24.7\%$ to $30.7\%$,
+Table~\ref{tab:delivered}). Moving the same rectangles onto tissue is worth
 $\DEnvelopeRandomEpFifty$ AUC at epoch 50, and \ArmBest{}, a band located from
 a first-order intensity statistic with no segmentation model anywhere, is worth
 $\DOracleRandomEpHundred$ at epoch 100. Every \textsc{envelope} and \ArmBest{}
@@ -1051,7 +1053,7 @@ All numbers below come from saved test predictions joined to FairVision's
 released metadata in deterministic loader order; the join is validated by exact
 label reconstruction (\Ntest/\Ntest{} labels recovered in every probe). The
 \NprobesSub{} probes used here are exactly those the inventory marks valid: the
-four retracted coverage probes of Appendix~\ref{app:excluded} and the two
+four retracted \textsc{random} probes of Appendix~\ref{app:excluded} and the two
 precision-spliced \textsc{anatomy-v2} probes are excluded here as everywhere
 else in the paper.
 
@@ -1852,12 +1854,15 @@ contrast & epoch & $\Delta$ AUC & 95\% CI & $p$ & $q$ \\
 \end{tabular}
 \end{table}
 
-Benjamini--Hochberg is applied within a declared confirmatory family consisting
+Benjamini--Hochberg is applied within a declared primary family consisting
 of exactly these nine contrasts (the fp16 comparisons among \textsc{random},
 \ArmBest{} and \textsc{envelope} at epochs 50, 75 and 100) and the remaining
 25 exploratory contrasts in the stored statistics are corrected as a separate
 family. The two families are never pooled, and the $q$ values printed above are
-those of the nine-contrast family only.
+those of the nine-contrast family only. Declaring the family fixes what is
+corrected together; it does not make these contrasts confirmatory, because the
+test split was inspected repeatedly before the family was fixed, and the paper
+reports them as descriptive throughout.
 
 \section{Full fp32 re-probe}
 \label{app:fp32}

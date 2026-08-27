@@ -1884,14 +1884,18 @@ descriptive, not inferential. The point labelled \texttt{oracle} is
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.6\linewidth]{fig_specificity_ladder.png}
+\includegraphics[width=0.72\linewidth]{fig_specificity_ladder.png}
 \caption{The matched-epoch-50 result arranged as a ladder of increasing
-anatomical specificity. Companion to Figure~\ref{fig:paradox}. The bars are
-drawn on a truncated AUC axis and carry no interval, so their relative
-\emph{heights} greatly exaggerate the differences; read the printed values and
-the intervals in
-Table~\ref{tab:main} instead. The reference line labelled \texttt{oracle} is
-\ArmBest{}.}
+anatomical specificity, measured as the share of tissue each policy's targets
+hide (Table~\ref{tab:geom}). Points are paired differences in test AUC against
+the unguided null on identical cases, with \Nboot-resample percentile bootstrap
+intervals. The axis is centred on zero, a meaningful baseline for a difference,
+so unlike a truncated AUC axis it cannot exaggerate the spacing. Filled markers
+denote intervals excluding zero. The two arms that separate from the null are
+not the two that hide the most anatomy, which is the observation
+Section~\ref{sec:results-h3} develops. Per-arm error bars are drawn nowhere in
+this paper, because between-case variance cancels in a pairing and would
+understate the evidence. Companion to Figure~\ref{fig:paradox}.}
 \label{fig:ladder}
 \end{figure}
 

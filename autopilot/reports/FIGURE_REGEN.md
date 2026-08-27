@@ -32,6 +32,14 @@ Only two generators exist in the repository. A name search for every
 `interp_04_window_occlusion_W7`, `interp_14_odos_mirror_test`,
 `interp_slice_contribution_by_outcome`. Those are listed in section 7.
 
+> **Correction, 2026-08-27.** Two of those now have generators, written after
+> this report. `fig_geometry_panel` is built by
+> `autopilot/make_fig_geometry_panel.py` from the same artifact that backs
+> Table 2, which resolved a numerical disagreement between the figure and the
+> table. `fig_specificity_ladder` is built by
+> `autopilot/make_fig_specificity_ladder.py` and is no longer a truncated-axis
+> bar chart. The remaining eight are still unregenerable.
+
 9 figure stems were regenerated (14 files counting the `.pdf` twins).
 
 ---

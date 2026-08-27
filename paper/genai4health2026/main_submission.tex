@@ -51,8 +51,8 @@ helped: restricting targets to retinal
 tissue improves AUC by $\DEnvelopeRandomEpFifty$ over unguided masking at the
 matched epoch (95\% CI $\DEnvelopeRandomEpFiftyCI$), and a band located by a
 first-order intensity statistic improves it by $\DOracleRandomEpHundred$ at
-epoch 100 ($\DOracleRandomEpHundredCI$, $p\,\DOracleRandomEpHundredP$). All six
-contrasts against the null, at all three epochs, exclude zero. But
+epoch 100 ($\DOracleRandomEpHundredCI$, $p\,\DOracleRandomEpHundredP$). Both
+arms exclude zero at all three epochs. But
 anatomical \emph{precision} does not reliably help. A policy that places $97\%$ of masked
 patches on tissue, using a trained retinal segmentation model to shape the
 targets, matches unguided masking at epoch 50
@@ -376,8 +376,8 @@ policy & guidance signal & AUC & $\Delta$ & AUC & $\Delta$ & AUC & $\Delta$ \\
 
 Table~\ref{tab:main} gives the main comparison, Table~\ref{tab:contrasts} in
 Appendix~\ref{app:contrasts} the full paired inference for all nine
-precision-matched contrasts, and Figure~\ref{fig:traj} the trajectories. All six
-contrasts against the null survive Benjamini--Hochberg correction over that
+precision-matched contrasts, and Figure~\ref{fig:traj} the trajectories. The six
+\textsc{envelope} and \ArmBest{} contrasts against the null survive Benjamini--Hochberg correction over that
 family of nine ($q \leq \DEnvelopeRandomEpHundredQ$ throughout).
 \textbf{H1 holds}: aiming the same rectangles at retinal tissue
 (\textsc{envelope}) beats unguided masking by $\DEnvelopeRandomEpFifty$ at epoch
@@ -395,8 +395,9 @@ fork from the same epoch-25 checkpoint (open circle). Solid lines are the
 precision-matched fp16 family; dashed lines are fp32
 arms and must not be compared vertically against the solid lines.
 \textbf{(b)} The actual inference: paired differences against the unguided null
-on identical test cases, with \Nboot-resample bootstrap intervals. All six
-intervals exclude zero. Paired differences are plotted rather than per-arm error
+on identical test cases, with \Nboot-resample bootstrap intervals. Every
+\textsc{envelope} and \ArmBest{} interval excludes zero; \textsc{cover} straddles
+zero at epoch 50 and is negative thereafter. Paired differences are plotted rather than per-arm error
 bars because marginal intervals carry between-case variance that cancels in a
 pairing and would understate the evidence.}
 \label{fig:traj}
@@ -525,7 +526,7 @@ A masking policy that only helps when labels are plentiful is of limited
 clinical use, so we withdrew supervision and re-fitted the same probe. Protocol
 and label subsets are held fixed --- the subsampling seed depends on the fraction
 and repeat but never on the arm --- and at full supervision this reproduces
-Table~\ref{tab:main} to within $0.0003$.
+Table~\ref{tab:main} to within $0.0009$.
 
 The observed margin is larger with fewer labels. At $5\%$ of the labelled set
 ($n{=}\LENFive$) \ArmBest{} leads the null by $\LEGapFive$
@@ -788,9 +789,11 @@ disagree, the branch-level figure is the one to believe.
 \caption{Subgroup gap trends. ``gap range'' is the max--min subgroup AUC gap
 observed across the \NprobesSub{} valid probes. $q$ is Benjamini--Hochberg
 across the seven attributes tested, which is necessary because seven trends were
-examined. Three attributes survive correction at checkpoint level: sex and
-disease severity, both of which \emph{narrow} as aggregate AUC rises, and race,
-which widens. Race is the one attribute whose checkpoint-level trend does not
+examined. Only sex survives correction at the conventional $0.05$ level, and it
+\emph{narrows} as aggregate AUC rises. Race, ethnicity and disease severity share
+the same $q$ just above that level, so no threshold admits race and severity
+without also admitting ethnicity. Race is the one attribute whose
+checkpoint-level trend does not
 persist under branch aggregation ($p{=}0.4821$), where the effective sample is
 \NbranchesSub{} independent branches rather than \NprobesSub{} probes; we
 therefore draw no trend conclusion for race.}

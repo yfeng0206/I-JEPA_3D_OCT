@@ -64,7 +64,8 @@ how much anatomy a policy hides is confounded here with mask ratio and retained
 context, so this design does not identify it. Nor are the null's background
 targets wasted --- they are a genuine pretraining signal, even though background
 contributes almost nothing to the classifier. A subgroup audit over
-\NprobesSub{} probes finds the same worst-served group every time; all three
+\NprobesSub{} probes finds the same worst-served group in every probe for five of
+seven attributes; all three
 disease-stage point estimates rise (largest for mild, $\SevDeltaMild$), and only
 the multiplicity-adjusted white race-group interval excludes zero. The gains are not
 separated from one another. The difficulty ordering is
@@ -124,8 +125,8 @@ segmentation model.
 \item The most anatomically precise policy is not the best performer, from
       direct measurement of mask geometry on 600 slices, with an explicit
       accounting of the axes on which the anatomy arms are confounded.
-\item The subgroup audit is a caution: every policy leaves the same groups
-      worst-served. Public-weight reproduction matches the headline result to
+      \item The subgroup audit is a caution: for five of seven attributes every policy
+      leaves the same group worst-served. Public-weight reproduction matches the headline result to
       $10^{-5}$ across hardware and precision.
 \end{itemize}
 
@@ -511,8 +512,9 @@ predictor beats a per-position, no-context reference by $0.680$ on
 background token takes more than knowing where it sits, even though such tokens
 start out nearly pure position ($90.8\%$ of across-position input variance there
 comes from \texttt{pos\_embed}, against $40.8\%$ at tissue). Pretraining spends
-real capacity on them, and background self-similarity falls from $0.784$
-untrained to $0.346$.
+real capacity on them: in the one arm where we measured it, background
+self-similarity falls from $0.784$ untrained to $0.346$ at epoch 100 under
+\textsc{envelope}.
 Yet almost none of it reaches the classifier. Pooled background features are $95.2\%$
 linearly reconstructible from pooled anatomy features; residualised, background
 predicts glaucoma at test AUC $0.5515$ --- barely above chance, though the
@@ -539,11 +541,13 @@ absolute gains at full supervision are small.
 Appendix~\ref{app:labeleff} gives the full curve.
 
 
-\subsection{Subgroups: the ordering never changes}
+\subsection{Subgroups: the ordering is stable}
 \label{sec:subgroup}
 
 Across seven stratifications and \NprobesSub{} probes spanning aggregate AUC
-$\SubAUCMin$ to $\SubAUCMax$, no masking policy reorders the subgroups.
+$\SubAUCMin$ to $\SubAUCMax$, the worst-served group is the same in every probe
+for five of the seven attributes; language and age each dissent in a handful
+(Table~\ref{tab:subtrends}).
 Predictions are joined to the released FairVision metadata in deterministic
 loader order, validated by exact label reconstruction (\Ntest/\Ntest{} cases,
 every probe). Probes that the exclusion rules of Appendix~\ref{app:excluded}
@@ -1328,8 +1332,11 @@ the mechanism.
 random arm's predictor beats a per-position, no-context reference by $0.680$ on
 background targets, above its $0.633$ on anatomy targets: predicting a background
 token requires more than knowing where it is. Pretraining also spends capacity
-reorganising background --- background self-similarity falls from $0.784$
-untrained to $0.346$ at epoch 100.
+reorganising background: self-similarity falls from $0.784$ untrained to $0.346$
+at epoch 100. That second measurement was made on the \textsc{envelope} encoder,
+the only arm for which the class-relation analysis was run, so it evidences that
+pretraining reorganises background rather than that the null arm specifically
+does.
 
 \paragraph{But it does not help the classifier.} Pooled background features are
 $95.2\%$ linearly reconstructible from pooled anatomy features. On $n{=}1000$
@@ -1712,7 +1719,8 @@ determination from our own institution. A venue requiring a formal determination
 should treat this item as outstanding rather than satisfied.
 
 The subgroup analysis in Section~\ref{sec:subgroup} is a caution, not a
-contribution. Every masking policy we tested leaves the same groups worst-served,
+contribution. For five of the seven attributes audited, every masking policy we
+tested leaves the same group worst-served,
 and the best-performing policy narrows none of them reliably, even though every subgroup point estimate rises at the matched
 epoch. We would regard deployment
 of any encoder reported here, without a dedicated and prospective fairness

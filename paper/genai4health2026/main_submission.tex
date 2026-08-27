@@ -27,9 +27,9 @@
 % segmentation model and NO ground-truth labels. Named for what it computes.
 \newcommand{\ArmBest}{\textsc{centroid}}
 
-\title{Does Anatomy-Guided Masking Help? A Controlled Comparison of Six\\
-Masking Policies for Joint-Embedding Predictive Pretraining\\
-on Retinal OCT}
+\title{Where to Aim, Not How Much to Cover:\\
+Segmentation-Free Anatomy Guidance for\\
+Masked Predictive Pretraining on Retinal OCT}
 
 \author{}
 
@@ -202,8 +202,8 @@ fairness for medical foundation models.
 
 \subsection{Background}
 
-I-JEPA partitions the token grid of an image into a context block and $M$ target
-blocks. A context encoder embeds the visible tokens; a predictor maps that
+I-JEPA samples from the token grid of an image a context block and $M$ target
+blocks, which need not cover it. A context encoder embeds the visible tokens; a predictor maps that
 embedding plus positional queries to predicted representations of the target
 tokens; an exponential-moving-average target encoder supplies the regression
 targets. With a $16{\times}16$ token grid the design choice we vary is which of
@@ -455,7 +455,8 @@ though the two are indistinguishable at epochs 50 and 75.
 \centering
 \caption{Measured mask geometry, 600 training slices, production samplers.
 ``purity'' is the fraction of masked cells lying on tissue; ``loss slots'' is the
-number of predictor targets contributing to the loss. AUC is quoted at the
+number of predictor target \emph{cells} entering the loss, summed over the $M$
+targets. AUC is quoted at the
 \emph{matched} epoch 50, so the geometry-to-AUC association is not read across
 mixed epochs.}
 \label{tab:geom}
@@ -606,7 +607,9 @@ equity the quantity that matters is the paired \emph{difference} between groups'
 gains; between the worst- and best-served race strata it is
 $\PDDiffRace$ (CI $\PDDiffRaceCI$), and by sex the interval likewise contains
 zero, so at these subgroup sizes we cannot resolve whether the improvement is
-evenly distributed. Appendix~\ref{app:subgroup} gives every stratum. No policy
+evenly distributed. Appendix~\ref{app:subgroup} gives every stratum,
+Appendix~\ref{app:intersectional} the race-by-sex cells, whose gap exceeds the
+race margin in every arm. No policy
 here is a fairness intervention and none should be presented as one.
 
 \subsection{Controls}
@@ -658,14 +661,16 @@ arm that randomises the band's vertical position while holding area and context
 fixed, which we did not run.
 
 \paragraph{One pretraining run per policy, and a replication in progress.}
-The paired bootstrap quantifies sampling error on a fixed test set; it does not
-quantify seed-to-seed variance of pretraining. With $n{=}1$ continuation per arm
-the \emph{ranking} is not statistically established even where individual
-pairwise differences are significant on this test set.
-\citet{bouthillier2021variance} show that single-seed comparisons routinely
-mistake optimisation noise for method effects. Probe-seed variance is not
-quantified here either: an earlier multi-seed probe check is not reproducible
-from retained artifacts, so this paper states no bound on probe noise. A
+This design holds the ancestor checkpoint, optimiser, schedule, effective batch
+size and probe protocol fixed across arms, leaving masking policy the only moving
+variable; what it does not resample is pretraining stochasticity, so each arm is
+one continuation.
+The paired bootstrap bounds sampling error on a fixed test set, so the intervals
+support statements about \emph{these} continuations rather than an expected
+\emph{ranking} over retrainings, which pairwise significance on one test set does
+not establish~\citep{bouthillier2021variance}. Probe-seed variance is outside the
+design too: an earlier multi-seed probe check is not reproducible from retained
+artifacts, so we state no bound on probe noise. A
 replication addressing the first gap is running and every result of it is
 PENDING: six continuations --- \textsc{random}, \textsc{envelope} and \ArmBest{}
 at two further seeds --- resume from the same epoch-25 ancestor, SHA-256 verified
@@ -1076,12 +1081,109 @@ are paired differences rather than differences of independent estimates.}
 
 \paragraph{Limitations.} The $p$-values here are descriptive, for the reasons
 given in Section~\ref{sec:limits}. Race and ethnicity are
-self-reported categories inherited from FairVision's coding; at these subgroup
-sizes we cannot speak to intersectional groups. All figures are frozen mean-pool
+self-reported categories inherited from FairVision's coding. A race-by-sex
+intersectional breakdown \emph{is} reported, in
+Appendix~\ref{app:intersectional}; its limits are that two of its six cells hold
+fewer than $130$ cases and that it carries no paired per-cell intervals, so it
+describes the disparity and tests no per-cell change.
+All figures are frozen mean-pool
 linear probes. Subgroup sensitivity at a transferred threshold is reported in
 Appendix~\ref{app:operating}, but we report no subgroup calibration and no
-intersectional breakdown, so this is not a complete fairness evaluation. Disparities
+subgroup predictive values, so this is not a complete fairness
+evaluation. Disparities
 could differ under fine-tuning or a stronger head.
+
+\subsection{Intersectional breakdown: race by sex}
+\label{app:intersectional}
+
+The audit above crosses no attributes, so on its own it cannot say whether a
+group disadvantaged on two axes at once is worse served than either margin
+implies. We therefore also computed AUC for all six race-by-sex cells of the
+test split, from the same saved predictions, under the same exact-label join
+proof, with per-arm bootstrap percentile intervals from the same helper as the
+marginal audit. The second axis is FairVision's self-reported gender coding,
+which this paper reports as sex throughout. The artifact behind this subsection
+covers 22 arms, 18 of them non-retracted; those 18 are a strict subset of the
+\NprobesSub{} probes of Table~\ref{tab:subtrends} --- five \textsc{cover} and
+\textsc{blob} probes are absent from it --- so every count in this subsection is
+out of 18 arms, not \NprobesSub{}.
+
+\begin{table}[h]
+\centering
+\caption{Race-by-sex AUC at matched epoch 100 on the \Ntest{} test volumes, with
+per-cell counts and per-arm bootstrap percentile intervals. $\Delta$ is
+\ArmBest{} minus \textsc{random} as a difference of point estimates. The
+artifact stores per-arm intervals only and no paired per-cell resampling, so no
+$\Delta$ in this table is tested against zero; per-cell significance is PENDING.
+The two asian cells are small ($n{=}123$ and $n{=}128$) and their intervals are
+correspondingly wide.}
+\label{tab:intersectional}
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lrrcccr}
+\toprule
+cell & $n$ & $n_{+}$ & \textsc{random} & \textsc{envelope} & \ArmBest{} & $\Delta$ \\
+\midrule
+asian $\times$ female & 123  & 52  & 0.8761 [0.8024, 0.9342] & 0.8762 [0.8042, 0.9366] & 0.8904 [0.8245, 0.9423] & $+0.0144$ \\
+asian $\times$ male   & 128  & 66  & 0.9245 [0.8752, 0.9655] & 0.9145 [0.8565, 0.9626] & 0.9409 [0.8983, 0.9751] & $+0.0164$ \\
+black $\times$ female & 250  & 149 & 0.8195 [0.7668, 0.8679] & 0.8155 [0.7632, 0.8638] & 0.8309 [0.7790, 0.8783] & $+0.0114$ \\
+black $\times$ male   & 181  & 119 & 0.8435 [0.7822, 0.8994] & 0.8652 [0.8091, 0.9141] & 0.8663 [0.8132, 0.9149] & $+0.0228$ \\
+white $\times$ female & 1343 & 610 & 0.8641 [0.8441, 0.8826] & 0.8728 [0.8530, 0.8910] & 0.8762 [0.8570, 0.8943] & $+0.0121$ \\
+white $\times$ male   & 975  & 470 & 0.8864 [0.8650, 0.9062] & 0.8958 [0.8744, 0.9148] & 0.8962 [0.8746, 0.9153] & $+0.0099$ \\
+\midrule
+max$-$min gap         &      &     & 0.1050 & 0.0990 & 0.1100 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{The ordering compounds, and it never reorders.} The black
+$\times$ female cell has the lowest AUC in all 18 non-retracted arms and the
+asian $\times$ male cell the highest in all 18. Within each race the female cell
+sits below the male cell in all $54$ race-by-arm combinations, and within each
+sex the black cell sits below the white cell in all $36$. These 18 arms share one
+test split, one epoch-25 ancestor and one probe seed, and several are different
+epochs of a single branch, so this unanimity is a consistency check across
+checkpoints, not 18 replications; we attach no $p$-value to it, exactly as for
+the marginal ordering above.
+
+\paragraph{The marginal race gap understates the worst cell.} Averaged over the
+18 arms, the max$-$min gap is $0.0340$ by sex alone, $0.0653$ by race alone, and
+$0.1046$ across the six race-by-sex cells, and the intersectional gap exceeds
+that arm's marginal race gap in all 18. The race margin therefore understates
+the spread a race-by-sex reading exposes by $60.1\%$ on average --- arithmetic on
+those two means, not a separate measurement. The same pattern holds at the
+matched epoch of Table~\ref{tab:intersectional}: under \ArmBest{} the marginal
+race gap is $0.0717$ while the race-by-sex gap is $0.1100$, and the worst cell,
+black $\times$ female at $0.8309$, sits $0.0163$ below the marginal black figure
+$\RaceOracleBlack$ that the marginal audit above reports. An audit that stops
+at the margins reports a worst-group number that is optimistic relative to the
+worst cell. The compounding is close to additive and we do not claim more: the
+sex and race means sum to $0.0993$ against an observed $0.1046$, a ratio of
+$1.053$, which is not evidence of a super-additive interaction.
+
+\paragraph{Not every cell improves.} The statement elsewhere in this appendix
+that every subgroup point estimate rises from \textsc{random} to \ArmBest{} is a
+statement about marginal strata at the matched epoch, and it does \emph{not}
+extend to cells at every epoch. At epoch 100 all six cells do rise
+(Table~\ref{tab:intersectional}), but at epoch 50 the asian $\times$ female cell
+falls by $0.0020$, and \textsc{envelope} minus \textsc{random} is negative in
+three of six cells at epoch 75 (asian $\times$ female $-0.0148$, asian $\times$
+male $-0.0031$, black $\times$ female $-0.0025$) and in two of six at epoch 100
+(asian $\times$ male $-0.0100$, black $\times$ female $-0.0040$, with asian
+$\times$ female at $+0.0001$). No policy we tested raises every intersectional
+cell at every epoch, and the exceptions fall in the small asian cells and in the
+worst cell.
+
+\paragraph{What this does not establish.} There are no paired per-cell bootstrap
+intervals in the artifact, so every $\Delta$ above is a difference of point
+estimates and none of them is separated from zero; per-cell delta significance
+is PENDING and is computable from the retained per-arm predictions. Two cells
+carry $n{=}123$ and $n{=}128$, so their intervals overlap almost everything.
+Cells with a single class or fewer than $40$ cases would have been dropped; none
+were, so all six race-by-sex cells are reported. Nothing here is a fairness
+intervention: as with the margins, no policy reorders the cells, and the
+worst-served cell is the same under the unguided null and under every guided
+policy we tested.
 
 \section{Excluded runs}
 \label{app:excluded}
@@ -1490,12 +1592,16 @@ not evidence of clinical utility.
 
 The subgroup analysis in Section~\ref{sec:subgroup} is a caution, not a
 contribution. Every masking policy we tested leaves the same groups worst-served,
-and the best-performing policy narrows none of them reliably, even though every subgroup point estimate rises. We would regard deployment
+and the best-performing policy narrows none of them reliably, even though every subgroup point estimate rises at the matched
+epoch. We would regard deployment
 of any encoder reported here, without a dedicated and prospective fairness
 evaluation on the target population, as inappropriate. We also stress that the
 audit is incomplete: beyond AUC, the transferred-threshold sensitivity,
-specificity and calibration of Appendix~\ref{app:operating}, it contains no
-predictive-value analysis and no intersectional breakdown.
+specificity and calibration of Appendix~\ref{app:operating}, and the race-by-sex
+breakdown of Appendix~\ref{app:intersectional}, it contains no
+predictive-value analysis and no subgroup calibration, and the intersectional
+cells carry no paired per-cell intervals, so no per-cell change there is tested
+against zero.
 
 Releasing pretrained weights carries the usual dual-use consideration that they
 may be applied to populations unlike the training cohort. We document the cohort

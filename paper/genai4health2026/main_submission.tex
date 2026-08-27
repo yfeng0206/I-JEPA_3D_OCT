@@ -394,15 +394,16 @@ Why the unguided null nonetheless stays close has an answer of its own
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.78\linewidth]{fig_trajectories_ci.png}
-\caption{\textbf{(a)} Frozen-probe test AUC against pretraining epoch. All arms
+\caption{\textbf{(a)} Frozen-probe test AUC against pretraining epoch; note the
+truncated AUC axis. All arms
 fork from the same epoch-25 checkpoint (open circle). Solid lines are the
 precision-matched fp16 family; dashed lines are fp32
 arms and must not be compared vertically against the solid lines.
 \textbf{(b)} The actual inference: paired differences against the unguided null
-on identical test cases, with \Nboot-resample bootstrap intervals. Every
+on identical test cases, \Nboot-resample percentile bootstrap intervals. Every
 \textsc{envelope} and \ArmBest{} interval excludes zero; \textsc{cover} straddles
-zero at epoch 50 and is negative thereafter. Paired differences are plotted
-rather than per-arm error bars: marginal intervals carry between-case variance
+zero at epoch 50 and is negative thereafter. Paired differences replace
+per-arm error bars: marginal intervals carry between-case variance
 that cancels in a pairing and would understate the evidence.}
 \label{fig:traj}
 \end{figure}
@@ -823,8 +824,11 @@ and no iteration afterwards. No such cohort was available to us.
 explains. Panel (b) shows the ordering this paper tests: target purity
 rises monotonically from \textsc{random} to \textsc{anatomy-v2}, while downstream
 AUC does not follow it. Panels (c)--(f) give the confounds we do not
-disentangle --- how much anatomy survives in the context, the context budget, and
-how often a slice is left with no anatomy visible at all.}
+disentangle --- how much anatomy survives in the context (c, d), the context
+budget (e), and
+how often a slice is left with no anatomy visible at all (f). Every bar starts
+at zero and is a mean over the sweep, with no interval drawn; panel scales
+differ, so bars should be compared only within a panel.}
 \label{fig:maskstats}
 \end{figure}
 
@@ -841,9 +845,13 @@ assignment, and the anatomy contour are identical to Figure~\ref{fig:policies}.
 \caption{All six masking policies (columns) on five B-scans (rows) spanning one
 volume, drawn with the production samplers. Leftmost column is the unmasked
 B-scan. Each predictor target block has its own colour; the green contour is
-the anatomy reference. The random, envelope, and cover arms place axis-aligned
-rectangles; the anatomy arms grow cell-wise targets that follow the retinal
-band and therefore change shape from slice to slice.}
+the anatomy reference. The random, \ArmBest{}, envelope and cover arms place
+axis-aligned rectangles; the anatomy arms grow cell-wise targets that follow the
+retinal band and therefore change shape from slice to slice. Column headings
+carry each arm's own probe epoch, which differs between arms, so the AUCs
+printed there are not a matched-epoch comparison and only
+Table~\ref{tab:main} should be read that way. Panel headings use the artefact
+name \texttt{oracle} for \ArmBest{}.}
 \label{fig:policies5}
 \end{figure}
 
@@ -964,11 +972,16 @@ what we can offer instead.
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_fairness.png}
-\caption{\textbf{Left:} race-stratified AUC at epoch 100 with bootstrap
-intervals. The black subgroup is lowest under every policy, yet
+\caption{\textbf{Left:} race-stratified AUC at epoch 100. Error bars are
+\Nboot-resample percentile bootstrap intervals over test volumes, with the
+per-group $n$ in the legend; the bars sit on a truncated axis, so bar
+\emph{height} exaggerates the differences and only the plotted positions should
+be read. The black subgroup is lowest under every policy, yet
 \emph{every} group improves from \textsc{random} to \ArmBest{}.
-\textbf{Right:} max--min race gap against aggregate AUC across \NprobesSub{}
-checkpoints. The fitted slope is positive and passes multiplicity correction at
+\textbf{Right:} max--min race gap against aggregate AUC, one point per probe
+over the \NprobesRace{} probes that carry a race summary. The dashed line is a
+least-squares fit while the quoted correlation is Spearman. The slope is
+positive and passes multiplicity correction at
 checkpoint level, but does not survive branch-level aggregation
 (Table~\ref{tab:subtrends}), so we draw no trend conclusion from it.}
 \label{fig:fair}
@@ -1371,8 +1384,10 @@ patch-level, leave-one-out over the 256 patch tokens of a target slice.
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.92\linewidth]{interp_slice_contribution_curves.png}
-\caption{Single-slice occlusion attribution against native slice position,
-averaged over all \Ntest{} test volumes, for all three fine-tuned probes.
+\caption{Single-slice occlusion attribution against native slice position, for
+all three fine-tuned probes. Each probe contributes two curves, a mean over the
+glaucoma volumes (solid) and a mean over the healthy volumes (dashed), with
+each $n$ in the legend and no interval drawn.
 Despite spanning zero to 7.14M probe parameters they converge on the same
 structure. The $y$-axis is
 \emph{signed} $\Delta$logit: peaks are slices whose removal lowers the logit,
@@ -1387,7 +1402,9 @@ genuinely unused.}
 \caption{Window occlusion ($W{=}7$) amplifies the same signal roughly sevenfold
 and suppresses single-volume noise. For mean-pooled models, single-slice
 occlusion systematically under-estimates attributed signal; the windowed variant
-recovers more signal.}
+recovers more signal. As in Figure~\ref{fig:interp-slice}, each probe
+contributes a glaucoma mean (solid) and a healthy mean (dashed) with no interval
+drawn, and the curve stops where a full window no longer fits.}
 \label{fig:interp-window}
 \end{figure}
 
@@ -1417,8 +1434,11 @@ and is not validated against ground truth.
 \includegraphics[width=0.92\linewidth]{interp_14_odos_mirror_test.png}
 \caption{The two-peak structure is an OD/OS storage artefact. Clustering
 per-volume attribution curves into two groups returns near-perfect mirror images
-of one another, which is what laterality flipping would produce, rather than
-bilateral anatomy.}
+of one another for the two well-structured probes, which is what laterality
+flipping would produce, rather than
+bilateral anatomy; the \textsc{d1} row does not show that structure. Glaucoma
+volumes only, cluster $n$ in each legend, no interval drawn, and the $y$ range
+differs by row.}
 \label{fig:interp-odos}
 \end{figure}
 
@@ -1434,7 +1454,9 @@ attending to the wrong structures.
 \centering
 \includegraphics[width=0.92\linewidth]{interp_slice_contribution_by_outcome.png}
 \caption{Attribution stratified by TP / FN / TN / FP. Errors reproduce the
-correct pattern at lower amplitude rather than selecting different anatomy.}
+correct pattern at lower amplitude rather than selecting different anatomy.
+Curves are per-outcome means with the $n$ in each legend; panels share a
+$y$ range and no interval is drawn.}
 \label{fig:interp-outcome}
 \end{figure}
 
@@ -1446,7 +1468,10 @@ correct pattern at lower amplitude rather than selecting different anatomy.}
 scale with the slice mean subtracted so that maps are comparable across volumes.
 Attribution is broadly distributed
 rather than concentrated in a few patches. Agreement is stronger at slice than
-patch level.}
+patch level. These are hand-picked illustrative volumes rather than a sample,
+the overlay is the patch grid rendered with smoothing and so carries no detail
+finer than a patch, and no colour bar is drawn, so the maps show sign and
+spatial pattern but no readable magnitude.}
 \label{fig:interp-heatmap}
 \end{figure}
 
@@ -1694,8 +1719,11 @@ those of the nine-contrast family only.
 masked patches lying on retinal tissue. The policy whose masks are $97\%$
 on-tissue does not separate from the null, while policies at $40$--$43\%$ purity
 gain the most. The ordering does not support the intuition that more accurate
-anatomical masking yields better representations. With four to five arms this is
-descriptive, not inferential.}
+anatomical masking yields better representations. The AUC axis is truncated and
+no interval is drawn, and the dashed line is
+a least-squares fit through the arms shown; with four to five arms this is
+descriptive, not inferential. The point labelled \texttt{oracle} is
+\ArmBest{}.}
 \label{fig:paradox}
 \end{figure}
 
@@ -1703,18 +1731,27 @@ descriptive, not inferential.}
 \centering
 \includegraphics[width=0.6\linewidth]{fig_specificity_ladder.png}
 \caption{The matched-epoch-50 result arranged as a ladder of increasing
-anatomical specificity. Companion to Figure~\ref{fig:paradox}.}
+anatomical specificity. Companion to Figure~\ref{fig:paradox}. The bars are
+drawn on a truncated AUC axis and carry no interval, so their relative
+\emph{heights} greatly exaggerate the differences; read the printed values and
+the intervals in
+Table~\ref{tab:main} instead. The reference line labelled \texttt{oracle} is
+\ArmBest{}.}
 \label{fig:ladder}
 \end{figure}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_geometry_panel.png}
-\caption{Measured mask geometry per policy, 600 training slices. The four
-rectangle policies are closely matched on every axis, so their comparison is
+\caption{Measured mask geometry per policy, 600 training slices. Bars start at
+zero and no interval is drawn; each is a mean over those slices. The four
+rectangle policies are closely matched on masking ratio, context kept and
+predictor loss slots, and separate only on the manipulated axis, how much
+anatomy the targets hide, so their comparison is
 near single-variable. The anatomy policy diverges on all four simultaneously ---
 half the masking ratio, $1.6\times$ the context, $0.4\times$ the predictor loss
-slots --- so its deficit cannot be attributed to target shape.}
+slots --- so its deficit cannot be attributed to target shape. Bars labelled
+\texttt{oracle} and \texttt{cover-f0.21} are \ArmBest{} and \textsc{cover}.}
 \label{fig:geom}
 \end{figure}
 

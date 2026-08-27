@@ -62,6 +62,82 @@ WEIGHTS = {
 }
 
 
+# The six masking-policy arms the paper compares. Every one is now published;
+# previously only RANDOM and CENTROID were, which left the paper's release
+# statement unsupported for the other four -- including ENVELOPE, which carries
+# the headline result. AUCs are the frozen MeanPool test values reported in the
+# paper, quoted here so a reader can confirm they fetched the right weights.
+PAPER_ARMS = {
+    "random": {
+        "hub": "random-posfix-100ep",
+        "desc": "Unguided masking. The null every other arm is compared against.",
+        "files": ["jepa_patch-ep050.pth.tar", "jepa_patch-ep075.pth.tar",
+                  "jepa_patch-ep100.pth.tar"],
+        "epochs": [("ep50", "0.8641"), ("ep75", "0.8723"), ("ep100", "0.8746")],
+    },
+    "centroid": {
+        "hub": "oracle-anatomical-100ep",
+        "desc": "Band located by a per-column intensity centroid. Best arm; uses no segmentation model.",
+        "files": ["jepa_patch_oracle-ep050.pth.tar", "jepa_patch_oracle-ep075.pth.tar",
+                  "jepa_patch_oracle-ep100.pth.tar"],
+        "epochs": [("ep50", "0.8740"), ("ep75", "0.8836"), ("ep100", "0.8855")],
+    },
+    "envelope": {
+        "hub": "envelope-mirage-100ep",
+        "desc": "Rectangles restricted to retinal tissue. Largest gain at the matched epoch.",
+        "files": ["jepa_patch_mirage-ep50.pth.tar", "jepa_patch_mirage-ep75.pth.tar",
+                  "jepa_patch_mirage-ep100.pth.tar"],
+        "epochs": [("ep50", "0.8761"), ("ep75", "0.8803"), ("ep100", "0.8807")],
+    },
+    "cover": {
+        "hub": "cover-f021-100ep",
+        "desc": "Coverage-constrained placement, floor f=0.21. See the collation-defect appendix.",
+        "files": ["jepa_patch_cover_f021-ep50.pth.tar", "jepa_patch_cover_f021-ep75.pth.tar",
+                  "jepa_patch_cover_f021-ep100.pth.tar"],
+        "epochs": [("ep50", "0.8643"), ("ep75", "0.8639"), ("ep100", "0.8577")],
+    },
+    "anatomy-v2": {
+        "hub": "anatomy-v2-100ep",
+        "desc": "Targets shaped to the segmented retina. ep75 is the clean fp32 continuation, "
+                "not the superseded fp16 splice.",
+        "files": ["jepa_patch_anatomy_v2-ep50.pth.tar",
+                  "jepa_patch_anatomy_v2-ep75-fp32.pth.tar"],
+        "epochs": [("ep50", "0.8654"), ("ep75 fp32", "0.8612")],
+    },
+    "anatomy-v1": {
+        "hub": "anatomy-v1-30ep",
+        "desc": "First anatomy-shaped sampler. Only epoch 30 exists.",
+        "files": ["jepa_patch_mirage-ep30.pth.tar"],
+        # No AUC is quoted here. Unlike every other arm this one has no
+        # generated macro, and the nearest artifact -- region_auc_summary
+        # anatomy_val -- is a VALIDATION figure, so quoting it would report a
+        # validation number under a test label. See the paper for this arm.
+        "epochs": [("ep30", "see paper")],
+    },
+}
+
+
+def download_arm(arm, output_dir):
+    """Fetch every published checkpoint for one masking-policy arm."""
+    try:
+        from huggingface_hub import hf_hub_download
+    except ImportError:
+        print("Install huggingface_hub: pip install huggingface_hub")
+        return 1
+    spec = PAPER_ARMS[arm]
+    print("arm  : %s" % arm)
+    print("desc : %s" % spec["desc"])
+    print("repo : %s/%s\n" % (ANCESTOR_REPO_ID, spec["hub"]))
+    os.makedirs(output_dir, exist_ok=True)
+    for fn in spec["files"]:
+        rel = "%s/%s" % (spec["hub"], fn)
+        print("  downloading %s ..." % rel)
+        p = hf_hub_download(ANCESTOR_REPO_ID, rel, local_dir=output_dir)
+        print("    -> %s" % p)
+    print("\nAll arms fork from the same epoch-25 ancestor; fetch it with --ancestor-ep25.")
+    return 0
+
+
 def download_ancestor(output_dir):
     """Fetch and verify the epoch-25 ancestor.  Returns 0 on success."""
     try:
@@ -91,21 +167,35 @@ def main():
     parser.add_argument("--list", action="store_true", help="List available weights")
     parser.add_argument("--ancestor-ep25", action="store_true",
                         help="Download the locked epoch-25 fork point and verify its SHA-256")
+    parser.add_argument("--arm", choices=sorted(PAPER_ARMS),
+                        help="Download one masking-policy arm from the paper")
     parser.add_argument("--output-dir", default="checkpoints", help="Output directory")
     args = parser.parse_args()
 
     if args.ancestor_ep25:
         return download_ancestor(args.output_dir)
 
+    if args.arm:
+        return download_arm(args.arm, args.output_dir)
+
     if args.list or not (args.all or args.encoder):
-        print(f"Available weights from {REPO_ID}:\n")
+        print("Masking-policy arms from the paper (repo %s):\n" % ANCESTOR_REPO_ID)
+        for name in sorted(PAPER_ARMS):
+            a = PAPER_ARMS[name]
+            print("  --arm %-11s %s" % (name, a["desc"]))
+            print("      %-13s %s" % ("hub folder:", a["hub"]))
+            print("      %-13s %s" % ("epochs:", ", ".join(
+                "%s AUC %s" % (e, v) for e, v in a["epochs"])))
+            print()
+        print("  --ancestor-ep25   the locked epoch-25 fork point shared by every arm\n")
+        print(f"Legacy weights from {REPO_ID}:\n")
         for fname, info in WEIGHTS.items():
             print(f"  {fname}")
             print(f"    {info['desc']}")
             print(f"    Size: {info['size']}  |  AUC: {info['auc']}")
             print()
         if not (args.all or args.encoder):
-            print("Use --encoder for best encoder, --all for everything")
+            print("Use --arm NAME for a paper arm, --encoder for best encoder, --all for everything")
         return
 
     try:

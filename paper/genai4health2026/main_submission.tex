@@ -393,7 +393,7 @@ Why the unguided null nonetheless stays close has an answer of its own
 \includegraphics[width=0.71\linewidth]{fig_trajectories_ci.png}
 \caption{\textbf{(a)} Frozen-probe test AUC against pretraining epoch; note the
 truncated AUC axis. All arms
-fork from the same epoch-25 checkpoint (open circle). Solid lines are the
+fork from the same epoch-25 checkpoint (open star). Solid lines are the
 precision-matched fp16 family; dashed lines are fp32
 arms and must not be compared vertically against the solid lines.
 \textbf{(b)} The actual inference: paired differences against the unguided null
@@ -982,15 +982,14 @@ what we can offer instead.
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_fairness.png}
-\caption{\textbf{Left:} race-stratified AUC at epoch 100. Error bars are
-3{,}000-resample class-stratified percentile bootstrap intervals within each
-group, with fitted heads fixed and
-per-group $n$ in the legend; the bars sit on a truncated axis, so bar
-\emph{height} exaggerates the differences and only the plotted positions should
-be read. The black subgroup is lowest under every policy, yet
+\caption{\textbf{Left:} race-stratified AUC at epoch 100. Points are group AUCs
+and vertical bars are 3{,}000-resample class-stratified percentile bootstrap
+intervals within each group, with fitted heads fixed and
+per-group $n$ in the legend. The black subgroup is lowest under every policy, yet
 \emph{every} group point estimate rises from \textsc{random} to \ArmBest{}.
 \textbf{Right:} max--min race gap against aggregate AUC, one point per probe
-over the \NprobesRace{} probes that carry a race summary. The dashed line is a
+over the \NprobesRace{} probes that carry a race summary; the legend keys colour
+and marker to policy. The dashed line is a
 least-squares fit while the quoted correlation is Spearman. The slope is
 positive but fails multiplicity correction at
 checkpoint level and does not survive branch-level aggregation

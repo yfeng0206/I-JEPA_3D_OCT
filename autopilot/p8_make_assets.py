@@ -21,6 +21,7 @@ import os
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 import numpy as np
 from sklearn.metrics import roc_curve
 
@@ -40,11 +41,44 @@ ARM_TEX = {"random": r"\textsc{random}", "oracle": r"\ArmBest{}",
 ARM_PLOT = {"random": "random", "oracle": "centroid", "intensity": "centroid",
             "envelope": "envelope",
             "anatomy-v1": "anatomy-v1", "anatomy-v2": "anatomy-v2",
-            "cover-f021": "cover", "ancestor": "ancestor"}
-COL = {"random": "#4c4c4c", "oracle": "#c1272d", "envelope": "#1f77b4",
-       "anatomy-v1": "#9467bd", "anatomy-v2": "#8c564b", "cover-f021": "#2ca02c",
-       "ancestor": "#999999"}
+            "cover-f021": "cover", "cover": "cover", "ancestor": "ancestor"}
 
+# ---------------------------------------------------------------- arm palette
+# ONE arm-to-colour mapping for every figure this file emits, and the same
+# mapping is mirrored in paper/genai4health2026/scripts/make_story_figures.py.
+# Audited offline with the bundled skill tool
+#   .agents/skills/scientific-visualization/scripts/palette_audit.py
+#   --background FFFFFF --role graphical
+# All seven colours clear the 3:1 background screen (worst: anatomy-v1 at 3.06;
+# the previous ancestor #999999 failed at 2.85). 19 of 21 pairs clear the
+# 10.0 dL* greyscale screen, against 9 failures before (worst pair 0.36).
+#
+# An exhaustive search over ALL 58 colours bundled with the skill (30 of which
+# clear 3:1 on white) shows the largest subset whose every pair clears
+# dL* >= 10 has exactly FIVE members, and six is impossible. That five-set is
+# also near-monochromatic blue, so it is useless as a qualitative palette. Six
+# or seven arms therefore cannot be separated by colour alone: the marker and
+# line-style redundancy below is a necessity, not a preference.
+COL = {"random": "#000000",      # L* 0.00,  contrast 21.00
+       "ancestor": "#333333",    # L* 21.25, contrast 12.63
+       "oracle": "#882255",      # L* 31.88, contrast  8.73  (Tol muted)
+       "anatomy-v2": "#666666",  # L* 43.19, contrast  5.74
+       "envelope": "#0072B2",    # L* 45.97, contrast  5.19  (Okabe-Ito blue)
+       "cover-f021": "#009E73",  # L* 57.74, contrast  3.42  (Okabe-Ito green)
+       "anatomy-v1": "#CC79A7"}  # L* 61.05, contrast  3.06  (Okabe-Ito purple)
+# Globally unique marker per arm, so colour is never the only cue.
+MK = {"random": "o", "ancestor": "*", "oracle": "s", "anatomy-v2": "v",
+      "envelope": "^", "cover-f021": "D", "anatomy-v1": "P"}
+# Historical aliases that appear as keys in some artifacts.
+for _src, _dst in (("oracle", "intensity"), ("cover-f021", "cover")):
+    COL[_dst] = COL[_src]
+    MK[_dst] = MK[_src]
+
+# Race subgroups in the fairness panel are a different variable from the arms,
+# so they get their own audited triple rather than borrowing arm colours.
+# dL* 0.00 / 31.88 / 45.97; all clear 3:1 on white.
+GRP_COL = {"White": "#000000", "Black": "#882255", "Asian": "#0072B2"}
+GRP_MK = {"White": "o", "Black": "s", "Asian": "^"}
 
 def num(x, d=4):
     return ("%." + str(d) + "f") % x
@@ -710,25 +744,29 @@ def main():
                              gridspec_kw={"width_ratios": [1.25, 1]})
     ax = axes[0]
     anc = T["ancestor@ep25@fp32"]
-    ax.plot([25], [anc["auc"]], "o", mfc="white", color="#555555", zorder=5)
+    ax.plot([25], [anc["auc"]], marker=MK["ancestor"], ls="none", mfc="white",
+            color=COL["ancestor"], ms=9, mew=1.2, zorder=5)
     ax.annotate("shared ancestor (ep25)", (25, anc["auc"]), textcoords="offset points",
-                xytext=(14, 26), fontsize=8, color="#555555",
-                arrowprops=dict(arrowstyle="-", color="#999999", lw=0.7))
+                xytext=(14, 26), fontsize=8, color=COL["ancestor"],
+                arrowprops=dict(arrowstyle="-", color=COL["ancestor"], lw=0.7))
 
+    # Solid line = fp16 family, dashed = fp32 family: line style carries
+    # PRECISION here, so arm identity is carried redundantly by a unique marker.
     for arm in ("random", "oracle", "envelope"):
         pts = sorted([t for t in st["table"] if t["arm"] == arm and t["precision"] == "fp16"],
                      key=lambda t: t["epoch"])
         if not pts:
             continue
         ax.plot([25] + [p["epoch"] for p in pts], [anc["auc"]] + [p["auc"] for p in pts],
-                "-o", color=COL[arm], label=ARM_PLOT[arm], lw=2.2, ms=5)
+                ls="-", marker=MK[arm], color=COL[arm], label=ARM_PLOT[arm], lw=2.2, ms=5.5)
 
-    for arm, mk in (("anatomy-v2", "s"), ("cover-f021", "^"), ("anatomy-v1", "D")):
+    for arm in ("anatomy-v2", "cover-f021", "anatomy-v1"):
         pts = sorted([t for t in st["table"] if t["arm"] == arm], key=lambda t: t["epoch"])
         if not pts:
             continue
         ax.plot([25] + [p["epoch"] for p in pts], [anc["auc"]] + [p["auc"] for p in pts],
-                "--", marker=mk, color=COL[arm], label=ARM_PLOT[arm] + " (fp32)", lw=1.3, ms=4, alpha=0.8)
+                ls="--", marker=MK[arm], color=COL[arm], label=ARM_PLOT[arm] + " (fp32)",
+                lw=1.3, ms=4.5, alpha=0.9)
 
     ax.set_xlabel("pretraining epoch")
     ax.set_ylabel("frozen-probe test AUC")
@@ -760,7 +798,7 @@ def main():
             hi.append(h - d)
         if not xs:
             continue
-        ax.errorbar(xs, ds, yerr=[lo, hi], fmt="o", color=COL[arm], capsize=4,
+        ax.errorbar(xs, ds, yerr=[lo, hi], fmt=MK[arm], color=COL[arm], capsize=4,
                     ms=6, lw=1.8, label=ARM_PLOT[arm] + r" $-$ random")
     ax.axhline(0, color="#333333", lw=1.2, ls="-")
     ax.set_xticks(range(len(eps)))
@@ -781,34 +819,73 @@ def main():
     keys = ["random@ep100@fp16", "envelope@ep100@fp16", "oracle@ep100@fp16"]
     groups = ["White", "Black", "Asian"]
     w = 0.25
+    # Dot-and-interval, not bars. The effects here are 0.006-0.012 AUC, and a
+    # bar read from a non-zero baseline encodes those as a length ratio that
+    # exaggerates them. A point encodes POSITION, so the axis may be scaled to
+    # the data without deceiving; the interval is drawn and named.
+    _all_v, _all_lo, _all_hi = [], [], []
     for gi, g in enumerate(groups):
         vals = [fair["arms"][k]["groups"]["race"]["per_group"][g]["auc"] for k in keys]
         errlo = [vals[i] - fair["arms"][k]["groups"]["race"]["per_group"][g]["auc_ci95_lo"]
                  for i, k in enumerate(keys)]
         errhi = [fair["arms"][k]["groups"]["race"]["per_group"][g]["auc_ci95_hi"] - vals[i]
                  for i, k in enumerate(keys)]
-        ax.bar(np.arange(len(keys)) + (gi - 1) * w, vals, w, yerr=[errlo, errhi],
-               capsize=3, label="%s (n=%d)" % (g, fair["arms"][keys[0]]["groups"]["race"]["per_group"][g]["n"]))
+        ax.errorbar(np.arange(len(keys)) + (gi - 1) * w, vals, yerr=[errlo, errhi],
+                    fmt=GRP_MK[g], color=GRP_COL[g], capsize=3, ms=6.5, lw=0,
+                    elinewidth=1.4, markeredgecolor="white", markeredgewidth=0.6,
+                    label="%s (n=%d)" % (g, fair["arms"][keys[0]]["groups"]["race"]["per_group"][g]["n"]))
+        _all_v += vals
+        _all_lo += errlo
+        _all_hi += errhi
     ax.set_xticks(range(len(keys)))
     ax.set_xticklabels([ARM_PLOT[k.split("@")[0]] for k in keys])
-    ax.set_ylim(0.75, 0.93)
+    ax.set_xlim(-0.5, len(keys) - 0.5)
+    # Headroom for the key. Widening a point-encoding axis cannot exaggerate an
+    # effect; it can only understate one, so it is the conservative direction.
+    _lo = min(v - e for v, e in zip(_all_v, _all_lo))
+    _hi = max(v + e for v, e in zip(_all_v, _all_hi))
+    _rng = _hi - _lo
+    ax.set_ylim(_lo - 0.08 * _rng, _hi + 0.30 * _rng)
     ax.set_ylabel("test AUC")
-    ax.set_title("Race-stratified AUC at epoch 100", fontsize=10)
-    ax.legend(fontsize=7)
+    ax.set_title("Race-stratified AUC at epoch 100\n"
+                 "vertical bars: 95%% percentile bootstrap CI (%s resamples)"
+                 % "{:,}".format(fair["n_bootstrap"]), fontsize=9)
+    ax.legend(fontsize=7, ncol=3, loc="upper center", frameon=False,
+              handletextpad=0.3, columnspacing=1.0)
     ax.grid(axis="y", alpha=0.25, ls=":")
 
     ax = axes[1]
     xs, ys = [], []
+    seen = []
     for k, e in fair["arms"].items():
         s = e["groups"]["race"]["summary"]
         if not s:
             continue
         xs.append(e["overall_auc"])
         ys.append(s["auc_gap"])
-        ax.scatter(e["overall_auc"], s["auc_gap"], color=COL.get(e["arm"], "#333"), s=26)
+        ax.scatter(e["overall_auc"], s["auc_gap"], color=COL.get(e["arm"], "#333"),
+                   marker=MK.get(e["arm"], "o"), s=30, edgecolor="white", linewidth=0.4)
+        if e["arm"] not in seen:
+            seen.append(e["arm"])
     z = np.polyfit(xs, ys, 1)
     xr = np.linspace(min(xs), max(xs), 50)
     ax.plot(xr, np.polyval(z, xr), "k--", lw=1)
+    # Proxy handles only: the scatter above stays one call per probe so the
+    # plotted values are untouched, and the key is built separately. Labels come
+    # from ARM_PLOT, so the artifact name "oracle" can never reach the canvas.
+    handles = [Line2D([], [], ls="none", marker=MK.get(a, "o"),
+                      color=COL.get(a, "#333"), ms=5.5,
+                      markeredgecolor="white", markeredgewidth=0.4,
+                      label=ARM_PLOT.get(a, a))
+               for a in seen]
+    handles.append(Line2D([], [], ls="--", color="k", lw=1,
+                          label="least-squares fit"))
+    # Reserve a band above the data so the key cannot occlude a point.
+    _r = max(ys) - min(ys)
+    ax.set_ylim(min(ys) - 0.08 * _r, max(ys) + 0.40 * _r)
+    ax.legend(handles=handles, fontsize=6.5, ncol=4, loc="upper center",
+              frameon=False, borderpad=0.3, handletextpad=0.3,
+              columnspacing=0.9)
     ax.set_xlabel("overall test AUC")
     ax.set_ylabel("max-min race AUC gap")
     ax.set_title(r"Gap widens as AUC improves ($\rho=%+.2f$, $p=%.3f$)" % (rho, prho), fontsize=10)
@@ -831,7 +908,12 @@ def main():
         p = z["probs"].astype(np.float64)
         fpr, tpr, _ = roc_curve(y, p)
         k = "%s@ep100@fp16" % arm
-        ax.plot(fpr, tpr, color=COL[arm], lw=1.8,
+        # All three curves are fp16 at epoch 100, so line style is free to stay
+        # solid; arm identity is carried redundantly by sparse markers using the
+        # same global marker map as every other figure here.
+        ax.plot(fpr, tpr, color=COL[arm], lw=1.8, marker=MK[arm],
+                markevery=max(len(fpr) // 12, 1), ms=4.5,
+                markeredgecolor="white", markeredgewidth=0.5,
                 label="%s  AUC %s" % (ARM_PLOT[arm], num(T[k]["auc"], 3)))
     ax.plot([0, 1], [0, 1], "k:", lw=0.8)
     ax.set_xlabel("false positive rate")
@@ -851,12 +933,11 @@ def main():
     lep2 = os.path.join(STATS, "p5_label_efficiency.json")
     if os.path.exists(lep2):
         le2 = json.load(open(lep2, encoding="utf-8"))
-        order = [("random", "random", "#4c4c4c"),
-                 ("intensity", "centroid", "#c1272d"),
-                 ("envelope", "envelope", "#1f77b4"),
-                 ("cover", "cover", "#2ca02c")]
+        order = [("random", "random"), ("intensity", "centroid"),
+                 ("envelope", "envelope"), ("cover", "cover")]
         fig, ax = plt.subplots(figsize=(5.4, 2.9))
-        for key, lab, col in order:
+        for key, lab in order:
+            col, mk = COL[key], MK[key]
             arm = le2["arms"].get(key)
             if not arm:
                 continue
@@ -866,7 +947,8 @@ def main():
                 mu.append(arm[fk]["auc_mean"])
                 sd.append(arm[fk]["auc_sd"])
             mu, sd = np.array(mu), np.array(sd)
-            ax.plot(fr, mu, marker="o", ms=3.5, lw=1.6, color=col, label=lab)
+            ax.plot(fr, mu, marker=mk, ms=4.2, lw=1.6, color=col, label=lab,
+                    markeredgecolor="white", markeredgewidth=0.5)
             ax.fill_between(fr, mu - sd, mu + sd, color=col, alpha=0.13, lw=0)
         ax.set_xscale("log")
         ax.set_xticks([1, 5, 10, 25, 100])

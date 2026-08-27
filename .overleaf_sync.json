@@ -2,12 +2,12 @@
  "version": 1,
  "_comment": "SHA-256 of every file this repository manages in the Overleaf project, as of the last agreed sync. Used to tell an unseen remote edit apart from a stale remote. Hashes only - safe to commit.",
  "project": "868079f07aa2a3d7",
- "updated_utc": "2026-08-27T05:17:46+00:00",
- "last_action": "verify",
+ "updated_utc": "2026-08-27T06:17:45+00:00",
+ "last_action": "push",
  "files": {
   "auto/auto_numbers.tex": {
-   "remote_sha256": "07bcb5fa1a2fb0f72dd4d03e39f28522675d750ebf51ec32e7a42d57dfeb08df",
-   "local_sha256": "07bcb5fa1a2fb0f72dd4d03e39f28522675d750ebf51ec32e7a42d57dfeb08df"
+   "remote_sha256": "f6b94cb8afed554477470f317b42305b051caf88174c6da843fa1fd0a9eed821",
+   "local_sha256": "f6b94cb8afed554477470f317b42305b051caf88174c6da843fa1fd0a9eed821"
   },
   "auto/fig_fairness.png": {
    "remote_sha256": "e37f3f0c77f37531c99f1c9a5f91a0affc6f6601a456184fd174379e837c54b3",
@@ -50,12 +50,12 @@
    "local_sha256": "a5e8e766170ce03bd7af71d8caab59489fa1fe4d0608fbba0d847f8382777110"
   },
   "auto/table_paired_subgroup.tex": {
-   "remote_sha256": "d82d23cff030ec786003d2dd0071a0a8352cb537e24899b3f2952639e4e2a94c",
-   "local_sha256": "d82d23cff030ec786003d2dd0071a0a8352cb537e24899b3f2952639e4e2a94c"
+   "remote_sha256": "ae5bb40afb3ed44b9c37d2f316a55eb30efcaf25c17a1041bd7711bac9ce2da5",
+   "local_sha256": "ae5bb40afb3ed44b9c37d2f316a55eb30efcaf25c17a1041bd7711bac9ce2da5"
   },
   "auto/table_subgroup_operating.tex": {
-   "remote_sha256": "10dd4e9bc85f42d7d9c067b29b4354c353d33466e09358737ce072a8652942ed",
-   "local_sha256": "10dd4e9bc85f42d7d9c067b29b4354c353d33466e09358737ce072a8652942ed"
+   "remote_sha256": "1dc88da81ace63d2247606baccc522b287bef30992d629290aaf2e2f631c5c96",
+   "local_sha256": "1dc88da81ace63d2247606baccc522b287bef30992d629290aaf2e2f631c5c96"
   },
   "auto/table_subgroup_trends.tex": {
    "remote_sha256": "ca419a8812b5e6326bae9d269390499daaf6ddffb8c11bfba1240a3953708477",
@@ -222,16 +222,16 @@
    "local_sha256": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6"
   },
   "main.tex": {
-   "remote_sha256": "0f0bf167045ef98257cf39fd5e6b321bac52e6fbdb759d9bb337ed40cccdba6a",
-   "local_sha256": "0f0bf167045ef98257cf39fd5e6b321bac52e6fbdb759d9bb337ed40cccdba6a"
+   "remote_sha256": "3c4c6bd7c5984417dc1f29b08f6b8096e3c18b9d7aadfedf7b87cbf24e2f9c2c",
+   "local_sha256": "3c4c6bd7c5984417dc1f29b08f6b8096e3c18b9d7aadfedf7b87cbf24e2f9c2c"
   },
   "neurips_2026.sty": {
    "remote_sha256": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a",
    "local_sha256": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a"
   },
   "references.bib": {
-   "remote_sha256": "179ee3e8a2aac1f217da6f40751e50a29aed53b357f248c7010d3708e5165a04",
-   "local_sha256": "179ee3e8a2aac1f217da6f40751e50a29aed53b357f248c7010d3708e5165a04"
+   "remote_sha256": "807e538da303e8dd5385eefc7f39e2641f2d86516fbf17dbe1d8ee2fd7f2fdaf",
+   "local_sha256": "807e538da303e8dd5385eefc7f39e2641f2d86516fbf17dbe1d8ee2fd7f2fdaf"
   }
  }
 }

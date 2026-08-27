@@ -9,6 +9,7 @@ Inputs  (all produced and checked earlier in this run)
   p1c_stats.json           - AUCs, bootstrap CIs, DeLong contrasts by family
   p7_fairness.json         - subgroup AUCs and gaps
   p7_gap_correlation.json  - AUC-vs-gap correlations
+  results/p17_subgroup_multiplicity.json - simultaneous subgroup intervals
 
 Outputs -> paper/genai4health2026/auto/
   auto_numbers.tex, table_main.tex, table_fairness.tex, table_allprobes.tex
@@ -24,7 +25,9 @@ import numpy as np
 from sklearn.metrics import roc_curve
 
 STATS = r"D:\jepa_phase0\autopilot_out\p1_stats"
+REPO = r"C:\Users\Gary\Desktop\jepa"
 AUTO = r"C:\Users\Gary\Desktop\jepa\paper\genai4health2026\auto"
+SUBGROUP_ADJUSTED = os.path.join(REPO, r"results\p17_subgroup_multiplicity.json")
 os.makedirs(AUTO, exist_ok=True)
 
 ARM_TEX = {"random": r"\textsc{random}", "oracle": r"\ArmBest{}",
@@ -62,6 +65,7 @@ def main():
     st = json.load(open(os.path.join(STATS, "p1c_stats.json")))
     fair = json.load(open(os.path.join(STATS, "p7_fairness.json")))
     gcorr = json.load(open(os.path.join(STATS, "p7_gap_correlation.json")))
+    adjusted = json.load(open(SUBGROUP_ADJUSTED, encoding="utf-8"))
 
     T = {t["key"]: t for t in st["table"]}
     C = {(c["a"], c["b"]): c for c in st["contrasts"]}
@@ -438,6 +442,12 @@ def main():
             v = ir.get("per_group", {}).get(gk)
             if not v:
                 continue
+            av = adjusted.get("auc_family", {}).get("contrasts", {}).get(gk)
+            if av:
+                v = dict(v)
+                v["ci95_lo"] = av["simultaneous_ci95_lo"]
+                v["ci95_hi"] = av["simultaneous_ci95_hi"]
+                v["excludes_zero"] = av["simultaneous_excludes_zero"]
             mac("PD%sDelta" % w, signed(v["delta_auc"], 5))
             mac("PD%sCI" % w, "[%s,\\,%s]" % (signed(v["ci95_lo"], 5), signed(v["ci95_hi"], 5)))
             mac("PD%sSig" % w, "yes" if v["excludes_zero"] else "no")
@@ -445,6 +455,16 @@ def main():
             d = ir.get("%s_differential_benefit" % gname)
             if not d:
                 continue
+            adjusted_name = ("%s:%s-minus-%s"
+                             % (gname,
+                                "Black" if gname == "race" else "Female",
+                                "Asian" if gname == "race" else "Male"))
+            av = adjusted.get("auc_family", {}).get("contrasts", {}).get(adjusted_name)
+            if av:
+                d = dict(d)
+                d["ci95_lo"] = av["simultaneous_ci95_lo"]
+                d["ci95_hi"] = av["simultaneous_ci95_hi"]
+                d["excludes_zero"] = av["simultaneous_excludes_zero"]
             mac("PDDiff%s" % w, signed(d["delta_worst_minus_delta_best"], 5))
             mac("PDDiff%sCI" % w, "[%s,\\,%s]" % (signed(d["ci95_lo"], 5), signed(d["ci95_hi"], 5)))
             mac("PDDiff%sSig" % w, "yes" if d["excludes_zero"] else "no")
@@ -457,13 +477,19 @@ def main():
             v = ir.get("per_group", {}).get(gk)
             if not v:
                 continue
+            av = adjusted.get("auc_family", {}).get("contrasts", {}).get(gk)
+            if av:
+                v = dict(v)
+                v["ci95_lo"] = av["simultaneous_ci95_lo"]
+                v["ci95_hi"] = av["simultaneous_ci95_hi"]
+                v["excludes_zero"] = av["simultaneous_excludes_zero"]
             lbl = gk.replace("severity:", "severity, ").replace("race:", "race, ").replace("sex:", "sex, ")
             rows.append("%s & %d & %s & [%s,\\,%s] & %s \\\\" % (
                 lbl, v["n"], signed(v["delta_auc"], 5),
                 signed(v["ci95_lo"], 5), signed(v["ci95_hi"], 5),
                 "yes" if v["excludes_zero"] else "no"))
         tab = [r"\begin{tabular}{lcccc}", r"\toprule",
-               r"stratum & $n$ & $\Delta$ AUC & 95\% CI & excludes 0 \\", r"\midrule"] \
+               r"stratum & $n$ & $\Delta$ AUC & simultaneous 95\% CI & excludes 0 \\", r"\midrule"] \
             + rows + [r"\bottomrule", r"\end{tabular}"]
         with open(os.path.join(AUTO, "table_paired_subgroup.tex"), "w", encoding="utf-8") as f:
             f.write("\n".join(tab) + "\n")
@@ -538,6 +564,13 @@ def main():
             for v, s in sorted(so.get("delta_random_to_intensity", {}).get(gname, {}).items()):
                 if v not in GW:
                     continue
+                av = (adjusted.get("sensitivity_family", {}).get("contrasts", {})
+                      .get("%s:%s" % (gname, v)))
+                if av:
+                    s = dict(s)
+                    s["ci95_lo"] = av["simultaneous_ci95_lo"]
+                    s["ci95_hi"] = av["simultaneous_ci95_hi"]
+                    s["excludes_zero"] = av["simultaneous_excludes_zero"]
                 mac("SOPD%s" % GW[v], "%+.4f" % s["d_sensitivity"])
                 mac("SOPD%sCI" % GW[v],
                     "[%+.4f,\\,%+.4f]" % (s["ci95_lo"], s["ci95_hi"]))
@@ -548,7 +581,7 @@ def main():
                                s["ci95_lo"], s["ci95_hi"],
                                "yes" if s["excludes_zero"] else "no"))
         tab = [r"\begin{tabular}{lcccc}", r"\toprule",
-               r"stratum & positives & $\Delta$ sensitivity & 95\% CI & excludes 0 \\",
+               r"stratum & positives & $\Delta$ sensitivity & simultaneous 95\% CI & excludes 0 \\",
                r"\midrule"] + rows + [r"\bottomrule", r"\end{tabular}"]
         with open(os.path.join(AUTO, "table_subgroup_operating.tex"), "w",
                   encoding="utf-8") as f:

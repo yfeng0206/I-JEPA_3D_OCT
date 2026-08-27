@@ -536,9 +536,10 @@ the two controls that would settle it were not run (Appendix~\ref{app:bg}).
 A masking policy that only helps when labels are plentiful is of limited
 clinical use, so we withdrew supervision and re-fitted the same probe. Protocol
 and label subsets are held fixed --- the subsampling seed depends on the fraction
-and repeat but never on the arm --- and at full supervision this reproduces
-Table~\ref{tab:main} to within $0.0009$. The observed margin is larger with fewer
-labels: at $5\%$ of the labelled set ($n{=}\LENFive$) \ArmBest{} leads the null by
+and repeat but never on the arm --- and, across all four arms in this sweep, the
+full-supervision fits reproduce their corresponding epoch-100 entries in
+Table~\ref{tab:main} to within $0.0009$. The observed margin is larger with
+fewer labels: at $5\%$ of the labelled set ($n{=}\LENFive$) \ArmBest{} leads the null by
 $\LEGapFive$, against $\LEGapHundred$ at full supervision, more than four times
 the advantage. Whether the gap genuinely widens as labels are withdrawn we did
 not test; the ordering across fractions is a point-estimate observation, and the
@@ -585,8 +586,9 @@ correlation is pseudo-replicated and does not show that better models are less
 fair. The same holds for severity in the opposite
 direction ($\rho=\SubSeverityRho$ per checkpoint, $\SubSeverityBranchRho$ per
 branch). Only the sex gap is consistent across both views, and it \emph{narrows}
-(branch-level $\rho=\SubGenderBranchRho$, $q=\SubGenderQ$). Neither harm nor
-benefit to equity is established here.
+(branch-level $\rho=\SubGenderBranchRho$, $p=\SubGenderBranchP$;
+checkpoint-level $q=\SubGenderQ$). Neither harm nor benefit to equity is
+established here.
 A property of threshold transfer, not of masking policy, matters more at
 deployment: a validation-selected threshold aimed at a fixed specificity does not
 transfer evenly, and the smaller stratum absorbs a higher false-positive rate
@@ -1023,9 +1025,10 @@ nonetheless widens slightly, because the asian subgroup --- already the
 highest --- gains most ($\RaceRandomAsian \to \RaceOracleAsian$). A widening
 max--min gap with universally rising subgroup AUCs is not evidence of harm. The
 checkpoint-level correlation between aggregate
-AUC and racial gap is $\rho{=}\SubRaceRho$ ($p{=}\SubRaceRhoP$). It passes
-Benjamini--Hochberg ($q{=}\SubRaceQ$) but vanishes once probes are aggregated to
-their pretraining branches ($\rho{=}\SubRaceBranchRho$,
+AUC and racial gap is $\rho{=}\SubRaceRho$ ($p{=}\SubRaceRhoP$). It does not
+pass Benjamini--Hochberg correction at the stated conventional threshold
+($q{=}\SubRaceQ$), and it vanishes once probes are aggregated to their
+pretraining branches ($\rho{=}\SubRaceBranchRho$,
 $p{=}\SubRaceBranchP$), and the checkpoint-level test is pseudo-replicated
 because the \NprobesSub{} probes come from only \NbranchesSub{} branches.
 
@@ -1307,10 +1310,12 @@ arm, so all arms see identical label subsets and the comparison is paired.
 Table~\ref{tab:main} --- minibatches of 256, AdamW at $4{\times}10^{-4}$, weight
 decay 0.05, 50 epochs with 5 warmup and cosine decay, and the epoch selected on
 validation AUC. An earlier cheaper full-batch fit disagreed with the primary
-protocol. Under matched protocols they now agree to within $0.0003$ at full
-supervision ($\LERandomHundred$ against $\AUCRandomEpHundred$ for the null,
+protocol. Under matched protocols, restricting this check to the null and
+\ArmBest{}, their full-supervision results agree to within $0.0003$
+($\LERandomHundred$ against $\AUCRandomEpHundred$ for the null,
 $\LEOracleHundred$ against $\AUCOracleEpHundred$ for \ArmBest{}), so the curve
-below and the headline table describe one probe, not two.
+below and the headline table describe one probe, not two. This two-arm bound is
+distinct from the four-arm bound reported in Section~\ref{sec:labeleff}.
 
 The advantage of guided masking is concentrated where labels are scarce
 (Table~\ref{tab:labeleff}, Figure~\ref{fig:labeleff}).

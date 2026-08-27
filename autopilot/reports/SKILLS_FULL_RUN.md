@@ -12,6 +12,38 @@ required by `assumption_checks.check_regression_diagnostics`. `seaborn` imported
 
 ---
 
+## 0. Incident: on-screen windows during this run, and the safeguard
+
+The operator reported figure windows appearing on screen. Cause, stated plainly:
+
+The very first probe of the statistics skill was
+`python .agents\skills\statistical-analysis\scripts\assumption_checks.py --help`.
+That script **has no CLI**; it ignores `--help` and executes its `__main__` synthetic demo,
+which calls `plt.show()` four times (lines 151, 220, 292, 389). No backend was forced on that
+call, the working directory was the repository root so the `.agents/skills/matplotlibrc`
+`backend: Agg` setting did not apply, and `tkinter` is present in the venv - so matplotlib
+resolved to the interactive TkAgg backend and drew windows. That process has since exited
+(exit code 1, `UnicodeEncodeError`), so the windows it created are gone. Verified afterwards:
+0 `python`/`pythonw` processes remain and every shell has exited. Nothing was left to kill.
+
+What did **not** cause it, for the record: no `Invoke-Item`, `Start-Process` or `start` was ever
+issued against any image or PDF, and no file was opened in a viewer, browser or default
+application at any point. All figure inspection was programmatic, via `palette_audit.py`,
+`image_metadata.py` and Pillow.
+
+Every subsequent run in this report set `MPLBACKEND=Agg` before the process started. The
+`assumption_checks.py` driver additionally did `matplotlib.use("Agg")` before importing pyplot;
+its `plt.show()` calls became no-ops, which matplotlib confirmed on stderr:
+`UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown`.
+
+`style_preview.py` and `figure_export.py` never draw to screen - they call `savefig` only, and
+both were pointed at the scratch directory. They are not implicated. No further tool runs are
+outstanding: all six bundled tools had already completed before the operator's message, and
+nothing is being re-run.
+
+
+---
+
 ## 1. `scientific-visualization/scripts/palette_audit.py`
 
 ### 1a. Every paper figure, colours sampled from the rendered pixels
@@ -328,7 +360,8 @@ Type 3 finding.
 ## 6. `statistical-analysis/scripts/assumption_checks.py`
 
 First fact: **the script has no CLI.** `python assumption_checks.py --help` ignores the flag,
-executes the `__main__` synthetic demo, and then crashes on Windows:
+executes the `__main__` synthetic demo - which calls `plt.show()` four times and, with no
+backend forced, opens interactive windows (see section 0) - and then crashes on Windows:
 
 ```
 UnicodeEncodeError: 'charmap' codec can't encode character '\u2713' in position 0
@@ -514,7 +547,7 @@ its output is new, but none of it changes a conclusion.
 | `style_presets.py` | Marginal | Not on the requested list but bundled; its generated `.mplstyle` happens to encode the three settings that would fix the Type 3, alpha and DPI findings. |
 | `export_plan.py` | NOT APPLICABLE | No NeurIPS/workshop profile exists, the venue's 139.7 mm width is not a named width in any profile, and native PDF page width is not the constraint a `\includegraphics[width=\linewidth]` workflow has. Zero actionable findings. |
 | `figure_export.py` | USEFUL (as proof) | Cannot be applied to existing figures, but its demo output proved `--font-mode truetype` yields `/Type0`, closing the loop on the Type 3 finding. Also showed the RGBA/no-DPI-metadata properties are matplotlib defaults, not our defect. |
-| `assumption_checks.py` | USEFUL (confirmatory) | Found no defect. It converted an untested methodological choice into a measured one: the paired per-case deltas are strongly non-normal with heavy tails, which is exactly the case where a non-parametric paired bootstrap is correct and a t-test is not. Also surfaced that the script has no CLI and crashes on Windows cp1252 without `PYTHONIOENCODING=utf-8`. |
+| `assumption_checks.py` | USEFUL (confirmatory) | Found no defect. It converted an untested methodological choice into a measured one: the paired per-case deltas are strongly non-normal with heavy tails, which is exactly the case where a non-parametric paired bootstrap is correct and a t-test is not. Also surfaced two operational hazards: the script has no CLI and crashes on Windows cp1252 without `PYTHONIOENCODING=utf-8`, and any invocation of it - including `--help` - opens interactive plot windows unless `MPLBACKEND=Agg` is set first. |
 
 ### Only actionable item from the whole run
 

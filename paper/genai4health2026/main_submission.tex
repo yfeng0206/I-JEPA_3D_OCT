@@ -1795,6 +1795,21 @@ a family-wise test. The largest difference is $2\times10^{-4}$.}
 \section{Reproducibility and numeric provenance}
 \label{app:repro}
 
+\paragraph{Why the intervals are non-parametric.} The estimator choice was
+checked against the data rather than assumed. The per-case paired differences are
+strongly non-normal with heavy tails (Shapiro--Wilk $W=0.968$--$0.981$,
+$p<10^{-10}$), and the raw within-arm scores more so ($p\approx10^{-37}$);
+Levene's test also rejects equal variance across arms ($F=21.4$, $p<0.001$),
+though the variance ratio is only $1.16$ and is detectable mainly because
+$n=9{,}000$. None of this invalidates what we report: a percentile bootstrap
+makes no distributional assumption about the deltas, which is the reason for
+choosing it, and an AUC is rank-based, so DeLong's variance is built from
+placement values rather than from Gaussian scores. The diagnostics are recorded
+here because ``the intervals are non-parametric'' is a claim a reader should be
+able to check, not take on trust. Where $n$ is small --- the five-arm and
+four-arm correlations --- a normality test has essentially no power, so we treat
+those as descriptive throughout and draw no inference from them.
+
 \paragraph{Guide provenance differs across the segmenter arms.} The three
 segmenter-driven policies do not all read the same anatomy guide.
 \textsc{envelope} samples the unmodified MIRAGE occupancy map.

@@ -65,7 +65,7 @@ targets wasted --- they are a genuine pretraining signal, even though background
 contributes almost nothing to the classifier. A subgroup audit over
 \NprobesSub{} probes finds the same worst-served group every time; all three
 disease-stage point estimates rise (largest for mild, $\SevDeltaMild$), and only
-the unadjusted white race-group interval excludes zero. The gains are not
+the multiplicity-adjusted white race-group interval excludes zero. The gains are not
 separated from one another. The difficulty ordering is
 untouched: the severe-to-mild
 gap stays within $\SeverityGapSpread$ of constant across every policy.
@@ -567,7 +567,7 @@ max--min gap is easy to misread as harm. It is not harm. At epoch 100 the
 strongest
 policy raises the point estimate for \emph{every} race stratum over the null,
 and the max--min gap widens only because the already-best asian subgroup gains
-most. Unadjusted paired intervals exclude zero only for the white subgroup
+most. Family-wise simultaneous paired intervals exclude zero only for the white subgroup
 (CI $\PDRaceWhiteCI$); the black and asian intervals include it, the
 smaller strata being noisier (Table~\ref{tab:pairedsub}). The gains are therefore
 consistent in sign across
@@ -595,8 +595,10 @@ under \emph{both} arms (Appendix~\ref{app:operating}).
 Scoring each severity stratum against the shared pool of all negatives, the
 strongest policy has a mild-disease point estimate of $\SevDeltaMild$ at matched
 epoch 100, with smaller moderate and severe estimates (Table~\ref{tab:severity}). These are
-paired differences on the same subjects; all three point estimates are positive
-and their unadjusted intervals exclude zero (Table~\ref{tab:pairedsub}). Whether mild
+paired differences on the same subjects; all three point estimates are positive,
+but after adjustment over the declared 10-contrast family only the mild interval
+excludes zero; the moderate and severe intervals no longer do
+(Table~\ref{tab:pairedsub}). Whether mild
 improves \emph{more} we did not test: that needs a paired contrast between the
 gains, not three contrasts against zero. What does not move is the difficulty
 ordering itself:
@@ -711,7 +713,7 @@ tissue beat unguided masking and the best policy consulted no segmentation
 model, while shaping targets to trace the segmented retina did not separate from unguided
 masking at epoch 50 and fell below it by epoch 75. Nor are the null's background targets wasted; they carry pretraining signal
 that barely reaches the classifier. A subgroup audit shows every
-positive disease-stage point estimates with unadjusted intervals excluding zero,
+positive disease-stage point estimate rises, but only the adjusted mild interval excludes zero;
 race gains consistent in sign, and the difficulty ordering untouched. What makes the best policy work is
 not identified here: this design cannot separate consistent target placement
 from mask ratio and task difficulty.
@@ -1070,8 +1072,8 @@ The severe-to-mild gap is $\SevGapRandom$ for the null and $\SevGapOracle$ for
 the strongest policy, and stays within $\SeverityGapSpread$
 ($\SubSeverityGapMin$--$\SubSeverityGapMax$) across all \NprobesSub{} probes
 while aggregate AUC spans $\SubAUCMin$--$\SubAUCMax$. All three point estimates
-rise and their unadjusted paired intervals exclude zero
-(Table~\ref{tab:pairedsub}), the largest point estimate at mild
+rise, but family-wise simultaneous adjustment leaves only mild excluding zero;
+moderate and severe no longer do (Table~\ref{tab:pairedsub}). The largest point estimate is at mild
 disease ($\PDSevMildDelta$, CI
 $\PDSevMildCI$) and the smallest at severe ($\PDSevSevereDelta$). That ordering
 is descriptive only: we did not test the paired \emph{difference} between
@@ -1083,10 +1085,12 @@ masking policy we tested changes it.
 \begin{table}[h]
 \centering
 \caption{Paired change in subgroup AUC from \textsc{random} to
-\ArmBest{} at matched epoch 100. The eight rows plus two gain-difference CIs in
-the text form one unadjusted exploratory family; no simultaneous coverage is
-claimed. Each percentile CI uses \Nboot{} class-stratified subject resamples,
-shared across both fixed heads and every stratum.}
+\ArmBest{} at matched epoch 100. The eight rows plus two gain-difference
+contrasts in the text form one exploratory family. Reported CIs are 95\%
+single-step max-$|t|$ simultaneous intervals from \Nboot{} outcome-stratified
+paired subject resamples shared across both fixed heads and every stratum
+(family-wise $\alpha=0.05$). Four of ten exclude zero: mild severity, white
+race, and both sex strata.}
 \label{tab:pairedsub}
 \small
 \input{auto/table_paired_subgroup}
@@ -1558,8 +1562,9 @@ apparent ninefold difference. \textbf{The intervals do not support that reading.
 The black interval ($\SOPDBlackCI$) reaches almost exactly the white point
 estimate, so the two are not separated; what distinguishes them is positive
 count ($\SOPNWhitePos$ versus $\SOPNBlackPos$), not demonstrated benefit. Only
-the white, female and male gains exclude zero, and those are the three largest
-strata. This is a \emph{power} limitation of the cohort: the study cannot certify
+the white, female and male gains exclude zero; all three remain after simultaneous
+adjustment over the five-contrast family, and they are the three largest strata.
+This is a \emph{power} limitation of the cohort: the study cannot certify
 that the smaller strata benefit, and equally cannot show they do not. Certifying
 subgroup benefit at a deployed
 threshold would need a cohort with more positives in the smaller strata.
@@ -1594,9 +1599,12 @@ shared threshold rather than at a shared realised false-positive rate.
 \begin{table}[h]
 \centering
 \caption{Change in sensitivity from \textsc{random} to \ArmBest{} at one shared
-validation-selected threshold, by stratum. These five unadjusted exploratory
-CIs use \Nboot{} percentile paired resamples of positive subjects, with fitted
-heads and threshold fixed. Epoch 100.}
+validation-selected threshold, by stratum. The five contrasts form one
+exploratory family. Reported CIs are 95\% single-step max-$|t|$ simultaneous
+intervals from \Nboot{} paired positive-subject resamples shared across both
+fixed heads and all five overlapping race and sex strata, with heads and
+threshold fixed (family-wise $\alpha=0.05$). White,
+female and male remain above zero after adjustment. Epoch 100.}
 \label{tab:subop}
 \small
 \input{auto/table_subgroup_operating}

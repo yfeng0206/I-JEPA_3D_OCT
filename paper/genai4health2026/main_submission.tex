@@ -731,7 +731,11 @@ Table~\ref{tab:allprobes} lists every frozen MeanPool probe in the study. It has
 for the reasons in Appendix~\ref{app:excluded}. \NprobesSub{} of the valid
 probes carry the joined metadata required by the subgroup audit
 (Section~\ref{sec:subgroup}) and \NprobesRace{} of them a usable race summary,
-which is why those three counts differ.
+which is why those three counts differ. The two race analyses therefore run on
+different subsets by construction: the gap-trend test in
+Table~\ref{tab:subtrends} uses all \NprobesSub{} probes, since every one carries
+a race \emph{gap}, while the scatter in Figure~\ref{fig:fair} needs a per-group
+AUC for all three groups and so uses the \NprobesRace{} probes that have one.
 
 \begin{table}[h]
 \centering
@@ -997,6 +1001,35 @@ label reconstruction (\Ntest/\Ntest{} labels recovered in every probe). The
 four retracted coverage probes of Appendix~\ref{app:excluded} and the two
 precision-spliced \textsc{anatomy-v2} probes are excluded here as everywhere
 else in the paper.
+
+\paragraph{Missing data.} No case is dropped for a missing attribute anywhere in
+this paper and no value is imputed, so the per-group denominators sum to the full
+test split rather than to a complete-case subset. The released metadata carries
+every attribute we use for all \Ntest{} test subjects, whose identifiers are all
+distinct, and the label is complete at \Npos{} positive and \Nneg{} negative.
+Race is \NAsian{} asian, \NBlack{} black and \NWhite{} white; sex is 1{,}716
+female and 1{,}284 male; ethnicity is 2{,}894 non-hispanic and 106 hispanic;
+language is 2{,}782 english, 174 other and 44 spanish; marital status is 1{,}741
+married or partnered, 776 single, 199 widowed, 191 divorced, 71 unknown and 22
+legally separated; age is present and numeric for all \Ntest{}, spanning
+$9.5$--$98.0$ years. Each of those five categorical breakdowns sums to \Ntest{}
+exactly, which is the check a reader should apply to the tables below.
+
+One level is non-substantive rather than absent: 71 of \Ntest{} subjects
+($2.4\%$) carry marital status \emph{unknown} in the release. We keep it as its
+own category rather than dropping those subjects or folding them into a
+substantive group, so it is subject only to the same underpowering rule as every
+other level. Severity is derived from visual-field mean deviation, and its 334
+severe, 460 moderate and 672 mild strata sum to all \Npos{} positives, so no
+positive is lost at a stratum boundary. The release uses a mean-deviation
+sentinel of $-1$ in 3 of the \Ntest{} test records; all 3 carry a negative label,
+and because every severity stratum is scored against the undifferentiated pool of
+all \Nneg{} negatives, that sentinel never enters a stratum definition.
+
+Separately from missingness, a group with fewer than 50 cases, or fewer than 10
+of either class, is still computed and reported but is marked underpowered and
+held out of the max--min gap summaries. That is an exclusion from the fairness
+claim, not from the data, and it is the only place a group is set aside.
 
 \paragraph{Why we report two sample sizes.} The \NprobesSub{} probes span only
 \NbranchesSub{} pretraining branches, because several are different epochs of
@@ -1630,6 +1663,39 @@ model reported here is clinically validated or intended for deployment: the
 frozen-probe AUCs are research measurements on one dataset and one task, and are
 not evidence of clinical utility.
 
+\paragraph{Dataset provenance and licence.} We name the governing terms
+explicitly rather than leave ``release terms'' to stand on its own. The cohort
+is the glaucoma arm of Harvard-FairVision~\citep{luo2024fairvision}: 10{,}000
+subjects distributed with a fixed 6{,}000/1{,}000/\Ntest{} training, validation
+and test partition, and every number in this paper is measured on the
+\Ntest{}-subject test partition. The distribution states a data licence of
+CC BY-NC-ND 4.0, which permits non-commercial research and states that the data
+are not to be used for clinical decisions or patient care; the accompanying code
+repository carries a separate MIT software licence that covers code only and does
+not relax the data terms. Our use is non-commercial research measurement with no
+clinical deployment, which is what those terms allow. The data were taken from
+the public release; no application, data use agreement or credentialed-access
+step is recorded for this dataset in our project record. The release is
+distributed de-identified: each subject archive holds an OCT volume, a binary
+label, a visual-field mean deviation and coded demographic attributes, with no
+name, date or free text. We added no identifying field, attempted no
+re-identification, and linked to no external source. The artifacts we release
+are encoder weights, a fitted probe head and per-case prediction scores; we
+redistribute no image data.
+
+\paragraph{What our ethics record does not contain.} This project holds no IRB or
+ethics-committee approval number, no consent documentation, and no written
+non-human-subjects or exemption determination for this secondary analysis. None
+was recorded at the time, and we will not assert one after the fact. The
+statement above is therefore narrower than a governance statement: it is what the
+release says and what we did with it. The approval and consent record for the
+underlying data collection belongs to the FairVision authors' primary
+publication and the institutional record behind
+it~\citep{luo2024fairvision}, which we did not obtain; closing this gap would
+require citing that ethics statement directly and obtaining a written
+determination from our own institution. A venue requiring a formal determination
+should treat this item as outstanding rather than satisfied.
+
 The subgroup analysis in Section~\ref{sec:subgroup} is a caution, not a
 contribution. Every masking policy we tested leaves the same groups worst-served,
 and the best-performing policy narrows none of them reliably, even though every subgroup point estimate rises at the matched
@@ -1794,6 +1860,25 @@ a family-wise test. The largest difference is $2\times10^{-4}$.}
 
 \section{Reproducibility and numeric provenance}
 \label{app:repro}
+
+\paragraph{Software and hardware environment.} Every number in this paper was
+produced under one environment, and the versions below were read from the live
+interpreter rather than recalled. Python 3.11.9 on 64-bit Windows (build
+10.0.26200); PyTorch 2.7.1 compiled against CUDA 12.8 with cuDNN 9.7.1; one
+NVIDIA GeForce RTX 3090 with 24\,GiB of memory, driver 610.62. The statistics and
+figures use NumPy 2.4.4, SciPy 1.17.1 and scikit-learn 1.9.0, and the manuscript
+is compiled by Tectonic 0.17.0. A lock file pinning 87 distributions accompanies
+the artifact; we re-resolved it against the live interpreter and every pin
+matches the installed version exactly, with no conflict. That interpreter also
+carries 16 further packages --- test, plotting and PDF-inspection tools such as
+pytest 9.1.1, statsmodels 0.14.6 and seaborn 0.13.2 --- which are deliberately
+absent from the lock file because no reported number depends on them. The chain
+from stored per-case predictions through macros, tables and figures to the
+compiled archive runs as one ordered script, so the released predictions, the
+released head and the numbers printed here are joined by code rather than by
+transcription. We did not re-verify these results under a second CUDA or PyTorch
+version, so the fp32 re-encode of Appendix~\ref{app:fp32} on different hardware
+is the only cross-environment evidence we have.
 
 \paragraph{Why the intervals are non-parametric.} The estimator choice was
 checked against the data rather than assumed. The per-case paired differences are

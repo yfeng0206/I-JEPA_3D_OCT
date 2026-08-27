@@ -27,29 +27,69 @@ three policies times two new seeds equals six continuations.
 
 ## 2. Ancestor (MEASURED)
 
-    Hugging Face repo : yfeng0206/ijepa-3d-oct-checkpoints
-    Path in repo      : random-posfix-100ep/jepa_patch-ep025.pth.tar
-    Local path        : D:\jepa_phase0\checkpoints_hf\random-posfix-100ep\jepa_patch-ep025.pth.tar
-    Size              : 1,507,519,602 bytes
-    SHA-256           : e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b
+    Canonical local path : D:\jepa_phase0\fairvision-glaucoma\checkpoint-ep25\jepa_patch-random_posfix-ep25.pth.tar
+    Size                 : 1,507,519,602 bytes (1,438 MiB)
+    SHA-256              : e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b
 
-Fetched with `scripts/download_weights.py --ancestor-ep25 --output-dir
-D:\jepa_phase0\checkpoints_hf`. That script previously only knew three weights
-in a different repository, so an `--ancestor-ep25` path was added to it; the
-SHA-256 above is hard-coded in the script and a mismatch is a fatal error, not a
-warning.
+This local file is what all six continuations read. Hashed on this machine
+(MEASURED) and matching the `SHA256SUMS` shipped beside it.
 
-Independent corroboration (MEASURED): the pre-existing local mirror
-`D:\jepa_phase0\fairvision-glaucoma\checkpoint-ep25\jepa_patch-random_posfix-ep25.pth.tar`
-hashes to the same value, and that value is what its published `SHA256SUMS` and
-`README.md` (Hugging Face repo `yfeng0206/I-JEPA-OCT-random-posfix-ep25`,
-revision `3624b4100ab39b1c989fc61ead0d5248c177735c`) record. Three independent
-sources agree, so the fork point is unambiguous.
+### Confirmed as the genuine shared fork point
 
-The chain re-hashes the ancestor immediately before EVERY one of the six
-launches and refuses to start that leg on a mismatch
-(`scripts/chain_replication.py::verify_ancestor`). Six continuations that did
-not all start from the same bytes would not be a replication.
+Five independent records, all MEASURED by direct inspection:
+
+1. `configs/patch_cover_random_ep25.yaml` line 104 carries the comment "The
+   common ancestor of random, oracle, envelope AND cover" written directly
+   above `read_checkpoint:` pointing at this exact path. The same path appears
+   in `configs/patch_cover_ep25.yaml` and `configs/patch_cover_f021_ep25.yaml`.
+2. `configs/patch_mirage_envelope.yaml` lines 121-123 name this SHA-256 as "the
+   verified ep25 fork point" and give this path as where to point
+   `read_checkpoint` to restart the ENVELOPE arm from scratch.
+3. `configs/frozen_meanpool_fork_ep25.yaml` computes the paper's shared-ancestor
+   probe row on this exact file; `autopilot/DECISION_LOG.md` line 72 confirms
+   that probe (`frozen_meanpool_fork_ep25`, test AUC 0.848680) "is already the
+   shared-ancestor row in the paper".
+4. `autopilot/TIMELINE_AND_CRITICAL_PATH.md` line 35 lists "ancestor (shared
+   fork) | `fairvision-glaucoma/checkpoint-ep25` (random_posfix) | ep25".
+5. `checkpoint-ep25/README.md` attributes it to training run
+   `patch_vit_base_ps16_ep100_bs64_lr0.00025_20260411_063607`, which is exactly
+   the blob prefix `docs/experiments/pretraining/random_100ep.md` records for
+   the random-posfix 100-epoch run; and
+   `docs/experiments/pretraining/oracle_100ep.md` states the oracle/CENTROID arm
+   was "warm-started from ep25 of the random-init run" of that same lineage.
+   The R2, R3a and R3b arm configs also read `jepa_patch-random_posfix-ep25.pth.tar`.
+
+No source anywhere in the repository names a different epoch-25 fork point.
+
+### Note on the naming discrepancy, and a byte-level cross-check
+
+The artifact is named `...-ep25...` locally and `...-ep025...` on Hugging Face,
+which is what made the local copy look absent. Before that was understood, the
+Hugging Face copy
+(`yfeng0206/ijepa-3d-oct-checkpoints :: random-posfix-100ep/jepa_patch-ep025.pth.tar`)
+was fetched once. It hashes to the SAME SHA-256 (MEASURED), which settles the
+naming question conclusively: `ep25` and `ep025` are identical bytes, and the
+published artifact is bit-for-bit the local ancestor.
+
+That download is now unused. No config, script or run references it; the chain
+verifies and loads only the canonical local path. It is retained at
+`D:\jepa_phase0\checkpoints_hf\random-posfix-100ep\jepa_patch-ep025.pth.tar`
+(1.4 GB on a volume with 639 GB free) solely as evidence for the paper's
+public-weights reproduction claim. To discard it:
+
+    Remove-Item -Recurse D:\jepa_phase0\checkpoints_hf\random-posfix-100ep
+
+`scripts/download_weights.py --ancestor-ep25` remains in the tree as the
+documented recovery path if the local ancestor is ever lost; it verifies the
+same SHA-256 and treats a mismatch as fatal.
+
+### Re-verification before every launch
+
+`scripts/chain_replication.py::verify_ancestor` re-hashes the canonical local
+file immediately before EACH of the six launches and refuses to start that leg
+on a mismatch. Six continuations that did not all start from the same bytes
+would not be a replication. Observed in the chain log at leg 1:
+`ancestor sha256 OK (e5ad5b0c2aadfa15...)` (MEASURED).
 
 ---
 
@@ -205,7 +245,8 @@ New files, all thin:
 * `scripts/smoke_replication.py` -- the pre-launch smoke test.
 * `scripts/chain_replication.py` -- the six-leg sequencer.
 * `scripts/download_weights.py` -- gained an `--ancestor-ep25` path with a
-  fatal SHA-256 check.
+  fatal SHA-256 check. Not on the run path: the chain reads the canonical local
+  ancestor. Retained as the documented recovery route if that file is ever lost.
 
 ---
 
@@ -232,22 +273,32 @@ deleted after the test.
 
 ## 8. Launch
 
-    Chain PID     : 26152  (detached; survives session shutdown)
+    Chain PID     : 19184  (detached; survives session shutdown)
     Command       : D:\jepa_phase0\.venv\Scripts\python.exe -u scripts\chain_replication.py
     Working dir   : C:\Users\Gary\Desktop\jepa
-    Chain stdout  : D:\jepa_phase0\campaign\replication\chain_stdout.log
-    Chain stderr  : D:\jepa_phase0\campaign\replication\chain_stderr.log
+    Chain stdout  : D:\jepa_phase0\campaign\replication\chain_stdout2.log
+    Chain stderr  : D:\jepa_phase0\campaign\replication\chain_stderr2.log
     Chain log     : D:\jepa_phase0\campaign\replication\chain_replication.log
     Status JSON   : D:\jepa_phase0\campaign\replication\chain_replication_status.json
     Lock file     : D:\jepa_phase0\campaign\replication\chain_replication.lock
+
+An earlier instance (PID 26152, launched 16:50:50) ran leg 1 through epoch 26
+while still holding the redundant Hugging Face path in memory. It was stopped by
+explicit PID, deepest child first, and relaunched at 18:05:59 so that every
+component -- including the pre-launch hash check -- reads the canonical local
+ancestor. Only processes started by this task were stopped; no `Stop-Process`
+by name was used. The restart cost the partial epoch 27 in flight and nothing
+else, and it doubled as a live test of the resume path: the chain log records
+`resuming from jepa_patch_rep_random_s1234-last.pth.tar (epoch 26)` and the
+trainer `Starting training from epoch 27 to 100` (both MEASURED).
 
 Launched as:
 
     Start-Process -FilePath "D:\jepa_phase0\.venv\Scripts\python.exe" `
       -ArgumentList "-u","scripts\chain_replication.py" `
       -WorkingDirectory "C:\Users\Gary\Desktop\jepa" `
-      -RedirectStandardOutput "D:\jepa_phase0\campaign\replication\chain_stdout.log" `
-      -RedirectStandardError  "D:\jepa_phase0\campaign\replication\chain_stderr.log" `
+      -RedirectStandardOutput "D:\jepa_phase0\campaign\replication\chain_stdout2.log" `
+      -RedirectStandardError  "D:\jepa_phase0\campaign\replication\chain_stderr2.log" `
       -WindowStyle Hidden -PassThru
 
 Inspect without disturbing it:
@@ -293,9 +344,20 @@ a second chain instance.
 | Frozen probe results | `D:\jepa_phase0\runs\frozen_meanpool_rep_<policy>_s<seed>_ep50\results.json` |
 | Probe hash guards | `D:\jepa_phase0\autopilot_out\probe_guards\guard_meanpool_rep_<policy>_s<seed>_ep50.json` |
 
-Checkpoint disk cost (INFERRED): 7 files times about 1.5 GB per leg, about
-10.5 GB per leg, about 63 GB for all six. Free space on D: at launch was
-686 GB (MEASURED), so this is not a constraint.
+Checkpoint volume (MEASURED file size 1,507,545,533 bytes = 1,438 MiB each;
+counts INFERRED): `save_every: 5` is set in all six configs, so each leg writes
+five milestones (epochs 30, 35, 40, 45, 50) plus `-best`, plus the rolling
+`-last`, plus the pinned epoch-50 copy handed to the probe -- eight files, about
+11.5 GB per leg, about 69 GB for all six. `save_every: 1` would write 25
+milestones per leg instead, about 40 GB per leg and about 242 GB overall, for no
+scientific gain: the rolling `-last` is written every epoch regardless of
+`save_every`, so per-epoch crash-resume granularity is already guaranteed. Free
+space on D: at launch was 639 GB (MEASURED), so 69 GB is not a constraint.
+
+Nothing is written to C:. `data.slice_cache_dir: C:\jepa_data\slice_cache` is
+read-only consumption of the existing active training cache; every run output
+path -- training runs, probe runs, feature caches, supervisor state, chain logs
+-- is under `D:\jepa_phase0\`.
 
 ---
 
@@ -309,11 +371,12 @@ Checkpoint disk cost (INFERRED): 7 files times about 1.5 GB per leg, about
 * No process not started by this task was touched. No `Stop-Process` by name
   was used anywhere.
 * `C:\jepa_data` was read only. Its `slice_cache` is consumed via
-  `data.slice_cache_dir`; nothing under it was created, moved or deleted.
+  `data.slice_cache_dir`; nothing under it was created, moved or deleted. C: is
+  low on free space and receives no run output of any kind.
 * `D:\jepa_phase0` receives only new run outputs under `runs\rep_*`,
-  `runs\frozen_meanpool_rep_*`, `campaign\replication\` and
-  `checkpoints_hf\random-posfix-100ep\`, which is the established convention for
-  this repository.
+  `runs\frozen_meanpool_rep_*` and `campaign\replication\`, which is the
+  established convention for this repository. No pre-existing run directory is
+  read, written or resumed.
 * `autopilot/RESUME_COMMAND.txt` carries a prior-session constraint reading "do
   NOT resume pretraining. COVER-0.21 stays at epoch 73. Forbidden:
   scripts\chain_cover_f021.py, scripts\campaign_chain.py". That constraint is
@@ -348,15 +411,17 @@ cos_sim 0.867 and rep_diversity 0.279
 exactly where the ancestor left off. That is the strongest available evidence
 that the warm start is correct rather than merely non-crashing.
 
-INFERRED from the 3,607 s measurement:
+INFERRED from the 3,607 s measurement, counted from the 2026-08-26 18:05:59
+relaunch with leg 1 already holding a completed epoch 26:
 
-* Per leg: 25 epochs x 3,607 s = 90,175 s = 25.05 h.
-* Six legs of training: 150.3 h.
+* Remaining epochs: leg 1 needs 24 (epochs 27-50), legs 2-6 need 25 each,
+  total 149 epochs.
+* Training: 149 x 3,607 s = 149.3 h.
 * Six frozen probes at 2.696 h each: 16.2 h.
-* Total: 166.5 h = 6.94 days from the 2026-08-26 16:50:50 -07:00 launch.
-* Projected chain completion: **2026-09-02 15:20 -07:00** (INFERRED).
+* Total: 165.5 h = 6.90 days.
+* Projected chain completion: **2026-09-02 15:36 -07:00** (INFERRED).
 * Projected completion of the first complete paired triple (legs 1-3 including
-  their probes, 83.2 h): **2026-08-30 04:05 -07:00** (INFERRED).
+  their probes, 82.2 h): **2026-08-30 04:20 -07:00** (INFERRED).
 
 Both projections precede the 2026-09-05 deadline, the full chain with about
 2.4 days of margin. They assume no crash and no GPU contention. The supervisor

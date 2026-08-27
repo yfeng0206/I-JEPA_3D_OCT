@@ -385,7 +385,7 @@ family of nine ($q \leq \DEnvelopeRandomEpHundredQ$ throughout).
 (\textsc{envelope}) beats unguided masking by $\DEnvelopeRandomEpFifty$ at epoch
 50 (CI $\DEnvelopeRandomEpFiftyCI$) and by $\DEnvelopeRandomEpHundred$ at epoch
 100 (CI $\DEnvelopeRandomEpHundredCI$). Aiming is not containment: the rectangles
-are large, so only $43.5\%$ of \textsc{envelope}'s masked cells land on tissue
+are large, so only $43.3\%$ of \textsc{envelope}'s masked cells land on tissue
 (Table~\ref{tab:geom}). Why the null nonetheless stays this close is examined in
 Appendix~\ref{app:bg}.
 
@@ -473,11 +473,11 @@ mixed epochs.}
 \toprule
 policy & anatomy hidden & purity & mask ratio & context kept & loss slots & AUC @ep50 \\
 \midrule
-\textsc{random}   & 52.2\% & 31.6\% & 43.7\% & 42.1\% & 157.7 & \AUCRandomEpFifty \\
-\ArmBest{}   & 62.2\% & 41.1\% & 40.0\% & 45.6\% & 158.4 & \AUCOracleEpFifty \\
-\textsc{envelope} & 76.9\% & 43.5\% & 46.4\% & 40.5\% & 159.9 & \textbf{\AUCEnvelopeEpFifty} \\
-\textsc{cover}    & 74.1\% & 45.3\% & 43.3\% & 43.5\% & 160.0 & \AUCCoverEpFifty \\
-\textsc{anatomy-v2} & 80.3\% & \textbf{97.3\%} & 21.4\% & 67.9\% & 64.0 & \AUCAnatomyTwoEpFifty \\
+\textsc{random}   & 54.0\% & 31.5\% & 44.5\% & 41.9\% & 159.9 & \AUCRandomEpFifty \\
+\ArmBest{}   & 62.1\% & 40.0\% & 40.3\% & 45.5\% & 159.0 & \AUCOracleEpFifty \\
+\textsc{envelope} & 77.6\% & 43.3\% & 46.5\% & 40.6\% & 159.7 & \textbf{\AUCEnvelopeEpFifty} \\
+\textsc{cover}    & 73.5\% & 44.2\% & 43.2\% & 43.2\% & 159.1 & \AUCCoverEpFifty \\
+\textsc{anatomy-v2} & 79.9\% & \textbf{97.1\%} & 21.3\% & 67.7\% & 64.0 & \AUCAnatomyTwoEpFifty \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -494,16 +494,16 @@ positive (Spearman $+0.80$, $p=0.20$), as is the correlation with mask
 ($p=0.60$); including the anatomy arm these fall to $+0.50$ and $+0.20$. At
 $n{=}4$--$5$ arms none of them resolves the association in either direction, and
 we draw no inference from them. The direct comparison carries the point instead:
-the anatomy arm places $97.3\%$ of masked cells on tissue and does not separate
-from the null; \ArmBest{} places $41.1\%$ on tissue and reaches the highest
+the anatomy arm places $97.1\%$ of masked cells on tissue and does not separate
+from the null; \ArmBest{} places $40.0\%$ on tissue and reaches the highest
 epoch-100 AUC. Occlusion attribution on the fine-tuned probes is correspondingly
 diffuse (Appendix~\ref{app:interp}).
 
 Second, \textbf{the anatomy arms are confounded on several axes simultaneously}.
-They hide only $21.4\%$ of the grid against $40$--$46\%$ for the rectangle arms,
-leave $67.9\%$
-of tokens visible as context against $40$--$46\%$, and supply $64$ predictor loss
-slots against $158$--$160$. Any of these could account for their deficit without
+They hide only $21.3\%$ of the grid against $41$--$45\%$ for the rectangle arms,
+leave $67.7\%$
+of tokens visible as context against $41$--$45\%$, and supply $64$ predictor loss
+slots against $159$--$160$. Any of these could account for their deficit without
 invoking target shape at all. \textbf{H3 is therefore not identified by this
 design}, and we do \emph{not} claim that irregular target shape is harmful.
 Figure~\ref{fig:geom} makes the four-way divergence explicit.
@@ -1096,19 +1096,16 @@ anatomy subject to a visible-tissue floor, evaluated on full rectangles, and the
 collator then shortens those rectangles. The optimisation is therefore defeated
 after the fact.
 
-\paragraph{Measured consequences.} On training slices, \textsc{cover}'s placement
-hides $78.6\%$ of anatomy mass, close to its configured target, but the masks
-actually delivered hide $73.9\%$; an independent sweep over $6{,}137$ slices
+\paragraph{Measured consequences.} A one-off audit found that collation reduced
+\textsc{cover}'s anatomy coverage; an independent sweep over $6{,}137$ slices
 gives $73.1\%$ against $77.6\%$ for \textsc{envelope}. The arm intended to hide
-\emph{more} anatomy than \textsc{envelope} in fact hides \emph{less}. Only
-$32.5\%$ of images retain all four rectangular targets, the mean being $2.51$ of
-$4$, and across $24{,}000$ emitted targets only $73.4\%$ remain perfect
+\emph{more} anatomy than \textsc{envelope} in fact hides \emph{less}. Across
+$24{,}000$ emitted targets only $73.4\%$ remain perfect
 rectangles. Because target cells are enumerated row-major, truncation keeps the
 top of each rectangle and discards the bottom, so the loss is directional rather
-than a neutral shrink. \emph{Provenance:} the pre- and post-truncation coverage
-figures and the retained-target statistics in this paragraph come from a one-off
-CPU audit of 194 accepted slices whose raw output was not persisted, so they
-cannot be recomputed from the released artifacts. The $73.1\%$ against $77.6\%$
+than a neutral shrink. \emph{Provenance:} the one-off CPU audit of 194 accepted
+slices that first exposed the defect was not persisted, so its pre- and
+post-truncation figures are no longer asserted. The $73.1\%$ against $77.6\%$
 comparison, which is the only figure the body relies on, is backed by the stored
 floor sweep and is unaffected.
 
@@ -1191,10 +1188,8 @@ arm, so all arms see identical label subsets and the comparison is paired.
 \paragraph{Protocol parity.} This sweep uses the \emph{same} probe protocol as
 Table~\ref{tab:main} --- minibatches of 256, AdamW at $4{\times}10^{-4}$, weight
 decay 0.05, 50 epochs with 5 warmup and cosine decay, and the epoch selected on
-validation AUC. An earlier version of this experiment used a cheaper full-batch
-fit, which put the null at $0.8811$ at full supervision against
-$\AUCRandomEpHundred$ in the primary protocol and so made the two tables
-disagree. Under matched protocols they now agree to within $0.0003$ at full
+validation AUC. An earlier cheaper full-batch fit disagreed with the primary
+protocol. Under matched protocols they now agree to within $0.0003$ at full
 supervision ($\LERandomHundred$ against $\AUCRandomEpHundred$ for the null,
 $\LEOracleHundred$ against $\AUCOracleEpHundred$ for \ArmBest{}), so the curve
 below and the headline table describe one probe, not two.
@@ -1262,7 +1257,7 @@ patch-level, leave-one-out over the 256 patch tokens of a target slice.
 \caption{Single-slice occlusion attribution against native slice position,
 averaged over all \Ntest{} test volumes, for all three fine-tuned probes.
 Despite spanning zero to 7.14M probe parameters they converge on the same
-structure (mean-pool vs cross-attention pool $r{=}0.94$). The $y$-axis is
+structure. The $y$-axis is
 \emph{signed} $\Delta$logit: peaks are slices whose removal lowers the logit,
 the central dip is slices whose removal raises it, and only slices near zero are
 genuinely unused.}
@@ -1275,23 +1270,22 @@ genuinely unused.}
 \caption{Window occlusion ($W{=}7$) amplifies the same signal roughly sevenfold
 and suppresses single-volume noise. For mean-pooled models, single-slice
 occlusion systematically under-estimates attributed signal; the windowed variant
-recovers about $25\times$ more.}
+recovers more signal.}
 \label{fig:interp-window}
 \end{figure}
 
 \paragraph{A bimodal attribution curve that is an artefact, not anatomy.}
-The population-averaged curve peaks at native slice $\approx 63$ and
-$\approx 137$ with a dip near $95$. The tempting reading --- that the model has
+The population-averaged curve is bimodal with a central dip. The tempting
+reading --- that the model has
 discovered the superior and inferior optic disc rim --- is \textbf{wrong}, and we
 report it because it is exactly the kind of claim a plausible-looking attribution
 figure invites. Three tests reject it. First, if the two peaks were bilateral
 anatomy then within a diseased eye they should co-occur, giving positive
-per-volume correlation between them; the observed correlation is slightly
-\emph{negative} ($-0.22$, $-0.07$, $-0.14$ across the three probes). Second,
+per-volume correlation between them; the peak contributions are not positively
+correlated across volumes. Second,
 clustering the per-volume curves into two groups yields clusters that are
-near-perfect \emph{mirror images} along the slice axis
-($\mathrm{corr}(c_1,\mathrm{flip}(c_2)) = 0.971$ and $0.988$ for the two
-well-structured probes, against raw correlations of $-0.124$ and $-0.478$).
+near-perfect \emph{mirror images} along the slice axis for the two
+well-structured probes.
 Third, using that cluster label as pseudo-laterality and flipping one cluster
 collapses the bimodality asymmetrically (Figure~\ref{fig:interp-odos}). What
 these three tests support is an orientation or storage mixture consistent with
@@ -1315,8 +1309,7 @@ bilateral anatomy.}
 outcome, false-negative curves are scaled-down true-positive curves with the same
 shape, and false positives likewise mirror true negatives
 (Figure~\ref{fig:interp-outcome}). Attribution structure
-is also near-invariant to prediction confidence ($|r| \leq 0.25$ between peak
-contribution magnitude and $|\text{logit}|$). The error rate at threshold $0.5$
+is also near-invariant to prediction confidence. The error rate at threshold $0.5$
 therefore reflects signal-strength saturation on hard cases, not the model
 attending to the wrong structures.
 
@@ -1334,11 +1327,9 @@ correct pattern at lower amplitude rather than selecting different anatomy.}
 {interp_heatmap_grid.png}
 \caption{Per-patch occlusion heat maps on individual B-scans, drawn on a shared
 scale with the slice mean subtracted so that maps are comparable across volumes.
-Between $84\%$ and $91\%$ of patches have a $95\%$ bootstrap interval excluding
-zero on the glaucoma class ($B{=}500$), so attribution is broadly distributed
-rather than concentrated in a few patches. Cross-probe agreement is strong at
-slice level ($r{=}0.94$) and moderate at patch level (per-volume $r \approx
-0.35$--$0.48$).}
+Attribution is broadly distributed
+rather than concentrated in a few patches. Agreement is stronger at slice than
+patch level.}
 \label{fig:interp-heatmap}
 \end{figure}
 
@@ -1581,7 +1572,7 @@ those of the nine-contrast family only.
 \includegraphics[width=0.46\linewidth]{fig_precision_paradox.png}
 \caption{Downstream AUC at matched epoch 50 against mask purity, the fraction of
 masked patches lying on retinal tissue. The policy whose masks are $97\%$
-on-tissue does not separate from the null, while policies at $41$--$44\%$ purity
+on-tissue does not separate from the null, while policies at $40$--$43\%$ purity
 gain the most. The ordering does not support the intuition that more accurate
 anatomical masking yields better representations. With four to five arms this is
 descriptive, not inferential.}

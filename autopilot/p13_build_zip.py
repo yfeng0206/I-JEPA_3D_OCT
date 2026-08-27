@@ -51,7 +51,7 @@ def used_graphics(tex_text):
     return set(re.findall(r"\\includegraphics\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}", folded))
 
 
-def build(out_zip, allow_ph):
+def build(out_zip, allow_ph, mark_uploaded=False):
     src = os.path.join(PAPER, "main_submission.tex")
     tex = open(src, encoding="utf-8").read()
 
@@ -233,11 +233,28 @@ def build(out_zip, allow_ph):
         mirror = os.path.splitext(out_zip)[0] + "_files"
         prev = {}
         man = os.path.join(mirror, ".manifest.json")
+        # Baseline for CHANGED.txt. .manifest.json advances on EVERY successful
+        # build, so two builds in a row made CHANGED.txt report "nothing" even
+        # when the source had changed substantially since the operator last
+        # uploaded -- which defeats the point of the mirror. The upload baseline
+        # advances only when --mark-uploaded is passed, so CHANGED.txt
+        # accumulates across rebuilds and answers the question actually being
+        # asked: what have I not uploaded yet.
+        upl = os.path.join(mirror, ".uploaded.json")
+        base, base_src = {}, "the previous publish"
+        if os.path.exists(upl):
+            try:
+                base = json.load(open(upl, encoding="utf-8"))
+                base_src = "your last marked upload"
+            except Exception:
+                base = {}
         if os.path.exists(man):
             try:
                 prev = json.load(open(man, encoding="utf-8"))
             except Exception:
                 prev = {}
+        if not base:
+            base = prev
         changed, now = [], {}
         for root, _dirs, files in os.walk(stage):
             for fn in files:
@@ -247,17 +264,21 @@ def build(out_zip, allow_ph):
                 rel = os.path.relpath(full, stage).replace("\\", "/")
                 h = hashlib.sha256(open(full, "rb").read()).hexdigest()
                 now[rel] = h
-                if prev.get(rel) != h:
+                if base.get(rel) != h:
                     changed.append(rel)
                 dst = os.path.join(mirror, rel)
                 os.makedirs(os.path.dirname(dst), exist_ok=True)
                 shutil.copy(full, dst)
-        removed = sorted(set(prev) - set(now))
+        removed = sorted(set(base) - set(now))
         with open(man, "w", encoding="utf-8") as f:
             json.dump(now, f, indent=1, sort_keys=True)
+        if mark_uploaded:
+            with open(upl, "w", encoding="utf-8") as f:
+                json.dump(now, f, indent=1, sort_keys=True)
+            print("  upload baseline  -> marked; CHANGED.txt starts fresh next build")
         with open(os.path.join(mirror, "CHANGED.txt"), "w", encoding="utf-8") as f:
-            f.write("Files changed since the previous publish (%s)\n"
-                    % datetime.now().strftime("%Y-%m-%d %H:%M"))
+            f.write("Files changed since %s (%s)\n"
+                    % (base_src, datetime.now().strftime("%Y-%m-%d %H:%M")))
             f.write("Upload only these to Overleaf; the rest are unchanged.\n")
             f.write("main.pdf and main.bbl are build outputs - Overleaf makes\n")
             f.write("its own, so they never need uploading. main.pdf differs on\n")
@@ -286,6 +307,10 @@ def build(out_zip, allow_ph):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--allow-placeholders", action="store_true")
+    ap.add_argument("--mark-uploaded", action="store_true",
+                    help="Record the current files as uploaded to Overleaf. "
+                         "CHANGED.txt then reports only what changes after this "
+                         "point, instead of resetting on every rebuild.")
     ap.add_argument("--out", default=r"C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_FINAL.zip")
     a = ap.parse_args()
-    sys.exit(build(a.out, a.allow_placeholders))
+    sys.exit(build(a.out, a.allow_placeholders, a.mark_uploaded))

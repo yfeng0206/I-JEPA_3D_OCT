@@ -1,4 +1,4 @@
-\begin{thebibliography}{48}
+\begin{thebibliography}{47}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -421,22 +421,12 @@ Aiham Taleb, Winfried Loetzsch, Noel Danz, Julius Severin, Thomas G{\"a}rtner,
 \newblock URL
   \url{https://proceedings.neurips.cc/paper/2020/hash/d2dc6368837861b42020ee72b0896182-Abstract.html}.
 
-\bibitem[Wang et~al.(2023{\natexlab{a}})Wang, Song, Fan, Wang, Xie, and
-  Zhang]{wang2023hardpatches}
+\bibitem[Wang et~al.(2023)Wang, Song, Fan, Wang, Xie, and Zhang]{wang2023hpm}
 Haochen Wang, Kaiyou Song, Junsong Fan, Yuxi Wang, Jin Xie, and Zhaoxiang
   Zhang.
 \newblock Hard patches mining for masked image modeling.
 \newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
-  and Pattern Recognition}, pages 10375--10385, 2023{\natexlab{a}}.
-\newblock \doi{10.1109/CVPR52729.2023.01000}.
-
-\bibitem[Wang et~al.(2023{\natexlab{b}})Wang, Song, Fan, Wang, Xie, and
-  Zhang]{wang2023hpm}
-Haochen Wang, Kaiyou Song, Junsong Fan, Yuxi Wang, Jin Xie, and Zhaoxiang
-  Zhang.
-\newblock Hard patches mining for masked image modeling.
-\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
-  and Pattern Recognition}, pages 10375--10385, 2023{\natexlab{b}}.
+  and Pattern Recognition}, pages 10375--10385, 2023.
 \newblock \doi{10.1109/CVPR52729.2023.01000}.
 \newblock URL
   \url{https://openaccess.thecvf.com/content/CVPR2023/html/Wang_Hard_Patches_Mining_for_Masked_Image_Modeling_CVPR_2023_paper.html}.

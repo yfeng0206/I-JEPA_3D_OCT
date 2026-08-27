@@ -129,6 +129,11 @@ FILE_MAP = {
     "main_submission.tex": "main.tex",
     "references.bib": "references.bib",
     "neurips_2026.sty": "neurips_2026.sty",
+    # A Word rendering for collaborators who do not write LaTeX. Named so it
+    # cannot be mistaken for the source: Overleaf compiles main.tex, and edits
+    # made in Word have to be carried back by hand. Rebuild it with
+    # autopilot/make_docx.py after any change to the manuscript.
+    "main_submission.docx": "main_editable.docx",
 }
 INCLUDE_DIRS = ["auto", "figures"]
 SKIP_EXT = (".aux", ".log", ".out", ".blg", ".synctex.gz", ".fls",
@@ -362,6 +367,27 @@ def validate():
     if not ok:
         raise SystemExit("build did not pass; refusing to push to Overleaf")
     return True
+
+
+def warn_if_docx_stale(paper):
+    """Say so if the Word copy predates the manuscript it was rendered from.
+
+    The .docx is a convenience for collaborators who do not write LaTeX, and a
+    stale one circulating among them is worse than none, because its numbers
+    look as authoritative as the current ones. This does not block the push:
+    the .tex is what gets submitted, and refusing to publish a corrected
+    manuscript because a derived Word file lagged would be the wrong trade.
+    """
+    tex = os.path.join(paper, "main_submission.tex")
+    docx = os.path.join(paper, "main_submission.docx")
+    if not os.path.exists(docx):
+        say("  note: no Word copy yet; build one with autopilot/make_docx.py")
+        return
+    if os.path.getmtime(docx) < os.path.getmtime(tex):
+        say("  WARNING: main_submission.docx is older than the .tex it renders.")
+        say("           Rebuild it: python autopilot/make_docx.py")
+    else:
+        say("  Word copy is newer than the manuscript")
 
 
 # ----------------------------------------------------------- classification
@@ -650,6 +676,7 @@ def main():
 
         say("\nvalidating before publish")
         validate()
+        warn_if_docx_stale(paper)
 
         # Update only what we manage. An earlier version wiped the checkout and
         # copied ours in, which would have deleted README_OVERLEAF.txt - a file

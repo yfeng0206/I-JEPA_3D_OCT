@@ -2,7 +2,7 @@
  "version": 1,
  "_comment": "SHA-256 of every file this repository manages in the Overleaf project, as of the last agreed sync. Used to tell an unseen remote edit apart from a stale remote. Hashes only - safe to commit.",
  "project": "868079f07aa2a3d7",
- "updated_utc": "2026-08-27T12:35:55+00:00",
+ "updated_utc": "2026-08-27T12:48:31+00:00",
  "last_action": "push",
  "files": {
   "auto/auto_numbers.tex": {
@@ -185,6 +185,10 @@
    "remote_sha256": "7493287e756cfc7f2739bfed1bc28ad1abfcefb775137f8af5159df04afb4fe1",
    "local_sha256": "7493287e756cfc7f2739bfed1bc28ad1abfcefb775137f8af5159df04afb4fe1"
   },
+  "figures/fig_pipeline_schematic.png": {
+   "remote_sha256": "b0365dd89068968d4c3e956f7261ff0bc6805de49ab13684c55ff219bfd4a674",
+   "local_sha256": "b0365dd89068968d4c3e956f7261ff0bc6805de49ab13684c55ff219bfd4a674"
+  },
   "figures/fig_precision_paradox.pdf": {
    "remote_sha256": "7c0369268bda2590fca6da1e12bc944a426d0d171812c428fdfd91f75543f70a",
    "local_sha256": "7c0369268bda2590fca6da1e12bc944a426d0d171812c428fdfd91f75543f70a"
@@ -224,6 +228,10 @@
   "main.tex": {
    "remote_sha256": "09365d58b2a2843b1f44de5b082992c499a7757c09607a03239469f6bb1b22bf",
    "local_sha256": "09365d58b2a2843b1f44de5b082992c499a7757c09607a03239469f6bb1b22bf"
+  },
+  "main_editable.docx": {
+   "remote_sha256": "7610d2c8137a17990381ee79843c9b9d44c73d6156f47ece3ba4fd94eff3a9ee",
+   "local_sha256": "7610d2c8137a17990381ee79843c9b9d44c73d6156f47ece3ba4fd94eff3a9ee"
   },
   "neurips_2026.sty": {
    "remote_sha256": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a",

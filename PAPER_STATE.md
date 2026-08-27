@@ -84,6 +84,11 @@ exists to prevent.
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\make_fig_geometry_panel.py
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\make_fig_specificity_ladder.py
 
+    # rebuild the Word copy for collaborators, then verify it
+    # (sync_overleaf warns, but does not block, if this is older than the .tex)
+    D:\jepa_phase0\.venv\Scripts\python.exe autopilot\make_docx.py
+    D:\jepa_phase0\.venv\Scripts\python.exe autopilot\check_docx.py
+
 ## Open items, all operator decisions
 
 1. **Public repository and double-blind.** `main_submission.pdf` is world-readable

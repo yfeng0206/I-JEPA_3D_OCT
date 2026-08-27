@@ -27,8 +27,8 @@
 % segmentation model and NO ground-truth labels. Named for what it computes.
 \newcommand{\ArmBest}{\textsc{centroid}}
 
-\title{Location Beats Shape: A Controlled Comparison of Anatomy-Guided\\
-Masking for Joint-Embedding Predictive Pretraining\\
+\title{Does Anatomy-Guided Masking Help? A Controlled Comparison of Six\\
+Masking Policies for Joint-Embedding Predictive Pretraining\\
 on Retinal OCT}
 
 \author{}
@@ -66,16 +66,13 @@ peaks at epoch \CoverPeakEpoch{} and then declines, ending
 $\DCoverRandomEpHundred$ below unguided masking (CI $\DCoverRandomEpHundredCI$);
 an audit found its targets are shortened after placement, so it does not test
 aggressive coverage. Direct measurement of mask geometry across
-600 slices shows the fraction of anatomy hidden is uncorrelated with downstream
-AUC. The best policy consults no segmentation model at all. A subgroup audit over
+600 slices shows the most anatomically precise policy is not the best performer. The best policy consults no segmentation model at all. A subgroup audit over
 \NprobesSub{} probes finds the same worst-served group every time; every disease
 stage improves with intervals excluding zero (largest for mild, $\SevDeltaMild$,
 though the gains are not separated from one another), while among race groups
 only the white subgroup's gain excludes zero. The difficulty ordering is
 untouched: the severe-to-mild
-gap stays within $\SeverityGapSpread$ of constant across every policy. Because
-each policy was pretrained once, we report these as single-run observations
-rather than an established ranking.
+gap stays within $\SeverityGapSpread$ of constant across every policy.
 \end{abstract}
 
 \section{Introduction}
@@ -125,13 +122,15 @@ performer locates a band by a per-column intensity centroid.
 \paragraph{Contributions.}
 \begin{itemize}
 \item A controlled six-arm study isolating masking policy in medical SSL, with a
-      shared ancestor checkpoint and a single evaluation protocol (21 frozen
-      probes).
-\item Evidence that guidance helps but anatomical precision does not, including the
+      shared ancestor checkpoint and a single evaluation protocol (every probe
+      fitted is listed in Appendix~\ref{app:allprobes}).
+\item Evidence that in these runs guidance helps while anatomical precision does
+      not reliably add to it, including the
       specific control --- rectangles aimed at retinal tissue --- that
       separates ``avoid background'' from ``target anatomy''.
 \item Direct measurement of mask geometry for every policy on 600 slices,
-      showing that fraction-of-anatomy-hidden does not order downstream AUC, and
+      showing that the most anatomically precise policy is not the best
+      performer, and
       an explicit accounting of the axes on which the anatomy arms are
       confounded.
 \item A subgroup audit and a $10^{-5}$ reproduction of the headline result from
@@ -184,10 +183,9 @@ precedent for our best policy is segmentation-free too:
 across five 3D medical benchmarks. Appendix~\ref{app:counter} tabulates these.
 
 That random masking is a strong baseline, and semantic guidance wins only
-sometimes, is known and contested; we do not overturn that literature. What we
-add is a controlled measurement of
-where a \emph{trained medical segmentation model} falls on that spectrum when
-everything else is held fixed, in a setting --- 3D retinal OCT, joint-embedding
+sometimes, is known and contested; we do not overturn that literature. We add a
+controlled measurement of where a \emph{trained medical segmentation model}
+falls on that spectrum, in a setting --- 3D retinal OCT, joint-embedding
 prediction, frozen probe --- where we could find no prior controlled comparison.
 
 \paragraph{Retinal foundation models, OCT, and fairness.}
@@ -237,7 +235,7 @@ scale and aspect-ratio ranges. The rectangle arms differ only in placement.
   located per slice by a per-column intensity-weighted row centroid, smoothed
   across columns. It adapts to the retina's position and curvature from a
   first-order intensity statistic, with no segmentation model and no ground-truth
-  annotation of any kind. It is named for the statistic it computes.
+  annotation of any kind.
 
 \item[\textsc{anatomy-v1} / \textsc{anatomy-v2}.] Ragged connected components
   grown on the MIRAGE score map, so target \emph{shape} follows tissue rather
@@ -245,9 +243,8 @@ scale and aspect-ratio ranges. The rectangle arms differ only in placement.
 
 \item[\textsc{cover} $f$.] Targets chosen greedily to cover the anatomy subject
   to a hard floor leaving a fraction $f$ of tissue visible in the context. We
-  pretrain $f{=}0.21$. The name describes the \emph{intent}: an implementation
-  defect means the delivered masks do not reach that coverage
-  (Appendix~\ref{app:covbug}).
+  pretrain $f{=}0.21$. An implementation defect means the delivered masks never
+  reach $f$ (Appendix~\ref{app:covbug}).
 \end{description}
 
 Figure~\ref{fig:policies} shows all six on the same B-scans.
@@ -298,7 +295,8 @@ from the same epoch-25 checkpoint} and continues with identical optimiser,
 learning-rate and weight-decay schedules, and effective batch size (512 for all
 arms). Guidance is ramped linearly from epoch 25 to 30 and held at full strength
 thereafter. Within the rectangle family the \emph{only} difference between arms
-is the mask sampler; the anatomy family additionally differs in collation, and
+is the mask sampler (Section~\ref{sec:policies}); the anatomy family
+additionally differs in collation, and
 we quantify that in Section~\ref{sec:results}.
 
 Arms differ in how far they were carried.
@@ -326,7 +324,7 @@ Each test volume is a distinct subject, so case-level resampling is already
 subject-level and no cluster correction is
 required~\citep{obuchowski1997clusteredroc,rutter2000clusterbootstrap}. We follow
 \citet{maierhein2024metricsreloaded} in reporting the operating-point metrics
-alongside AUC rather than AUC alone (Appendix~\ref{app:allprobes}).
+alongside AUC rather than AUC alone (Appendix~\ref{app:operating}).
 
 \paragraph{Numerical precision.} The probe harness
 defaults to mixed precision. The \textsc{random}, \ArmBest{} and
@@ -336,19 +334,16 @@ were fitted with autocast explicitly disabled (fp32). Protocol is therefore not
 uniform across probes, so we partition the comparisons: all headline contrasts in
 Table~\ref{tab:main} are drawn from arms sharing both epoch \emph{and}
 precision, and any contrast that would cross the precision boundary is marked
-as such and excluded from headline claims. Section~\ref{sec:precision} reports a
-direct measurement of how large the precision effect actually is.
+as such and excluded from headline claims. Section~\ref{sec:precision} measures
+the precision effect.
 
 \section{Results}
 \label{sec:results}
 
-Each policy was pretrained exactly once, so policy is confounded with one
-stochastic optimisation path after the fork. The intervals below quantify
-sampling error over test subjects for a \emph{fixed} pair of score vectors, not
-seed-to-seed variance of pretraining: every comparison is a single-run
-observation, not an established ranking over retrainings (Section~\ref{sec:limits}).
+Each policy was pretrained once, so the intervals below are sampling error over
+test subjects, not seed-to-seed variance (Section~\ref{sec:limits}).
 
-\subsection{Guidance helps; anatomical precision does not}
+\subsection{Guidance helps; anatomical precision does not reliably add}
 
 \begin{table}[t]
 \centering
@@ -356,12 +351,9 @@ observation, not an established ranking over retrainings (Section~\ref{sec:limit
 All arms continue from one epoch-25 ancestor (AUC $\AUCAncestor$). $\Delta$ is
 versus \textsc{random} at the \emph{matched} epoch. The upper block is
 precision-matched (fp16 throughout) and carries every headline claim. The lower
-block is fp32. Its epoch-50 $\Delta$ is taken against an fp32 null re-probed for
-that comparison and is matched on epoch and precision. The \textsc{cover}
-epoch-75 $\Delta$ is marked $\ddagger$: no fp32 null exists at that epoch yet, so
-it is matched on epoch only. The measured fp16/fp32 gap is at most
-$2\times10^{-4}$ (Appendix~\ref{app:fp32}), some forty times below that
-$\Delta$.}
+block is fp32, and each $\Delta$ is taken against an fp32 null re-probed at the
+same epoch, so it is matched on both epoch and precision. The measured fp16/fp32
+gap is at most $2\times10^{-4}$ (Appendix~\ref{app:fp32}).}
 \label{tab:main}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -392,27 +384,27 @@ family of nine ($q \leq \DEnvelopeRandomEpHundredQ$ throughout).
 50 (CI $\DEnvelopeRandomEpFiftyCI$) and by $\DEnvelopeRandomEpHundred$ at epoch
 100 (CI $\DEnvelopeRandomEpHundredCI$). Aiming is not containment: the rectangles
 are large, so only $43.5\%$ of \textsc{envelope}'s masked cells land on tissue
-(Table~\ref{tab:geom}). Avoiding background is worth something at every epoch we
-measured, with an interval that excludes zero.
+(Table~\ref{tab:geom}). Why the null nonetheless stays this close is examined in
+Appendix~\ref{app:bg}.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.88\linewidth]{fig_trajectories_ci.png}
 \caption{\textbf{(a)} Frozen-probe test AUC against pretraining epoch. All arms
-fork from the same epoch-25 checkpoint (open circle). Rectangle arms differ
-only in masking policy; the anatomy arms also differ in collation. Solid lines are the precision-matched fp16 family; dashed lines are fp32
+fork from the same epoch-25 checkpoint (open circle). Solid lines are the
+precision-matched fp16 family; dashed lines are fp32
 arms and must not be compared vertically against the solid lines.
 \textbf{(b)} The actual inference: paired differences against the unguided null
 on identical test cases, with \Nboot-resample bootstrap intervals. All six
-intervals exclude zero. We plot paired differences rather than per-arm error
+intervals exclude zero. Paired differences are plotted rather than per-arm error
 bars because marginal intervals carry between-case variance that cancels in a
-paired comparison, and would understate the evidence.}
+pairing and would understate the evidence.}
 \label{fig:traj}
 \end{figure}
 
 \textbf{H2 is not supported, but the anatomy result is mixed.} H2 predicts the
-anatomy arms exceed \textsc{envelope}. Tested directly at epoch 50 --- the only
-epoch at which all five arms have a probe --- \textsc{anatomy-v2} sits
+anatomy arms exceed \textsc{envelope}. Tested directly at the matched epoch 50,
+\textsc{anatomy-v2} sits
 $\DAnatomyTwoEnvelopeEpFifty$ \emph{below} \textsc{envelope} (CI
 $\DAnatomyTwoEnvelopeEpFiftyCI$, $p=\DAnatomyTwoEnvelopeEpFiftyP$). At epoch 30,
 however, \textsc{anatomy-v1} sits $\DAnatomyOneEnvelopeEpThirty$ \emph{above} it
@@ -425,14 +417,11 @@ the shared null, \textsc{envelope} gains $\DEnvelopeRandomEpFifty$ while
 $\DCoverRandomEpFifty$, neither separable from it; \ArmBest{} gains
 $\DOracleRandomEpFifty$.
 
-At the matched epoch 50 neither \textsc{anatomy-v2}
-(CI $\DAnatomyTwoRandomEpFiftyCI$,
-$p=\DAnatomyTwoRandomEpFiftyP$) nor \textsc{cover} (CI
-$\DCoverRandomEpFiftyCI$, $p=\DCoverRandomEpFiftyP$) is \emph{worse} than the
-null; both are indistinguishable from it, against an fp32 null re-probed for
-this comparison, so they are matched on epoch \emph{and} precision. What the
-data rule out is not harm but the expected \emph{monotone improvement with
-anatomical precision}.
+At the matched epoch 50 neither is \emph{worse} than the null: \textsc{anatomy-v2}
+(CI $\DAnatomyTwoRandomEpFiftyCI$, $p=\DAnatomyTwoRandomEpFiftyP$) and
+\textsc{cover} (CI $\DCoverRandomEpFiftyCI$, $p=\DCoverRandomEpFiftyP$) are both
+indistinguishable from it. The data rule out monotone improvement with
+anatomical precision, not harm.
 
 \paragraph{Carried to epoch 100 the coverage arm degrades.}
 \textsc{cover} is the only policy that uses the segmenter to choose \emph{how
@@ -449,8 +438,9 @@ $p\,\DCoverRandomEpHundredP$).
 We cannot read this as evidence that high coverage is harmful. An audit found
 that the collator shortens predictor targets \emph{after} \textsc{cover} chooses
 its placement, so its delivered masks hide $73.1\%$ of anatomy --- less than
-\textsc{envelope}'s $77.6\%$ --- and the arm never realised the coverage it was
-configured for; Appendix~\ref{app:covbug} gives the full account.
+\textsc{envelope}'s $77.6\%$ (Figure~\ref{fig:maskstats}) --- and the arm never
+realised the coverage it was configured for; Appendix~\ref{app:covbug} gives the
+full account.
 
 The strongest policy is the one that uses no segmentation model.
 \ArmBest{} gives $\DOracleRandomEpHundred$ over the null at epoch 100
@@ -472,8 +462,8 @@ training ($\DEnvelopeRandomEpFifty \to \DEnvelopeRandomEpSeventyFive \to
 \caption{Measured mask geometry, 600 held-out slices, production samplers.
 ``purity'' is the fraction of masked cells lying on tissue; ``loss slots'' is the
 number of predictor targets contributing to the loss. AUC is quoted at the
-\emph{matched} epoch 50, the only epoch at which all five policies have a probe,
-so the geometry-to-AUC association is not read across mixed epochs.}
+\emph{matched} epoch 50, so the geometry-to-AUC association is not read across
+mixed epochs.}
 \label{tab:geom}
 \small
 \begin{tabular}{lcccccc}
@@ -490,27 +480,28 @@ policy & anatomy hidden & purity & mask ratio & context kept & loss slots & AUC 
 \end{table}
 
 To test H3 we ran each production sampler on 600 held-out slices and measured
-what it actually does (Table~\ref{tab:geom}, Figure~\ref{fig:paradox}). Three
-observations follow.
+what it actually does (Table~\ref{tab:geom}, Figures~\ref{fig:paradox}
+and~\ref{fig:ladder}). Three observations follow.
 
-First, \textbf{anatomical targeting does not order the results}. Over the four
-rectangle arms, the Spearman correlation between fraction-of-anatomy-hidden and
-AUC is exactly $0.00$: knowing how much anatomy a policy hides tells you nothing
-about its downstream AUC. Mask \emph{purity} --- the share of masked patches
-lying on tissue --- trends negatively ($-0.40$). Neither is significant at
-$n{=}4$ arms, and we present them as descriptive rather than inferential; but
-neither shows the positive relationship the anatomy-guidance hypothesis predicts.
-The anatomy arm places $97.3\%$ of masked cells on tissue and does not separate
+First, \textbf{anatomical targeting does not explain the ordering}. Over the four
+rectangle arms the rank correlation between fraction-of-anatomy-hidden and AUC is
+positive (Spearman $+0.80$, $p=0.20$), as is the correlation with mask
+\emph{purity} at $+0.40$
+($p=0.60$); including the anatomy arm these fall to $+0.50$ and $+0.20$. At
+$n{=}4$--$5$ arms none of them resolves the association in either direction, and
+we draw no inference from them. The direct comparison carries the point instead:
+the anatomy arm places $97.3\%$ of masked cells on tissue and does not separate
 from the null; \ArmBest{} places $41.1\%$ on tissue and reaches the highest
-epoch-100 AUC.
+epoch-100 AUC. Occlusion attribution on the fine-tuned probes is correspondingly
+diffuse (Appendix~\ref{app:interp}).
 
 Second, \textbf{the anatomy arms are confounded on several axes simultaneously}.
 They hide only $21.4\%$ of the grid against $40$--$46\%$ for the rectangle arms,
 leave $67.9\%$
 of tokens visible as context against $40$--$46\%$, and supply $64$ predictor loss
 slots against $158$--$160$. Any of these could account for their deficit without
-invoking target shape at all. We therefore do \emph{not} claim that irregular
-target shape is harmful; that comparison is not identified by this design.
+invoking target shape at all. \textbf{H3 is therefore not identified by this
+design}, and we do \emph{not} claim that irregular target shape is harmful.
 Figure~\ref{fig:geom} makes the four-way divergence explicit.
 
 These are not consequences of blob geometry: the anatomy arms resample
@@ -544,21 +535,18 @@ wider again ($\LEOracleOne$ against $\LERandomOne$), though the spread across
 repeats ($\LESDRandomOne$--$\LESDCoverOne$) is large enough that we read the
 ordering and not its size. Whether the gap genuinely widens as labels are
 withdrawn we did not test; the ordering across fractions is a point-estimate
-observation. The absolute gains at full supervision are small, but
-the regime that matters for a new imaging site or a rare condition is the one
-with few labels. Appendix~\ref{app:labeleff} gives the full curve.
+observation. The absolute gains at full supervision are small.
+Appendix~\ref{app:labeleff} gives the full curve.
 
 
 \subsection{Subgroups: the ordering never changes}
 \label{sec:subgroup}
 
-Joining saved test predictions to the released FairVision metadata in
-deterministic loader order (the join is validated by exact label
-reconstruction: the label vector rebuilt from the sorted file order matches the
-stored labels for all \Ntest{} cases in every probe), we audit seven
-stratifications across \NprobesSub{} probes spanning aggregate AUC
-$\SubAUCMin$ to $\SubAUCMax$. Probes that the exclusion rules of
-Appendix~\ref{app:excluded} remove are removed here too.
+We audit seven stratifications across \NprobesSub{} probes spanning aggregate
+AUC $\SubAUCMin$ to $\SubAUCMax$. Predictions are joined to the released
+FairVision metadata in deterministic loader order, validated by exact label
+reconstruction (\Ntest/\Ntest{} cases, every probe). Probes that the exclusion
+rules of Appendix~\ref{app:excluded} remove are removed here too.
 
 \paragraph{The ordering of subgroups never changes.} The worst-performing group
 is the same in every one of the \NprobesSub{} probes for sex
@@ -570,7 +558,8 @@ this as a descriptive regularity and attach no $p$-value. What it shows is that
 the disparity is not introduced by any policy we tried.
 
 \paragraph{Point estimates rise everywhere; few gaps reliably move.} A widening
-max--min gap is easy to misread as harm. It is not. At epoch 100 the strongest
+max--min gap is easy to misread as harm. It is not harm. At epoch 100 the
+strongest
 policy raises the point estimate for \emph{every} race stratum over the null,
 and the max--min gap widens only because the already-best asian subgroup gains
 most. Paired resampling, however, separates only the white subgroup's gain from
@@ -620,6 +609,10 @@ Section~\ref{sec:setup} are not the effect and every contrast is matched on
 precision (Appendix~\ref{app:fp32}). Every number quoted here is generated by one
 script from stored per-case predictions; that script, the epoch-100 \ArmBest{}
 encoder, its head and those predictions are released, links withheld for anonymity.
+Re-encoding the test split from those weights on different hardware, at fp32
+rather than fp16 and with a different encoder chunk size, reproduces the
+reported AUC to $9.8\times10^{-6}$ ($0.8854754$ versus $0.8854852$): 22
+discordant pairs out of $2{,}248{,}844$.
 
 \section{Discussion and limitations}
 \label{sec:limits}
@@ -639,9 +632,9 @@ localisation.
 We cannot claim anatomy-shaped masking is \emph{harmful}: at the matched epoch it
 sits $\DAnatomyTwoRandomEpFifty$ from the null with an interval
 ($\DAnatomyTwoRandomEpFiftyCI$) that comfortably contains zero, so it is
-indistinguishable rather than worse. Nor can we claim target \emph{shape} is the
-operative variable, for the reasons in Table~\ref{tab:geom}. Nor can we claim the
-mechanism behind \ArmBest{}'s advantage. Two explanations remain live:
+indistinguishable rather than worse. Nor is target \emph{shape} identified as the
+operative variable (Table~\ref{tab:geom}), nor is \ArmBest{}'s mechanism. Two
+explanations remain live:
 consistency of location (the encoder is repeatedly forced to represent the same
 region), and masking ratio or task difficulty. Distinguishing them requires an
 arm that randomises the band's vertical position while holding area and context
@@ -668,11 +661,10 @@ modalities, diseases, or segmentation-quality regimes is untested, and the
 anatomy arms depend on MIRAGE's prediction quality on this data, so a better
 segmenter might change the conclusion. Only $f{=}0.21$ was pretrained for
 \textsc{cover}, so we report no dose-response over the visible-tissue floor and
-make no claim that any floor is optimal. That arm reaches epoch 100, but an
-implementation defect means its delivered masks never realised the coverage it
-was configured for (Appendix~\ref{app:covbug}), so its trajectory is not evidence
-about aggressive coverage. Its epoch-50 value is retained as a matched-epoch
-comparison against every other arm. Finally, one dataset and one test split were
+make no claim that any floor is optimal. That arm reaches epoch 100, but the
+collation defect above (Appendix~\ref{app:covbug}) means its trajectory is not
+evidence about aggressive coverage. Its epoch-50 value is retained as a
+matched-epoch comparison against every other arm. Finally, one dataset and one test split were
 reused throughout this programme's history, and policies, checkpoints and
 analyses were chosen after repeated inspection of that split; the intervals we
 report are therefore best read as descriptive rather than as confirmatory
@@ -687,13 +679,13 @@ the full statement.
 \section{Conclusion}
 
 We tested the intuition that masked predictive pretraining in medical imaging
-should target clinically meaningful anatomy. Under matched compute, schedule, and
-a shared ancestor checkpoint, guidance helped --- but anatomical precision did
-not. Restricting targets to retinal tissue improved AUC over unguided masking by
-$\DEnvelopeRandomEpFifty$ at the matched epoch, while shaping targets to trace
-the segmented retina matched unguided masking at epoch 50 and fell below it by
-epoch 75, and the best policy consulted no segmentation model. Mask geometry is
-uncorrelated with how much anatomy is hidden; a subgroup audit shows every
+should target clinically meaningful anatomy. In these runs, under a matched
+schedule, effective batch size, and shared ancestor checkpoint, guidance helped
+--- but anatomical precision did not. Restricting targets to retinal tissue
+improved AUC over unguided masking by $\DEnvelopeRandomEpFifty$ at the matched
+epoch, while shaping targets to trace the segmented retina matched unguided
+masking at epoch 50 and fell below it by epoch 75, and the best policy consulted
+no segmentation model. A subgroup audit shows every
 disease stage improving with intervals excluding zero, race gains consistent in
 sign, and the difficulty ordering untouched. We suggest the operative variable is
 the consistency of the predictive task rather than its anatomical correctness.
@@ -732,7 +724,7 @@ Appendix~\ref{app:excluded}.}
 (\textsc{anatomy-v2} on $n{=}1{,}534$). Panel (a) is the quantity the
 \textsc{cover} arm was built to maximise: it reaches $73.1\%$, \emph{below}
 \textsc{envelope}'s $77.6\%$, which is the discrepancy Appendix~\ref{app:covbug}
-explains. Panel (b) shows the ordering that motivates this paper: target purity
+explains. Panel (b) shows the ordering this paper tests: target purity
 rises monotonically from \textsc{random} to \textsc{anatomy-v2}, while downstream
 AUC does not follow it. Panels (c)--(f) give the confounds we do not
 disentangle --- how much anatomy survives in the context, the context budget, and
@@ -810,7 +802,7 @@ therefore draw no trend conclusion for race.}
 
 \paragraph{Race.} The black subgroup has the lowest AUC in every one of the
 \NprobesSub{} probes ($n{=}\NBlack$ black, $n{=}\NAsian$ asian, $n{=}\NWhite$
-white). At matched epoch 100 the black subgroup improves from
+white; Figure~\ref{fig:fair}). At matched epoch 100 the black subgroup improves from
 $\RaceRandomBlack$ under \textsc{random} to $\RaceOracleBlack$ under
 \ArmBest{} ($\BlackGainOracle$), a larger absolute gain than the white
 subgroup's ($\RaceRandomWhite \to \RaceOracleWhite$). The max--min gap
@@ -822,15 +814,14 @@ AUC and racial gap is $\rho{=}\SubRaceRho$ ($p{=}\SubRaceRhoP$). It passes
 Benjamini--Hochberg ($q{=}\SubRaceQ$) but vanishes once probes are aggregated to
 their pretraining branches ($\rho{=}\SubRaceBranchRho$,
 $p{=}\SubRaceBranchP$), and the checkpoint-level test is pseudo-replicated
-because the \NprobesSub{} probes come from only \NbranchesSub{} branches. The
-branch-level figure is the one to believe.
+because the \NprobesSub{} probes come from only \NbranchesSub{} branches.
 
 \paragraph{Disease severity.} FairVision's label is defined by visual-field mean
 deviation (md): every test volume with md $\leq -2$ is positive. Severity
 therefore cannot be used as an ordinary subgroup axis, because within-bin AUC is
 undefined --- a trap that silently yields nothing under naive stratification.
 Instead each positive stratum is scored against the shared pool of all
-\Nneg{} negatives.
+\Nneg{} negatives (Table~\ref{tab:severity}).
 
 \begin{table}[h]
 \centering
@@ -855,7 +846,8 @@ the strongest policy, and stays within $\SeverityGapSpread$
 ($\SubSeverityGapMin$--$\SubSeverityGapMax$) across all \NprobesSub{} probes
 while aggregate AUC spans $\SubAUCMin$--$\SubAUCMax$. Target placement raises
 the whole severity curve, all three strata separated from zero under paired
-resampling, the largest point estimate at mild disease ($\PDSevMildDelta$, CI
+resampling (Table~\ref{tab:pairedsub}), the largest point estimate at mild
+disease ($\PDSevMildDelta$, CI
 $\PDSevMildCI$) and the smallest at severe ($\PDSevSevereDelta$). That ordering
 is descriptive only: we did not test the paired \emph{difference} between
 strata, so it does not establish that mild disease benefits most. We note that
@@ -874,10 +866,8 @@ are paired differences rather than differences of independent estimates.}
 \input{auto/table_paired_subgroup}
 \end{table}
 
-\paragraph{Limitations.} One dataset, one test split, reused throughout this
-programme's history. Because policies, checkpoints and analyses were chosen
-after repeated inspection of that split, the $p$-values here should be read as
-descriptive rather than as confirmatory inference. Race and ethnicity are
+\paragraph{Limitations.} The $p$-values here are descriptive, for the reasons
+given in Section~\ref{sec:limits}. Race and ethnicity are
 self-reported categories inherited from FairVision's coding; at these subgroup
 sizes we cannot speak to intersectional groups. All figures are frozen mean-pool
 linear probes. Subgroup sensitivity at a transferred threshold is reported in
@@ -904,9 +894,8 @@ matched-epoch comparisons in Table~\ref{tab:main}.
 \label{app:covbug}
 
 We audited the \textsc{cover} sampler after its epoch-100 result and found a
-defect that changes how that arm may be interpreted: it invalidates the reading
-we would otherwise have given, and the same mechanism silently weakens one
-cross-family comparison.
+defect. It invalidates the reading of that arm and weakens one cross-family
+comparison.
 
 \paragraph{The defect.} Predictor targets are collated by truncating every target
 to the length of the shortest target anywhere in the microbatch. \textsc{cover}
@@ -963,15 +952,16 @@ random arm's predictor beats a per-position, no-context reference by $0.680$ on
 background targets, above its $0.633$ on anatomy targets: predicting a background
 token requires more than knowing where it is. Pretraining also spends capacity
 reorganising background --- background self-similarity falls from $0.784$
-untrained to $0.346$ at epoch 100, while tissue contrast collapses.
+untrained to $0.346$ at epoch 100.
 
 \paragraph{But it does not help the classifier.} Pooled background features are
 $95.2\%$ linearly reconstructible from pooled anatomy features. Residualised,
 background predicts glaucoma at test AUC $0.5515$ (CI $[0.5165, 0.5893]$).
 Appending background to anatomy \emph{lowers} test AUC by $0.0076$
 (CI $[-0.0139, -0.0012]$) for the random arm and moves it under $\pm0.002$ for
-every other. A background-only probe scores $0.867$, but that is attention
-leakage rather than background signal.
+every other. A background-only probe scores $0.867$; self-attention mixes tissue
+information into background tokens, so that figure cannot be read as background
+signal, and we did not measure how much mixing occurs.
 
 \paragraph{Position dominates background tokens, but is not the whole story.} At
 layer 0, $90.8\%$ of the across-position variance of the encoder input at
@@ -979,14 +969,13 @@ background cells comes from \texttt{pos\_embed}, against $40.8\%$ at tissue cell
 (stable across six thresholds and both checkpoints). Mechanically a background
 token is close to its position code. That the predictor still beats a
 per-position reference shows the pretraining signal is not purely positional.
-The causal chain from this mechanism to downstream AUC remains open; two
-ablations would settle it.
+The causal chain from this mechanism to downstream AUC remains open.
 
 \section{Label efficiency}
 \label{app:labeleff}
 
-Guidance that only matters when labels are plentiful is of limited clinical
-interest, so we measured how each policy behaves as supervision is withdrawn. We
+We measured each policy as supervision is withdrawn
+(Section~\ref{sec:labeleff}). We
 subsample the labelled training set to fractions of its size, fit the same frozen
 linear probe on cached epoch-\LEEpoch{} features, and repeat \LERepeats{} times
 per fraction. The per-fraction seed depends only on fraction and repeat, never on
@@ -1003,7 +992,8 @@ supervision ($\LERandomHundred$ against $\AUCRandomEpHundred$ for the null,
 $\LEOracleHundred$ against $\AUCOracleEpHundred$ for \ArmBest{}), so the curve
 below and the headline table describe one probe, not two.
 
-The advantage of guided masking is concentrated where labels are scarce.
+The advantage of guided masking is concentrated where labels are scarce
+(Table~\ref{tab:labeleff}, Figure~\ref{fig:labeleff}).
 At $5\%$ of labels ($n{=}\LENFive$) \ArmBest{} leads the null by $\LEGapFive$
 ($\LEOracleFive$ against $\LERandomFive$), against $\LEGapHundred$ at full
 supervision --- more than four times the margin. At $1\%$ the gap is wider still
@@ -1051,15 +1041,16 @@ sensitivity to deleting a token, not a causal effect of anatomy on disease.
 Gradient$\times$input is not used because two of
 the three probes are non-linear in the slice-token matrix, where gradient
 attribution is misleading. For slice-level attribution each slice token is zeroed
-in turn and $\Delta$logit recorded; for window-level, seven consecutive slices;
-for patch-level, leave-one-out over the 256 patch tokens of a target slice.
+in turn and $\Delta$logit recorded (Figure~\ref{fig:interp-slice}); for
+window-level, seven consecutive slices (Figure~\ref{fig:interp-window}); for
+patch-level, leave-one-out over the 256 patch tokens of a target slice.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.92\linewidth]{interp_slice_contribution_curves.png}
 \caption{Single-slice occlusion attribution against native slice position,
 averaged over all \Ntest{} test volumes, for all three fine-tuned probes.
-Despite spanning zero to 7.17M probe parameters they converge on the same
+Despite spanning zero to 7.14M probe parameters they converge on the same
 structure (mean-pool vs cross-attention pool $r{=}0.94$). The $y$-axis is
 \emph{signed} $\Delta$logit: peaks are slices whose removal lowers the logit,
 the central dip is slices whose removal raises it, and only slices near zero are
@@ -1073,8 +1064,7 @@ genuinely unused.}
 \caption{Window occlusion ($W{=}7$) amplifies the same signal roughly sevenfold
 and suppresses single-volume noise. For mean-pooled models, single-slice
 occlusion systematically under-estimates attributed signal; the windowed variant
-recovers about $25\times$ more. We recommend it as the default primitive for
-this class of model.}
+recovers about $25\times$ more.}
 \label{fig:interp-window}
 \end{figure}
 
@@ -1092,7 +1082,8 @@ near-perfect \emph{mirror images} along the slice axis
 ($\mathrm{corr}(c_1,\mathrm{flip}(c_2)) = 0.971$ and $0.988$ for the two
 well-structured probes, against raw correlations of $-0.124$ and $-0.478$).
 Third, using that cluster label as pseudo-laterality and flipping one cluster
-collapses the bimodality asymmetrically. The signature is OD/OS axial storage:
+collapses the bimodality asymmetrically (Figure~\ref{fig:interp-odos}). The
+signature is OD/OS axial storage:
 each eye carries its dominant signal on one side of the disc, right and left eyes
 are stored with opposite axial orientation, and population averaging manufactures
 an illusion of symmetry.
@@ -1109,7 +1100,8 @@ bilateral anatomy.}
 
 \paragraph{Errors are weaker signal, not different anatomy.} Stratifying by
 outcome, false-negative curves are scaled-down true-positive curves with the same
-shape, and false positives likewise mirror true negatives. Attribution structure
+shape, and false positives likewise mirror true negatives
+(Figure~\ref{fig:interp-outcome}). Attribution structure
 is also near-invariant to prediction confidence ($|r| \leq 0.25$ between peak
 contribution magnitude and $|\text{logit}|$). The error rate at threshold $0.5$
 therefore reflects signal-strength saturation on hard cases, not the model
@@ -1137,9 +1129,10 @@ slice level ($r{=}0.94$) and moderate at patch level (per-volume $r \approx
 \label{fig:interp-heatmap}
 \end{figure}
 
-\paragraph{Why this is in a masking paper.} Two of these results bear directly on
-the main claim. The classifier's evidence is spread across the middle two-thirds
-of the volume and across most patches within a slice, rather than concentrated on
+\paragraph{Diffuse attribution supports the main claim.} The classifier's
+evidence is spread across the middle two-thirds
+of the volume and across most patches within a slice
+(Figure~\ref{fig:interp-heatmap}), rather than concentrated on
 a compact anatomical target. A masking policy that sharpens targets onto a
 precise anatomical boundary is therefore optimising for a spatial prior the
 downstream task does not appear to need, which is consistent with
@@ -1169,7 +1162,8 @@ unchanged to all arms on test. ECE is a
 \input{auto/table_operating}
 \end{table}
 
-Two observations. First, the threshold transfers imperfectly: a validation target
+Two observations (Table~\ref{tab:operating}). First, the threshold transfers
+imperfectly: a validation target
 of $0.90$ yields test specificity $\SpecAchIntensitySpecNinety$ to
 $\SpecAchEnvelopeSpecNinety$ across the three arms, so the operating point moves
 by roughly one point between arms and the comparison below is at a shared
@@ -1185,8 +1179,9 @@ best-calibrated arm (Brier $\BrierIntensity$ versus $\BrierRandom$; ECE
 $\ECEIntensity$ versus $\ECERandom$), which matters because a screening score
 that is used as a probability must be trustworthy as one.
 
-A $+0.011$ AUC difference is hard to interpret clinically, whereas a change in
-cases detected at a fixed threshold is not. We state that comparison carefully:
+A $+0.011$ AUC difference is hard to interpret clinically, and the ROC curves are
+nearly superimposed (Figure~\ref{fig:roc}), whereas a change in cases detected at
+a fixed threshold is not. We state that comparison carefully:
 transferring one threshold moves achieved specificity from $\SpecAchRandomSpecNinety$
 to $\SpecAchIntensitySpecNinety$, so the arms are \emph{not} compared at an
 identical false-positive rate and the sensitivity change partly reflects that
@@ -1265,7 +1260,8 @@ subgroup audit and are never model inputs.
 \section{Published ablations on informed versus random masking}
 \label{app:counter}
 
-Our result should be read against the following published comparisons, which we
+Our result should be read against the following published comparisons
+(Table~\ref{tab:counter}), which we
 collected while positioning this work. The pattern is that random masking is a
 strong baseline and informed masking wins only under some objectives and
 protocols; the deficit is largest under frozen evaluation.
@@ -1296,10 +1292,7 @@ SSiT~\citep{huang2024ssit} & no saliency 79.48 $\kappa$ & 25\% mask 77.53; 50\% 
 \end{table}
 
 Read together, these say that the \emph{direction} of our finding is not new.
-What we add is a controlled measurement in a setting where the guidance comes
-from a trained medical segmentation model rather than from attention or
-difficulty, and where the comparison is run from a shared checkpoint with the
-masking policy as the only difference.
+What we add is the controlled measurement, not the sign of the result.
 
 \section{Full paired-contrast table}
 \label{app:contrasts}
@@ -1310,7 +1303,7 @@ masking policy as the only difference.
 is a paired difference on identical test cases; the interval is a
 \Nboot-resample paired bootstrap and $p$ is a DeLong test for correlated ROC
 curves. $q$ is Benjamini--Hochberg over these nine contrasts. All $p$ and $q$
-values here are descriptive rather than confirmatory (Section~\ref{sec:limits}).
+values here are descriptive (Section~\ref{sec:limits}).
 Every comparison against the null excludes zero.}
 \label{tab:contrasts}
 \small
@@ -1372,7 +1365,8 @@ were originally fitted under the harness default, which enables autocast. To
 remove any doubt that the headline effect is a precision artifact, we re-ran the
 complete probe pipeline for those arms with autocast disabled, so that feature
 extraction, head optimisation and test evaluation are all fp32, under the exact
-protocol already used by the \textsc{anatomy} and \textsc{cover} arms. The
+protocol already used by the \textsc{anatomy} and \textsc{cover} arms
+(Table~\ref{tab:fp32}). The
 encoder checkpoint is SHA-256 hashed before and after each run and verified
 unchanged, so no result here can be contaminated by an accidental encoder
 update.
@@ -1381,8 +1375,7 @@ update.
 \centering
 \caption{Full fp32 re-probe against the original fp16 result, same frozen
 encoder in each row. The largest difference is $2\times10^{-4}$, two to three
-orders of magnitude below the effects reported in Table~\ref{tab:main}. Rows
-appear as the re-probes complete.}
+orders of magnitude below the effects reported in Table~\ref{tab:main}.}
 \label{tab:fp32}
 \small
 \input{auto/table_fp32}

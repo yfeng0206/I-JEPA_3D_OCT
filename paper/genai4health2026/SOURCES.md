@@ -5,15 +5,15 @@ the manuscript that actually exist, and is rebuilt on every refresh. Do not edit
 it by hand: it will be overwritten, and a hand-edited copy is exactly how it
 drifted from the paper before.
 
-Generated 2026-08-26T09:23:05-07:00
+Generated 2026-08-26T16:26:31-07:00
 
 ## 1. What the built PDF contains
 
 | item | count |
 |---|---|
-| auto-generated numeric macros | 388 |
+| auto-generated numeric macros | 400 |
 | generated tables `\input` into the paper | 8 |
-| figures included | 12 |
+| figures included | 15 |
 | distinct citation keys | 48 |
 
 Every numeric quantity in the manuscript resolves through
@@ -34,10 +34,13 @@ Generated tables:
 Figures:
 
 - `fig1_policies_compact.png`
+- `figS5_mask_statistics.png`
 - `fig_fairness.png`
 - `fig_geometry_panel.png`
+- `fig_labeleff.png`
 - `fig_masking_policies.png`
 - `fig_precision_paradox.png`
+- `fig_roc.png`
 - `fig_specificity_ladder.png`
 - `fig_trajectories_ci.png`
 - `interp_04_window_occlusion_W7.png`
@@ -127,7 +130,7 @@ SHA-256 hashed before and after and the run is invalidated if it changed.
 
 ## 4. Subgroup analysis
 
-- probes used: 22, drawn from 7 pretraining branches
+- probes used: 23, drawn from 7 pretraining branches
 - exclusion status is taken from the evidence inventory, not from the
   subgroup script's own tag, so runs the paper declares excluded are
   excluded here too

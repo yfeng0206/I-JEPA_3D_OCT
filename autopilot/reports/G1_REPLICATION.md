@@ -331,16 +331,44 @@ Checkpoint disk cost (INFERRED): 7 files times about 1.5 GB per leg, about
 | Throughput, leg 1 epoch 26, 300 s window | 2.673 iterations/s (802 iterations) | MEASURED |
 | Implied training-only epoch time | 58.5 min | INFERRED |
 | Historic reference rate quoted for this box | 57.7 min/epoch | prior MEASURED |
-| First full epoch wall time, including validation | see below | PENDING at first write |
-| Six legs x 25 epochs | see below | PENDING at first write |
-| Frozen probe wall time, per leg | about 2.7 h (reference: `frozen_meanpool_oracle_ep50_fp32` ran 2026-08-22 22:26:33 to 2026-08-23 01:08:17) | MEASURED, prior run |
-| Projected chain completion | see below | PENDING at first write |
+| First full epoch wall time, including validation | 3,607 s = 60.1 min | MEASURED |
+| Frozen probe wall time, per leg | 2 h 41 min 44 s (`frozen_meanpool_oracle_ep50_fp32` ran 2026-08-22 22:26:33 to 2026-08-23 01:08:17) | MEASURED, prior run |
 
-### Update after the first completed epoch
+### Update after the first completed epoch (MEASURED)
 
-PENDING. This section is rewritten with MEASURED values as soon as epoch 26 of
-leg 1 prints its `Epoch 26/100 (Ns) train_loss=...` line. No projection based on
-a full epoch is recorded until then.
+    Epoch 26/100  (3607s)  train_loss=0.1187  val_loss=0.1186 *
+
+completed 2026-08-26 18:00:48 -07:00, from a 2026-08-26 16:50:50 launch.
+
+Health of that epoch (MEASURED, from the same log): `cos_sim=0.8699`,
+`l2_dist=12.4559`, `rep_diversity=0.2703`, `train_eval_loss=0.122328`. The
+published random arm records train 0.1174 / val 0.1197 at epoch 25 with
+cos_sim 0.867 and rep_diversity 0.279
+(`docs/experiments/pretraining/random_100ep.md`), so the continuation picks up
+exactly where the ancestor left off. That is the strongest available evidence
+that the warm start is correct rather than merely non-crashing.
+
+INFERRED from the 3,607 s measurement:
+
+* Per leg: 25 epochs x 3,607 s = 90,175 s = 25.05 h.
+* Six legs of training: 150.3 h.
+* Six frozen probes at 2.696 h each: 16.2 h.
+* Total: 166.5 h = 6.94 days from the 2026-08-26 16:50:50 -07:00 launch.
+* Projected chain completion: **2026-09-02 15:20 -07:00** (INFERRED).
+* Projected completion of the first complete paired triple (legs 1-3 including
+  their probes, 83.2 h): **2026-08-30 04:05 -07:00** (INFERRED).
+
+Both projections precede the 2026-09-05 deadline, the full chain with about
+2.4 days of margin. They assume no crash and no GPU contention. The supervisor
+absorbs up to eight transient restarts per leg, and a restart costs at most the
+epoch in progress because the rolling checkpoint is written every epoch.
+
+Resource state during that first epoch (MEASURED): GPU utilisation 100 percent,
+23.6 GB of 24.6 GB VRAM in use including desktop applications, trainer-reported
+allocation 11,456 MB; system RAM fell to 0.6 GB free during the training loop
+and recovered to 15.6 GB during validation, when the six training workers are
+not resident. This is the previously characterised 6-worker operating point and
+was not changed.
 
 ---
 

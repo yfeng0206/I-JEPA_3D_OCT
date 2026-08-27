@@ -1,0 +1,237 @@
+{
+ "version": 1,
+ "_comment": "SHA-256 of every file this repository manages in the Overleaf project, as of the last agreed sync. Used to tell an unseen remote edit apart from a stale remote. Hashes only - safe to commit.",
+ "project": "868079f07aa2a3d7",
+ "updated_utc": "2026-08-27T05:17:46+00:00",
+ "last_action": "verify",
+ "files": {
+  "auto/auto_numbers.tex": {
+   "remote_sha256": "07bcb5fa1a2fb0f72dd4d03e39f28522675d750ebf51ec32e7a42d57dfeb08df",
+   "local_sha256": "07bcb5fa1a2fb0f72dd4d03e39f28522675d750ebf51ec32e7a42d57dfeb08df"
+  },
+  "auto/fig_fairness.png": {
+   "remote_sha256": "e37f3f0c77f37531c99f1c9a5f91a0affc6f6601a456184fd174379e837c54b3",
+   "local_sha256": "e37f3f0c77f37531c99f1c9a5f91a0affc6f6601a456184fd174379e837c54b3"
+  },
+  "auto/fig_labeleff.png": {
+   "remote_sha256": "56b6e72135e25fa81317fb5a24af9aeb655de8b497e23c247e2ce35f98d5716d",
+   "local_sha256": "56b6e72135e25fa81317fb5a24af9aeb655de8b497e23c247e2ce35f98d5716d"
+  },
+  "auto/fig_roc.png": {
+   "remote_sha256": "f343becd29d0a3c9715a6cf7cf7c38dc20fad582bffada6c0769a7ec2caeb564",
+   "local_sha256": "f343becd29d0a3c9715a6cf7cf7c38dc20fad582bffada6c0769a7ec2caeb564"
+  },
+  "auto/fig_trajectories_ci.png": {
+   "remote_sha256": "073368d3beeac90ff3d4676ed791fc94fd8674abb3c18684dccc35b28407c5e0",
+   "local_sha256": "073368d3beeac90ff3d4676ed791fc94fd8674abb3c18684dccc35b28407c5e0"
+  },
+  "auto/table_allprobes.tex": {
+   "remote_sha256": "b9c2cb4abb23ef2fd7d965bcbcb54ad4bf43b30964d8347b1816d2b90cc45617",
+   "local_sha256": "b9c2cb4abb23ef2fd7d965bcbcb54ad4bf43b30964d8347b1816d2b90cc45617"
+  },
+  "auto/table_fairness.tex": {
+   "remote_sha256": "05c6d152644b0ebd8b305c2ec2cccb4ea14a3e2fb99b1d3e205497b75c6b0a9e",
+   "local_sha256": "05c6d152644b0ebd8b305c2ec2cccb4ea14a3e2fb99b1d3e205497b75c6b0a9e"
+  },
+  "auto/table_fp32.tex": {
+   "remote_sha256": "843cd07bb195b222873f5bacd2b0b0a3e8aa4ad9307ffb7acc86d46df750e009",
+   "local_sha256": "843cd07bb195b222873f5bacd2b0b0a3e8aa4ad9307ffb7acc86d46df750e009"
+  },
+  "auto/table_labeleff.tex": {
+   "remote_sha256": "af65f93be796893cb0781e5319ddacf43a10be0eebc38dd7398d5ed76fa3e212",
+   "local_sha256": "af65f93be796893cb0781e5319ddacf43a10be0eebc38dd7398d5ed76fa3e212"
+  },
+  "auto/table_main.tex": {
+   "remote_sha256": "ae8cf7baad8e1949bb007a1c26dacfe636bf2e56c95c61540cba28298c8185f0",
+   "local_sha256": "ae8cf7baad8e1949bb007a1c26dacfe636bf2e56c95c61540cba28298c8185f0"
+  },
+  "auto/table_operating.tex": {
+   "remote_sha256": "a5e8e766170ce03bd7af71d8caab59489fa1fe4d0608fbba0d847f8382777110",
+   "local_sha256": "a5e8e766170ce03bd7af71d8caab59489fa1fe4d0608fbba0d847f8382777110"
+  },
+  "auto/table_paired_subgroup.tex": {
+   "remote_sha256": "d82d23cff030ec786003d2dd0071a0a8352cb537e24899b3f2952639e4e2a94c",
+   "local_sha256": "d82d23cff030ec786003d2dd0071a0a8352cb537e24899b3f2952639e4e2a94c"
+  },
+  "auto/table_subgroup_operating.tex": {
+   "remote_sha256": "10dd4e9bc85f42d7d9c067b29b4354c353d33466e09358737ce072a8652942ed",
+   "local_sha256": "10dd4e9bc85f42d7d9c067b29b4354c353d33466e09358737ce072a8652942ed"
+  },
+  "auto/table_subgroup_trends.tex": {
+   "remote_sha256": "ca419a8812b5e6326bae9d269390499daaf6ddffb8c11bfba1240a3953708477",
+   "local_sha256": "ca419a8812b5e6326bae9d269390499daaf6ddffb8c11bfba1240a3953708477"
+  },
+  "figures/fig1_crop_defect.pdf": {
+   "remote_sha256": "9d71d9382cbf1fc80dbccb22b0a153088e4bd437b20d09427e493f442b2397ea",
+   "local_sha256": "9d71d9382cbf1fc80dbccb22b0a153088e4bd437b20d09427e493f442b2397ea"
+  },
+  "figures/fig1_crop_defect.png": {
+   "remote_sha256": "0cf571e54db16de1bb4bd57ccc0a89e00ca688a05e330ed07dcc651e0daf3f0c",
+   "local_sha256": "0cf571e54db16de1bb4bd57ccc0a89e00ca688a05e330ed07dcc651e0daf3f0c"
+  },
+  "figures/fig1_policies_compact.pdf": {
+   "remote_sha256": "c44ffd72274a6dbf93857a2a59b966ffa7ba374df742e7e0f036071391977d75",
+   "local_sha256": "c44ffd72274a6dbf93857a2a59b966ffa7ba374df742e7e0f036071391977d75"
+  },
+  "figures/fig1_policies_compact.png": {
+   "remote_sha256": "30805f537d14a76e9cdcfe46362394b8cffc0bcc0fb159d1fd24cb6722078f6f",
+   "local_sha256": "30805f537d14a76e9cdcfe46362394b8cffc0bcc0fb159d1fd24cb6722078f6f"
+  },
+  "figures/fig1b_context_excision.pdf": {
+   "remote_sha256": "7fd1da093408f8fc6a31f0bafc85866255b39ad5dafd40da7c0583e044f1a100",
+   "local_sha256": "7fd1da093408f8fc6a31f0bafc85866255b39ad5dafd40da7c0583e044f1a100"
+  },
+  "figures/fig1b_context_excision.png": {
+   "remote_sha256": "e32d8c964a85ebd72a82caa3ba2fe26da2e3bd93807dd9581667817724910c1c",
+   "local_sha256": "e32d8c964a85ebd72a82caa3ba2fe26da2e3bd93807dd9581667817724910c1c"
+  },
+  "figures/fig2_composition_vs_auc.pdf": {
+   "remote_sha256": "4841a252bad91f0c6f8a26266658f7fe226ca055831f92aeaf751bc8e654e6ce",
+   "local_sha256": "4841a252bad91f0c6f8a26266658f7fe226ca055831f92aeaf751bc8e654e6ce"
+  },
+  "figures/fig2_composition_vs_auc.png": {
+   "remote_sha256": "fc1a56bbae6ad91773c09a559531bf3031d2f188cc10a59b72550803813554bb",
+   "local_sha256": "fc1a56bbae6ad91773c09a559531bf3031d2f188cc10a59b72550803813554bb"
+  },
+  "figures/fig3_cover_floor_dose_response.pdf": {
+   "remote_sha256": "872a645976bd868af8429b8c06b0a5d37cad48236648638fc9ad7483deecb2ec",
+   "local_sha256": "872a645976bd868af8429b8c06b0a5d37cad48236648638fc9ad7483deecb2ec"
+  },
+  "figures/fig3_cover_floor_dose_response.png": {
+   "remote_sha256": "644ca022fecde6a7b4f18c6f856270a3c916bfbdd03cf71c7eea0e7af4f36785",
+   "local_sha256": "644ca022fecde6a7b4f18c6f856270a3c916bfbdd03cf71c7eea0e7af4f36785"
+  },
+  "figures/fig4_auc_trajectories.pdf": {
+   "remote_sha256": "f1a8e97c56855ad11fcc6544b41b2d8467f513b55941f0c78064e6412819e741",
+   "local_sha256": "f1a8e97c56855ad11fcc6544b41b2d8467f513b55941f0c78064e6412819e741"
+  },
+  "figures/fig4_auc_trajectories.png": {
+   "remote_sha256": "667acbb9e58d0a7ad751ee4b209edbd499734316d8b4706d722edfa06cee9fec",
+   "local_sha256": "667acbb9e58d0a7ad751ee4b209edbd499734316d8b4706d722edfa06cee9fec"
+  },
+  "figures/fig5_zero_anatomy_example.pdf": {
+   "remote_sha256": "462f6ce1e3aaac11b6c2e1cb2eefe4e1f173f5880cab74282693d3dcae505782",
+   "local_sha256": "462f6ce1e3aaac11b6c2e1cb2eefe4e1f173f5880cab74282693d3dcae505782"
+  },
+  "figures/fig5_zero_anatomy_example.png": {
+   "remote_sha256": "9766cd872193eae238a891f6d324fea083020fcbcc2e04689006131a10210fc0",
+   "local_sha256": "9766cd872193eae238a891f6d324fea083020fcbcc2e04689006131a10210fc0"
+  },
+  "figures/fig6_subgroup_disparity.pdf": {
+   "remote_sha256": "68d4f7e31e03ffa3a00b34dde45b812fe5ee70e2500cecc4ddfb1969c4d19b0e",
+   "local_sha256": "68d4f7e31e03ffa3a00b34dde45b812fe5ee70e2500cecc4ddfb1969c4d19b0e"
+  },
+  "figures/fig6_subgroup_disparity.png": {
+   "remote_sha256": "50d0f087357e948a79307f9f37929bb5216f6cdff8a26b21c12b117458b5fe56",
+   "local_sha256": "50d0f087357e948a79307f9f37929bb5216f6cdff8a26b21c12b117458b5fe56"
+  },
+  "figures/figS1_background_matters.pdf": {
+   "remote_sha256": "69beacfe17e768f141811057982834967101c831171abf97ff63f7130dfa9a7a",
+   "local_sha256": "69beacfe17e768f141811057982834967101c831171abf97ff63f7130dfa9a7a"
+  },
+  "figures/figS1_background_matters.png": {
+   "remote_sha256": "78bf78cf9d8021b7e28be87d2f974073c34181b6e749bef661ea2df7389c6874",
+   "local_sha256": "78bf78cf9d8021b7e28be87d2f974073c34181b6e749bef661ea2df7389c6874"
+  },
+  "figures/figS2_inverted_u.pdf": {
+   "remote_sha256": "d7f5b8891080357e2125a1a9b80e89bc417353f455b0c1947a78752d39c074f2",
+   "local_sha256": "d7f5b8891080357e2125a1a9b80e89bc417353f455b0c1947a78752d39c074f2"
+  },
+  "figures/figS2_inverted_u.png": {
+   "remote_sha256": "88f12b9f9c55071a94d561e6bb8fcaa73f816ca56b19162034726e76da1000c6",
+   "local_sha256": "88f12b9f9c55071a94d561e6bb8fcaa73f816ca56b19162034726e76da1000c6"
+  },
+  "figures/figS3_collapse_mechanism.pdf": {
+   "remote_sha256": "f99c62d7c84636f4f4f7cda81576704a8115dba277d51b4acb0cccb1dd8488a5",
+   "local_sha256": "f99c62d7c84636f4f4f7cda81576704a8115dba277d51b4acb0cccb1dd8488a5"
+  },
+  "figures/figS3_collapse_mechanism.png": {
+   "remote_sha256": "f649138dbab4cd0e53812f6686400994edc9602604fc6b9df28e3e5fe300d00b",
+   "local_sha256": "f649138dbab4cd0e53812f6686400994edc9602604fc6b9df28e3e5fe300d00b"
+  },
+  "figures/figS4_coverage_floor.pdf": {
+   "remote_sha256": "1237a29eba1fc01ea4ab4e501bf2ebca78ecface5f372f8e1925c0d5b4b74f6f",
+   "local_sha256": "1237a29eba1fc01ea4ab4e501bf2ebca78ecface5f372f8e1925c0d5b4b74f6f"
+  },
+  "figures/figS4_coverage_floor.png": {
+   "remote_sha256": "a3a7a369c452999c1a03d7f053a121d1e057d3e000d57fd8839e69f8d918a91a",
+   "local_sha256": "a3a7a369c452999c1a03d7f053a121d1e057d3e000d57fd8839e69f8d918a91a"
+  },
+  "figures/figS5_mask_statistics.pdf": {
+   "remote_sha256": "45ea1fdb5dd8496d62892650bb97f6d726c4e6d02855e67451dc7e93c591cc14",
+   "local_sha256": "45ea1fdb5dd8496d62892650bb97f6d726c4e6d02855e67451dc7e93c591cc14"
+  },
+  "figures/figS5_mask_statistics.png": {
+   "remote_sha256": "ffba5cb2b234bc2bb9fc25bacad6caa5f586ae0526107c9886a34d90052d0631",
+   "local_sha256": "ffba5cb2b234bc2bb9fc25bacad6caa5f586ae0526107c9886a34d90052d0631"
+  },
+  "figures/fig_auc_trajectories_v2.pdf": {
+   "remote_sha256": "251b32603888e4c2a763f2bfcb3bebdf05337ecee47fb39ddda7d20b596a9510",
+   "local_sha256": "251b32603888e4c2a763f2bfcb3bebdf05337ecee47fb39ddda7d20b596a9510"
+  },
+  "figures/fig_auc_trajectories_v2.png": {
+   "remote_sha256": "9d16d3cadc2110e9b8e9f638ff09addd6792efe1effa80959ef8c2ce934cb4a0",
+   "local_sha256": "9d16d3cadc2110e9b8e9f638ff09addd6792efe1effa80959ef8c2ce934cb4a0"
+  },
+  "figures/fig_geometry_panel.pdf": {
+   "remote_sha256": "ee75af7651e62c3526569183e3f4f818daa22f110950d7e2bd000baf5bffc433",
+   "local_sha256": "ee75af7651e62c3526569183e3f4f818daa22f110950d7e2bd000baf5bffc433"
+  },
+  "figures/fig_geometry_panel.png": {
+   "remote_sha256": "a5150aabdc7be8db4923ce947806760768959529a24502cf40ec12fcfa3eaaba",
+   "local_sha256": "a5150aabdc7be8db4923ce947806760768959529a24502cf40ec12fcfa3eaaba"
+  },
+  "figures/fig_masking_policies.png": {
+   "remote_sha256": "7493287e756cfc7f2739bfed1bc28ad1abfcefb775137f8af5159df04afb4fe1",
+   "local_sha256": "7493287e756cfc7f2739bfed1bc28ad1abfcefb775137f8af5159df04afb4fe1"
+  },
+  "figures/fig_precision_paradox.pdf": {
+   "remote_sha256": "7c0369268bda2590fca6da1e12bc944a426d0d171812c428fdfd91f75543f70a",
+   "local_sha256": "7c0369268bda2590fca6da1e12bc944a426d0d171812c428fdfd91f75543f70a"
+  },
+  "figures/fig_precision_paradox.png": {
+   "remote_sha256": "b39d5e46fb59cb13f00c14cebef14949e554b37436012476c5dc7805ccb91658",
+   "local_sha256": "b39d5e46fb59cb13f00c14cebef14949e554b37436012476c5dc7805ccb91658"
+  },
+  "figures/fig_specificity_ladder.pdf": {
+   "remote_sha256": "4e23863c4c6edb25b17b1d94f54d12343965511d0964bf0851b87ae52ecb91fc",
+   "local_sha256": "4e23863c4c6edb25b17b1d94f54d12343965511d0964bf0851b87ae52ecb91fc"
+  },
+  "figures/fig_specificity_ladder.png": {
+   "remote_sha256": "be147d306d5b57671bbefe6e3f9a4faa3e389ddefc855302027b09d71a706d84",
+   "local_sha256": "be147d306d5b57671bbefe6e3f9a4faa3e389ddefc855302027b09d71a706d84"
+  },
+  "figures/interp_04_window_occlusion_W7.png": {
+   "remote_sha256": "84f240a96461acb3f2e0280f0aa943146e3b98bc06b9cdf921ee76a9716277dc",
+   "local_sha256": "84f240a96461acb3f2e0280f0aa943146e3b98bc06b9cdf921ee76a9716277dc"
+  },
+  "figures/interp_14_odos_mirror_test.png": {
+   "remote_sha256": "4bbbb9456e911aa5d590234bffa7048b2177d2da6a4169dd138bde4d8c3098b8",
+   "local_sha256": "4bbbb9456e911aa5d590234bffa7048b2177d2da6a4169dd138bde4d8c3098b8"
+  },
+  "figures/interp_heatmap_grid.png": {
+   "remote_sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb",
+   "local_sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb"
+  },
+  "figures/interp_slice_contribution_by_outcome.png": {
+   "remote_sha256": "4ed73e379131a5cda85efb3a42205b88781e5bece0b2c25974640eb10357d8b1",
+   "local_sha256": "4ed73e379131a5cda85efb3a42205b88781e5bece0b2c25974640eb10357d8b1"
+  },
+  "figures/interp_slice_contribution_curves.png": {
+   "remote_sha256": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6",
+   "local_sha256": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6"
+  },
+  "main.tex": {
+   "remote_sha256": "0f0bf167045ef98257cf39fd5e6b321bac52e6fbdb759d9bb337ed40cccdba6a",
+   "local_sha256": "0f0bf167045ef98257cf39fd5e6b321bac52e6fbdb759d9bb337ed40cccdba6a"
+  },
+  "neurips_2026.sty": {
+   "remote_sha256": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a",
+   "local_sha256": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a"
+  },
+  "references.bib": {
+   "remote_sha256": "179ee3e8a2aac1f217da6f40751e50a29aed53b357f248c7010d3708e5165a04",
+   "local_sha256": "179ee3e8a2aac1f217da6f40751e50a29aed53b357f248c7010d3708e5165a04"
+  }
+ }
+}

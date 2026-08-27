@@ -52,9 +52,20 @@ ARMS = {
         "hub": "cover-f021-100ep",
         "epochs": ["ep50", "ep75", "ep100"],
     },
+    # anatomy-v2's trajectory spans THREE run directories, and picking a single
+    # one publishes the wrong weights under a cited number. p8_make_assets.py
+    # keys this arm as "anatomy-v2@ep<N>@fp32", and the precision-spliced fp16
+    # ep75/ep92 probes were excluded from the paper and replaced by a clean
+    # fp32 continuation. So ep50 comes from the original run and ep75 must come
+    # from blob_fp32_ep56 -- taking ep75 from blob_resume_ep56 would ship the
+    # superseded fp16 checkpoint as though it produced the printed 0.8612.
     "anatomy-v2": {
-        "run": "blob_resume_ep56",
-        "prefix": None,
+        "explicit": [
+            (r"anatomy_v2_ep25\jepa_patch_mirage-ep50.pth.tar",
+             "anatomy-v2-100ep/jepa_patch_anatomy_v2-ep50.pth.tar"),
+            (r"blob_fp32_ep56\jepa_patch_blob_fp32-ep75.pth.tar",
+             "anatomy-v2-100ep/jepa_patch_anatomy_v2-ep75-fp32.pth.tar"),
+        ],
         "hub": "anatomy-v2-100ep",
         "epochs": ["ep50", "ep75"],
     },
@@ -112,6 +123,49 @@ def main():
         return 0
 
     spec = ARMS[a.arm]
+
+    # Arms whose trajectory spans several run directories name each source
+    # explicitly, so a checkpoint can never be published under the wrong epoch.
+    if "explicit" in spec:
+        pairs = []
+        for rel, target in spec["explicit"]:
+            src = os.path.join(RUNS, rel)
+            if not os.path.isfile(src):
+                print("MISSING source: %s" % src)
+                return 1
+            pairs.append((src, target))
+        total = sum(os.path.getsize(s) for s, _ in pairs)
+        print("arm       : %s" % a.arm)
+        print("hub target: %s/%s" % (REPO_ID, spec["hub"]))
+        print("files     : %d, %.2f GB" % (len(pairs), total / 1e9))
+        for s, t in pairs:
+            print("   %7.0f MB  %s" % (os.path.getsize(s) / 1e6, t.split("/")[-1]))
+            print("             from %s" % s.replace(RUNS + os.sep, ""))
+        if a.dry_run:
+            print("\ndry run, nothing uploaded")
+            return 0
+        from huggingface_hub import HfApi
+        api = HfApi()
+        try:
+            existing = set(api.list_repo_files(REPO_ID, repo_type="model"))
+        except Exception:
+            existing = set()
+        for s, t in pairs:
+            if t in existing:
+                print("skip (already on hub): %s" % t)
+                continue
+            t0 = time.time()
+            print("uploading %s ... " % t, end="", flush=True)
+            api.upload_file(path_or_fileobj=s, path_in_repo=t,
+                            repo_id=REPO_ID, repo_type="model",
+                            commit_message="publish %s %s" % (a.arm, os.path.basename(t)))
+            mb = os.path.getsize(s) / 1e6
+            dt = time.time() - t0
+            print("done %.0f MB in %.0fs (%.1f MB/s)" % (mb, dt, mb / max(dt, 1e-6)))
+            print("   sha256 %s" % sha256(s))
+        print("\ncomplete.")
+        return 0
+
     run_dir = os.path.join(RUNS, spec["run"])
     if not os.path.isdir(run_dir):
         print("run directory not found: %s" % run_dir)

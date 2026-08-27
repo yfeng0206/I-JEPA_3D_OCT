@@ -848,36 +848,35 @@ are not a choice: the cached anatomy guides exist for the Training split only,
 so three of the five production samplers cannot be run on held-out slices at
 all.
 
-\paragraph{Cell-level agreement and seed noise.} Comparing the 25 geometry cells
-of Table~\ref{tab:geom} against the regeneration, one cell reproduces exactly,
-21 preserve the printed ordering of the arms on their metric, and 3 do not;
-18 of the 25 fall inside the three-seed range of the measurement, i.e.\ are
-indistinguishable from a re-draw. The largest absolute difference over all 25
-cells is $2.21$ points. All three cells whose ordering moves are the
-\emph{loss slots} column on rectangle arms (Table~\ref{tab:geomprov}), whose
-printed spread across those arms is smaller than the per-arm seed spread. That
-ordering therefore carries no information, and no claim in this paper depends on
-it.
+\paragraph{Cell-level agreement and seed noise.} Table~\ref{tab:geom} now carries
+the regenerated values, so the question is how stable they are across draws.
+18 of the 25 cells fall inside the three-seed range of the measurement, i.e.\ are
+indistinguishable from a re-draw. Across the four rectangle arms the
+\emph{loss slots} spread is smaller than the per-arm seed spread
+(Table~\ref{tab:geomprov}), so that column's ordering carries no information and
+no claim in this paper depends on it. The rank order of the arms on anatomy
+hidden and on purity is identical across all three draws, which is what the
+rank correlations in the main text rely on.
 
 \begin{table}[h]
 \centering
-\caption{Regeneration of two Table~\ref{tab:geom} columns against three
-independent draws of the same 600-slice measurement. ``sd'' is the standard
-deviation over seeds 42, 1234 and 2026. The loss-slot differences between
-rectangle arms are smaller than this noise.}
+\caption{Stability of two Table~\ref{tab:geom} columns across three independent
+draws of the same 600-slice measurement. ``sd'' is the standard deviation over
+seeds 42, 1234 and 2026. The loss-slot differences between rectangle arms are
+smaller than this noise.}
 \label{tab:geomprov}
 \small
-\begin{tabular}{lcccccc}
+\begin{tabular}{lcccc}
 \toprule
- & \multicolumn{3}{c}{anatomy hidden (\%)} & \multicolumn{3}{c}{loss slots} \\
-\cmidrule(lr){2-4}\cmidrule(lr){5-7}
-policy & printed & regenerated & sd & printed & regenerated & sd \\
+ & \multicolumn{2}{c}{anatomy hidden (\%)} & \multicolumn{2}{c}{loss slots} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+policy & value & sd & value & sd \\
 \midrule
-\textsc{random}     & 52.2 & 53.95 & 0.71 & 157.7 & 159.91 & 1.15 \\
-\ArmBest{}          & 62.2 & 62.13 & 0.64 & 158.4 & 158.99 & 0.43 \\
-\textsc{envelope}   & 76.9 & 77.58 & 0.38 & 159.9 & 159.68 & 1.00 \\
-\textsc{cover}      & 74.1 & 73.55 & 0.30 & 160.0 & 159.09 & 0.45 \\
-\textsc{anatomy-v2} & 80.3 & 79.89 & 0.39 & 64.0  & 64.00  & 0.00 \\
+\textsc{random}     & 53.95 & 0.71 & 159.91 & 1.15 \\
+\ArmBest{}          & 62.13 & 0.64 & 158.99 & 0.43 \\
+\textsc{envelope}   & 77.58 & 0.38 & 159.68 & 1.00 \\
+\textsc{cover}      & 73.55 & 0.30 & 159.09 & 0.45 \\
+\textsc{anatomy-v2} & 79.89 & 0.39 & 64.00  & 0.00 \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -10,6 +10,8 @@
 \usepackage{amsmath}
 \usepackage{xcolor}
 \usepackage{microtype}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 \graphicspath{{figures/}{auto/}}
 
@@ -208,7 +210,7 @@ blocks, which need not cover it. A context encoder embeds the visible tokens; a 
 embedding plus positional queries to predicted representations of the target
 tokens; an exponential-moving-average target encoder supplies the regression
 targets. With a $16{\times}16$ token grid the design choice we vary is which of
-the 256 cells become targets.
+the 256 cells become targets. Figure~\ref{fig:policies}(a) draws the pipeline.
 
 \subsection{The six policies}
 
@@ -241,17 +243,64 @@ scale and aspect-ratio ranges. The rectangle arms differ only in placement.
   reach $f$ (Appendix~\ref{app:covbug}).
 \end{description}
 
-Figure~\ref{fig:policies} shows all six on the same B-scans.
+Figure~\ref{fig:policies}(b) shows all six on the same B-scans.
 
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.47\linewidth]{fig1_policies_compact.png}
-\caption{The six masking policies on one identical B-scan, drawn with the
-production samplers; each target block has its own colour and the green
-contour is the anatomy reference. Anatomical specificity increases along the
-ladder, while downstream AUC does not (Table~\ref{tab:main});
-Figure~\ref{fig:policies5} repeats this over five B-scans.}
+\begin{minipage}[t]{0.63\linewidth}
+\centering
+\vspace{0pt}
+\begin{tikzpicture}[x=1mm,y=1mm,font=\scriptsize,
+  bx/.style={draw,rounded corners=1pt,align=center,inner sep=1.6pt,line width=0.3pt},
+  ar/.style={-{Latex[length=1.3mm,width=1.0mm]},line width=0.35pt},
+  dr/.style={ar,dashed,dash pattern=on 1.1pt off 1.1pt}]
+\node[anchor=south west,align=left,inner sep=0pt,text width=88mm,font=\tiny] at (0,39.6)
+  {B-scan $=16{\times}16$ tokens; the policy places $M{=}4$ targets (dark) and one context block (light)};
+% token grid: light cells are the context block, dark cells the M targets
+\begin{scope}[shift={(0,28)}]
+  \fill[black!10] (0.625,0) rectangle (10,9.375);
+  \fill[black!45] (1.25,6.25) rectangle (3.75,8.75);
+  \fill[black!45] (5.625,6.875) rectangle (8.125,9.375);
+  \fill[black!45] (1.875,1.875) rectangle (4.375,4.375);
+  \fill[black!45] (6.25,2.5) rectangle (8.75,5);
+  \draw[step=0.625,black!30,line width=0.08pt] (0,0) grid (10,10);
+  \draw[black!70,line width=0.3pt] (0,0) rectangle (10,10);
+\end{scope}
+\node[bx,anchor=north west,text width=30mm] (ctx) at (13,38) {context encoder $f_\theta$\\ViT-B/16, visible tokens};
+\node[bx,anchor=north east,text width=33mm] (prd) at (88,38) {predictor $g_\phi$, 6 blocks, $d{=}384$\\mask token $+$ target pos.};
+\node[bx,anchor=north west,text width=30mm] (tgt) at (13,25) {EMA target encoder $f_{\bar\theta}$\\all 256 tokens, LayerNorm};
+\node[bx,anchor=north east,text width=33mm] (loss) at (88,25) {smooth-$L_1$ loss\\at the $M$ target sites};
+\draw[ar] (10,34.5) -- (ctx.west);
+\draw[ar] (10,30.5) -- (11.5,30.5) -- (11.5,21.5) -- (tgt.west);
+\draw[ar] (ctx.east) -- (prd.west);
+\draw[ar] (tgt.east) -- (loss.west);
+\draw[ar] (prd.south) -- (loss.north);
+\draw[dr] (ctx.south) -- node[right,inner sep=1.5pt,font=\tiny] {EMA} (tgt.north);
+% downstream probe
+\draw[black!45,dashed,dash pattern=on 0.7pt off 0.7pt,line width=0.25pt] (0,13.5) -- (88,13.5);
+\node[anchor=west,inner sep=0pt,font=\tiny] at (0,11.7) {downstream: encoder frozen, volume-level glaucoma label};
+\node[bx,anchor=south west,text width=14mm] (fr) at (0,0) {frozen $f_{\bar\theta}$};
+\node[bx,anchor=south west,text width=30mm] (mp) at (23,0) {mean-pool patch tokens,\\then 100 B-scans};
+\node[bx,anchor=south east,text width=21mm] (hd) at (88,0) {LayerNorm\\$+$ linear head};
+\draw[ar] (fr.east) -- (mp.west);
+\draw[ar] (mp.east) -- (hd.west);
+\end{tikzpicture}\\[1.5pt]
+{\footnotesize (a) pipeline}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.35\linewidth}
+\centering
+\vspace{0pt}
+\includegraphics[width=\linewidth]{fig1_policies_compact.png}\\[1.5pt]
+{\footnotesize (b) the six policies}
+\end{minipage}
+\caption{\textbf{(a)} The pipeline: the predictor is queried with each target's
+position and regresses the EMA target encoder's features; below the rule, the
+frozen-encoder probe. \textbf{(b)} The six masking policies on one
+identical B-scan, drawn with the production samplers; each target block has its
+own colour and the green contour is the anatomy reference. Anatomical
+specificity increases along the ladder, while downstream AUC does not
+(Table~\ref{tab:main}); Figure~\ref{fig:policies5} repeats this over five B-scans.}
 \label{fig:policies}
 \end{figure}
 
@@ -308,7 +357,8 @@ epoch at which
 five policies are simultaneously available, and it carries every cross-policy
 comparison that involves the anatomy or coverage arms.
 
-\paragraph{Evaluation.} The encoder is frozen. Per-slice features are
+\paragraph{Evaluation.} The frozen encoder is the EMA target branch, not the
+online context encoder. Per-slice features are
 mean-pooled over the volume, followed by LayerNorm and a linear head. The head is
 selected by validation AUC and reported on the held-out test split. We report
 percentile bootstrap intervals for primary AUCs and paired deltas (\Nboot{}
@@ -842,11 +892,11 @@ differ, so bars should be compared only within a panel.}
 \label{fig:maskstats}
 \end{figure}
 
-Figure~\ref{fig:policies} shows one B-scan for legibility.
+Figure~\ref{fig:policies}(b) shows one B-scan for legibility.
 Figure~\ref{fig:policies5} repeats the same rendering on five B-scans sampled
 across the depth of a volume, so that the stability of each policy under
 changing retinal geometry can be inspected. The samplers, the colour
-assignment, and the anatomy contour are identical to Figure~\ref{fig:policies}.
+assignment, and the anatomy contour are identical to Figure~\ref{fig:policies}(b).
 
 \begin{figure}[p]
 \centering

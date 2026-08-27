@@ -35,13 +35,18 @@ REGION_AUC = REPORTS / "downstream_region_auc" / "region_auc_summary.json"
 ATTRIB = REPORTS / "patch_attribution" / "attribution_summary.csv"
 
 COLORS = {
-    "random": "#6b7280",
-    "oracle": "#2f855a",
-    "envelope": "#2b6cb0",
-    "anatomy": "#c53030",
-    "blob": "#9b2c2c",
-    "cover": "#dd6b20",
-    "cover_f021": "#dd6b20",
+    # Mirrors autopilot/p8_make_assets.py COL exactly, so one arm carries one
+    # colour across the whole manuscript. Audited with the bundled skill tool
+    # .agents/skills/scientific-visualization/scripts/palette_audit.py
+    # (background FFFFFF, role graphical); every entry clears 3:1 on white.
+    "random": "#000000",
+    "oracle": "#882255",
+    "envelope": "#0072B2",
+    "anatomy": "#CC79A7",
+    "blob": "#666666",
+    "cover": "#009E73",
+    "cover_f021": "#009E73",
+    "ancestor": "#333333",
 }
 LABEL = {
     "random": "random",
@@ -104,7 +109,8 @@ def fig_signal():
     ax.bar(x - 0.2, va, 0.4, color=ANAT_C, label="anatomy token")
     ax.bar(x + 0.2, vb, 0.4, color=BG_C, label="background token")
     ax.set_xticks(x)
-    abbr = {"fork": "fork", "random": "rand", "oracle": "orac", "envelope": "envl"}
+    abbr = {"fork": "fork", "random": "rand", "oracle": "cent", "envelope": "envl",
+            "blob": "an-v2", "cover": "covr", "cover_f021": "covr"}
     ax.set_xticklabels(
         [f"{abbr.get(r['tag'].split('_ep')[0], r['tag'].split('_ep')[0])}·{r['ep']}"
          for r in healthy], rotation=45, ha="right", fontsize=5.8)
@@ -125,7 +131,8 @@ def fig_signal():
     ax.bar(x + 0.22, [rows[t]["background"] for t in order], 0.44, color=BG_C,
            label="background patches only")
     ax.set_xticks(x)
-    ax.set_xticklabels([t.replace("_ep50", "") for t in order], fontsize=7)
+    ax.set_xticklabels([LABEL.get(t.replace("_ep50", ""), t.replace("_ep50", ""))
+                        for t in order], fontsize=7)
     ax.set_ylim(0.80, 0.90)
     ax.set_ylabel("glaucoma AUC")
     ax.set_title("(b) Background patches alone\nstill reach AUC 0.85--0.87")
@@ -157,7 +164,7 @@ def fig_signal():
     ax.bar(np.arange(len(names)), vals, 0.6, color=cols)
     ax.axhline(1.0, color="0.4", lw=0.8, ls=":")
     ax.set_xticks(np.arange(len(names)))
-    ax.set_xticklabels(names, fontsize=7)
+    ax.set_xticklabels([LABEL.get(n, n) for n in names], fontsize=7)
     ax.set_ylabel("background / anatomy\ntotal |attribution|")
     ax.set_title("(c) Background carries most of the\ntotal attribution mass")
 
@@ -227,7 +234,7 @@ def fig_collapse():
         c = COLORS["blob"] if fam == "anatomy" else COLORS.get(fam, "#666")
         ax.plot([int(r["ep"]) for r in rs], [float(r["ratio"]) for r in rs],
                 "o-", ms=3.4, lw=1.3, color=c,
-                label="blob (near-pure)" if fam == "anatomy" else fam)
+                label="anatomy-v2 (near-pure)" if fam == "anatomy" else LABEL.get(fam, fam))
     ax.axhline(1.0, color="0.4", lw=0.8, ls=":")
     ax.set_xlabel("pretraining epoch")
     ax.set_ylabel("anatomy / background\ntoken value")
@@ -251,11 +258,12 @@ def fig_collapse():
     ax.bar(x + 0.2, [s["bg"]["skill_vs_pos"] for s in skill], 0.4,
            color=BG_C, label="background")
     ax.set_xticks(x)
-    ax.set_xticklabels([t.replace("_ep", "\n") for t in tags], fontsize=5.6)
+    ax.set_xticklabels([LABEL.get(t.split("_ep")[0], t.split("_ep")[0]) + "\n"
+                        + t.split("_ep")[-1] for t in tags], fontsize=5.6)
     ax.set_ylabel("skill vs. position-only baseline")
     ax.set_title("(c) Predictor skill collapses")
     ax.legend(frameon=False, fontsize=6.2, loc="upper right")
-    ax.annotate("blob", xy=(4, 0.22), xytext=(3.1, 0.42), fontsize=6.5,
+    ax.annotate("anatomy-v2", xy=(4, 0.22), xytext=(2.7, 0.42), fontsize=6.5,
                 color=COLORS["blob"],
                 arrowprops=dict(arrowstyle="->", color=COLORS["blob"], lw=0.8))
 

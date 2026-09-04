@@ -1,0 +1,284 @@
+{
+  "schema_version": "1.0",
+  "review_id": "OCT-JEPA-FRESH-20260904-SCIENCE",
+  "role": "author-side AI-assisted working draft",
+  "baseline_head": "de145d7005f57e871bc0181bf58b271775d1d25d",
+  "manuscript": "paper\\genai4health2026\\main_submission.tex",
+  "manuscript_lines_read": 2059,
+  "p0_count": 0,
+  "p1_count": 11,
+  "p2_count": 3,
+  "central_claim_supported": "For one completed continuation per policy on one repeatedly inspected FairVision test split, the implemented envelope and centroid rectangle-placement policies have higher matched frozen-probe glaucoma AUC than implemented random masking; greater measured tissue coverage or purity is not monotonically associated with AUC.",
+  "central_claim_not_supported": [
+    "statistical equivalence between centroid and envelope",
+    "target placement alone as the causal mechanism",
+    "expected policy ranking across retraining seeds",
+    "a genuinely 3D encoder result",
+    "general harm or uselessness of anatomically precise masking",
+    "clinical utility or fairness intervention"
+  ],
+  "cross_audit_verification": {
+    "source": "autopilot\\reports\\fresh_audit_2026-09-04\\prediction_snapshot.json",
+    "total_prediction_files": 43,
+    "present": 43,
+    "matching_six_decimal_auc": 43,
+    "status_counts": {
+      "primary": 31,
+      "excluded": 2,
+      "retracted": 4,
+      "supplementary": 6
+    },
+    "n_per_file": 3000,
+    "positives_per_file": 1466,
+    "negatives_per_file": 1534,
+    "unique_label_sequences": 1,
+    "scope_limit": "Equal label arrays do not establish subject-identity pairing, and matching arithmetic does not rehabilitate excluded or retracted records."
+  },
+  "findings": [
+    {
+      "id": "P1-01",
+      "priority": "P1",
+      "title": "Matches a segmenter is not an equivalence result and is task-ambiguous",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:32-35",
+        "paper\\genai4health2026\\main_submission.tex:43-60",
+        "paper\\genai4health2026\\main_submission.tex:754-769",
+        "paper\\genai4health2026\\auto\\auto_numbers.tex:111-122"
+      ],
+      "observation": "Centroid-envelope intervals cross zero at epochs 50 and 75, while centroid is higher at epoch 100. No equivalence margin or test is defined, and the downstream task is classification rather than segmentation.",
+      "evidence": "Ep50 delta -0.0020 CI [-0.0069,+0.0029]; ep75 +0.0033 CI [-0.0013,+0.0079]; ep100 +0.0047 CI [+0.0004,+0.0091].",
+      "impact": "The title overstates statistical sameness and can imply a segmentation-task comparison.",
+      "minimum_action": "Retitle around segmentation-free target placement for glaucoma classification and describe the three epoch-specific comparisons without equivalence language.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-02",
+      "priority": "P1",
+      "title": "Region and H1 wording over-identify placement as the cause",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:217-242",
+        "paper\\genai4health2026\\main_submission.tex:388-439",
+        "paper\\genai4health2026\\main_submission.tex:979-1002",
+        "paper\\genai4health2026\\main_submission.tex:1904-1913"
+      ],
+      "observation": "Tissue-directed sampling changes delivered context as well as target location, contradicting the geometry caption's near-single-variable/separate-only wording.",
+      "evidence": "Delivered context is 24.7% random, 30.7% envelope, and 32.9% centroid.",
+      "impact": "A policy-package comparison is framed as an isolated causal region effect.",
+      "minimum_action": "Use run-level implemented-policy wording and name delivered-context differences in the caption.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-03",
+      "priority": "P1",
+      "title": "Anatomical precision does not add is too categorical",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:57-64",
+        "paper\\genai4health2026\\main_submission.tex:103-125",
+        "paper\\genai4health2026\\main_submission.tex:459-470",
+        "paper\\genai4health2026\\main_submission.tex:527-554",
+        "paper\\genai4health2026\\auto\\auto_numbers.tex:59-69"
+      ],
+      "observation": "Anatomy-v1 is positive versus envelope at ep30, while anatomy-v2 is negative versus envelope at ep50 but confounded on geometry, collation, and implementation.",
+      "evidence": "Anatomy-v1 ep30 delta +0.0044 CI [+0.0009,+0.0078]; anatomy-v2 ep50 delta versus envelope -0.0107 CI [-0.0167,-0.0046], versus random +0.0013 CI [-0.0055,+0.0082].",
+      "impact": "A non-monotonic mixed result is generalized to anatomical precision as a construct.",
+      "minimum_action": "Say greater measured specificity did not monotonically or consistently add in the tested confounded arms.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-04",
+      "priority": "P1",
+      "title": "3D language obscures a 2D B-scan encoder",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:43-44",
+        "paper\\genai4health2026\\main_submission.tex:259-284",
+        "paper\\genai4health2026\\main_submission.tex:320-325",
+        "paper\\genai4health2026\\main_submission.tex:360-362"
+      ],
+      "observation": "The encoder operates independently on 2D B-scans and volume aggregation is mean pooling.",
+      "evidence": "The pipeline labels a B-scan as a 16x16 token grid and then mean-pools 100 B-scans.",
+      "impact": "Readers may infer learned 3D interactions that are absent.",
+      "minimum_action": "State volumetric OCT with a 2D slice encoder and late mean pooling at first mention.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-05",
+      "priority": "P1",
+      "title": "Statistics artifact incorrectly labels an adaptive family confirmatory",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:326-331",
+        "paper\\genai4health2026\\main_submission.tex:744-747",
+        "paper\\genai4health2026\\main_submission.tex:1857-1865",
+        "autopilot\\p1c_stats.py:129-176",
+        "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p1c_stats.json:14-16"
+      ],
+      "observation": "The manuscript calls the inference descriptive after repeated test reuse, but code and JSON call the family confirmatory.",
+      "evidence": "The family was fixed after repeated test inspection; BH correction does not restore prespecification.",
+      "impact": "Structured outputs can be quoted with a stronger inferential status than the paper allows.",
+      "minimum_action": "Rename the family primary_descriptive or headline_descriptive; retain numeric q-values.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-06",
+      "priority": "P1",
+      "title": "Background mechanism narrative combines heterogeneous analyses",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:556-576",
+        "paper\\genai4health2026\\main_submission.tex:1374-1414",
+        "autopilot\\bgsig\\a2_region_incremental.py:1-6",
+        "autopilot\\bgsig\\a2_region_incremental.py:59-102"
+      ],
+      "observation": "Random ep100 predictor skill, envelope ep100 self-similarity, and ep50 reduced-slice regional probes are synthesized as one mechanism.",
+      "evidence": "The regional probe uses 25 slices and 2000/600/1000 cases, not the primary 100-slice 6000/1000/3000 protocol.",
+      "impact": "The evidence supports redundancy under a secondary protocol, not why the ep100 random baseline is strong.",
+      "minimum_action": "Name each arm/epoch/protocol and use consistent-with rather than mechanism-establishing language.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-07",
+      "priority": "P1",
+      "title": "Label-efficiency conclusion exceeds five descriptive subset repeats",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:578-590",
+        "paper\\genai4health2026\\main_submission.tex:1417-1464",
+        "autopilot\\p5_label_efficiency.py:162-216",
+        "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p5_label_efficiency.json:2-25"
+      ],
+      "observation": "The section says the advantage concentrates where labels are scarce, but no paired delta interval or interaction/trend test is performed.",
+      "evidence": "Five subset repeats per low-label fraction; arm-wise means and SDs only.",
+      "impact": "A descriptive pattern is presented as an established label-efficiency effect.",
+      "minimum_action": "Rename as an observed larger gap in low-label refits and retain the explicit not-tested caveat.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-08",
+      "priority": "P1",
+      "title": "Broad fairness summary is false and exceeds adjusted analysis scope",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:1187-1201",
+        "paper\\genai4health2026\\main_submission.tex:1758-1778",
+        "autopilot\\p7c_paired_subgroup.py:43-44",
+        "autopilot\\p7c_paired_subgroup.py:138-158",
+        "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p7_fairness.json:4038-4053",
+        "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p7_fairness.json:4809-4824"
+      ],
+      "observation": "Not every subgroup point estimate rises: the adequately sized divorced group falls from random to centroid. Paired differential-benefit inference is not implemented for all seven attributes.",
+      "evidence": "Divorced AUC 0.88280 random versus 0.87346 centroid; n=191 and not marked underpowered.",
+      "impact": "The fairness reassurance is factually inaccurate and too broad.",
+      "minimum_action": "Restrict to verified race, gender/sex, severity, and ep100 intersectional cells; separate descriptive seven-attribute consistency from paired policy effects.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-09",
+      "priority": "P1",
+      "title": "Gender is relabeled as sex without justification",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:332-334",
+        "paper\\genai4health2026\\main_submission.tex:1204-1213"
+      ],
+      "observation": "The paper acknowledges source gender coding but reports it as sex throughout.",
+      "evidence": "No local variable definition establishes biological sex.",
+      "impact": "The fairness construct may be mischaracterized.",
+      "minimum_action": "Use gender or provide source-backed justification for sex.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-10",
+      "priority": "P1",
+      "title": "Operating-point language overstates usable benefit and calibration",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:1601-1647",
+        "paper\\genai4health2026\\main_submission.tex:1650-1695",
+        "paper\\genai4health2026\\auto\\table_operating.tex:1-12"
+      ],
+      "observation": "Higher sensitivity is measured at lower achieved specificity, and calibration superiority is based on unqualified Brier/ECE point estimates.",
+      "evidence": "At nominal 0.90 specificity, random achieves 0.8794 and centroid 0.8696; black-group ECE worsens.",
+      "impact": "Readers may infer clinical utility or uniformly improved calibration.",
+      "minimum_action": "Present a sensitivity-specificity trade-off and say lower measured overall Brier/ECE on this split.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1-11",
+      "priority": "P1",
+      "title": "Interpretability synthesis is too definitive and mechanistic",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:1472-1485",
+        "paper\\genai4health2026\\main_submission.tex:1519-1551",
+        "paper\\genai4health2026\\main_submission.tex:1573-1594"
+      ],
+      "observation": "The OD/OS caption is definitive despite missing laterality labels, and diffuse attribution from fine-tuned probes is said to support the main frozen-probe masking claim.",
+      "evidence": "Different models, hand-picked heat maps, no intervals, and non-released arrays limit inference.",
+      "impact": "A cautionary analysis is mistaken for causal validation.",
+      "minimum_action": "Use consistent-with/unverified orientation language and call diffuse attribution contextual, not mechanistic support.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2-01",
+      "priority": "P2",
+      "title": "Replication running status is stale",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:710-733",
+        "paper\\genai4health2026\\main_submission.tex:812-874",
+        "autopilot\\PROCESS_REGISTRY.csv:5-6",
+        "D:\\jepa_phase0\\runs\\rep_random_s1234\\train_20260826_180614_a0.log:21-23",
+        "D:\\jepa_phase0\\runs\\rep_random_s1234\\jepa_patch_rep_random_s1234-log.csv:11027-11038"
+      ],
+      "observation": "No completed epoch-50 result or active local process was found; the only local leg is partial epoch 27.",
+      "evidence": "Six configs exist, but only rep_random_s1234 has local training artifacts and it repeatedly resumes from epoch 26.",
+      "impact": "Running implies an active evidence-generating process that is not locally present.",
+      "minimum_action": "Say planned and partially attempted, with no completed result; keep one-continuation limitation explicit.",
+      "confidence": "high_local_only"
+    },
+    {
+      "id": "P2-02",
+      "priority": "P2",
+      "title": "Anatomical specificity uses inconsistent metrics",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:57-66",
+        "paper\\genai4health2026\\main_submission.tex:503-519",
+        "paper\\genai4health2026\\main_submission.tex:1884-1897",
+        "autopilot\\make_fig_specificity_ladder.py:37-44",
+        "autopilot\\make_fig_specificity_ladder.py:68-77"
+      ],
+      "observation": "Prose uses target purity while the ladder sorts fraction of all anatomy hidden.",
+      "evidence": "Envelope and cover reverse order between purity and anatomy-hidden metrics.",
+      "impact": "A changing construct can be mistaken for a coherent dose-response ladder.",
+      "minimum_action": "Name purity and anatomy hidden separately; rename the figure axis.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2-03",
+      "priority": "P2",
+      "title": "Boldface in the main table can imply significance for null results",
+      "locations": [
+        "paper\\genai4health2026\\main_submission.tex:397-421",
+        "paper\\genai4health2026\\auto\\auto_numbers.tex:395-398"
+      ],
+      "observation": "Unresolved anatomy-v2 and cover ep50 deltas are bolded.",
+      "evidence": "Their paired intervals contain zero.",
+      "impact": "Visual emphasis conflicts with the preserved null interpretation.",
+      "minimum_action": "Remove boldface or define and apply it consistently.",
+      "confidence": "high"
+    }
+  ],
+  "verified_strengths": [
+    "headline contrasts are matched on epoch and precision",
+    "subject-level paired bootstrap and correlated-ROC methods align with the fixed-case design",
+    "valid, excluded, and retracted probes are inventoried",
+    "subgroup multiplicity uses simultaneous intervals",
+    "cover-arm defect and selective stopping are disclosed",
+    "null and adverse results are retained",
+    "adaptive test reuse is explicitly acknowledged",
+    "clinical deployment is disclaimed"
+  ],
+  "not_reproduced": [
+    "primary NPZ AUC recomputation was not performed inside this science pass; it was independently completed in prediction_snapshot.json",
+    "training or replication",
+    "probe fitting or feature re-encoding",
+    "bootstrap and DeLong reruns",
+    "PDF or image rendering",
+    "src implementation audit",
+    "external citation verification",
+    "subject-identity pairing from case identifiers",
+    "remote or cloud replication status"
+  ]
+}

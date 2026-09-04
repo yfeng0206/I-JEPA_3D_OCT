@@ -1,5 +1,11 @@
 # Paper workflow state
 
+> **Historical snapshot below (August 27).** A fresh September 4 audit found
+> gaps in the earlier readiness, inference, and build-safety assurances.
+> See `VERSION_BOARD.md` and `autopilot\reports\fresh_audit_2026-09-04`
+> for the current evidence-bounded status. In particular, an internal AI review
+> is not a workshop decision, and a recorded sync is not a fresh remote check.
+
 Resume point for this submission. Written 2026-08-27. Update it when the state
 changes; it exists so a fresh session, or a Windows restart, can pick up without
 re-deriving everything.

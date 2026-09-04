@@ -1,0 +1,11 @@
+hypothesis_id,contract,owner,state,evidence,interpretation
+H01,Image transforms and guide channels identify the same tissue,mask-data,pending,,
+H02,Configured policy and ramp actually govern emitted target indices,mask-data,pending,,
+H03,Guided and random-background targets survive to predictor loss,mask-data,pending,,
+H04,Visible anatomy survives final encoder-context collation,mask-data,pending,,
+H05,Image context block and teacher target token ordering align,training-eval,pending,,
+H06,Online predictor gradients and teacher EMA are operational,training-eval,pending,,
+H07,AMP accumulation and checkpoint resume follow intended update semantics,training-eval,pending,,
+H08,Historical checkpoints heads precision and case order match claims,training-eval,pending,,
+H09,Literature importance and prediction objective correspond to our proposed intervention,literature,pending,,
+H10,Task difficulty and guide proxy remain alternatives to implementation failure,coordinator,pending,,

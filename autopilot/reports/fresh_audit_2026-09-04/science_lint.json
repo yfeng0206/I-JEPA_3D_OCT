@@ -1,0 +1,21 @@
+{
+  "channel_separation": {
+    "author_before_editor": true,
+    "author_heading_count": 1,
+    "editor_heading_count": 1
+  },
+  "comments": [],
+  "errors": [],
+  "line_count": 318,
+  "notice": "This deterministic lint uses structural and lexical rules. It does not judge scientific validity, verify whether statements are true, or replace accountable human review. Findings contain line numbers and rule IDs, not review or manuscript text.",
+  "schema_version": "2.0",
+  "status": "READY_FOR_HUMAN_REVIEW",
+  "structured_comment_count": 0,
+  "valid": true,
+  "warnings": [
+    {
+      "code": "NO_STRUCTURED_COMMENTS_FOUND",
+      "field": "document"
+    }
+  ]
+}

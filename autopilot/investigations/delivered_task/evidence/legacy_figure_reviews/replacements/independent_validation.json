@@ -1,0 +1,206 @@
+{
+  "scatter": {
+    "status": "source_fields_and_all_data_artists_verified",
+    "geometry_sha256": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7",
+    "inventory_sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6",
+    "series": [
+      {
+        "arm": "random",
+        "display_label": "Random",
+        "observed_xy": [
+          31.466034477712412,
+          0.8641212996544002
+        ],
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/random/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/34/auc"
+        },
+        "epoch": 50,
+        "precision": "fp32"
+      },
+      {
+        "arm": "oracle",
+        "display_label": "Centroid",
+        "observed_xy": [
+          40.008725298518314,
+          0.8740152718463352
+        ],
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/oracle/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/29/auc"
+        },
+        "epoch": 50,
+        "precision": "fp32"
+      },
+      {
+        "arm": "envelope",
+        "display_label": "Envelope",
+        "observed_xy": [
+          43.30093279923807,
+          0.8760634352582928
+        ],
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/envelope/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/23/auc"
+        },
+        "epoch": 50,
+        "precision": "fp32"
+      },
+      {
+        "arm": "anatomy-v2",
+        "display_label": "ANATOMY-v2",
+        "observed_xy": [
+          97.0935374668334,
+          0.8653855047304304
+        ],
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/anatomy/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/9/auc"
+        },
+        "epoch": 50,
+        "precision": "fp32"
+      },
+      {
+        "arm": "cover-f021",
+        "display_label": "COVER",
+        "observed_xy": [
+          44.18566087795465,
+          0.864281381901101
+        ],
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/cover/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/17/auc"
+        },
+        "epoch": 50,
+        "precision": "fp32"
+      }
+    ],
+    "line_or_interval_count": 0,
+    "scope": "Five exact source-valued markers and their semantic annotations; not statistical/causal validation."
+  },
+  "token_maps": {
+    "status": "exact_frozen_source_arrays_and_artists_verified",
+    "private_fixture_sha256": "269f1c143af8e91daa179796fb0bfbd40583d91fafebbc0dbd45cba9c6c4692e",
+    "anonymous_ordinal": 0,
+    "raw_image_artists": 0,
+    "axes_dimension": 2,
+    "policies": [
+      {
+        "arm": "random",
+        "fixture_policy_key": "random",
+        "anonymous_ordinal": 0,
+        "cells_checked": 256,
+        "tissue_circles_checked": 85,
+        "target_union_sha256": "134d499d0d2f48b482c8e78f3a1fb3dd48ca5531aaa85fe941fbbbac755ffd08",
+        "context_sha256": "7bcb34efc4e6aa6d6b8d5a7f1456368d8dc65d5a153abf59119c61bfb213f800",
+        "exact_source_membership_checked": true
+      },
+      {
+        "arm": "oracle",
+        "fixture_policy_key": "oracle",
+        "anonymous_ordinal": 0,
+        "cells_checked": 256,
+        "tissue_circles_checked": 85,
+        "target_union_sha256": "ef803b040195b82f603b21cf84dcab0f23db0d679c9a9b46a25f21080bfe8c7b",
+        "context_sha256": "51cbcb09b9aeea4058d102efbb6cf395d1d2b4e12eed8764fd242dfc17a5150f",
+        "exact_source_membership_checked": true
+      },
+      {
+        "arm": "envelope",
+        "fixture_policy_key": "envelope",
+        "anonymous_ordinal": 0,
+        "cells_checked": 256,
+        "tissue_circles_checked": 85,
+        "target_union_sha256": "4ad3f7e0a8f641dfe7e9208ac0c825cac9bb81b1b1684396c17f3621ca67733a",
+        "context_sha256": "754ab488d028eddb048ed53a845703c9d2e7cdffdf2f026cb300b6681e9569df",
+        "exact_source_membership_checked": true
+      },
+      {
+        "arm": "anatomy-v2",
+        "fixture_policy_key": "anatomy",
+        "anonymous_ordinal": 0,
+        "cells_checked": 256,
+        "tissue_circles_checked": 85,
+        "target_union_sha256": "7662d704bdabc3e132d849149a31f02d743339a27746ffc304851d88ae19b05b",
+        "context_sha256": "62b2f5484a78bbbaf501cbc6c62d712ccfabff849d9a9a80bf177d90f93972ab",
+        "exact_source_membership_checked": true
+      },
+      {
+        "arm": "cover-f021",
+        "fixture_policy_key": "cover_legacy",
+        "anonymous_ordinal": 0,
+        "cells_checked": 256,
+        "tissue_circles_checked": 85,
+        "target_union_sha256": "d3840b3b008f53871e257236e3e9c15eb45f843529690cfc6991b948a32a1bed",
+        "context_sha256": "5612a0c809dc1682c4157585c039096d0288c620ab4524f2b6c99e49b0d8e989",
+        "exact_source_membership_checked": true
+      }
+    ],
+    "scope": "Selected source-reviewed engineering token-map illustration; not performance or population verification."
+  },
+  "scatter_png": {
+    "exact_byte_equality": true,
+    "sha256": "e9635409b46a295e1dd4da8398a08d1c3ba7014438dcb1039f8ef7485028e6c4",
+    "dimensions_pixels": [
+      2040,
+      1170
+    ],
+    "fully_opaque": true
+  },
+  "token_maps_png": {
+    "exact_byte_equality": true,
+    "sha256": "876d8dbdc8d60bacec3a69906a8df239e824e3afa2ba99fb609c4deb5ed22512",
+    "dimensions_pixels": [
+      2190,
+      765
+    ],
+    "fully_opaque": true
+  },
+  "vector_files": {
+    "fig_purity_auc_ep50_fp32": {
+      "pdf_embedded_images": 0,
+      "svg_image_elements": 0,
+      "pdf_pages": 1,
+      "pdf_text": "20\n30\n40\n50\n60\n70\n80\n90\n100\nDelivered target-union tissue purity (%)\n0.862\n0.864\n0.866\n0.868\n0.870\n0.872\n0.874\n0.876\n0.878\nFrozen-probe test AUC\nRandom\nCentroid\nEnvelope\nANATOMY-v2\nCOVER\nTarget purity and frozen-probe performance\nMatched epoch 50, fp32 point estimates; no intervals shown.\n"
+    },
+    "fig_policy_family_token_maps": {
+      "pdf_embedded_images": 0,
+      "svg_image_elements": 0,
+      "pdf_pages": 1,
+      "pdf_text": "(a) Random\n(b) Centroid\n(c) Envelope\n(d) ANATOMY-v2\n(e) COVER\nFrozen delivered token sets; one predeclared Training view; no raw OCT pixels.\nFinal target union\nFinal encoder context\nGuide-positive tissue proxy\nNeither\n"
+    }
+  },
+  "scatter_text_layout": {
+    "visible_text_rectangles_checked": 27,
+    "outside_figure": 0,
+    "text_rectangle_overlaps": 0,
+    "scope": "Headless renderer geometry; not human readability or accessibility certification."
+  },
+  "token_text_layout": {
+    "visible_text_rectangles_checked": 10,
+    "outside_figure": 0,
+    "text_rectangle_overlaps": 0,
+    "scope": "Headless renderer geometry; not human readability or accessibility certification."
+  },
+  "no_training_gpu_network_or_resampling": true
+}

@@ -1,0 +1,47 @@
+{
+  "branch": "fix/jepa-delivered-task-audit",
+  "protected_baseline": "de145d7",
+  "published_branch_baseline": "5a47648",
+  "published_engineering_milestone": "73e0b55",
+  "main_merge_authorized": false,
+  "sustained_pretraining_authorized": false,
+  "agents": {
+    "repair-release": "c74236c6-35d4-47a1-8221-b5d69bc2b5ed",
+    "repair-masks": "9362a912-cc32-4459-b095-31d8d1e20fc5",
+    "repair-training": "1b4a5de8-7dc3-4a81-8333-291b7fa503db",
+    "literature-contract": "ae8edf81-c733-4180-95a2-049640f2da67",
+    "complete-number-coverage": "0d7c33bb-541c-47dc-a172-5dca3853052d",
+    "release-fix-critic": "555e4953-676d-473f-8ca6-8a9b291aabb9",
+    "mask-fix-critic": "dc48921c-dde8-4f60-87b8-19b1d2fa1774",
+    "resume-fork-critic": "7670ef13-a089-48dd-ae71-2872f081d6a5",
+    "legacy-figure-evidence": "ca444d25-19ec-45ca-b75c-4878046b8e34"
+  },
+  "manuscript_stable_sha256": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
+  "pending_acceptance": [
+    "Numeric owner targeted rereview after six genuine literal/scope corrections; original378of385 reviewed, remaining corrections now applied",
+    "Merge final literal candidate with parent diagnostic/policy-illustration receipts, rejecting unequal duplicates",
+    "Replacement purity scatter artist validator and policy-map receipt must pass on installed new files",
+    "Final integrated tests, isolated release build, Word validation and reviewed branch commits",
+    "Fresh remote conflict check and exact-manifest Overleaf sync; no main update"
+  ],
+  "completed_bounds": {
+    "sustained_training": "none",
+    "production_gpu_updates": "8 initial independent checks plus 3 real guided-mask checks",
+    "real_guided_batch": "first two predeclared Training views; guard nonbinding",
+    "paper_review": "No P0; five bounded textual/method findings addressed",
+    "fork_review": "No significant issue in explicit exact/fork correction"
+  },
+  "accepted_implementation": {
+    "training_and_masks": "149 integrated tests; mask critic issues fixed; 15 truly isolated parity controls",
+    "trajectory": "Wrong null precision fixed; 11 regressions; generated tables/macros unchanged",
+    "release_safety": "Five critic findings closed, then numeric-review input/output collision fixed;83 current release tests",
+    "figures": "Two source-verified replacements adopted; five unretained attribution displays excluded, originals preserved",
+    "word": "Isolated prior candidate has128refs17tables11figures45bibliography; regenerate for final5ec7source",
+    "overleaf": "Repaired nonpersistent auth dry-run succeeded; no remote edits/conflicts; nothing published yet"
+  },
+  "do_not_stage": [
+    "pre-existing autopilot/RESOURCE_MONITOR.csv modification",
+    ".audit or private real-image/case manifests",
+    "_release_work and temporary test/build files"
+  ]
+}

@@ -1,0 +1,353 @@
+{
+  "version": 1,
+  "sources": {
+    "delivered_full_batches": {
+      "root": "repo",
+      "path": "autopilot/investigations/delivered_task/evidence/mask_replay600_v2/full_batch64_confirmation.json",
+      "sha256": "e1f1a3f510fa88cb676689f50362b5a36350a023089c4d314cb91e65a230bcb5"
+    },
+    "delivered_gpu_joint": {
+      "root": "repo",
+      "path": "autopilot/investigations/delivered_task/evidence/training_gpu_guided_v1/joint_summary.json",
+      "sha256": "49128f3d2592083a00f470084583df39e25a204df57d37c7f173960fa51797de"
+    }
+  },
+  "macros": {
+    "DTFullImages": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_legacy/full_batch_images"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTValidGuides": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_legacy/valid"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTTissueTruncation": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_legacy/target_tissue_truncation_losses"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTZeroContext": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_legacy/zero_tissue_context"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTLegacyFloorMiss": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_legacy/valid_floor_misses"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTLegacyTruncation": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_legacy/target_tissue_truncation_losses"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTLegacyZeroContext": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_legacy/zero_tissue_context"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTLegacyScoredMass": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "delivered_full_batches",
+                "pointer": "/cover_legacy/mean_scored_mass"
+              }
+            ]
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "DTLegacyDeliveredMass": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "delivered_full_batches",
+                "pointer": "/cover_legacy/mean_delivered_mass"
+              }
+            ]
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "DTLegacyContextMean": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_legacy/mean_context_tissue"
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "DTPrefixFloorMiss": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_v2/valid_floor_misses"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTPrefixTruncation": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_v2/target_tissue_truncation_losses"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTPrefixZeroContext": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_v2/zero_tissue_context"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTPrefixScoredMass": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "delivered_full_batches",
+                "pointer": "/cover_v2/mean_scored_mass"
+              }
+            ]
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "DTPrefixDeliveredMass": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "delivered_full_batches",
+                "pointer": "/cover_v2/mean_delivered_mass"
+              }
+            ]
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "DTPrefixContextMean": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_v2/mean_context_tissue"
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "DTGuardFloorMiss": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_v2_guard/valid_floor_misses"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTGuardTruncation": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_v2_guard/target_tissue_truncation_losses"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTGuardZeroContext": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_v2_guard/zero_tissue_context"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTGuardScoredMass": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "delivered_full_batches",
+                "pointer": "/cover_v2_guard/mean_scored_mass"
+              }
+            ]
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "DTGuardDeliveredMass": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "delivered_full_batches",
+                "pointer": "/cover_v2_guard/mean_delivered_mass"
+              }
+            ]
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "DTGuardContextMean": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_full_batches",
+            "pointer": "/cover_v2_guard/mean_context_tissue"
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "DTGPUObservations": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_gpu_joint",
+            "pointer": "/observations"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTGPUCases": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "length",
+            "args": [
+              {
+                "source": "delivered_gpu_joint",
+                "pointer": "/policies"
+              }
+            ]
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "DTGPUGuardChanges": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "delivered_gpu_joint",
+            "pointer": "/guard_modified_images"
+          }
+        ],
+        "format": "%d"
+      }
+    }
+  },
+  "scope": "Fixed engineering diagnostics, not downstream AUC or independent training replicates"
+}

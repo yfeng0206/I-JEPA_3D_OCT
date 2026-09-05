@@ -1,0 +1,46 @@
+{
+  "ALL_PASS": true,
+  "errors": [],
+  "docx_sha256": "7da6b8e63ebde1c00aa48ef0ab9221cc96c8185d4474ebcf12e6cb4ad4f46b5b",
+  "input_hashes": {
+    "auto/auto_numbers.tex": "d6f2c6201dd19c363ba51e1c006490eb7211af53615a45f2f62d4ef6bb80cbc2",
+    "auto/fig_fairness.png": "003e4867ceffa5232d211ca4baa05697a23c3a76045e292fc118c7c4e7c1ac70",
+    "auto/fig_labeleff.png": "c38adc921b2d6d95771d4656549e6c127bc7b2052dcaef9136a9a2bc29c3d082",
+    "auto/fig_roc.png": "0dbe1d493de657e913431edc1d87f2cbe418828e559ee501bf8095f768767857",
+    "auto/fig_trajectories_ci.png": "39e16f8e497b014ab37a51bcbf3c840293c9ee899178e07180a7fef6a3e2c145",
+    "auto/table_allprobes.tex": "dcc31d5a0bf5cf2c9538a65a1f223b6fe033586d4d4bbfc4ccc96879cfdd0bf5",
+    "auto/table_fp32.tex": "83c52c34e75872b1b4aa6f8d0a49aaefdc20e8011900a7579ec5c24206136317",
+    "auto/table_labeleff.tex": "8c3dc6b0b830055b9dfcf355aff970c6360f7fdf2b48f0fb18e29f87df4db546",
+    "auto/table_operating.tex": "4562025c084847f2bde3be36f2a44c9184a6ab250e343a1c0fc5267aad897d35",
+    "auto/table_paired_subgroup.tex": "074a1ecd38dafcec2c87c85bcc5fcc97ad45466f32e52a894f19db6b7a5db10a",
+    "auto/table_subgroup_operating.tex": "4fe8e8569a57d6ca61cdd5d381c7a850fbe048523858e5eb9167bfc11e6ed4c1",
+    "auto/table_subgroup_trends.tex": "4edc6013c4dec8a567168475b87db2cb3b57592bad699e6da786e38a988e10b2",
+    "figures/fig1_policies_compact.png": "30805f537d14a76e9cdcfe46362394b8cffc0bcc0fb159d1fd24cb6722078f6f",
+    "figures/figS5_mask_statistics.png": "b3cd2f3642522c3aa6e6a101d9f07ec05d6a7454ac1db97696ed89e3c7e51e09",
+    "figures/fig_geometry_panel.png": "d961ab632dcf907dc8c04e406c5837eba6e3fcf331b2806398cb2929c5aecb11",
+    "figures/fig_masking_policies.png": "7493287e756cfc7f2739bfed1bc28ad1abfcefb775137f8af5159df04afb4fe1",
+    "figures/fig_precision_paradox.png": "b39d5e46fb59cb13f00c14cebef14949e554b37436012476c5dc7805ccb91658",
+    "figures/fig_specificity_ladder.png": "412e51919d5d0028429e2320dfb7819252468b54de3d9d1ad05a3327e4edace5",
+    "figures/interp_04_window_occlusion_W7.png": "84f240a96461acb3f2e0280f0aa943146e3b98bc06b9cdf921ee76a9716277dc",
+    "figures/interp_14_odos_mirror_test.png": "4bbbb9456e911aa5d590234bffa7048b2177d2da6a4169dd138bde4d8c3098b8",
+    "figures/interp_heatmap_grid.png": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb",
+    "figures/interp_slice_contribution_by_outcome.png": "4ed73e379131a5cda85efb3a42205b88781e5bece0b2c25974640eb10357d8b1",
+    "figures/interp_slice_contribution_curves.png": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6",
+    "main_submission.tex": "af47a1c8904d0f82b7a1e76c727a31f2945baa4a995554fcabc89a6dd9c9e07c",
+    "neurips_2026.sty": "c5287da23f9bd6b76c74f70360d977b4ea63c880297cadbe1d805f8a49d7bf86",
+    "references.bib": "ae137165bc4d2b0306507e7cf078b1e695eb22a40cf6e5a363ab0e602af9e6f4"
+  },
+  "aux_sha256": "4238d3d3d980331174b8fd7b9cb7369eaed0bb8db5ed5d4da4a9007d82acaa26",
+  "counts": {
+    "references": 134,
+    "table_captions": 16,
+    "figure_captions": 15,
+    "tables": 17,
+    "media": 16,
+    "bibliography": 47
+  },
+  "limits": [
+    "Conversion completeness does not establish scientific validity.",
+    "Table checks cover numeric token multiplicity/order and caption prose/numbers, not typography."
+  ]
+}

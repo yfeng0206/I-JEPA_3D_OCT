@@ -1,0 +1,15 @@
+{
+  "baseline": "de145d7",
+  "scope": "Parent-selected maps-only illustration registration; no promotion/authentication changes",
+  "source_hashes": {
+    "autopilot/release_assets.json": "e923fdbba4db50e5a89b6f61ac75df6b191c048a862de9114b385bdf1c5276da",
+    "autopilot/release_assets.py": "8a019e932eddfde2b21e317e89867fb1ca5b5680ed315ed3986a166c369f00da",
+    "tests/test_release_safety.py": "929bd69714ae5ee170be625d3040f755f816b619cf8c8e658fdb359c15d1a1e7"
+  },
+  "targeted_test_report_sha256": "afcba9e566f226d7079620ba0aeab6b7965da21df35f200e300a333cb034efff",
+  "prior_critic_record": "release_critic_fix_manifest.json",
+  "limits": [
+    "Identity/producer pinning is not aggregate statistical verification.",
+    "No figure regeneration; no p15/schema or manuscript edits."
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "scope": "Source and rendered-image review of the selected maps-only diagnostic. This is not numerical verification of a population estimate.",
+  "sources": {
+    "delivered_map_manifest": {
+      "root": "repo",
+      "path": "autopilot/investigations/delivered_task/evidence/mask_figure_manuscript_v2/figure_manifest.json",
+      "sha256": "4111cb9012a39c00f4b4775462a5c28b6a1a991e1338958ce39835c39bba7aa3"
+    },
+    "delivered_map_generator": {
+      "root": "repo",
+      "path": "scripts/delivered_mask_figure.py",
+      "sha256": "19fe12a1262e163b27e9a25534975f6ca6919971c139f6b56062e8b514c3ede8"
+    },
+    "delivered_map_legacy_records": {
+      "root": "repo",
+      "path": "autopilot/investigations/delivered_task/evidence/mask_replay600_v2/cover_legacy_bs64.jsonl",
+      "sha256": "aeb30a5de1f6c4ee39e7c44977e9e05a2a7647aca36dd8795a71151a8fae940c"
+    },
+    "delivered_map_guard_records": {
+      "root": "repo",
+      "path": "autopilot/investigations/delivered_task/evidence/mask_replay600_v2/cover_v2_guard_bs64.jsonl",
+      "sha256": "b8052be3604649963decde7e08667e259eb8b71cf5219ce79f6615a0f98b7e07"
+    }
+  },
+  "figures": [
+    {
+      "path": "figures/fig_delivered_task_token_maps.png",
+      "sha256": "bb3dfe97ecfacf5ea412c984015f26503911d32e67ac2ce3abbf1b64db465354",
+      "caption_sha256": "8d887e3301c4802fa68c82672c304d169dff882d2a923f7ac50c3e6d7ec889d3",
+      "inputs": [
+        {
+          "source": "delivered_map_manifest",
+          "pointer": "/rendered_metrics",
+          "sha256": "4111cb9012a39c00f4b4775462a5c28b6a1a991e1338958ce39835c39bba7aa3"
+        },
+        {
+          "source": "delivered_map_generator",
+          "pointer": "/",
+          "sha256": "19fe12a1262e163b27e9a25534975f6ca6919971c139f6b56062e8b514c3ede8"
+        },
+        {
+          "source": "delivered_map_legacy_records",
+          "pointer": "/",
+          "sha256": "aeb30a5de1f6c4ee39e7c44977e9e05a2a7647aca36dd8795a71151a8fae940c"
+        },
+        {
+          "source": "delivered_map_guard_records",
+          "pointer": "/",
+          "sha256": "b8052be3604649963decde7e08667e259eb8b71cf5219ce79f6615a0f98b7e07"
+        }
+      ],
+      "validation": {
+        "method": "reviewed_source_illustration",
+        "reviewer": "Numeric-coverage agent; source and rendered-PNG inspection on 2026-09-04",
+        "quantitative_scope": "illustrative_only",
+        "limitations": "One previously identified Training-view failure, not a random or representative sample. The image illustrates target/context membership and guide-positive tissue for that case only. It contains no aggregate bars, readable numerical estimates, frequency estimate, or downstream AUC claim. Historical and corrected placements are not exactly paired. This review is not mathematical verification of all mask pixels or a population-level result.",
+        "review_checks": [
+          "Inspected the delivered PNG: four labelled token-map panels and a categorical legend, without raw OCT pixels, subject identifiers, aggregate bars, or numeric readouts.",
+          "The PNG/PDF/SVG file hashes equal the maps-only manifest output hashes; the current generator hash equals the recorded export hash.",
+          "Both input JSONL hashes equal the manifest records. Selected ordinal 94 has matching crop and guide hashes in both policies and a valid guide.",
+          "Selected legacy record reports final context_tissue=0; selected guarded record reports a satisfied context floor and context_tissue=16. The displayed qualitative contrast agrees with those retained records.",
+          "The caption explicitly identifies the selected failure, separates aggregate evidence into the source-bound table, disclaims a downstream AUC improvement, and states that placements are not exactly paired."
+        ],
+        "source_locators": {
+          "legacy": "cover_legacy_bs64.jsonl: unique record with ordinal=94",
+          "guard": "cover_v2_guard_bs64.jsonl: unique record with ordinal=94",
+          "crop_tensor_sha256": "11f06b10c67ad47bcb29c55834de437c0d84f89177cb9559a4b1be7b4dc42eaa",
+          "guide_sha256": "41c9084e1b48f4739bc511b2da7c39ba5a808f87fa33695a21e087e17535202b"
+        }
+      }
+    }
+  ]
+}

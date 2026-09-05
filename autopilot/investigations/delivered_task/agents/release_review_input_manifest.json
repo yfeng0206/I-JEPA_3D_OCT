@@ -1,0 +1,14 @@
+{
+  "baseline": "de145d7",
+  "scope": "Explicit numeric review staging, private exact-byte archival and identity checks; no scientific autoapproval",
+  "source_hashes": {
+    "autopilot/release_assets.py": "74176dbcd84634af35b5352e78f7ad1da2c680d3b1166f1905818cc0082dcbb3",
+    "autopilot/p13_build_zip.py": "2f1bcd3a5dbe3c0c52684ba668bb4239e869cbb5b36774f52a72759b7e6b7285",
+    "autopilot/refresh_all.py": "f6770c0bba155ba3d69724dd86691b5961639f35293e2d4d8586f6b99fda8e70",
+    "scripts/sync_overleaf.py": "6806382f7d64ac0c600257549bd6735b63c47ef465e35373d70fff2b0ada14c0",
+    "tests/test_release_safety.py": "e4969a04238ba87a605fb0dae408024afe81adeda86ef63e4cda98ad6beddb9b"
+  },
+  "targeted_test_report_sha256": "e65d34307a4cc961aadaccac013f92f4963454a60e336ad5b1d3538df66862d9",
+  "pending_owner_integration": "Canonical logical manuscript name for main.tex staged binding/review lookups",
+  "prior_critic_record": "release_critic_fix_manifest.json"
+}

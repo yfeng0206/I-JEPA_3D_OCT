@@ -1,0 +1,18 @@
+{
+  "scope": "Only byte-equivalent duplicate entries deduplicated; unequal entries would fail",
+  "parent_before_sha256": "f88e17e2f3f692fc7df5aa95ea59fd76df15fbca53a550dcff450be21dcbfc38",
+  "candidate_sha256": "f7dff325a1e6456025f47e96122da6c065e1d2f7e02a0746aaf2e20d142f2657",
+  "merged_sha256": "2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6",
+  "deduplicated": {
+    "sources": 6,
+    "macros": 25,
+    "figures": 1,
+    "literals": 0
+  },
+  "counts": {
+    "sources": 64,
+    "macros": 25,
+    "literals": 370,
+    "figures": 2
+  }
+}

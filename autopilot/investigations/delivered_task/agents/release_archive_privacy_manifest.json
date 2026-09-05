@@ -1,0 +1,16 @@
+{
+  "scope": "New targeted archive-membership/privacy regression, not final scientific release approval",
+  "source_hashes": {
+    ".gitignore": "f72407d0def169d5fc3f8b1bc4def3414ed1654ca71a92e8a9a36da90fe85b0b",
+    "autopilot/p13_build_zip.py": "74a5259ba3c2ee65a8bde38091f13fa4e0f6e4a5a7ab11da6a6a26232bc97988",
+    "autopilot/release_assets.py": "74176dbcd84634af35b5352e78f7ad1da2c680d3b1166f1905818cc0082dcbb3",
+    "tests/test_release_safety.py": "2a4db4cd1557e50c7d5c3ae04e7912b1748553f2a59d2cabfce42b59ea7e99e2"
+  },
+  "test_report_sha256": "bcbe5c2f773fa16926277558835a27851e1c4107fcaf315839ea399ad30fceae",
+  "allowlist_report_sha256": "64ba036a0e4e298fb30ca02de7c576bcd1dff72ddc2344dd3ee5971649e96d96",
+  "historical_combined_record": "release_review_collision_fix_manifest.json",
+  "limits": [
+    "Prior combined-test manifest remains historical; not restamped.",
+    "Updated ignore policy captured; no full third-party source documents embedded."
+  ]
+}

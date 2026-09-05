@@ -1,0 +1,75 @@
+{
+  "scope": "Coordinator-declared final source hashes verified before and after numeric coverage; numeric release is blocked, not approved.",
+  "expected_source_hashes": {
+    "main_submission.tex": "61d8d2cceb397f58313b166d481a03a3f94c2c0c914fb2ee8caca25cef7e27e6",
+    "references.bib": "36dae5e6a3663be19daacd6e1af63add0e6d5da1ec4d8e1d87ee2b4b1e75ec5e",
+    "auto/delivered_numbers.tex": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5"
+  },
+  "actual_source_hashes": {
+    "main_submission.tex": "61d8d2cceb397f58313b166d481a03a3f94c2c0c914fb2ee8caca25cef7e27e6",
+    "references.bib": "36dae5e6a3663be19daacd6e1af63add0e6d5da1ec4d8e1d87ee2b4b1e75ec5e",
+    "auto/delivered_numbers.tex": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5"
+  },
+  "source_stable": true,
+  "coverage_report_sha256": "bc2dc0be51b069b390c64b0180e54b332bcf83395718b678b9438d4bbb2827ac",
+  "numeric_ALL_PASS": false,
+  "coverage_counts": {
+    "verified": 759,
+    "unused": 243,
+    "nonnumeric_definition": 1,
+    "explicit_no_result": 3,
+    "structural": 814,
+    "unresolved": 392,
+    "programmatically_verified_plotted_values": 7,
+    "reviewed_source_illustration": 1
+  },
+  "unresolved_by_class": {
+    "statistical_convention": 10,
+    "protocol_descriptor": 111,
+    "empirical_or_unclassified": 214,
+    "arithmetic_expression": 2,
+    "published_citation_claim": 35,
+    "software_environment_metadata": 13,
+    "figure": 7
+  },
+  "proven_numeric_mismatches": [],
+  "unverified_figures": [
+    {
+      "path": "figures/fig_masking_policies.png",
+      "reason": "Independent plotted-value validator or explicit historical-illustration review required; identity is not numeric proof."
+    },
+    {
+      "path": "figures/fig_precision_paradox.png",
+      "reason": "Independent plotted-value validator or explicit historical-illustration review required; identity is not numeric proof."
+    },
+    {
+      "path": "figures/interp_04_window_occlusion_W7.png",
+      "reason": "Independent plotted-value validator or explicit historical-illustration review required; identity is not numeric proof."
+    },
+    {
+      "path": "figures/interp_14_odos_mirror_test.png",
+      "reason": "Independent plotted-value validator or explicit historical-illustration review required; identity is not numeric proof."
+    },
+    {
+      "path": "figures/interp_heatmap_grid.png",
+      "reason": "Independent plotted-value validator or explicit historical-illustration review required; identity is not numeric proof."
+    },
+    {
+      "path": "figures/interp_slice_contribution_by_outcome.png",
+      "reason": "Independent plotted-value validator or explicit historical-illustration review required; identity is not numeric proof."
+    },
+    {
+      "path": "figures/interp_slice_contribution_curves.png",
+      "reason": "Independent plotted-value validator or explicit historical-illustration review required; identity is not numeric proof."
+    }
+  ],
+  "pending_literal_review_tokens": 385,
+  "limitations": [
+    "Unresolved literal candidates are not all known to be incorrect or unavailable: they include unreviewed protocol/statistical constants and source-binding work.",
+    "Bibliographic authority records establish reference identity, not support for the 35 published-ablation numeric tokens.",
+    "No production Word/PDF/ZIP, manuscript, statistics, release-gate flags, or remote state was modified.",
+    "Isolated Word/parity belongs to the release owner; no duplicate Word conversion was launched."
+  ],
+  "root_alias_test_report": "numeric_root_alias_tests.xml",
+  "root_alias_test_report_sha256": "c6952a8bb2fc013db9fc0a92f498767c2f8f435835bcabb54336c41ee3a18f04"
+}

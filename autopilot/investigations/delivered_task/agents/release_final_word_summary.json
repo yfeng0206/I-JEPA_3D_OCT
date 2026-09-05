@@ -1,0 +1,125 @@
+{
+  "status": "SUPERSEDED SNAPSHOT: coordinator revoked 61d8 source freeze; not a final release candidate",
+  "source_hashes": {
+    "main_submission.tex": "61d8d2cceb397f58313b166d481a03a3f94c2c0c914fb2ee8caca25cef7e27e6",
+    "references.bib": "36dae5e6a3663be19daacd6e1af63add0e6d5da1ec4d8e1d87ee2b4b1e75ec5e",
+    "auto/delivered_numbers.tex": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5"
+  },
+  "work": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-6a96c09d7be443468e3a4023c5829a0c",
+  "word": {
+    "path": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-6a96c09d7be443468e3a4023c5829a0c\\main_submission.docx",
+    "sha256": "ef2f6537e4defea8ddadee2a0b5eae9c13317ea8457372446a57ac920e0aa687",
+    "receipt": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-6a96c09d7be443468e3a4023c5829a0c\\main_submission.docx.provenance.json",
+    "ALL_PASS": true,
+    "counts": {
+      "references": 135,
+      "table_captions": 17,
+      "figure_captions": 16,
+      "tables": 17,
+      "data_tables": 17,
+      "media": 16,
+      "bibliography": 45
+    }
+  },
+  "pdf": {
+    "total_pages": 38,
+    "references_start_page": 9,
+    "references_heading_y": 629.18359375,
+    "main_content_pages": 9,
+    "identifying_terms_found": [],
+    "identifying_metadata": {},
+    "references_headings": [
+      [
+        9,
+        629.18359375
+      ]
+    ]
+  },
+  "citations": {
+    "ALL_PASS": true,
+    "matched": 45,
+    "cited": 45,
+    "scope": "existence/title only, not claim support"
+  },
+  "numeric": {
+    "ALL_PASS": false,
+    "counts": {
+      "verified": 759,
+      "unused": 243,
+      "nonnumeric_definition": 1,
+      "explicit_no_result": 3,
+      "structural": 814,
+      "unresolved": 392,
+      "programmatically_verified_plotted_values": 7,
+      "reviewed_source_illustration": 1
+    },
+    "errors": [],
+    "remaining_by_kind": {
+      "literal": 385,
+      "figure": 7
+    },
+    "report": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-6a96c09d7be443468e3a4023c5829a0c\\numeric_coverage.json",
+    "review_sha256": "c71ff19568f9a28cc58fb4a2abd58d8c6be5b5f55c3d756b284668698a0b78fd"
+  },
+  "input_stability": {
+    "live_source_inputs_unchanged": false,
+    "live_review_matches_snapshot": true
+  },
+  "production_word": {
+    "before_sha256": "7610d2c8137a17990381ee79843c9b9d44c73d6156f47ece3ba4fd94eff3a9ee",
+    "current_sha256": "7610d2c8137a17990381ee79843c9b9d44c73d6156f47ece3ba4fd94eff3a9ee",
+    "overwritten": false
+  },
+  "limits": [
+    "No production promotion or remote operation.",
+    "Initial numeric CLI had an int64 serialization TypeError; subsequent direct audit and canonical CLI serialized normally; no serializer workaround was applied.",
+    "Anonymity false positive on cited author Gary S. Collins was corrected to exact author/project identifiers without changing manuscript/bibliography."
+  ],
+  "live_input_changes": [
+    {
+      "path": "figures/interp_04_window_occlusion_W7.png",
+      "snapshot_sha256": "84f240a96461acb3f2e0280f0aa943146e3b98bc06b9cdf921ee76a9716277dc",
+      "current_sha256": null
+    },
+    {
+      "path": "figures/interp_14_odos_mirror_test.png",
+      "snapshot_sha256": "4bbbb9456e911aa5d590234bffa7048b2177d2da6a4169dd138bde4d8c3098b8",
+      "current_sha256": null
+    },
+    {
+      "path": "figures/interp_heatmap_grid.png",
+      "snapshot_sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb",
+      "current_sha256": null
+    },
+    {
+      "path": "figures/interp_slice_contribution_by_outcome.png",
+      "snapshot_sha256": "4ed73e379131a5cda85efb3a42205b88781e5bece0b2c25974640eb10357d8b1",
+      "current_sha256": null
+    },
+    {
+      "path": "figures/interp_slice_contribution_curves.png",
+      "snapshot_sha256": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6",
+      "current_sha256": null
+    },
+    {
+      "path": "main_submission.tex",
+      "snapshot_sha256": "61d8d2cceb397f58313b166d481a03a3f94c2c0c914fb2ee8caca25cef7e27e6",
+      "current_sha256": "6536f11df140206f1ed8be7bc7a7a3a5136b1adeec6f164c345d84625ef1f05a"
+    }
+  ],
+  "release_tests": {
+    "tests": "72",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0"
+  },
+  "release_code_hashes": {
+    "autopilot/release_assets.py": "74176dbcd84634af35b5352e78f7ad1da2c680d3b1166f1905818cc0082dcbb3",
+    "autopilot/p13_build_zip.py": "2855b093a911f9982c49b2f1c4fa7000eaf2a20ba3495dc661794f2b9d9d3eda",
+    "autopilot/make_docx.py": "d4291d1eb225dd724c783eb9e0559178014d4cd8aa759d1a78a291f20ae652a5",
+    "autopilot/check_docx.py": "8c3cb577d07520a46973c9b8d9550f24441047f9eefe39adb5500c16533f725d",
+    "scripts/sync_overleaf.py": "6806382f7d64ac0c600257549bd6735b63c47ef465e35373d70fff2b0ada14c0"
+  },
+  "source_freeze_revoked": true,
+  "pending": "Two replacement figures, evidence review and a new coordinator stable-source hash"
+}

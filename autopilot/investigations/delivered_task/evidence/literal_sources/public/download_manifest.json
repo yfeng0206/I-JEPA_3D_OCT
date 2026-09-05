@@ -1,0 +1,58 @@
+{
+  "mae": {
+    "requested_url": "https://openaccess.thecvf.com/content/CVPR2022/papers/He_Masked_Autoencoders_Are_Scalable_Vision_Learners_CVPR_2022_paper.pdf",
+    "resolved_url": "https://openaccess.thecvf.com/content/CVPR2022/papers/He_Masked_Autoencoders_Are_Scalable_Vision_Learners_CVPR_2022_paper.pdf",
+    "sha256": "81bbc64bc197a64362927010470e46601a0f0311aa4c2014a355dfff0e5b3b6c",
+    "bytes": 1737112,
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\mae.pdf"
+  },
+  "simmim": {
+    "requested_url": "https://openaccess.thecvf.com/content/CVPR2022/papers/Xie_SimMIM_A_Simple_Framework_for_Masked_Image_Modeling_CVPR_2022_paper.pdf",
+    "resolved_url": "https://openaccess.thecvf.com/content/CVPR2022/papers/Xie_SimMIM_A_Simple_Framework_for_Masked_Image_Modeling_CVPR_2022_paper.pdf",
+    "sha256": "ea0a738441f245f8a53557b3ed753b0b3f187ff87f75e90cc90a9f4b00fd851f",
+    "bytes": 3889817,
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\simmim.pdf"
+  },
+  "hpm": {
+    "requested_url": "https://openaccess.thecvf.com/content/CVPR2023/papers/Wang_Hard_Patches_Mining_for_Masked_Image_Modeling_CVPR_2023_paper.pdf",
+    "resolved_url": "https://openaccess.thecvf.com/content/CVPR2023/papers/Wang_Hard_Patches_Mining_for_Masked_Image_Modeling_CVPR_2023_paper.pdf",
+    "sha256": "608dfd4e67807122987ab68fed213557ae8437d20df7f7809bd6b2916ad2e77f",
+    "bytes": 3085579,
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\hpm.pdf"
+  },
+  "attg": {
+    "requested_url": "https://openaccess.thecvf.com/content/WACV2025/papers/Sick_Attention-Guided_Masked_Autoencoders_for_Learning_Image_Representations_WACV_2025_paper.pdf",
+    "resolved_url": "https://openaccess.thecvf.com/content/WACV2025/papers/Sick_Attention-Guided_Masked_Autoencoders_for_Learning_Image_Representations_WACV_2025_paper.pdf",
+    "sha256": "f1f274db024d8058a1f23ddd013fbff3959fd4449ee3048fad86082bb7c43373",
+    "bytes": 3701761,
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\attg.pdf"
+  },
+  "semmae": {
+    "requested_url": "https://papers.neurips.cc/paper_files/paper/2022/file/5c186016d0844767209dc36e9e61441b-Paper-Conference.pdf",
+    "resolved_url": "https://papers.neurips.cc/paper_files/paper/2022/file/5c186016d0844767209dc36e9e61441b-Paper-Conference.pdf",
+    "sha256": "8710c6a0bf66ce00a5b7687eb7d1487f8173763deb504f81a4547d26e21ae4b0",
+    "bytes": 2255282,
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\semmae.pdf"
+  },
+  "automae": {
+    "requested_url": "https://arxiv.org/pdf/2303.06583v1",
+    "resolved_url": "https://arxiv.org/pdf/2303.06583v1",
+    "sha256": "3d6f7b533f67ef5204ed0d82c3a07e46e093a4c13f0580efd883e6c08937d7e0",
+    "bytes": 5048749,
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\automae.pdf"
+  },
+  "attmask": {
+    "requested_url": "https://arxiv.org/pdf/2203.12719v2",
+    "resolved_url": "https://arxiv.org/pdf/2203.12719v2",
+    "sha256": "c964a7d8c111263893469e5afd6c4c9942fa76f7941daa34dd13f7dd4cbd8daf",
+    "bytes": 16674819,
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\attmask.pdf"
+  },
+  "ssit": {
+    "requested_url": "https://arxiv.org/pdf/2210.10969v2",
+    "resolved_url": "https://arxiv.org/pdf/2210.10969v2",
+    "sha256": "2fa7cd898e5f5754a773ffabf6d561b7ce00fb4edf77632984b9a3c71c7a367c",
+    "bytes": 1035160,
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\ssit.pdf"
+  }
+}

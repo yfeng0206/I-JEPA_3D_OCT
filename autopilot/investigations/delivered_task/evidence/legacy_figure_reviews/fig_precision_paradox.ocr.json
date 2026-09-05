@@ -1,0 +1,610 @@
+{
+    "image_sha256":  "b39d5e46fb59cb13f00c14cebef14949e554b37436012476c5dc7805ccb91658",
+    "width":  1482,
+    "language":  "en-US",
+    "limitations":  "OCR is fallible; extracted text is not numeric validation or proof of image provenance.",
+    "method":  "Windows.Media.Ocr, local CPU, no desktop display",
+    "lines":  [
+                  {
+                      "text":  "The precision paradox: masking anatomy more accurately does not help",
+                      "words":  [
+                                    {
+                                        "y":  23,
+                                        "height":  25,
+                                        "width":  60,
+                                        "text":  "The",
+                                        "x":  202
+                                    },
+                                    {
+                                        "y":  23,
+                                        "height":  32,
+                                        "width":  143,
+                                        "text":  "precision",
+                                        "x":  276
+                                    },
+                                    {
+                                        "y":  23,
+                                        "height":  32,
+                                        "width":  140,
+                                        "text":  "paradox:",
+                                        "x":  435
+                                    },
+                                    {
+                                        "y":  23,
+                                        "height":  32,
+                                        "width":  133,
+                                        "text":  "masking",
+                                        "x":  591
+                                    },
+                                    {
+                                        "y":  25,
+                                        "height":  30,
+                                        "width":  143,
+                                        "text":  "anatomy",
+                                        "x":  739
+                                    },
+                                    {
+                                        "y":  30,
+                                        "height":  18,
+                                        "width":  81,
+                                        "text":  "more",
+                                        "x":  896
+                                    },
+                                    {
+                                        "y":  23,
+                                        "height":  32,
+                                        "width":  170,
+                                        "text":  "accurately",
+                                        "x":  990
+                                    },
+                                    {
+                                        "y":  23,
+                                        "height":  25,
+                                        "width":  75,
+                                        "text":  "does",
+                                        "x":  1173
+                                    },
+                                    {
+                                        "y":  25,
+                                        "height":  23,
+                                        "width":  51,
+                                        "text":  "not",
+                                        "x":  1262
+                                    },
+                                    {
+                                        "y":  23,
+                                        "height":  32,
+                                        "width":  67,
+                                        "text":  "help",
+                                        "x":  1326
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "epoch 50, geometry from 600 slices",
+                      "words":  [
+                                    {
+                                        "y":  63,
+                                        "height":  32,
+                                        "width":  96,
+                                        "text":  "epoch",
+                                        "x":  581
+                                    },
+                                    {
+                                        "y":  64,
+                                        "height":  28,
+                                        "width":  47,
+                                        "text":  "50,",
+                                        "x":  692
+                                    },
+                                    {
+                                        "y":  65,
+                                        "height":  30,
+                                        "width":  157,
+                                        "text":  "geometry",
+                                        "x":  753
+                                    },
+                                    {
+                                        "y":  63,
+                                        "height":  25,
+                                        "width":  75,
+                                        "text":  "from",
+                                        "x":  922
+                                    },
+                                    {
+                                        "y":  64,
+                                        "height":  24,
+                                        "width":  59,
+                                        "text":  "600",
+                                        "x":  1011
+                                    },
+                                    {
+                                        "y":  63,
+                                        "height":  25,
+                                        "width":  88,
+                                        "text":  "slices",
+                                        "x":  1083
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "u",
+                      "words":  [
+                                    {
+                                        "y":  322,
+                                        "height":  14,
+                                        "width":  17,
+                                        "text":  "u",
+                                        "x":  27
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "o",
+                      "words":  [
+                                    {
+                                        "y":  339,
+                                        "height":  16,
+                                        "width":  17,
+                                        "text":  "o",
+                                        "x":  27
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "c",
+                      "words":  [
+                                    {
+                                        "y":  696,
+                                        "height":  14,
+                                        "width":  17,
+                                        "text":  "c",
+                                        "x":  27
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "o",
+                      "words":  [
+                                    {
+                                        "y":  750,
+                                        "height":  16,
+                                        "width":  17,
+                                        "text":  "o",
+                                        "x":  27
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.876",
+                      "words":  [
+                                    {
+                                        "y":  137,
+                                        "height":  20,
+                                        "width":  78,
+                                        "text":  "0.876",
+                                        "x":  64
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.874",
+                      "words":  [
+                                    {
+                                        "y":  263,
+                                        "height":  21,
+                                        "width":  78,
+                                        "text":  "0.874",
+                                        "x":  64
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.872",
+                      "words":  [
+                                    {
+                                        "y":  389,
+                                        "height":  21,
+                                        "width":  77,
+                                        "text":  "0.872",
+                                        "x":  64
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.870",
+                      "words":  [
+                                    {
+                                        "y":  516,
+                                        "height":  21,
+                                        "width":  78,
+                                        "text":  "0.870",
+                                        "x":  64
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.868",
+                      "words":  [
+                                    {
+                                        "y":  642,
+                                        "height":  21,
+                                        "width":  78,
+                                        "text":  "0.868",
+                                        "x":  64
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.866",
+                      "words":  [
+                                    {
+                                        "y":  769,
+                                        "height":  20,
+                                        "width":  78,
+                                        "text":  "0.866",
+                                        "x":  64
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.864",
+                      "words":  [
+                                    {
+                                        "y":  895,
+                                        "height":  21,
+                                        "width":  78,
+                                        "text":  "0.864",
+                                        "x":  64
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "random",
+                      "words":  [
+                                    {
+                                        "y":  816,
+                                        "height":  20,
+                                        "width":  92,
+                                        "text":  "random",
+                                        "x":  222
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.8641",
+                      "words":  [
+                                    {
+                                        "y":  847,
+                                        "height":  19,
+                                        "width":  85,
+                                        "text":  "0.8641",
+                                        "x":  225
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "O",
+                      "words":  [
+                                    {
+                                        "y":  872,
+                                        "height":  55,
+                                        "width":  60,
+                                        "text":  "O",
+                                        "x":  240
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "30",
+                      "words":  [
+                                    {
+                                        "y":  957,
+                                        "height":  20,
+                                        "width":  33,
+                                        "text":  "30",
+                                        "x":  226
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "O",
+                      "words":  [
+                                    {
+                                        "y":  116,
+                                        "height":  55,
+                                        "width":  55,
+                                        "text":  "O",
+                                        "x":  430
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "oracle",
+                      "words":  [
+                                    {
+                                        "y":  188,
+                                        "height":  20,
+                                        "width":  74,
+                                        "text":  "oracle",
+                                        "x":  382
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.8740",
+                      "words":  [
+                                    {
+                                        "y":  219,
+                                        "height":  19,
+                                        "width":  85,
+                                        "text":  "0.8740",
+                                        "x":  376
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "O",
+                      "words":  [
+                                    {
+                                        "y":  244,
+                                        "height":  55,
+                                        "width":  55,
+                                        "text":  "O",
+                                        "x":  392
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cover-fO.21",
+                      "words":  [
+                                    {
+                                        "y":  804,
+                                        "height":  20,
+                                        "width":  138,
+                                        "text":  "cover-fO.21",
+                                        "x":  416
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.8643",
+                      "words":  [
+                                    {
+                                        "y":  835,
+                                        "height":  19,
+                                        "width":  85,
+                                        "text":  "0.8643",
+                                        "x":  443
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "O",
+                      "words":  [
+                                    {
+                                        "y":  860,
+                                        "height":  55,
+                                        "width":  55,
+                                        "text":  "O",
+                                        "x":  458
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "ana",
+                      "words":  [
+                                    {
+                                        "y":  834,
+                                        "height":  15,
+                                        "width":  43,
+                                        "text":  "ana",
+                                        "x":  1238
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "o.",
+                      "words":  [
+                                    {
+                                        "y":  860,
+                                        "height":  19,
+                                        "width":  20,
+                                        "text":  "o.",
+                                        "x":  1269
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "40",
+                      "words":  [
+                                    {
+                                        "y":  957,
+                                        "height":  20,
+                                        "width":  33,
+                                        "text":  "40",
+                                        "x":  384
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  957,
+                                        "height":  20,
+                                        "width":  32,
+                                        "text":  "50",
+                                        "x":  544
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "60",
+                      "words":  [
+                                    {
+                                        "y":  957,
+                                        "height":  20,
+                                        "width":  32,
+                                        "text":  "60",
+                                        "x":  703
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "70",
+                      "words":  [
+                                    {
+                                        "y":  957,
+                                        "height":  20,
+                                        "width":  32,
+                                        "text":  "70",
+                                        "x":  862
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "80",
+                      "words":  [
+                                    {
+                                        "y":  957,
+                                        "height":  20,
+                                        "width":  33,
+                                        "text":  "80",
+                                        "x":  1020
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "90",
+                      "words":  [
+                                    {
+                                        "y":  957,
+                                        "height":  20,
+                                        "width":  33,
+                                        "text":  "90",
+                                        "x":  1179
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-ycæcl n II",
+                      "words":  [
+                                    {
+                                        "y":  830,
+                                        "height":  31,
+                                        "width":  59,
+                                        "text":  "-ycæcl",
+                                        "x":  1348
+                                    },
+                                    {
+                                        "y":  846,
+                                        "height":  15,
+                                        "width":  12,
+                                        "text":  "n",
+                                        "x":  1419
+                                    },
+                                    {
+                                        "y":  841,
+                                        "height":  20,
+                                        "width":  10,
+                                        "text":  "II",
+                                        "x":  1451
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "100",
+                      "words":  [
+                                    {
+                                        "y":  957,
+                                        "height":  20,
+                                        "width":  50,
+                                        "text":  "100",
+                                        "x":  1330
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "mask purity: % of masked",
+                      "words":  [
+                                    {
+                                        "y":  994,
+                                        "height":  25,
+                                        "width":  81,
+                                        "text":  "mask",
+                                        "x":  359
+                                    },
+                                    {
+                                        "y":  994,
+                                        "height":  31,
+                                        "width":  95,
+                                        "text":  "purity:",
+                                        "x":  452
+                                    },
+                                    {
+                                        "y":  995,
+                                        "height":  24,
+                                        "width":  27,
+                                        "text":  "%",
+                                        "x":  561
+                                    },
+                                    {
+                                        "y":  994,
+                                        "height":  25,
+                                        "width":  29,
+                                        "text":  "of",
+                                        "x":  600
+                                    },
+                                    {
+                                        "y":  994,
+                                        "height":  25,
+                                        "width":  116,
+                                        "text":  "masked",
+                                        "x":  641
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "patches lying on retinal tissue",
+                      "words":  [
+                                    {
+                                        "y":  994,
+                                        "height":  31,
+                                        "width":  120,
+                                        "text":  "patches",
+                                        "x":  772
+                                    },
+                                    {
+                                        "y":  994,
+                                        "height":  31,
+                                        "width":  71,
+                                        "text":  "lying",
+                                        "x":  905
+                                    },
+                                    {
+                                        "y":  1001,
+                                        "height":  18,
+                                        "width":  35,
+                                        "text":  "on",
+                                        "x":  990
+                                    },
+                                    {
+                                        "y":  994,
+                                        "height":  25,
+                                        "width":  95,
+                                        "text":  "retinal",
+                                        "x":  1040
+                                    },
+                                    {
+                                        "y":  994,
+                                        "height":  25,
+                                        "width":  91,
+                                        "text":  "tissue",
+                                        "x":  1148
+                                    }
+                                ]
+                  }
+              ],
+    "height":  1046
+}

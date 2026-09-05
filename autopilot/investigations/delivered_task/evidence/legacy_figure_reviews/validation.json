@@ -1,0 +1,22 @@
+{
+  "status": "targeted_checks_passed_original_assets_not_approved",
+  "python": "D:\\jepa_phase0\\.venv\\Scripts\\python.exe",
+  "backend": "Agg",
+  "tests_run": 10,
+  "failures": 0,
+  "errors": 0,
+  "assets_inspected": 7,
+  "approved_figure_receipts": 0,
+  "precision_purity_source_mismatches": 5,
+  "precision_png_pdf_marker_concordance": true,
+  "mask_header_auc_annotation_matches": 6,
+  "candidate_schema_valid": true,
+  "current_asset_caption_and_source_hashes_checked": true,
+  "duplicate_source_figure_and_literal_merge_rejected": true,
+  "in_memory_raster_marker_mutation_detected": true,
+  "commands": [
+    "D:\\jepa_phase0\\.venv\\Scripts\\python.exe autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\audit_legacy_figures.py",
+    "D:\\jepa_phase0\\.venv\\Scripts\\python.exe -m unittest discover -s autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews -p test_legacy_review.py -v"
+  ],
+  "limits": "Passing tests validate this review's source/geometry mismatch detection and receipt safety; they do not approve the seven original figures, reproduce unavailable attribution arrays, or certify journal/accessibility compliance."
+}

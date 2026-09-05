@@ -1,0 +1,2799 @@
+[
+  {
+    "group": 0,
+    "file": "auto/table_allprobes.tex",
+    "context_sha256": "09bb33f999c024d160720b3d7abd0d5fb9344650a5332329028f2bca69b934ea",
+    "context": "policy & epoch & precision & test AUC & 95\\% CI \\\\",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "95",
+        "line": 3
+      }
+    ]
+  },
+  {
+    "group": 1,
+    "file": "auto/table_paired_subgroup.tex",
+    "context_sha256": "281d9b0c3540a31286fe25b330df34f139714a3360a5237a025e3cb2b47140d4",
+    "context": "stratum & $n$ & $\\Delta$ AUC & simultaneous 95\\% CI & excludes 0 \\\\",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "95",
+        "line": 3
+      },
+      {
+        "index": 1,
+        "value": "0",
+        "line": 3
+      }
+    ]
+  },
+  {
+    "group": 2,
+    "file": "auto/table_subgroup_operating.tex",
+    "context_sha256": "b0476c62046ad17bdb1fee2a1b736135847723cb41ac7dce7f6599c2b5b4f2cc",
+    "context": "stratum & positives & $\\Delta$ sensitivity & simultaneous 95\\% CI & excludes 0 \\\\",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "95",
+        "line": 3
+      },
+      {
+        "index": 1,
+        "value": "0",
+        "line": 3
+      }
+    ]
+  },
+  {
+    "group": 3,
+    "file": "main_submission.tex",
+    "context_sha256": "9b345f4b108d0ef13c0c9431dd77fcb7ad12bfb39177f1d3a727a289d9d1b77a",
+    "context": "\\begin{abstract} Anatomy-guided masking is motivated by concentrating representation learning on informative tissue, but prediction also requires useful visible context. We study six I-JEPA masking-policy implementations on volumetric retinal OCT, using a 2D B-scan encoder and a frozen volume-level linear probe for glaucoma classification (FairVision, $N{=}\\Ntest$). The encoders descend from a shared checkpoint, with one continuation per policy. Segmenter-guided rectangular target placement improves AUC over uniform placement by $\\DEnvelopeRandomEpFifty$ at epoch 50. A segmentation-free intensity-centroid policy improves it by $\\DOracleRandomEpHundred$ at epoch 100. Both policies have positive paired differences from uniform placement at all three evaluated epochs. Their difference is unresolved at epochs 50 and 75; the centroid policy is higher at epoch 100, which does not establish equivalence between the methods. Greater tissue purity or coverage is not consistently beneficial across the other implementations: an early, incompletely documented anatomy-shaped continuation has higher AUC than its rectangle comparator, whereas later shaped and coverage-constrained policies do not consistently improve the uniform baseline. Auditing delivered masks reveals changes in visible context, target area and loss weighting, including target truncation after coverage-based placement. These comparisons therefore do not isolate the effect of anatomical coverage. Background-feature diagnostics further motivate distinguishing target content from information retained in context, without establishing a causal mechanism. The results support tissue-directed placement in these runs, not a ranking over retrainings: the test split was repeatedly inspected, and subgroup and low-label analyses remain exploratory. \\end{abstract}",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "50",
+        "line": 49
+      },
+      {
+        "index": 2,
+        "value": "100",
+        "line": 50
+      },
+      {
+        "index": 3,
+        "value": "50",
+        "line": 52
+      },
+      {
+        "index": 4,
+        "value": "75",
+        "line": 52
+      },
+      {
+        "index": 5,
+        "value": "100",
+        "line": 53
+      }
+    ]
+  },
+  {
+    "group": 4,
+    "file": "main_submission.tex",
+    "context_sha256": "8113f42471504d647d574fe2fd1f458bded8f0b2a92b47467d90a1f184193c0e",
+    "context": "The tissue-directed rectangle policies outperform uniform placement in the observed continuations. The centroid policy uses image intensity rather than a segmentation model and has the highest epoch-100 point estimate. The anatomy-shaped results are mixed, including a positive early comparison. Neither these outcomes nor the coverage-constrained arm isolates how much anatomy should be hidden: target area, retained context and the number of supervised target tokens also change. This motivates an implementation audit before a stronger claim about the masking mechanism.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-100",
+        "line": 105
+      }
+    ]
+  },
+  {
+    "group": 5,
+    "file": "main_submission.tex",
+    "context_sha256": "81c736b5165c0451fa4d1577f7c27301fecc4cd78a20a521adc132527ece78ef",
+    "context": "I-JEPA samples from the token grid of an image a context block and $M$ target blocks, which need not cover it. A context encoder embeds the visible tokens. A predictor maps that embedding plus positional queries to predicted representations of the target tokens. An exponential-moving-average target encoder supplies the regression targets. With a $16{\\times}16$ token grid the design choice we vary is which of the 256 cells become targets. Figure~\\ref{fig:policies} shows the pipeline. Target blocks are predicted in parallel from the supplied context, with no sequential or causal conditioning on earlier predicted regions.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "16",
+        "line": 207
+      },
+      {
+        "index": 1,
+        "value": "16",
+        "line": 207
+      },
+      {
+        "index": 2,
+        "value": "256",
+        "line": 208
+      }
+    ]
+  },
+  {
+    "group": 6,
+    "file": "main_submission.tex",
+    "context_sha256": "2b42becf941029e61eae0f5bcb814c1d93b445987a0e0468f74759bf94602b8f",
+    "context": "All policies request $M{=}4$ target blocks and one context block. Rectangle policies share nominal scale and aspect-ratio ranges, but placement and collation can change unique target area and encoder-visible context.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "4",
+        "line": 220
+      }
+    ]
+  },
+  {
+    "group": 7,
+    "file": "main_submission.tex",
+    "context_sha256": "8bc02d828c6c5b994a632e019da4843003178edee5e2c34c8674b58318ef982d",
+    "context": "\\item[\\textsc{cover} $f$.] Targets chosen greedily to cover anatomy while leaving a fraction $f$ outside the target union. The historical run uses $f{=}0.21$. This condition does not guarantee the same fraction survives final encoder-context collation, and post-placement target truncation changes the intended coverage (Appendix~\\ref{app:covbug}). \\end{description}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "0.21",
+        "line": 249
+      }
+    ]
+  },
+  {
+    "group": 8,
+    "file": "main_submission.tex",
+    "context_sha256": "cfe261a2e63939d5b4b8f31592c5273e708584698679c6f9848bb351983fb1ef",
+    "context": "\\begin{figure}[t] \\centering \\begin{tikzpicture}[scale=1.4,transform shape,x=1mm,y=1mm,font=\\scriptsize, bx/.style={draw,rounded corners=1pt,align=center,inner sep=1.6pt,line width=0.3pt}, ar/.style={-{Latex[length=1.3mm,width=1.0mm]},line width=0.35pt}, dr/.style={ar,dashed,dash pattern=on 1.1pt off 1.1pt}] \\node[anchor=south west,align=left,inner sep=0pt,text width=88mm,font=\\tiny] at (0,39.6) {B-scan $=16{\\times}16$ tokens; the policy places $M{=}4$ targets (dark) and one context block (light)};",
+    "tokens": [
+      {
+        "index": 15,
+        "value": "16",
+        "line": 264
+      },
+      {
+        "index": 16,
+        "value": "16",
+        "line": 264
+      },
+      {
+        "index": 17,
+        "value": "4",
+        "line": 264
+      }
+    ]
+  },
+  {
+    "group": 9,
+    "file": "main_submission.tex",
+    "context_sha256": "f7fafaf8d21d23806ab0bd67087247691463034d2143f8684d42863dc23ce0dd",
+    "context": "\\begin{scope}[shift={(0,28)}] \\fill[black!10] (0.625,0) rectangle (10,9.375); \\fill[black!45] (1.25,6.25) rectangle (3.75,8.75); \\fill[black!45] (5.625,6.875) rectangle (8.125,9.375); \\fill[black!45] (1.875,1.875) rectangle (4.375,4.375); \\fill[black!45] (6.25,2.5) rectangle (8.75,5); \\draw[step=0.625,black!30,line width=0.08pt] (0,0) grid (10,10); \\draw[black!70,line width=0.3pt] (0,0) rectangle (10,10); \\end{scope} \\node[bx,anchor=north west,text width=30mm] (ctx) at (13,38) {context encoder $f_\\theta$\\\\visible tokens after\\\\exclusion and collation}; \\node[bx,anchor=north east,text width=33mm] (prd) at (88,38) {predictor $g_\\phi$, 6 blocks, $d{=}384$\\\\mask token $+$ target pos.}; \\node[bx,anchor=north west,text width=30mm] (tgt) at (13,25) {EMA target encoder $f_{\\bar\\theta}$\\\\all 256 tokens, LayerNorm}; \\node[bx,anchor=north east,text width=33mm] (loss) at (88,25) {smooth-$L_1$ loss\\\\at the $M$ target sites}; \\draw[ar] (10,34.5) -- (ctx.west); \\draw[ar] (10,30.5) -- (11.5,30.5) -- (11.5,21.5) -- (tgt.west); \\draw[ar] (ctx.east) -- (prd.west); \\draw[ar] (tgt.east) -- (loss.west); \\draw[ar] (prd.south) -- (loss.north); \\draw[dr] (ctx.south) -- node[right,inner sep=1.5pt,font=\\tiny] {EMA} (tgt.north);",
+    "tokens": [
+      {
+        "index": 46,
+        "value": "6",
+        "line": 276
+      },
+      {
+        "index": 47,
+        "value": "384",
+        "line": 276
+      },
+      {
+        "index": 51,
+        "value": "256",
+        "line": 277
+      },
+      {
+        "index": 55,
+        "value": "1",
+        "line": 278
+      }
+    ]
+  },
+  {
+    "group": 10,
+    "file": "main_submission.tex",
+    "context_sha256": "e5980c49446236e0a80c2eea4b80e840f097a7f0f8d5831faa20d6ed307bd1a9",
+    "context": "\\draw[black!45,dashed,dash pattern=on 0.7pt off 0.7pt,line width=0.25pt] (0,13.5) -- (88,13.5); \\node[anchor=west,inner sep=0pt,font=\\tiny] at (0,11.7) {downstream: encoder frozen, volume-level glaucoma label}; \\node[bx,anchor=south west,text width=14mm] (fr) at (0,0) {frozen $f_{\\bar\\theta}$}; \\node[bx,anchor=south west,text width=30mm] (mp) at (23,0) {mean-pool patch tokens,\\\\then 100 B-scans}; \\node[bx,anchor=south east,text width=21mm] (hd) at (88,0) {LayerNorm\\\\$+$ linear head}; \\draw[ar] (fr.east) -- (mp.west); \\draw[ar] (mp.east) -- (hd.west); \\end{tikzpicture} \\caption{I-JEPA pretraining and frozen-encoder evaluation. The grid is schematic: dark cells are target positions and light cells the candidate context. After exclusion and collation, retained context tokens enter the online encoder. The predictor uses target positions to regress features from the full-image EMA target encoder; target-encoder gradients are stopped. Below the dashed line, the frozen target encoder supplies patch features pooled into one volume-level classification input. Real policy examples are shown at readable size in Figure~\\ref{fig:policies5}.} \\label{fig:policies} \\end{figure}",
+    "tokens": [
+      {
+        "index": 17,
+        "value": "100",
+        "line": 289
+      }
+    ]
+  },
+  {
+    "group": 11,
+    "file": "main_submission.tex",
+    "context_sha256": "99bd14426acf2b0a155cd2fe020fef5025cdb7b40084bb03f698d0ced24c2442",
+    "context": "\\paragraph{Data.} FairVision~\\citep{luo2024fairvision} glaucoma OCT volumes. Each volume is a 3D scan resampled to 100 B-scans of $256{\\times}256$ after transform. The label is a binary glaucoma diagnosis. Splits are fixed and patient-disjoint as released. Downstream evaluation uses a held-out test split of $N{=}3000$ volumes (1466 positive / 1534 negative), seed 42, fixed loader order. No test volume is used to fit or select the probe head, which is selected on a separate validation split. The study's choices of policy, checkpoint, analysis and stopping horizon were made after repeated inspection of that same test split (Section~\\ref{sec:limits}). Test files are read in deterministic sorted order. The saved label vectors agree across arms, but those vectors alone do not prove case identity because the historical prediction files omit subject identifiers. Paired analyses rely on the documented shared split and loader ordering. Demographic attributes are used only for the subgroup analysis in Section~\\ref{sec:subgroup} and never as model inputs.",
+    "tokens": [
+      {
+        "index": 2,
+        "value": "100",
+        "line": 323
+      },
+      {
+        "index": 3,
+        "value": "256",
+        "line": 323
+      },
+      {
+        "index": 4,
+        "value": "256",
+        "line": 323
+      },
+      {
+        "index": 8,
+        "value": "42",
+        "line": 326
+      }
+    ]
+  },
+  {
+    "group": 12,
+    "file": "main_submission.tex",
+    "context_sha256": "edb428911f537e16ea87ccd9d15f98313b984173bfba37fd90bf095f00c073c1",
+    "context": "\\paragraph{Pretraining.} Patch-level I-JEPA, ViT-Base, $256{\\times}256$ crops, patch size 16, predictor depth 6, EMA target encoder. The reference fork is the epoch-25 checkpoint, with matched nominal optimiser, learning-rate and weight-decay schedules and effective batch size (512). The checked-in \\textsc{anatomy-v1} configuration instead resumes an \\textsc{envelope} epoch-27 checkpoint; its exact historical launch record is not retained, so a direct epoch-25 fork is not independently established for that early result. Guidance is ramped linearly from epoch 25 to 30 and held at full strength thereafter. Within the rectangle family the \\emph{only} difference between arms is the mask sampler (Section~\\ref{sec:policies}). The anatomy family also differs in collation, and we quantify that in Section~\\ref{sec:results}.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "256",
+        "line": 337
+      },
+      {
+        "index": 1,
+        "value": "256",
+        "line": 337
+      },
+      {
+        "index": 2,
+        "value": "16",
+        "line": 338
+      },
+      {
+        "index": 3,
+        "value": "6",
+        "line": 338
+      },
+      {
+        "index": 4,
+        "value": "-25",
+        "line": 339
+      },
+      {
+        "index": 5,
+        "value": "512",
+        "line": 340
+      },
+      {
+        "index": 7,
+        "value": "-27",
+        "line": 342
+      },
+      {
+        "index": 8,
+        "value": "-25",
+        "line": 343
+      },
+      {
+        "index": 9,
+        "value": "25",
+        "line": 344
+      },
+      {
+        "index": 10,
+        "value": "30",
+        "line": 344
+      }
+    ]
+  },
+  {
+    "group": 13,
+    "file": "main_submission.tex",
+    "context_sha256": "faf73e786f3d0853c4a0d20df4afa2c6c3169dbda60f9a154a31bba32889e684",
+    "context": "Arms differ in how far they were carried. \\textsc{random}, \\ArmBest{} and \\textsc{envelope} reach epoch 100. \\textsc{anatomy-v2} reaches epoch 75 (its epoch-75 and epoch-92 probes under an earlier target-precision splice are excluded and replaced by a clean fp32 continuation, Appendix~\\ref{app:excluded}). We stopped that arm having seen its epoch-75 deficit, which is a selective stopping horizon and a real weakness: a trajectory can recover, and its epoch-100 value is unmeasured, not known to be worse. \\textsc{anatomy-v1} has only epoch 30. \\textsc{cover} $f{=}0.21$ reaches epoch 100, with an extra probe at its epoch-73 peak. Epoch 50 is therefore the only epoch at which five policies are simultaneously available, and it carries every cross-policy comparison that involves the anatomy or coverage arms.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 351
+      },
+      {
+        "index": 2,
+        "value": "75",
+        "line": 352
+      },
+      {
+        "index": 3,
+        "value": "-75",
+        "line": 352
+      },
+      {
+        "index": 4,
+        "value": "-92",
+        "line": 352
+      },
+      {
+        "index": 6,
+        "value": "-75",
+        "line": 355
+      },
+      {
+        "index": 7,
+        "value": "-100",
+        "line": 356
+      },
+      {
+        "index": 9,
+        "value": "30",
+        "line": 358
+      },
+      {
+        "index": 10,
+        "value": "0.21",
+        "line": 358
+      },
+      {
+        "index": 11,
+        "value": "100",
+        "line": 359
+      },
+      {
+        "index": 12,
+        "value": "-73",
+        "line": 359
+      },
+      {
+        "index": 13,
+        "value": "50",
+        "line": 359
+      }
+    ]
+  },
+  {
+    "group": 14,
+    "file": "main_submission.tex",
+    "context_sha256": "bdb389ce1f6b397960fa792a54250a9433da97e32b610cec31a4b50c21d1d452",
+    "context": "\\begin{table}[t] \\centering \\caption{Frozen MeanPool probe, FairVision test ($N{=}\\Ntest$, \\Npos{} positive). The reference ancestor is epoch 25 (AUC $\\AUCAncestor$); continuation provenance is described in Section~\\ref{sec:setup}. $\\Delta$ is versus \\textsc{random} at the \\emph{matched} epoch. The upper block is precision-matched (fp16 throughout) and carries every headline claim; the lower block is fp32, each $\\Delta$ taken against an fp32 null re-probed at the same epoch. The measured fp16/fp32 gap is at most $2\\times10^{-4}$ (Appendix~\\ref{app:fp32}).} \\label{tab:main} \\footnotesize \\setlength{\\tabcolsep}{4pt} \\begin{tabular}{llcccccc} \\toprule & & \\multicolumn{2}{c}{epoch 50} & \\multicolumn{2}{c}{epoch 75} & \\multicolumn{2}{c}{epoch 100} \\\\ \\cmidrule(lr){3-4}\\cmidrule(lr){5-6}\\cmidrule(lr){7-8} policy & guidance signal & AUC & $\\Delta$ & AUC & $\\Delta$ & AUC & $\\Delta$ \\\\ \\midrule \\textsc{random} & none (null) & \\AUCRandomEpFifty & --- & \\AUCRandomEpSeventyFive & --- & \\AUCRandomEpHundred & --- \\\\ \\textsc{envelope} & segmenter (location only) & \\AUCEnvelopeEpFifty & $\\mathbf{\\DEnvelopeRandomEpFifty}$ & \\AUCEnvelopeEpSeventyFive & $\\mathbf{\\DEnvelopeRandomEpSeventyFive}$ & \\AUCEnvelopeEpHundred & $\\mathbf{\\DEnvelopeRandomEpHundred}$ \\\\ \\ArmBest{} & intensity centroid, no segmenter & \\AUCOracleEpFifty & $\\mathbf{\\DOracleRandomEpFifty}$ & \\AUCOracleEpSeventyFive & $\\mathbf{\\DOracleRandomEpSeventyFive}$ & \\textbf{\\AUCOracleEpHundred} & $\\mathbf{\\DOracleRandomEpHundred}$ \\\\ \\midrule \\textsc{anatomy-v2} & segmenter (target shape) & \\TAUCAnatomyTwoEpFifty & \\TAnatomyTwoRandomEpFifty & \\TAUCAnatomyTwoEpSeventyFive & \\TAnatomyTwoRandomEpSeventyFive & \\TAUCAnatomyTwoEpHundred & \\TAnatomyTwoRandomEpHundred \\\\ \\textsc{cover} $f{=}.21$ & segmenter (coverage) & \\TAUCCoverEpFifty & \\TCoverRandomEpFifty & \\TAUCCoverEpSeventyFive & \\TCoverRandomEpSeventyFive & \\TAUCCoverEpHundred & \\TCoverRandomEpHundred \\\\ \\bottomrule \\end{tabular} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "25",
+        "line": 404
+      },
+      {
+        "index": 6,
+        "value": "2",
+        "line": 410
+      },
+      {
+        "index": 7,
+        "value": "10",
+        "line": 410
+      },
+      {
+        "index": 8,
+        "value": "-4",
+        "line": 410
+      }
+    ]
+  },
+  {
+    "group": 15,
+    "file": "main_submission.tex",
+    "context_sha256": "ae19e064278a0e07aa5df8f62895fb9273cda45775afd693cd621062fbf3e9fa",
+    "context": "& & \\multicolumn{2}{c}{epoch 50} & \\multicolumn{2}{c}{epoch 75} & \\multicolumn{2}{c}{epoch 100} \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "50",
+        "line": 416
+      },
+      {
+        "index": 3,
+        "value": "75",
+        "line": 416
+      },
+      {
+        "index": 5,
+        "value": "100",
+        "line": 416
+      }
+    ]
+  },
+  {
+    "group": 16,
+    "file": "main_submission.tex",
+    "context_sha256": "b1aadf124a13e90042b720bcffc92ce48c4136760b4c5d988bfe2bfcec68dcf2",
+    "context": "\\textsc{cover} $f{=}.21$ & segmenter (coverage) & \\TAUCCoverEpFifty & \\TCoverRandomEpFifty & \\TAUCCoverEpSeventyFive & \\TCoverRandomEpSeventyFive & \\TAUCCoverEpHundred & \\TCoverRandomEpHundred \\\\",
+    "tokens": [
+      {
+        "index": 0,
+        "value": ".21",
+        "line": 425
+      }
+    ]
+  },
+  {
+    "group": 17,
+    "file": "main_submission.tex",
+    "context_sha256": "25e1935b2c4684e3dfc6ac8b2019d3766915aa80967f224e87ae039ef848fca3",
+    "context": "\\textbf{The observed comparisons are consistent with H1 in these continuations.} \\textsc{envelope} changes rectangle placement relative to the unguided baseline (Section~\\ref{sec:policies}). Delivered context also changes ($24.7\\%$ to $30.7\\%$, Table~\\ref{tab:delivered}), so this comparison does not isolate location from its consequences for the prediction task. The AUC difference is $\\DEnvelopeRandomEpFifty$ AUC at epoch 50, and \\ArmBest{}, a band located from a first-order intensity statistic with no segmentation model anywhere, is worth $\\DOracleRandomEpHundred$ at epoch 100. Every \\textsc{envelope} and \\ArmBest{} interval excludes zero at all three epochs, and all six contrasts survive Benjamini--Hochberg correction over that family of nine ($q \\leq \\DEnvelopeRandomEpHundredQ$; Figure~\\ref{fig:traj}b, with the full paired inference on all nine precision-matched contrasts in Table~\\ref{tab:contrasts}, Appendix~\\ref{app:contrasts}).",
+    "tokens": [
+      {
+        "index": 3,
+        "value": "50",
+        "line": 437
+      },
+      {
+        "index": 4,
+        "value": "100",
+        "line": 439
+      }
+    ]
+  },
+  {
+    "group": 18,
+    "file": "main_submission.tex",
+    "context_sha256": "68842f114eb20003f14df2011e9ad451c1aa2690c6f33fd8686a8f854d2742a5",
+    "context": "\\begin{figure}[t] \\centering \\includegraphics[width=0.71\\linewidth]{fig_trajectories_ci.png} \\caption{\\textbf{(a)} Frozen-probe test AUC against pretraining epoch; note the truncated AUC axis. The open star marks the shared epoch-25 ancestor. Solid lines are the precision-matched fp16 family; dashed lines are fp32 arms and must not be compared vertically against the solid lines. \\textbf{(b)} The actual inference: paired differences against the unguided null on identical test cases, \\Nboot-resample percentile bootstrap intervals. Every \\textsc{envelope} and \\ArmBest{} interval excludes zero; \\textsc{cover} straddles zero at epoch 50 and is negative thereafter. Paired differences account for the covariance of predictions on shared test cases; individual-arm intervals answer a different question.} \\label{fig:traj} \\end{figure}",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "-25",
+        "line": 456
+      },
+      {
+        "index": 4,
+        "value": "50",
+        "line": 463
+      }
+    ]
+  },
+  {
+    "group": 19,
+    "file": "main_submission.tex",
+    "context_sha256": "6ca31f0b6c081f15bffa8efa31ed874ef0b5f614e01b390d3be49d93f4e68e9e",
+    "context": "\\textbf{The anatomy-shaped results are mixed.} H2 predicts that the anatomy arms exceed \\textsc{envelope}. Tested directly at the matched epoch 50, \\textsc{anatomy-v2} sits $\\DAnatomyTwoEnvelopeEpFifty$ \\emph{below} \\textsc{envelope} (CI $\\DAnatomyTwoEnvelopeEpFiftyCI$). At epoch 30, however, \\textsc{anatomy-v1} sits $\\DAnatomyOneEnvelopeEpThirty$ \\emph{above} it (CI $\\DAnatomyOneEnvelopeEpThirtyCI$), with the early continuation's lineage uncertainty described in Section~\\ref{sec:setup}. These are different implementations at different epochs, so we do not read either as settling H2. What the pair rules out is a uniform observed ordering across these implementations, not a causal effect of target shape. Neither \\textsc{anatomy-v2} nor \\textsc{cover} is resolved as \\emph{worse} than the null at the matched epoch: both sit within a paired interval that comfortably contains zero (Figure~\\ref{fig:traj}b). Intervals containing zero do not establish equality or exclude smaller beneficial or adverse effects.",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "50",
+        "line": 470
+      },
+      {
+        "index": 3,
+        "value": "30",
+        "line": 472
+      }
+    ]
+  },
+  {
+    "group": 20,
+    "file": "main_submission.tex",
+    "context_sha256": "4ded2c402efd21bffca3babf8419ea105db826c948bd6a142644db8bc101a23b",
+    "context": "\\paragraph{Carried to epoch 100 the coverage arm degrades.} \\textsc{cover} is the only policy that uses the segmenter to choose \\emph{how much} to hide, and carried to the full horizon it produces the study's one \\emph{negative} result. It climbs normally to epoch 50, peaks at epoch $\\CoverPeakEpoch$, then \\emph{falls}, losing $\\DCoverPeakToHundred$ from its own peak ($p\\,\\DCoverPeakToHundredP$) while the unguided null keeps improving (Figure~\\ref{fig:traj}). Its gap against the null widens monotonically across the three matched epochs (Table~\\ref{tab:main}).",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 484
+      },
+      {
+        "index": 1,
+        "value": "50",
+        "line": 487
+      }
+    ]
+  },
+  {
+    "group": 21,
+    "file": "main_submission.tex",
+    "context_sha256": "356551811fa97beae62ed8f163bfffa5ebb704c4ca3ad0d8912b6c3243278a6e",
+    "context": "\\textbf{The strongest policy consults no segmentation model.} \\ArmBest{} finds its band from a per-column intensity centroid: no model and no annotation. Its margin over the null is the largest at epoch 100 and does not decay with training, whereas \\textsc{envelope}'s does (Table~\\ref{tab:main}), and it exceeds the segmenter-guided \\textsc{envelope} arm at epoch 100 by $\\DOracleEnvelopeEpHundred$ (CI $\\DOracleEnvelopeEpHundredCI$), though their paired intervals span zero at epochs 50 and 75.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 502
+      },
+      {
+        "index": 1,
+        "value": "100",
+        "line": 505
+      },
+      {
+        "index": 2,
+        "value": "50",
+        "line": 506
+      },
+      {
+        "index": 3,
+        "value": "75",
+        "line": 506
+      }
+    ]
+  },
+  {
+    "group": 22,
+    "file": "main_submission.tex",
+    "context_sha256": "e630ca5b926d039221cff74bbc0b508e69e2f2369f9bf1df776384e64c636053",
+    "context": "\\begin{table}[t] \\centering \\caption{Measured mask geometry, 600 training slices, production samplers. ``purity'' is the fraction of masked cells lying on tissue; ``loss slots'' counts supervised target-token instances, summed over the $M$ targets and including duplicates. AUC is quoted at the \\emph{matched} epoch 50, so the geometry-to-AUC association is not read across mixed epochs.} \\label{tab:geom} \\footnotesize \\begin{tabular}{lcccccc} \\toprule policy & anatomy hidden & purity & mask ratio & context kept & loss slots & AUC @ep50 \\\\ \\midrule \\textsc{random} & 54.0\\% & 31.5\\% & 44.5\\% & 41.9\\% & 159.9 & \\AUCRandomEpFifty \\\\ \\ArmBest{} & 62.1\\% & 40.0\\% & 40.3\\% & 45.5\\% & 159.0 & \\AUCOracleEpFifty \\\\ \\textsc{envelope} & 77.6\\% & 43.3\\% & 46.5\\% & 40.6\\% & 159.7 & \\textbf{\\AUCEnvelopeEpFifty} \\\\ \\textsc{cover} & 73.5\\% & 44.2\\% & 43.2\\% & 43.2\\% & 159.1 & \\AUCCoverEpFifty \\\\ \\textsc{anatomy-v2} & 79.9\\% & \\textbf{97.1\\%} & 21.3\\% & 67.7\\% & 64.0 & \\AUCAnatomyTwoEpFifty \\\\ \\bottomrule \\end{tabular} \\end{table}",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "50",
+        "line": 517
+      }
+    ]
+  },
+  {
+    "group": 23,
+    "file": "main_submission.tex",
+    "context_sha256": "507aaf09e761862f1e22d51f5853336396f16b7fae196ad0feab1295f471471e",
+    "context": "policy & anatomy hidden & purity & mask ratio & context kept & loss slots & AUC @ep50 \\\\",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "50",
+        "line": 523
+      }
+    ]
+  },
+  {
+    "group": 24,
+    "file": "main_submission.tex",
+    "context_sha256": "8b20391a0019bedb34c69bdbb5c19476314e7fad8e1908932ea33f3343e140b8",
+    "context": "\\textbf{The highest epoch-100 endpoint hides the least anatomy.} Of the four guided arms the one that hides the most (masking almost nothing but tissue, at $97.1\\%$ purity) does not separate from the null. Both readings come from running each production sampler on 600 training slices and measuring the realised masks (Table~\\ref{tab:geom}, Figures~\\ref{fig:paradox} and~\\ref{fig:ladder}; provenance in Appendix~\\ref{app:geomprov}). What \\ArmBest{} does instead is leave more visible: it retains more context than any other rectangle arm, and the background stays maskable. Rank correlations over these arms are positive for both anatomy hidden and purity, but at $n{=}4$--$5$ arms they resolve nothing in either direction and we draw no inference from them. Occlusion attribution on the fine-tuned probes is correspondingly diffuse (Appendix~\\ref{app:interp}).",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-100",
+        "line": 534
+      },
+      {
+        "index": 1,
+        "value": "97.1",
+        "line": 536
+      },
+      {
+        "index": 3,
+        "value": "4",
+        "line": 543
+      },
+      {
+        "index": 4,
+        "value": "5",
+        "line": 543
+      }
+    ]
+  },
+  {
+    "group": 25,
+    "file": "main_submission.tex",
+    "context_sha256": "d1da423eec89cf1cbc5af36b32bf7235837bdd2cd7c985b378cea75230079b40",
+    "context": "\\textbf{The anatomy arms are confounded on several axes simultaneously.} \\textsc{anatomy-v2} retains more context still, but it also hides far less of the grid and collapses to $64$ predictor loss slots against about $159$ for every rectangle arm (Table~\\ref{tab:geom}, Figure~\\ref{fig:geom}), changing the prediction task. They and \\textsc{cover} also differ from \\textsc{envelope} in guide provenance (Appendix~\\ref{app:repro}). Any of these could account for its deficit without invoking target shape at all. \\textbf{H3 is therefore not identified by this design}, and we do \\emph{not} claim that irregular target shape is harmful.",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "64",
+        "line": 551
+      },
+      {
+        "index": 2,
+        "value": "159",
+        "line": 551
+      }
+    ]
+  },
+  {
+    "group": 26,
+    "file": "main_submission.tex",
+    "context_sha256": "6af5cf3be944065d7db4e946fa1ce987b64278ef14a3ccf602f91a5efcdfcd0e",
+    "context": "These are not consequences of target shape: the anatomy arms resample every target to a fixed $K{=}16$ cells, so $4\\times16=64$ loss slots follows by construction, while the rectangle arms do not set $K$. The two families are collated differently, which weakens ``everything else held fixed'' for the anatomy-versus-rectangle comparison specifically. Rectangle-family comparisons share the collation rule but not necessarily its realized context or target budgets (Appendix~\\ref{app:covbug}).",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "16",
+        "line": 560
+      },
+      {
+        "index": 1,
+        "value": "4",
+        "line": 560
+      },
+      {
+        "index": 2,
+        "value": "16",
+        "line": 560
+      },
+      {
+        "index": 3,
+        "value": "64",
+        "line": 560
+      }
+    ]
+  },
+  {
+    "group": 27,
+    "file": "main_submission.tex",
+    "context_sha256": "10f2a8d1b2e0203b2c11e5849841ed9250643bf7e3e93008e54e59a98138ebb6",
+    "context": "Unguided masking often selects background targets. At epoch 100 the null's predictor beats a per-position, no-context reference by $0.680$ on \\emph{background} targets, \\emph{above} its $0.633$ on anatomy: predicting a background token takes more than knowing where it sits, even though such tokens start out nearly pure position ($90.8\\%$ of across-position input variance there comes from \\texttt{pos\\_embed}, against $40.8\\%$ at tissue). Pretraining spends self-similarity changes during training: under \\textsc{envelope}, the one arm measured, self-similarity falls from $0.784$ untrained to $0.346$. In a separate epoch-50 regional probe using 25 slices and 2{,}000/600/1{,}000 training/validation/test volumes, pooled background features are $95.2\\%$ linearly reconstructible from pooled anatomy features. Residualised, background predicts glaucoma at test AUC $0.5515$ (barely above chance, though the interval excludes it), and appending it to anatomy \\emph{lowers} test AUC for the null arm under that protocol. These diagnostics show that predicting background embeddings is nontrivial and that their incremental classification signal can be small. They do not establish why the epoch-100 baseline is strong or whether background target selection causes a downstream gain. The proposed causal controls were not run (Appendix~\\ref{app:bg}).",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 584
+      },
+      {
+        "index": 3,
+        "value": "90.8",
+        "line": 588
+      },
+      {
+        "index": 4,
+        "value": "40.8",
+        "line": 589
+      },
+      {
+        "index": 5,
+        "value": "0.784",
+        "line": 591
+      },
+      {
+        "index": 6,
+        "value": "0.346",
+        "line": 591
+      },
+      {
+        "index": 7,
+        "value": "-50",
+        "line": 592
+      },
+      {
+        "index": 8,
+        "value": "25",
+        "line": 592
+      },
+      {
+        "index": 9,
+        "value": "2{,}000",
+        "line": 593
+      },
+      {
+        "index": 10,
+        "value": "600",
+        "line": 593
+      },
+      {
+        "index": 11,
+        "value": "1{,}000",
+        "line": 593
+      },
+      {
+        "index": 12,
+        "value": "95.2",
+        "line": 594
+      },
+      {
+        "index": 13,
+        "value": "0.5515",
+        "line": 596
+      },
+      {
+        "index": 14,
+        "value": "-100",
+        "line": 601
+      }
+    ]
+  },
+  {
+    "group": 28,
+    "file": "main_submission.tex",
+    "context_sha256": "296fde2ae15b425aa51ace6c1f9cf7acfbe7bcce54778d38b7bec65231a12f77",
+    "context": "The observed margin is larger with fewer labels: at $5\\%$ of the labelled set ($n{=}\\LENFive$) \\ArmBest{} leads the null by $\\LEGapFive$, against $\\LEGapHundred$ at full supervision. This is descriptive evidence from \\LERepeats{} shared subset refits per low-label fraction, not a tested gap-by-label-fraction interaction. Full-supervision fits agree with the corresponding primary entries to within $0.0009$ across the four arms. Appendix~\\ref{app:labeleff} reports the curve, variation and protocol.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "5",
+        "line": 608
+      },
+      {
+        "index": 1,
+        "value": "0.0009",
+        "line": 613
+      }
+    ]
+  },
+  {
+    "group": 29,
+    "file": "main_submission.tex",
+    "context_sha256": "b91167f4f15b6f1922dc3ba3151db67630dfda6e76647c87aafe531996c818c0",
+    "context": "At epoch 100, \\ArmBest{} has positive point-estimate gains in all race and disease-severity strata shown, but the adjusted race intervals exclude zero only for the white group. Severity strata are compared with the shared negative pool; only the mild interval excludes zero after the declared family adjustment (Tables~\\ref{tab:severity} and~\\ref{tab:pairedsub}). These results do not show that one stratum benefits more than another. The paired difference between gains in the lowest- and highest-AUC race groups is $\\PDDiffRace$ (CI $\\PDDiffRaceCI$); the corresponding gender contrast also includes zero.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 629
+      }
+    ]
+  },
+  {
+    "group": 30,
+    "file": "main_submission.tex",
+    "context_sha256": "49b2714ba17267f8e190b22b8d13447615d688ab8ab94138aab59ffa2f1afbfd",
+    "context": "The eight recorded fp32 re-probes shift AUC by less than $2\\times10^{-4}$, orders of magnitude below the effects in Table~\\ref{tab:main}, so the differing autocast settings of Section~\\ref{sec:setup} are not the effect and every contrast is matched on precision (Appendix~\\ref{app:fp32}). The generating script, the epoch-100 \\ArmBest{} encoder, its head and its stored per-case predictions are released (links withheld for anonymity). Re-encoding the test split from those weights on different hardware, at fp32 rather than fp16 and with a different encoder chunk size, reproduces the reported AUC to $9.8\\times10^{-6}$: 22 discordant pairs out of $2{,}248{,}844$.",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "2",
+        "line": 649
+      },
+      {
+        "index": 2,
+        "value": "10",
+        "line": 649
+      },
+      {
+        "index": 3,
+        "value": "-4",
+        "line": 649
+      },
+      {
+        "index": 5,
+        "value": "-100",
+        "line": 652
+      },
+      {
+        "index": 8,
+        "value": "9.8",
+        "line": 657
+      },
+      {
+        "index": 9,
+        "value": "10",
+        "line": 657
+      },
+      {
+        "index": 10,
+        "value": "-6",
+        "line": 657
+      },
+      {
+        "index": 11,
+        "value": "22",
+        "line": 657
+      },
+      {
+        "index": 12,
+        "value": "2{,}248{,}844",
+        "line": 658
+      }
+    ]
+  },
+  {
+    "group": 31,
+    "file": "main_submission.tex",
+    "context_sha256": "d70fbe7a34c4878bc091ea7607774ef63c5c39350590d9b32e2786e551ab7870",
+    "context": "\\paragraph{What the evidence supports.} The segmenter-guided continuation has higher observed AUC by $\\DEnvelopeRandomEpFifty$ at epoch 50, and the intensity-centroid policy by $\\DOracleRandomEpHundred$ at epoch 100, relative to their matched uniform baselines. Paired intervals exclude zero at all three observed epochs. The latter policy requires no segmentation model. More anatomically specific implementations do not have a consistent advantage, but this is not a controlled test of target shape or coverage: delivered context, target area, loss weighting and guide provenance differ. Background diagnostics motivate considering the information in targets and context jointly, rather than treating all background as wasted supervision. Their downstream causal contribution is unresolved.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "50",
+        "line": 665
+      },
+      {
+        "index": 1,
+        "value": "100",
+        "line": 666
+      }
+    ]
+  },
+  {
+    "group": 32,
+    "file": "main_submission.tex",
+    "context_sha256": "22b5dbf12d8d2decad6e4693f7722df872aebf61a7d6e4d38d3265ad1cff5458",
+    "context": "\\paragraph{One pretraining continuation per policy.} The study uses a shared encoder ancestry and matched nominal training and probe settings. The mask sampler is the intended difference, though it also moves delivered mask ratio, retained context and loss slots, and across families collation and guide provenance (Section~\\ref{sec:results-h3}). What it does not resample is pretraining stochasticity, so each arm is one continuation. The paired bootstrap bounds sampling error on a fixed test set, so the intervals support statements about \\emph{these} continuations rather than an expected \\emph{ranking} over retrainings, which pairwise significance on one test set does not establish~\\citep{bouthillier2021variance}. Probe-seed variance is outside the design too: an earlier multi-seed probe check is not reproducible from retained artifacts, so we state no bound on probe noise. A planned six-leg replication is paused, with no completed epoch-50 replication result. It would add two seeds each for \\textsc{random}, \\textsc{envelope} and \\ArmBest{} from the epoch-25 ancestor, under generated configurations differing in policy, seed and logging fields. Seeds do not randomise the distributed sampler's visitation order. The proposed analysis is recorded in Appendix~\\ref{app:replication}; neither its existence nor a partial continuation increases the number of completed runs in Table~\\ref{tab:main}.",
+    "tokens": [
+      {
+        "index": 2,
+        "value": "-50",
+        "line": 700
+      },
+      {
+        "index": 3,
+        "value": "-25",
+        "line": 702
+      }
+    ]
+  },
+  {
+    "group": 33,
+    "file": "main_submission.tex",
+    "context_sha256": "f72056da5afa86a549fc95f5f836495085431b918bfd4e921dad988753231724",
+    "context": "\\paragraph{Scope, coverage and an incomplete arm.} All results are glaucoma classification from FairVision OCT. Generality to other modalities, diseases, or segmentation-quality regimes is untested, and the anatomy arms depend on MIRAGE's prediction quality on this data, so a better segmenter might change the conclusion. Only $f{=}0.21$ was pretrained for \\textsc{cover}, so we report no dose-response over the visible-tissue floor and make no claim that any floor is optimal. That arm reaches epoch 100, but the collation defect above (Appendix~\\ref{app:covbug}) means its trajectory is not evidence about aggressive coverage. Its epoch-50 value is retained as a matched-epoch comparison against every other arm. Finally, one dataset and one test split were reused throughout this programme's history, and policies, checkpoints and analyses were chosen after repeated inspection of that split. The intervals we report are therefore best read as descriptive rather than as confirmatory inference.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "0.21",
+        "line": 712
+      },
+      {
+        "index": 1,
+        "value": "100",
+        "line": 714
+      },
+      {
+        "index": 2,
+        "value": "-50",
+        "line": 716
+      }
+    ]
+  },
+  {
+    "group": 34,
+    "file": "main_submission.tex",
+    "context_sha256": "3c931c2bb55962bbf26d98f74973e7c059227be2d1afb6b8f78e8fe27eadc797",
+    "context": "Table~\\ref{tab:allprobes} lists every frozen MeanPool probe in the study. It has 37 rows: \\Nprobes{} valid probes, plus two probes excluded and four retracted for the reasons in Appendix~\\ref{app:excluded}. Two further counts follow from those \\Nprobes{}. Eight of them are fp32 re-probes of an encoder already probed at fp16, and the subgroup audit collapses each such pair to the single encoder it scores twice, leaving \\NprobesSub{} distinct encoder--epoch units (Section~\\ref{sec:subgroup}); \\NprobesRace{} of those carry a stored per-group race summary. The two race analyses therefore run on different subsets by construction: the gap-trend test in Table~\\ref{tab:subtrends} uses all \\NprobesSub{} probes, since every one carries a race \\emph{gap}, while the scatter in Figure~\\ref{fig:fair} needs a per-group AUC for all three groups and so uses the \\NprobesRace{} probes that have one. The four that do not are \\textsc{cover} at epochs 73, 75 and 100 and \\textsc{anatomy-v2} at epoch 75: each was probed after the per-group race artifact was generated, and that artifact was not recomputed, so their absence is one of artifact chronology and not a property of those runs, whose race gaps are present and do enter the \\NprobesSub{}-probe trend test.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "37",
+        "line": 750
+      },
+      {
+        "index": 3,
+        "value": "73",
+        "line": 761
+      },
+      {
+        "index": 4,
+        "value": "75",
+        "line": 761
+      },
+      {
+        "index": 5,
+        "value": "100",
+        "line": 761
+      },
+      {
+        "index": 7,
+        "value": "75",
+        "line": 762
+      }
+    ]
+  },
+  {
+    "group": 35,
+    "file": "main_submission.tex",
+    "context_sha256": "33604f61d780fec1095cf66e5b987a174508b2e64ef1f682c2203e324736f66e",
+    "context": "\\begin{table}[h] \\centering \\caption{Every frozen probe in the study, including runs excluded from the analysis and the reasons. The probe protocol is otherwise the same for every row (FairVision test $N{=}\\Ntest$, seed 42, frozen encoder, MeanPool + LayerNorm + Linear) and differs only in the precision column. ``Precision'' is the probe-time numerical precision, inferred from the stored prediction dtype, and is distinct from the pretraining target precision discussed in Appendix~\\ref{app:excluded}.} \\label{tab:allprobes} \\footnotesize \\input{auto/table_allprobes} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "42",
+        "line": 771
+      }
+    ]
+  },
+  {
+    "group": 36,
+    "file": "main_submission.tex",
+    "context_sha256": "25453ba9e0a4a258cee312760356fb76eed3b99b3ce125e151348043b8fd6d81",
+    "context": "\\textbf{Status at submission: paused; no completed replication result.} The first leg has a completed epoch-26 checkpoint and an incomplete epoch 27, not an epoch-50 probe. What follows is the recorded design for subsequent work, not additional evidence for the present comparisons.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-26",
+        "line": 786
+      },
+      {
+        "index": 1,
+        "value": "27",
+        "line": 786
+      },
+      {
+        "index": 2,
+        "value": "-50",
+        "line": 787
+      }
+    ]
+  },
+  {
+    "group": 37,
+    "file": "main_submission.tex",
+    "context_sha256": "2d242064d60cb49c5c6dc3a3882973a3fff9078c47d31423e0978f661f3e89f3",
+    "context": "\\paragraph{Design.} Six continuations (\\textsc{random}, \\textsc{envelope} and \\ArmBest{}, each at two further seeds) resume from the same epoch-25 ancestor used by every arm in this paper. The ancestor is locked by content: SHA-256 \\texttt{e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b}, 1{,}507{,}519{,}602 bytes, re-hashed immediately before each leg, and a mismatch aborts the leg rather than continuing from an unverified starting point. The six configurations are generated by a script that asserts they are identical outside the mask curriculum except for the seed and logging fields. Each leg runs to epoch 50 (the endpoint at which every arm already carries a frozen probe) with the optimiser, cosine learning-rate, weight-decay and EMA schedules still sized for 100 epochs, so the trajectory is the one this paper measures and not a shorter, differently-scheduled substitute. Each completed leg is then probed under the frozen-probe protocol of Section~\\ref{sec:setup}, with the encoder hashed before and after the probe. Together with the continuations reported here, this yields three continuations per policy at a matched endpoint.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-25",
+        "line": 791
+      },
+      {
+        "index": 15,
+        "value": "1{,}507{,}519{,}602",
+        "line": 794
+      },
+      {
+        "index": 16,
+        "value": "50",
+        "line": 798
+      },
+      {
+        "index": 17,
+        "value": "100",
+        "line": 800
+      }
+    ]
+  },
+  {
+    "group": 38,
+    "file": "main_submission.tex",
+    "context_sha256": "47a1c12e0f3771f042075fdb75e5731614a63b2669e9b2daceede31c2bfc7c99",
+    "context": "\\paragraph{Recorded analysis plan.} (i) All nine epoch-50 continuation AUCs would be reported in one table, whatever they show. No continuation is dropped for any reason other than a documented crash, and a crash is reported. (ii) We report the per-policy mean and full range, and the two paired-by-seed differences \\textsc{envelope}$-$\\textsc{random} and \\ArmBest{}$-$\\textsc{random}, one per seed. (iii) At three continuations we report point estimates and ranges only: no $t$-test, no $p$-value and no confidence interval at the continuation level, because a small set of continuations gives a limited account of training variability. (iv) The fixed-data-order caveat below is restated wherever the result is.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-50",
+        "line": 806
+      }
+    ]
+  },
+  {
+    "group": 39,
+    "file": "main_submission.tex",
+    "context_sha256": "48957eadbca2c50a1efdce8c6b2b17ad347dcb2b447165dccd118673f4a735c6",
+    "context": "\\paragraph{The failure case, written in advance.} If the epoch-50 ordering does not reproduce (a paired difference changes sign, or the three-continuation range for either contrast spans zero), the reported conclusion becomes that the single-continuation contrasts of Table~\\ref{tab:main} describe those particular runs and not the policies, and every policy-level statement in this paper is downgraded to a run-level one. Table~\\ref{tab:main} is not withdrawn in that case: it remains a correct description of the runs it measures. That outcome is an anticipated and informative result of this design rather than a failure of it, which is why the rules above are fixed now.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-50",
+        "line": 827
+      }
+    ]
+  },
+  {
+    "group": 40,
+    "file": "main_submission.tex",
+    "context_sha256": "12fc7e37d554b2354ebb338fc597033f5c46682fd48afb688fb28a95beaac8ad",
+    "context": "\\begin{figure}[h] \\centering \\includegraphics[width=\\linewidth]{figS5_mask_statistics.png} \\caption{What each sampler actually does, measured on the 6,137-slice sweep (\\textsc{anatomy-v2} on $n{=}1{,}534$). Panel (a) is the quantity the \\textsc{cover} arm was built to maximise: it reaches $73.1\\%$, \\emph{below} \\textsc{envelope}'s $77.6\\%$, which is the discrepancy Appendix~\\ref{app:covbug} explains. Panel (b) shows the ordering this paper tests: target purity rises monotonically from \\textsc{random} to \\textsc{anatomy-v2}, while downstream AUC does not follow it. Panels (c)--(f) give the confounds we do not disentangle: how much anatomy survives in the context (c, d), the context budget (e), and how often a slice is left with no anatomy visible at all (f). Every bar starts at zero and is a mean over the sweep, with no interval drawn; panel scales differ, so bars should be compared only within a panel.} \\label{fig:maskstats} \\end{figure}",
+    "tokens": [
+      {
+        "index": 3,
+        "value": "1{,}534",
+        "line": 855
+      },
+      {
+        "index": 4,
+        "value": "73.1",
+        "line": 856
+      },
+      {
+        "index": 5,
+        "value": "77.6",
+        "line": 857
+      }
+    ]
+  },
+  {
+    "group": 41,
+    "file": "main_submission.tex",
+    "context_sha256": "d547fd7ca172ef4bebf1f299a19179c8dc8fd302fc4a808199f67f1e6524ee43",
+    "context": "\\paragraph{How the geometry was measured.} Each production sampler was run on the same 600 FairVision \\emph{Training} slices (24 volumes, 25 slices each), one image at a time, with the \\textsc{cover} visible-tissue floor at its production value $f{=}0.21$, on the $16\\times16$ patch grid, with anatomy taken from the MIRAGE guide occupancy channel at threshold $0.25$. The measurement was repeated with three independent draws (seeds 42, 1234 and 2026). Training slices are not a choice: the cached anatomy guides exist for the Training split only, so three of the five production samplers cannot be run on held-out slices at all.",
+    "tokens": [
+      {
+        "index": 3,
+        "value": "0.21",
+        "line": 903
+      },
+      {
+        "index": 4,
+        "value": "16",
+        "line": 903
+      },
+      {
+        "index": 5,
+        "value": "16",
+        "line": 903
+      },
+      {
+        "index": 6,
+        "value": "0.25",
+        "line": 904
+      }
+    ]
+  },
+  {
+    "group": 42,
+    "file": "main_submission.tex",
+    "context_sha256": "204a825e56fca6b4b7d68f677ee2dd40d466a244816f9247ccb1f1dd7f8e4e2c",
+    "context": "\\paragraph{Cell-level agreement and seed noise.} Table~\\ref{tab:geom} now carries the regenerated values, so the question is how stable they are across draws. 18 of the 25 cells fall inside the three-seed range of the measurement and do not exceed observed re-draw variation. Across the four rectangle arms the \\emph{loss slots} spread is smaller than the per-arm seed spread (Table~\\ref{tab:geomprov}), so that column's ordering carries no information and no claim in this paper depends on it. The rank order of the arms on anatomy hidden and on purity is identical across all three draws, which is what the rank correlations in the main text rely on.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "18",
+        "line": 912
+      },
+      {
+        "index": 1,
+        "value": "25",
+        "line": 912
+      }
+    ]
+  },
+  {
+    "group": 43,
+    "file": "main_submission.tex",
+    "context_sha256": "d2ad42463c63d83b70117efa813877de2558bf71a417134d19d42bfd76f0bc85",
+    "context": "\\begin{table}[h] \\centering \\caption{Stability of two Table~\\ref{tab:geom} columns across three independent draws of the same 600-slice measurement. ``sd'' is the standard deviation over seeds 42, 1234 and 2026. The loss-slot differences between rectangle arms are smaller than this noise.} \\label{tab:geomprov} \\small \\begin{tabular}{lcccc} \\toprule & \\multicolumn{2}{c}{anatomy hidden (\\%)} & \\multicolumn{2}{c}{loss slots} \\\\ \\cmidrule(lr){2-3}\\cmidrule(lr){4-5} policy & value & sd & value & sd \\\\ \\midrule \\textsc{random} & 53.95 & 0.71 & 159.91 & 1.15 \\\\ \\ArmBest{} & 62.13 & 0.64 & 158.99 & 0.43 \\\\ \\textsc{envelope} & 77.58 & 0.38 & 159.68 & 1.00 \\\\ \\textsc{cover} & 73.55 & 0.30 & 159.09 & 0.45 \\\\ \\textsc{anatomy-v2} & 79.89 & 0.39 & 64.00 & 0.00 \\\\ \\bottomrule \\end{tabular} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "600",
+        "line": 923
+      }
+    ]
+  },
+  {
+    "group": 44,
+    "file": "main_submission.tex",
+    "context_sha256": "e012fff9c27e715777ca78ee0e7b6504b452306fa69e6c41fb260ba2c81d7dd6",
+    "context": "\\paragraph{The delivered context is not the per-image context.} The ``context kept'' column of Table~\\ref{tab:geom} is per-image geometry, measured before collation. In training, every context mask in a batch is truncated to the batch minimum, so what the encoder actually receives at the production batch size is smaller, and unevenly so (Table~\\ref{tab:delivered}). The context confound between the anatomy arm and the rectangle arms that Section~\\ref{sec:results-h3} declines to explain away is consequently \\emph{larger} than the printed table suggests: roughly a doubling rather than a $1.6\\times$ ratio. This strengthens the verdict that H3 is not identified by this design.",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "1.6",
+        "line": 951
+      }
+    ]
+  },
+  {
+    "group": 45,
+    "file": "main_submission.tex",
+    "context_sha256": "2fc981e70bbf1cf0af317b390217d50ba6876b8ea9f3787be9e6195190762bb0",
+    "context": "\\begin{table}[h] \\centering \\caption{Visible context as a fraction of the patch grid, same 600 slices and same seed, measured per image and as delivered to the encoder at the production batch size of 64. The per-image column reproduces Table~\\ref{tab:geom}'s ``context kept'' to within $0.4$ points.} \\label{tab:delivered} \\small \\begin{tabular}{lcc} \\toprule policy & per image & delivered at batch 64 \\\\ \\midrule \\textsc{random} & 41.9\\% & 24.7\\% \\\\ \\ArmBest{} & 45.5\\% & 32.9\\% \\\\ \\textsc{envelope} & 40.6\\% & 30.7\\% \\\\ \\textsc{cover} & 43.2\\% & 30.1\\% \\\\ \\textsc{anatomy-v2} & 67.7\\% & 63.5\\% \\\\ \\bottomrule \\end{tabular} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "600",
+        "line": 956
+      },
+      {
+        "index": 1,
+        "value": "64",
+        "line": 958
+      },
+      {
+        "index": 2,
+        "value": "0.4",
+        "line": 959
+      }
+    ]
+  },
+  {
+    "group": 46,
+    "file": "main_submission.tex",
+    "context_sha256": "349e726fc1083abb956b43333f8057656067e990a95bcd11d992a6591c6d3939",
+    "context": "policy & per image & delivered at batch 64 \\\\",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "64",
+        "line": 964
+      }
+    ]
+  },
+  {
+    "group": 47,
+    "file": "main_submission.tex",
+    "context_sha256": "ef6bae71889ba8d7a56aeb2dd3ec5202d7d87de78c47b7f8603e4cc01ab9e4b0",
+    "context": "\\paragraph{The rank correlation depends on a configuration constant.} The $+0.80$ anatomy-hidden/AUC Spearman coefficient of Section~\\ref{sec:results-h3} is computed at the production \\textsc{cover} floor $f{=}0.21$. Re-measured on the same slices with the floor at $0.15$, \\textsc{cover} hides $79.5\\%$ of anatomy instead of $73.4\\%$ at the same batch size and overtakes \\textsc{envelope}, which reorders the four rectangle arms and moves the same coefficient to $+0.40$. A rank statistic over four arms that a single configuration constant can move by that much is not evidence about anatomy, in either direction, which is why Section~\\ref{sec:results-h3} draws its conclusion from the direct comparison instead.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "+0.80",
+        "line": 976
+      },
+      {
+        "index": 2,
+        "value": "0.21",
+        "line": 978
+      },
+      {
+        "index": 3,
+        "value": "0.15",
+        "line": 978
+      },
+      {
+        "index": 4,
+        "value": "79.5",
+        "line": 979
+      },
+      {
+        "index": 5,
+        "value": "73.4",
+        "line": 979
+      },
+      {
+        "index": 6,
+        "value": "+0.40",
+        "line": 982
+      }
+    ]
+  },
+  {
+    "group": 48,
+    "file": "main_submission.tex",
+    "context_sha256": "ba47af790e8cd143421c54f9e1d40cebcf0aea27673918375bcb3abf00e848ad",
+    "context": "\\paragraph{What would identify target shape.} An arm that isolated target shape would have to match \\textsc{envelope} on the axes that currently differ, and those requirements are numeric, not rhetorical. \\textsc{anatomy-v2} sets four predictor targets resampled to a fixed $K{=}16$ cells, giving exactly 64 loss slots. Matching the rectangle arms' $158$--$160$ slots at four targets requires $K\\approx40$ (inferred arithmetic on those measured values). It would also have to deliver a mask ratio of $40$--$46\\%$ of the grid rather than the $21\\%$ that the anatomy arms deliver, roughly twice the target area, which for a shape-following sampler means more or larger connected components and therefore changes the very shape statistics being tested, and it would have to pass through the rectangle collation path, including the batch-minimum truncation above. It would then need the same replicated continuation design and the same endpoint as Appendix~\\ref{app:replication}. We did not run it. Naming its specification is what we can offer instead.",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "16",
+        "line": 990
+      },
+      {
+        "index": 2,
+        "value": "64",
+        "line": 990
+      },
+      {
+        "index": 3,
+        "value": "158",
+        "line": 991
+      },
+      {
+        "index": 4,
+        "value": "160",
+        "line": 991
+      },
+      {
+        "index": 5,
+        "value": "40",
+        "line": 992
+      },
+      {
+        "index": 6,
+        "value": "40",
+        "line": 993
+      },
+      {
+        "index": 7,
+        "value": "46",
+        "line": 993
+      },
+      {
+        "index": 8,
+        "value": "21",
+        "line": 993
+      }
+    ]
+  },
+  {
+    "group": 49,
+    "file": "main_submission.tex",
+    "context_sha256": "aa31412754483e17d9aa8d48629bf8cf79b9824b890f0e473a6a74b1de78e2c1",
+    "context": "\\begin{figure}[h] \\centering \\includegraphics[width=\\linewidth]{fig_fairness.png} \\caption{\\textbf{Left:} race-stratified AUC at epoch 100. Points are group AUCs and vertical bars are 3{,}000-resample class-stratified percentile bootstrap intervals within each group, with fitted heads fixed and per-group $n$ in the legend. The black subgroup is lowest under every policy, yet \\emph{every} group point estimate rises from \\textsc{random} to \\ArmBest{}. \\textbf{Right:} max--min race gap against aggregate AUC, one point per probe over the \\NprobesRace{} probes that carry a race summary; the legend keys colour and marker to policy. The dashed line is a least-squares fit while the quoted correlation is Spearman. The slope is positive but fails multiplicity correction at checkpoint level and does not survive branch-level aggregation (Table~\\ref{tab:subtrends}), so we draw no trend conclusion from it.} \\label{fig:fair} \\end{figure}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 1008
+      },
+      {
+        "index": 1,
+        "value": "3{,}000",
+        "line": 1009
+      }
+    ]
+  },
+  {
+    "group": 50,
+    "file": "main_submission.tex",
+    "context_sha256": "084b00a75effb5b65cfed0b9fd92379e324ff540e0d568b4637ee168fa3d000f",
+    "context": "\\paragraph{Missing data.} No case is dropped for a missing attribute anywhere in this paper and no value is imputed, so the per-group denominators sum to the full test split rather than to a complete-case subset. The released metadata carries every attribute we use for all \\Ntest{} test subjects, whose identifiers are all distinct, and the label is complete at \\Npos{} positive and \\Nneg{} negative. Race is \\NAsian{} asian, \\NBlack{} black and \\NWhite{} white; gender is 1{,}716 female and 1{,}284 male; ethnicity is 2{,}894 non-hispanic and 106 hispanic; language is 2{,}782 english, 174 other and 44 spanish; marital status is 1{,}741 married or partnered, 776 single, 199 widowed, 191 divorced, 71 unknown and 22 legally separated; age is present and numeric for all \\Ntest{}, spanning $9.5$--$98.0$ years. Each of those five categorical breakdowns sums to \\Ntest{} exactly, which is the check a reader should apply to the tables below.",
+    "tokens": [
+      {
+        "index": 13,
+        "value": "9.5",
+        "line": 1041
+      },
+      {
+        "index": 14,
+        "value": "98.0",
+        "line": 1041
+      }
+    ]
+  },
+  {
+    "group": 51,
+    "file": "main_submission.tex",
+    "context_sha256": "355d6ffceab3b2c76849acda007c320803e3572fae84d3f274d9253aa75328db",
+    "context": "One level is non-substantive rather than absent: 71 of \\Ntest{} subjects ($2.4\\%$) carry marital status \\emph{unknown} in the release. We keep it as its own category rather than dropping those subjects or folding them into a substantive group, so it is subject only to the same underpowering rule as every other level. Severity is derived from visual-field mean deviation, and its 334 severe, 460 moderate and 672 mild strata sum to all \\Npos{} positives, so no positive is lost at a stratum boundary. The release uses a mean-deviation sentinel of $-1$ in 3 of the \\Ntest{} test records. All 3 carry a negative label, and because every severity stratum is scored against the undifferentiated pool of all \\Nneg{} negatives, that sentinel never enters a stratum definition.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "71",
+        "line": 1044
+      },
+      {
+        "index": 1,
+        "value": "2.4",
+        "line": 1045
+      },
+      {
+        "index": 2,
+        "value": "334",
+        "line": 1048
+      },
+      {
+        "index": 3,
+        "value": "460",
+        "line": 1049
+      },
+      {
+        "index": 4,
+        "value": "672",
+        "line": 1049
+      },
+      {
+        "index": 5,
+        "value": "-1",
+        "line": 1051
+      },
+      {
+        "index": 6,
+        "value": "3",
+        "line": 1051
+      },
+      {
+        "index": 7,
+        "value": "3",
+        "line": 1051
+      }
+    ]
+  },
+  {
+    "group": 52,
+    "file": "main_submission.tex",
+    "context_sha256": "ae4e0f91cf3199313e276a4596c8cdcd80ff0a0f1e72caabf34b22ed461db136",
+    "context": "Separately from missingness, a group with fewer than 50 cases, or fewer than 10 of either class, is still computed and reported but is marked underpowered and held out of the max--min gap summaries. That is an exclusion from the fairness claim, not from the data, and it is the only place a group is set aside.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "50",
+        "line": 1055
+      },
+      {
+        "index": 1,
+        "value": "10",
+        "line": 1055
+      }
+    ]
+  },
+  {
+    "group": 53,
+    "file": "main_submission.tex",
+    "context_sha256": "d0fc24fac61368f7de63ad29941400bbe702fd879905608a4333016addd4b917",
+    "context": "\\begin{table}[h] \\centering \\caption{Subgroup gap trends. ``gap range'' is the max--min subgroup AUC gap observed across the \\NprobesSub{} valid probes. $q$ is Benjamini--Hochberg across the seven checkpoint-level tests. Branch $p$-values are unadjusted across the same seven and, at $n{=}7$, descriptive only. Only gender survives checkpoint-level correction at the conventional $0.05$ level, and it \\emph{narrows} as aggregate AUC rises. Race, ethnicity and disease severity share the same $q$ just above that level, so no threshold admits race and severity without also admitting ethnicity. Race is the one attribute whose checkpoint-level trend does not persist under branch aggregation ($p{=}0.4821$), where the effective sample is \\NbranchesSub{} independent branches rather than \\NprobesSub{} probes; we therefore draw no trend conclusion for race.} \\label{tab:subtrends} \\footnotesize \\setlength{\\tabcolsep}{4pt} \\input{auto/table_subgroup_trends} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "7",
+        "line": 1073
+      },
+      {
+        "index": 1,
+        "value": "0.05",
+        "line": 1074
+      },
+      {
+        "index": 2,
+        "value": "0.4821",
+        "line": 1079
+      }
+    ]
+  },
+  {
+    "group": 54,
+    "file": "main_submission.tex",
+    "context_sha256": "2a4a15f2db12948432058e77efb8da2f4fa3a863758f71d31654b72e9772eece",
+    "context": "\\paragraph{Race.} The black subgroup has the lowest AUC in every one of the \\NprobesSub{} probes ($n{=}\\NBlack$ black, $n{=}\\NAsian$ asian, $n{=}\\NWhite$ white; Figure~\\ref{fig:fair}). At matched epoch 100 the black subgroup improves from $\\RaceRandomBlack$ under \\textsc{random} to $\\RaceOracleBlack$ under \\ArmBest{} ($\\BlackGainOracle$), a larger absolute gain than the white subgroup's ($\\RaceRandomWhite \\to \\RaceOracleWhite$). The max--min gap nonetheless widens slightly, because the asian subgroup (already the highest) gains most ($\\RaceRandomAsian \\to \\RaceOracleAsian$). A widening max--min gap with universally rising subgroup AUCs is not evidence of harm. The checkpoint-level correlation between aggregate AUC and racial gap is $\\rho{=}\\SubRaceRho$ ($p{=}\\SubRaceRhoP$). It does not pass Benjamini--Hochberg correction at the stated conventional threshold ($q{=}\\SubRaceQ$), and it vanishes once probes are aggregated to their pretraining branches ($\\rho{=}\\SubRaceBranchRho$, $p{=}\\SubRaceBranchP$), and the checkpoint-level test is pseudo-replicated because the \\NprobesSub{} probes come from only \\NbranchesSub{} branches.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 1090
+      }
+    ]
+  },
+  {
+    "group": 55,
+    "file": "main_submission.tex",
+    "context_sha256": "a2d0a5866d5bb5941d4941f96790d557bb871dc5fb5a5d4477869a71199f144b",
+    "context": "\\paragraph{Disease severity.} FairVision's label is defined by visual-field mean deviation (md): every test volume with md $\\leq -2$ is positive. Severity therefore cannot be used as an ordinary subgroup axis, because within-bin AUC is undefined, a trap that silently yields nothing under naive stratification. Instead each positive stratum is scored against the shared pool of all \\Nneg{} negatives (Table~\\ref{tab:severity}).",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-2",
+        "line": 1106
+      }
+    ]
+  },
+  {
+    "group": 56,
+    "file": "main_submission.tex",
+    "context_sha256": "8fd4c5431911da2a93cabb6e9f0fe1b4f467d1dc14150b03f9af9ffcafe68c4e",
+    "context": "\\begin{table}[h] \\centering \\caption{Severity-stratified AUC at matched epoch 100. Each positive stratum is scored against the shared pool of all \\Nneg{} negatives. Each point estimate rises; the gains were not tested against one another.} \\label{tab:severity} \\small \\begin{tabular}{lccccc} \\toprule stratum & $n_{+}$ & \\textsc{random} & \\textsc{envelope} & \\ArmBest{} & $\\Delta$ \\\\ \\midrule severe (md $\\leq -12$) & 334 & \\SevRandomSevere & \\SevEnvelopeSevere & \\SevOracleSevere & \\SevDeltaSevere \\\\ moderate ($-12 <$ md $\\leq -6$) & 460 & \\SevRandomModerate & \\SevEnvelopeModerate & \\SevOracleModerate & \\SevDeltaModerate \\\\ mild ($-6 <$ md $\\leq -2$) & 672 & \\SevRandomMild & \\SevEnvelopeMild & \\SevOracleMild & \\textbf{\\SevDeltaMild} \\\\ \\bottomrule \\end{tabular} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 1114
+      }
+    ]
+  },
+  {
+    "group": 57,
+    "file": "main_submission.tex",
+    "context_sha256": "54ad8c20b232e9f30c41df1088b487fc32950b62f3868355a8d566a72cd4a335",
+    "context": "\\begin{table}[h] \\centering \\caption{Paired change in subgroup AUC from \\textsc{random} to \\ArmBest{} at matched epoch 100. The eight rows plus two gain-difference contrasts in the text form one exploratory family. Reported CIs are 95\\% single-step max-$|t|$ simultaneous intervals from \\Nboot{} outcome-stratified paired subject resamples shared across both fixed heads and every stratum (family-wise $\\alpha=0.05$). Four of ten exclude zero: mild severity, white race, and both gender strata.} \\label{tab:pairedsub} \\small \\input{auto/table_paired_subgroup} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 1147
+      },
+      {
+        "index": 1,
+        "value": "95",
+        "line": 1148
+      },
+      {
+        "index": 2,
+        "value": "0.05",
+        "line": 1151
+      }
+    ]
+  },
+  {
+    "group": 58,
+    "file": "main_submission.tex",
+    "context_sha256": "82e0c6f72114356df079883035a8dee056c2d9e8caecdc142470d3912cf873b4",
+    "context": "\\paragraph{Limitations.} The $p$-values here are descriptive, for the reasons given in Section~\\ref{sec:limits}. Race and ethnicity are self-reported categories inherited from FairVision's coding. A race-by-gender intersectional breakdown \\emph{is} reported, in Appendix~\\ref{app:intersectional}. Its limits are that two of its six cells hold fewer than $130$ cases and that it carries no paired per-cell intervals, so it describes the disparity and tests no per-cell change. All figures are frozen mean-pool linear probes. Subgroup sensitivity, specificity and race-stratified expected calibration error at a transferred threshold are reported in Appendix~\\ref{app:operating}. What is absent is subgroup predictive values, reliability curves, and calibration stratified by any attribute other than race, so this is not a complete fairness evaluation. Disparities could differ under fine-tuning or a stronger head.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "130",
+        "line": 1163
+      }
+    ]
+  },
+  {
+    "group": 59,
+    "file": "main_submission.tex",
+    "context_sha256": "d8fee05ce81113f836319d53e85f9bce302f878fdcf7aaf76f0e8d13447dc7d1",
+    "context": "The audit above crosses no attributes, so on its own it cannot say whether a group disadvantaged on two axes at once is worse served than either margin implies. We therefore also computed AUC for all six race-by-gender cells of the test split, from the same saved predictions, under the same exact-label join proof, with per-arm, 2{,}000-resample class-stratified percentile intervals within each cell and fitted heads fixed. The second axis is FairVision's self-reported gender coding, which we retain here without reinterpreting it as a biological-sex measure. Legacy figures using ``sex'' refer to this same released variable. The artifact behind this subsection covers 22 arms, 18 of them non-retracted. Those 18 are a strict subset of the \\NprobesSub{} probes of Table~\\ref{tab:subtrends}. Five are absent: \\textsc{cover} at epochs 50, 73, 75 and 100, and the \\textsc{anatomy-v2} epoch-75 probe, whose run directory carries the internal name \\texttt{blob}, an artifact label for the anatomy-shaped family that this paper calls \\textsc{anatomy-v2}, and the only place that label survives here. All five were probed after this artifact was generated and it was not recomputed, so their absence is artifact chronology rather than an analytic exclusion. The four retracted arms the artifact does contain are dropped for the reasons in Appendix~\\ref{app:excluded}. Every count in this subsection is therefore out of 18 arms, not \\NprobesSub{}.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "2{,}000",
+        "line": 1181
+      },
+      {
+        "index": 1,
+        "value": "22",
+        "line": 1186
+      },
+      {
+        "index": 2,
+        "value": "18",
+        "line": 1186
+      },
+      {
+        "index": 3,
+        "value": "18",
+        "line": 1186
+      },
+      {
+        "index": 4,
+        "value": "50",
+        "line": 1188
+      },
+      {
+        "index": 5,
+        "value": "73",
+        "line": 1188
+      },
+      {
+        "index": 6,
+        "value": "75",
+        "line": 1188
+      },
+      {
+        "index": 7,
+        "value": "100",
+        "line": 1188
+      },
+      {
+        "index": 9,
+        "value": "-75",
+        "line": 1189
+      },
+      {
+        "index": 11,
+        "value": "18",
+        "line": 1197
+      }
+    ]
+  },
+  {
+    "group": 60,
+    "file": "main_submission.tex",
+    "context_sha256": "a2913e5b370d1b96ff479ede7517c9385debb6802c179304ba8bc9292fd0fe6f",
+    "context": "\\begin{table}[h] \\centering \\caption{Race-by-gender AUC at matched epoch 100 on the \\Ntest{} test volumes, with per-cell counts and per-arm bootstrap percentile intervals. $\\Delta$ is \\ArmBest{} minus \\textsc{random} as a difference of point estimates. The artifact stores per-arm intervals only and no paired per-cell resampling, so no $\\Delta$ in this table is tested against zero; per-cell significance is not reported. The 18 intervals are marginal, not simultaneous. The two asian cells are small ($n{=}123$ and $n{=}128$) and their intervals are correspondingly wide.} \\label{tab:intersectional} \\scriptsize \\setlength{\\tabcolsep}{3.5pt} \\begin{tabular}{lrrcccr} \\toprule cell & $n$ & $n_{+}$ & \\textsc{random} & \\textsc{envelope} & \\ArmBest{} & $\\Delta$ \\\\ \\midrule asian $\\times$ female & 123 & 52 & 0.8761 [0.8024, 0.9342] & 0.8762 [0.8042, 0.9366] & 0.8904 [0.8245, 0.9423] & $+0.0144$ \\\\ asian $\\times$ male & 128 & 66 & 0.9245 [0.8752, 0.9655] & 0.9145 [0.8565, 0.9626] & 0.9409 [0.8983, 0.9751] & $+0.0164$ \\\\ black $\\times$ female & 250 & 149 & 0.8195 [0.7668, 0.8679] & 0.8155 [0.7632, 0.8638] & 0.8309 [0.7790, 0.8783] & $+0.0114$ \\\\ black $\\times$ male & 181 & 119 & 0.8435 [0.7822, 0.8994] & 0.8652 [0.8091, 0.9141] & 0.8663 [0.8132, 0.9149] & $+0.0228$ \\\\ white $\\times$ female & 1343 & 610 & 0.8641 [0.8441, 0.8826] & 0.8728 [0.8530, 0.8910] & 0.8762 [0.8570, 0.8943] & $+0.0121$ \\\\ white $\\times$ male & 975 & 470 & 0.8864 [0.8650, 0.9062] & 0.8958 [0.8744, 0.9148] & 0.8962 [0.8746, 0.9153] & $+0.0099$ \\\\ \\midrule max$-$min gap & & & 0.1050 & 0.0990 & 0.1100 & \\\\ \\bottomrule \\end{tabular} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 1201
+      },
+      {
+        "index": 1,
+        "value": "18",
+        "line": 1206
+      },
+      {
+        "index": 2,
+        "value": "123",
+        "line": 1207
+      },
+      {
+        "index": 3,
+        "value": "128",
+        "line": 1207
+      }
+    ]
+  },
+  {
+    "group": 61,
+    "file": "main_submission.tex",
+    "context_sha256": "5ab014981da86a3d0ccdf680f37c6c3d6bb7501bc88239be072a01666da7a71b",
+    "context": "\\paragraph{The ordering compounds, and it never reorders.} The black $\\times$ female cell has the lowest AUC in all 18 non-retracted arms and the asian $\\times$ male cell the highest in all 18. Within each race the female cell sits below the male cell in all $54$ race-by-arm combinations, and within each gender the black cell sits below the white cell in all $36$. These 18 arms share one test split, one epoch-25 ancestor and one probe seed, and several are different epochs of a single branch, so this unanimity is a consistency check across checkpoints, not 18 replications. We attach no $p$-value to it, exactly as for the marginal ordering above.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "18",
+        "line": 1229
+      },
+      {
+        "index": 1,
+        "value": "18",
+        "line": 1230
+      },
+      {
+        "index": 2,
+        "value": "54",
+        "line": 1231
+      },
+      {
+        "index": 3,
+        "value": "36",
+        "line": 1232
+      },
+      {
+        "index": 4,
+        "value": "18",
+        "line": 1232
+      },
+      {
+        "index": 5,
+        "value": "-25",
+        "line": 1233
+      },
+      {
+        "index": 6,
+        "value": "18",
+        "line": 1235
+      }
+    ]
+  },
+  {
+    "group": 62,
+    "file": "main_submission.tex",
+    "context_sha256": "bbf469e7009237da690ae1a00f00b8b35ea5f905c1e1fe9253b7cb4806652c23",
+    "context": "\\paragraph{The marginal race gap understates the worst cell.} Averaged over the 18 arms, the max$-$min gap is $0.0340$ by gender alone, $0.0653$ by race alone, and $0.1046$ across the six race-by-gender cells, and the intersectional gap exceeds that arm's marginal race gap in all 18. The race margin therefore understates the spread a race-by-gender reading exposes by $60.1\\%$ on average, arithmetic on those two means, not a separate measurement. The same pattern holds at the matched epoch of Table~\\ref{tab:intersectional}: under \\ArmBest{} the marginal race gap is $0.0717$ while the race-by-gender gap is $0.1100$, and the worst cell, black $\\times$ female at $0.8309$, sits $0.0163$ below the marginal black figure $\\RaceOracleBlack$ that the marginal audit above reports. An audit that stops at the margins reports a worst-group number that is optimistic relative to the worst cell. The compounding is close to additive and we do not claim more: the gender and race means sum to $0.0993$ against an observed $0.1046$, a ratio of $1.053$, which is not evidence of a super-additive interaction.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "18",
+        "line": 1239
+      },
+      {
+        "index": 1,
+        "value": "0.0340",
+        "line": 1239
+      },
+      {
+        "index": 2,
+        "value": "0.0653",
+        "line": 1239
+      },
+      {
+        "index": 3,
+        "value": "0.1046",
+        "line": 1240
+      },
+      {
+        "index": 4,
+        "value": "18",
+        "line": 1241
+      },
+      {
+        "index": 5,
+        "value": "60.1",
+        "line": 1242
+      },
+      {
+        "index": 6,
+        "value": "0.0717",
+        "line": 1245
+      },
+      {
+        "index": 7,
+        "value": "0.1100",
+        "line": 1245
+      },
+      {
+        "index": 8,
+        "value": "0.8309",
+        "line": 1246
+      },
+      {
+        "index": 9,
+        "value": "0.0163",
+        "line": 1246
+      },
+      {
+        "index": 10,
+        "value": "0.0993",
+        "line": 1250
+      },
+      {
+        "index": 11,
+        "value": "0.1046",
+        "line": 1250
+      },
+      {
+        "index": 12,
+        "value": "1.053",
+        "line": 1251
+      }
+    ]
+  },
+  {
+    "group": 63,
+    "file": "main_submission.tex",
+    "context_sha256": "7a459fa5d972e631f54dc98e88b4296dceccc18ac1dfc7ec701ecfd91d3bc64b",
+    "context": "\\paragraph{Not every cell improves.} The statement elsewhere in this appendix that every subgroup point estimate rises from \\textsc{random} to \\ArmBest{} is a statement about marginal strata at the matched epoch, and it does \\emph{not} extend to cells at every epoch. At epoch 100 all six point estimates rise (Table~\\ref{tab:intersectional}), but at epoch 50 the asian $\\times$ female cell falls by $0.0020$, and \\textsc{envelope} minus \\textsc{random} is negative in three of six cells at epoch 75 (asian $\\times$ female $-0.0148$, asian $\\times$ male $-0.0031$, black $\\times$ female $-0.0025$) and in two of six at epoch 100 (asian $\\times$ male $-0.0100$, black $\\times$ female $-0.0040$, with asian $\\times$ female at $+0.0001$). No policy we tested raises every intersectional cell at every epoch, and the exceptions fall in the small asian cells and in the worst cell.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 1256
+      },
+      {
+        "index": 1,
+        "value": "50",
+        "line": 1257
+      },
+      {
+        "index": 2,
+        "value": "0.0020",
+        "line": 1258
+      },
+      {
+        "index": 3,
+        "value": "75",
+        "line": 1259
+      },
+      {
+        "index": 4,
+        "value": "-0.0148",
+        "line": 1259
+      },
+      {
+        "index": 5,
+        "value": "-0.0031",
+        "line": 1260
+      },
+      {
+        "index": 6,
+        "value": "-0.0025",
+        "line": 1260
+      },
+      {
+        "index": 7,
+        "value": "100",
+        "line": 1260
+      },
+      {
+        "index": 8,
+        "value": "-0.0100",
+        "line": 1261
+      },
+      {
+        "index": 9,
+        "value": "-0.0040",
+        "line": 1261
+      },
+      {
+        "index": 10,
+        "value": "+0.0001",
+        "line": 1262
+      }
+    ]
+  },
+  {
+    "group": 64,
+    "file": "main_submission.tex",
+    "context_sha256": "adf269a4ce2b0ed8614fd3b24e068cbf46e175f1b4c8cc1df0e8c1967cf206c1",
+    "context": "\\paragraph{What this does not establish.} There are no paired per-cell bootstrap intervals in the artifact, so every $\\Delta$ above is a difference of point estimates and none of them is separated from zero. Per-cell delta significance is not computed here, though it is computable from the retained per-arm predictions. Two cells carry $n{=}123$ and $n{=}128$, so their intervals overlap almost everything. Cells with a single class or fewer than $40$ cases would have been dropped. None were, so all six race-by-gender cells are reported. Nothing here is a fairness intervention: as with the margins, no policy reorders the cells, and the worst-served cell is the same under the unguided null and under every guided policy we tested.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "123",
+        "line": 1271
+      },
+      {
+        "index": 1,
+        "value": "128",
+        "line": 1271
+      },
+      {
+        "index": 2,
+        "value": "40",
+        "line": 1272
+      }
+    ]
+  },
+  {
+    "group": 65,
+    "file": "main_submission.tex",
+    "context_sha256": "7dbe1e3d833947846664a2d9deb793ce66c599728e585de4b55ddda05e145b86",
+    "context": "Four probes of an earlier \\emph{null} run are excluded from all analysis. They are unguided-masking controls from a superseded coverage campaign: the inventory lists them under \\textsc{random}, and their run tags begin \\texttt{frozen\\_cover\\_random} because of that campaign, not because they use a coverage policy. They were trained with half-precision EMA targets and a different encoder-truncation policy from the arms they would be compared against, so their deficit is not attributable to masking. Similarly, the \\textsc{anatomy-v2} probes at epochs 75 and 92 follow a change of target precision partway through that arm's training. They are listed in Table~\\ref{tab:allprobes} but excluded from the matched-epoch comparisons in Table~\\ref{tab:main}.",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "75",
+        "line": 1289
+      },
+      {
+        "index": 2,
+        "value": "92",
+        "line": 1289
+      }
+    ]
+  },
+  {
+    "group": 66,
+    "file": "main_submission.tex",
+    "context_sha256": "44be1037fd9be2e7f7ae5ee9ea9e07728fd0b5c1a3de9ffe0f2aa39daa25f94e",
+    "context": "We audited the \\textsc{cover} sampler after its epoch-100 result and found a defect. It invalidates the reading of that arm and weakens one cross-family comparison.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-100",
+        "line": 1296
+      }
+    ]
+  },
+  {
+    "group": 67,
+    "file": "main_submission.tex",
+    "context_sha256": "cb967b5622113a897990d85cd8c49bbe5dc773c7c6bc467e983e5101e99f488e",
+    "context": "\\paragraph{Measured consequences.} A one-off audit found that collation reduced \\textsc{cover}'s anatomy coverage. An independent sweep over $6{,}137$ slices gives $73.1\\%$ against $77.6\\%$ for \\textsc{envelope}. The arm intended to hide \\emph{more} anatomy than \\textsc{envelope} in fact hides \\emph{less}. Across $24{,}000$ emitted targets only $73.4\\%$ remain perfect rectangles. Because target cells are enumerated row-major, truncation keeps the top of each rectangle and discards the bottom, so the loss is directional rather than a neutral shrink. \\emph{Provenance:} the one-off CPU audit of 194 accepted slices that first exposed the defect was not persisted, so its pre- and post-truncation figures are no longer asserted. The $73.1\\%$ against $77.6\\%$ comparison, which is the only figure the body relies on, is backed by the stored floor sweep and is unaffected.",
+    "tokens": [
+      {
+        "index": 3,
+        "value": "24{,}000",
+        "line": 1311
+      },
+      {
+        "index": 4,
+        "value": "73.4",
+        "line": 1311
+      },
+      {
+        "index": 5,
+        "value": "194",
+        "line": 1314
+      },
+      {
+        "index": 6,
+        "value": "73.1",
+        "line": 1316
+      },
+      {
+        "index": 7,
+        "value": "77.6",
+        "line": 1316
+      }
+    ]
+  },
+  {
+    "group": 68,
+    "file": "main_submission.tex",
+    "context_sha256": "87633ba2ebe974b94a22c5e252d320df9d8d5054effa6e9552800ba22ffe17b1",
+    "context": "\\paragraph{Scope.} \\textsc{envelope} shares the same collation path and the same directional clipping, but sets no exact coverage target, so it has no comparable optimisation to defeat. The anatomy arms instead resample every target to a fixed $K{=}16$ cells. Contrasts within the rectangle family are collated identically and are unaffected. The anatomy-versus-rectangle contrast is not, and we treat it accordingly in Section~\\ref{sec:results}. A corrected coverage arm must be retrained from the shared ancestor, since patching mid-trajectory would splice two masking policies into one curve.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "16",
+        "line": 1334
+      }
+    ]
+  },
+  {
+    "group": 69,
+    "file": "main_submission.tex",
+    "context_sha256": "937a7de0e34b4cb2fdc47588e0a2bae3a2ae25b9510ea793839ffab516f1c940",
+    "context": "\\paragraph{Scope.} We replayed the actual guided dataset, paired transforms, DataLoader worker collator and returned mask tensors on the existing 600-view Training scope (24 volumes, 25 views each), using fixed new crop draws shared across policies. These are not reconstructed historical training crops. Drawn block sizes were injected independently of placement; equal seeds alone do not pair policy-dependent rejection sampling. The production-size subset contains \\DTFullImages{} views in complete batches of 64, with \\DTValidGuides{} valid post-crop guides. The shorter final batch is excluded from Table~\\ref{tab:delivered_repair}. Views within volumes are correlated, so these are descriptive engineering counts, not independent training replications.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "600",
+        "line": 1349
+      },
+      {
+        "index": 1,
+        "value": "24",
+        "line": 1350
+      },
+      {
+        "index": 2,
+        "value": "25",
+        "line": 1350
+      },
+      {
+        "index": 3,
+        "value": "64",
+        "line": 1354
+      }
+    ]
+  },
+  {
+    "group": 70,
+    "file": "main_submission.tex",
+    "context_sha256": "1b8f5ae2f14c5153e416369aa144be00d0a54b4995f87f430d216e3c67e60551",
+    "context": "\\paragraph{What is measured.} Target coverage is measured both at scoring and after target collation. Encoder-visible tissue is counted only in the final encoder indices, not in the full-grid target complement. Tissue is a guide occupancy thresholded at $0.25$, not clinical ground truth. The context criterion is at least $\\max(\\lceil 0.21N_{\\mathrm{tissue}}\\rceil,\\min(4,N_{\\mathrm{tissue}}))$ non-target tissue cells. It is an explicit occupancy-cell diagnostic and corrected-policy guarantee, distinct from the historical soft-mass constraint on the target complement.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "0.25",
+        "line": 1363
+      },
+      {
+        "index": 1,
+        "value": "0.21",
+        "line": 1364
+      },
+      {
+        "index": 2,
+        "value": "4",
+        "line": 1364
+      }
+    ]
+  },
+  {
+    "group": 71,
+    "file": "main_submission.tex",
+    "context_sha256": "ab987bde8297f4c1cf5b6d5db6b771ee95d1caf6584509219c9384534245b8cf",
+    "context": "\\paragraph{The delivered tensors reach the objective.} Using exact masks for one fixed batch of the first \\DTGPUObservations{} predeclared views, we ran \\DTGPUCases{} independent fp32 one-update checks from the same historical ancestor, one per COVER implementation. Tissue/background and first/repeated token contributions reconcile with the actual Smooth-L1 loss. Online/predictor gradients and parameter updates were finite and nonzero; teacher gradients were absent and EMA updates matched their stated formula. The guard changed \\DTGPUGuardChanges{} contexts in these selected views, which already met its floor; equality with unguarded v2 is therefore expected. These bounded checks neither train a corrected representation nor estimate its downstream AUC.",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "1",
+        "line": 1434
+      }
+    ]
+  },
+  {
+    "group": 72,
+    "file": "main_submission.tex",
+    "context_sha256": "f5723cc4f4121b99f4445065b2555568bc1b23fea398ed01148917345ba0f09d",
+    "context": "\\paragraph{Background is a real \\emph{pretraining} signal.} At epoch 100 the random arm's predictor beats a per-position, no-context reference by $0.680$ on background targets, above its $0.633$ on anatomy targets: predicting a background token requires more than knowing where it is. Pretraining also spends capacity reorganising background in the separate \\textsc{envelope} analysis: background self-similarity falls from $0.784$ untrained to $0.346$ at epoch 100.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 1460
+      },
+      {
+        "index": 3,
+        "value": "0.784",
+        "line": 1465
+      },
+      {
+        "index": 4,
+        "value": "0.346",
+        "line": 1466
+      },
+      {
+        "index": 5,
+        "value": "100",
+        "line": 1466
+      }
+    ]
+  },
+  {
+    "group": 73,
+    "file": "main_submission.tex",
+    "context_sha256": "8b9de05e43aab7ae350afeb52265fe7c5947b2f5861f88d21a15eecc6a56e3c1",
+    "context": "\\paragraph{Incremental signal under a regional-probe protocol.} This analysis uses epoch-50 encoders, 25 slices per volume and 2{,}000/600/1{,}000 training/validation/test volumes, rather than the main 100-slice protocol and full split. Pooled background features are $95.2\\%$ linearly reconstructible from pooled anatomy features. On $n{=}1000$ test subjects, with fitted transforms and probes fixed, residual background has AUC $0.5515$ (2{,}000-resample case-percentile CI $[0.5165, 0.5893]$). A paired bootstrap of the same size puts the change from appending background at $-0.0076$ (CI $[-0.0139, -0.0012]$) for the random arm and under $\\pm0.002$ for every other. A background-only probe scores $0.867$. Self-attention mixes tissue information into background tokens, so that figure cannot be read as background signal, and we did not measure how much mixing occurs.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-50",
+        "line": 1469
+      },
+      {
+        "index": 1,
+        "value": "25",
+        "line": 1469
+      },
+      {
+        "index": 2,
+        "value": "2{,}000",
+        "line": 1470
+      },
+      {
+        "index": 3,
+        "value": "600",
+        "line": 1470
+      },
+      {
+        "index": 4,
+        "value": "1{,}000",
+        "line": 1470
+      },
+      {
+        "index": 5,
+        "value": "100",
+        "line": 1471
+      },
+      {
+        "index": 6,
+        "value": "95.2",
+        "line": 1472
+      },
+      {
+        "index": 7,
+        "value": "1000",
+        "line": 1472
+      },
+      {
+        "index": 8,
+        "value": "0.5515",
+        "line": 1474
+      },
+      {
+        "index": 9,
+        "value": "2{,}000",
+        "line": 1474
+      },
+      {
+        "index": 10,
+        "value": "0.5165",
+        "line": 1474
+      },
+      {
+        "index": 11,
+        "value": "0.5893",
+        "line": 1474
+      },
+      {
+        "index": 12,
+        "value": "-0.0076",
+        "line": 1476
+      },
+      {
+        "index": 13,
+        "value": "-0.0139",
+        "line": 1476
+      },
+      {
+        "index": 14,
+        "value": "-0.0012",
+        "line": 1476
+      },
+      {
+        "index": 15,
+        "value": "0.002",
+        "line": 1476
+      },
+      {
+        "index": 16,
+        "value": "0.867",
+        "line": 1477
+      }
+    ]
+  },
+  {
+    "group": 74,
+    "file": "main_submission.tex",
+    "context_sha256": "5c821ca5ecd42593edc2450dfbe0eff53d7be3238bd074c1f511bba4624f65cd",
+    "context": "\\paragraph{Position dominates background tokens, but is not the whole story.} At layer 0, $90.8\\%$ of the across-position variance of the encoder input at background cells comes from \\texttt{pos\\_embed}, against $40.8\\%$ at tissue cells (stable across six thresholds and both checkpoints). Mechanically a background token is close to its position code. That the predictor still beats a per-position reference shows the pretraining signal is not purely positional. The causal chain from this mechanism to downstream AUC remains open.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "0",
+        "line": 1482
+      },
+      {
+        "index": 1,
+        "value": "90.8",
+        "line": 1482
+      },
+      {
+        "index": 2,
+        "value": "40.8",
+        "line": 1483
+      }
+    ]
+  },
+  {
+    "group": 75,
+    "file": "main_submission.tex",
+    "context_sha256": "6e849618f721ccf7238acb919daad2771f184d7c5cdb424be2cdaad87587fa3e",
+    "context": "\\paragraph{Protocol parity.} This sweep uses the \\emph{same} probe protocol as Table~\\ref{tab:main}: minibatches of 256, AdamW at $4{\\times}10^{-4}$, weight decay 0.05, 50 epochs with 5 warmup and cosine decay, and the epoch selected on validation AUC. An earlier cheaper full-batch fit disagreed with the primary protocol. Under matched protocols, restricting this check to the null and \\ArmBest{}, their full-supervision results agree to within $0.0003$ ($\\LERandomHundred$ against $\\AUCRandomEpHundred$ for the null, $\\LEOracleHundred$ against $\\AUCOracleEpHundred$ for \\ArmBest{}), so the curve below and the headline table describe one probe, not two. This two-arm bound is distinct from the four-arm bound reported in Section~\\ref{sec:labeleff}.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "256",
+        "line": 1510
+      },
+      {
+        "index": 1,
+        "value": "4",
+        "line": 1510
+      },
+      {
+        "index": 2,
+        "value": "10",
+        "line": 1510
+      },
+      {
+        "index": 3,
+        "value": "-4",
+        "line": 1510
+      },
+      {
+        "index": 4,
+        "value": "0.05",
+        "line": 1511
+      },
+      {
+        "index": 5,
+        "value": "50",
+        "line": 1511
+      },
+      {
+        "index": 6,
+        "value": "5",
+        "line": 1511
+      },
+      {
+        "index": 7,
+        "value": "0.0003",
+        "line": 1514
+      }
+    ]
+  },
+  {
+    "group": 76,
+    "file": "main_submission.tex",
+    "context_sha256": "95e8546170c6198dfefe164c874ea6b13b36ebe6d7bca1f3083af9c618acef0e",
+    "context": "The observed mean gap is larger in the low-label probe refits (Table~\\ref{tab:labeleff}, Figure~\\ref{fig:labeleff}). At $5\\%$ of labels ($n{=}\\LENFive$) \\ArmBest{} leads the null by $\\LEGapFive$ ($\\LEOracleFive$ against $\\LERandomFive$), against $\\LEGapHundred$ at full supervision, more than four times the margin. At $1\\%$ the gap is wider still ($\\LEOracleOne$ against $\\LERandomOne$), though the standard deviations there ($\\LESDRandomOne$--$\\LESDCoverOne$ across arms) are large enough that we read the ordering but not its precise size.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "5",
+        "line": 1522
+      },
+      {
+        "index": 1,
+        "value": "1",
+        "line": 1524
+      }
+    ]
+  },
+  {
+    "group": 77,
+    "file": "main_submission.tex",
+    "context_sha256": "170a0f2308751147566a8947e330121cad62845bcbadd0888d3edc8b707fba26",
+    "context": "The defective \\textsc{cover} arm (Appendix~\\ref{app:covbug}) is the worst arm at every fraction, reaching only $\\LECoverOne$ at $1\\%$ against $\\LERandomOne$ for the null. Without corrected-policy training, that deficit cannot be attributed to truncation rather than the other differences between these implementations.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "1",
+        "line": 1530
+      }
+    ]
+  },
+  {
+    "group": 78,
+    "file": "main_submission.tex",
+    "context_sha256": "1792b23d3f534f5869ef651223c9fccd8193bb3842d9298fa35f6f8067ba9af4",
+    "context": "\\begin{figure}[h] \\centering \\includegraphics[width=0.60\\linewidth]{fig_labeleff.png} \\caption{The policies converge as labels are added and separate as they are removed. Shading is one standard deviation over \\LERepeats{} label subsets, with every arm seeing identical subsets. At full supervision the four arms lie within $0.027$ of one another; at $5\\%$ the spread is $0.085$.} \\label{fig:labeleff} \\end{figure}",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "0.027",
+        "line": 1550
+      },
+      {
+        "index": 2,
+        "value": "5",
+        "line": 1550
+      },
+      {
+        "index": 3,
+        "value": "0.085",
+        "line": 1550
+      }
+    ]
+  },
+  {
+    "group": 79,
+    "file": "main_submission.tex",
+    "context_sha256": "76be9d560243578a33d6ef855f6822a154736b3be5f2e1fbedf69a841bac1d42",
+    "context": "The analyses in this appendix were run on the three \\emph{fine-tuned} probes (mean-pool, cross-attention pool, and a depth-1 attentive probe) that tie at test AUC $\\approx 0.887$, not on the frozen probes used for the arm comparison in the main text. They characterise what the downstream classifier uses, and they are reported here because two of the findings are cautionary rather than positive. Every number in this appendix is computed from archived per-volume attribution arrays that are not part of the released artifact set, so unlike the rest of the paper these values cannot be recomputed from the release. Only the diffuse-attribution result at the end of the appendix is cited by the main text.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-1",
+        "line": 1558
+      },
+      {
+        "index": 1,
+        "value": "0.887",
+        "line": 1559
+      }
+    ]
+  },
+  {
+    "group": 80,
+    "file": "main_submission.tex",
+    "context_sha256": "1b1638fc0fe9589837ba12a355e465cc34d587dfde2b88d6dd3895318d9fe54a",
+    "context": "\\paragraph{Method.} Attribution is by \\emph{occlusion}, which is architecture-agnostic and interventional on the model. It measures the model's sensitivity to deleting a token, not a causal effect of anatomy on disease. Gradient$\\times$input is not used because two of the three probes are non-linear in the slice-token matrix, where gradient attribution is misleading. For slice-level attribution each slice token is zeroed in turn and $\\Delta$logit recorded (Figure~\\ref{fig:interp-slice}); for window-level, seven consecutive slices (Figure~\\ref{fig:interp-window}); for patch-level, leave-one-out over the 256 patch tokens of a target slice.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "256",
+        "line": 1575
+      }
+    ]
+  },
+  {
+    "group": 81,
+    "file": "main_submission.tex",
+    "context_sha256": "eb99024b9fe9810277fc5af231da5c6eab24094378de4ec5eda4f3789210d633",
+    "context": "\\begin{figure}[h] \\centering \\includegraphics[width=0.92\\linewidth]{interp_slice_contribution_curves.png} \\caption{Single-slice occlusion attribution against native slice position, for all three fine-tuned probes. Each probe contributes two curves, a mean over the glaucoma volumes (solid) and a mean over the healthy volumes (dashed), with each $n$ in the legend and no interval drawn. Despite spanning zero to 7.14M probe parameters they converge on the same structure. The $y$-axis is \\emph{signed} $\\Delta$logit: peaks are slices whose removal lowers the logit, the central dip is slices whose removal raises it, and only slices near zero are genuinely unused.} \\label{fig:interp-slice} \\end{figure}",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "7.14",
+        "line": 1584
+      }
+    ]
+  },
+  {
+    "group": 82,
+    "file": "main_submission.tex",
+    "context_sha256": "9360252b3844c2c73415a992e1eb92c116edce52197934e50eade6f872e28bff",
+    "context": "\\begin{figure}[h] \\centering \\includegraphics[width=0.92\\linewidth]{interp_04_window_occlusion_W7.png} \\caption{Window occlusion ($W{=}7$) amplifies the same signal roughly sevenfold and suppresses single-volume noise. For mean-pooled models, single-slice occlusion systematically under-estimates attributed signal; the windowed variant recovers more signal. As in Figure~\\ref{fig:interp-slice}, each probe contributes a glaucoma mean (solid) and a healthy mean (dashed) with no interval drawn, and the curve stops where a full window no longer fits.} \\label{fig:interp-window} \\end{figure}",
+    "tokens": [
+      {
+        "index": 3,
+        "value": "7",
+        "line": 1595
+      }
+    ]
+  },
+  {
+    "group": 83,
+    "file": "main_submission.tex",
+    "context_sha256": "bcc63223b762b9962e175cc1eaebf1d1cdbcebd48a723215530688eae4f17e12",
+    "context": "\\paragraph{Outcome-stratified attribution.} Stratifying by outcome, false-negative curves are scaled-down true-positive curves with the same shape, and false positives likewise mirror true negatives (Figure~\\ref{fig:interp-outcome}). Attribution structure is also near-invariant to prediction confidence. The error rate at threshold $0.5$ is associated with attribution amplitude in this analysis; the curves do not identify the cause of classification errors.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "0.5",
+        "line": 1642
+      }
+    ]
+  },
+  {
+    "group": 84,
+    "file": "main_submission.tex",
+    "context_sha256": "ae2fb93b43a3119d8ab15755de77fd65f473681f54934be6d3761106f4c11acd",
+    "context": "\\begin{table}[h] \\centering \\caption{Operating points at matched epoch 100. One threshold, chosen on the \\textsc{random} validation split to hit the target specificity, is applied unchanged to all arms on test. ECE is a 15-bin expected calibration error.} \\label{tab:operating} \\small \\input{auto/table_operating} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "100",
+        "line": 1693
+      },
+      {
+        "index": 1,
+        "value": "15",
+        "line": 1696
+      }
+    ]
+  },
+  {
+    "group": 85,
+    "file": "main_submission.tex",
+    "context_sha256": "961dfba996436d5a418648e5602bf4cab60ea8e3afec51252fffeb2db2fef5f4",
+    "context": "Two observations (Table~\\ref{tab:operating}). First, the threshold transfers imperfectly: a validation target of $0.90$ yields test specificity $\\SpecAchIntensitySpecNinety$ to $\\SpecAchEnvelopeSpecNinety$ across the three arms, so the operating point moves by roughly one point between arms and the comparison below is at a shared threshold rather than at a shared false-positive rate. Second, sensitivity is higher at this shared threshold. At a target specificity of $0.90$, \\ArmBest{} detects $\\SensIntensitySpecNinety$ of cases against $\\SensRandomSpecNinety$ for the unguided null, a paired difference of $\\DSensIntRandSpecNinety$ (CI $\\DSensIntRandSpecNinetyCI$, excluding zero), with the specificity caveat above. At a target of $0.85$ the gain is $\\DSensIntRandSpecEightyFive$ (CI $\\DSensIntRandSpecEightyFiveCI$). These four arm-by-target CIs use \\Nboot{} class-stratified percentile subject resamples with fitted heads and thresholds fixed. They are one unadjusted exploratory family. \\ArmBest{} also has lower measured overall Brier score ($\\BrierIntensity$ versus $\\BrierRandom$) and ECE ($\\ECEIntensity$ versus $\\ECERandom$). These are calibration point estimates on this split, without uncertainty or a reliability-curve comparison; they do not establish uniformly better calibration across subgroups.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "0.90",
+        "line": 1704
+      },
+      {
+        "index": 1,
+        "value": "0.90",
+        "line": 1709
+      },
+      {
+        "index": 2,
+        "value": "0.85",
+        "line": 1713
+      }
+    ]
+  },
+  {
+    "group": 86,
+    "file": "main_submission.tex",
+    "context_sha256": "12401d7bc82e11b600d452d68e2945068ba9ea4f92cb1393b89ea312153de66e",
+    "context": "A $+0.011$ AUC difference is hard to interpret clinically, and the ROC curves are nearly superimposed (Figure~\\ref{fig:roc}), whereas a change in cases detected at a fixed threshold is not. We state that comparison carefully: transferring one threshold moves achieved specificity from $\\SpecAchRandomSpecNinety$ to $\\SpecAchIntensitySpecNinety$, so the arms are \\emph{not} compared at an identical false-positive rate and the sensitivity change partly reflects that shift. A deployment-grade comparison would select each arm's threshold on validation to meet the same specificity, lock it, and evaluate on an untouched cohort. One dataset, one split, one pretraining run per policy.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "+0.011",
+        "line": 1722
+      }
+    ]
+  },
+  {
+    "group": 87,
+    "file": "main_submission.tex",
+    "context_sha256": "d40673a4f4a15778353da49343945a2dfd0602b77c1611a93a0e4bc9546643d4",
+    "context": "\\paragraph{The threshold itself does not transfer evenly across strata.} The same table answers a question the sensitivity column does not. A threshold selected on validation to achieve specificity $0.90$ does not achieve it uniformly on test: under \\textsc{random} it realises $0.895$ specificity in the white stratum but $0.736$ in the black stratum, a shortfall of roughly sixteen points, and under \\ArmBest{} the same threshold realises $0.879$ and $0.761$. The shortfall is therefore a property of transferring one threshold to a cohort whose strata have different score distributions, and it is present under \\emph{both} arms. No masking policy here causes it and none of them repairs it. For a screening context this is a larger effect than any AUC difference in this paper.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "0.90",
+        "line": 1757
+      }
+    ]
+  },
+  {
+    "group": 88,
+    "file": "main_submission.tex",
+    "context_sha256": "620353cb88bc8982027173b22d3264c3eac5fbd0d6ec7c3106d474d004581736",
+    "context": "\\begin{table}[h] \\centering \\caption{Change in sensitivity from \\textsc{random} to \\ArmBest{} at one shared validation-selected threshold, by stratum. The five contrasts form one exploratory family. Reported CIs are 95\\% single-step max-$|t|$ simultaneous intervals from \\Nboot{} paired positive-subject resamples shared across both fixed heads and all five overlapping race and gender strata, with heads and threshold fixed (family-wise $\\alpha=0.05$). White, female and male remain above zero after adjustment. Epoch 100.} \\label{tab:subop} \\small \\input{auto/table_subgroup_operating} \\end{table}",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "95",
+        "line": 1787
+      },
+      {
+        "index": 1,
+        "value": "0.05",
+        "line": 1790
+      },
+      {
+        "index": 2,
+        "value": "100",
+        "line": 1791
+      }
+    ]
+  },
+  {
+    "group": 89,
+    "file": "main_submission.tex",
+    "context_sha256": "4d55976038e7d0f48ad5859d79307d88441468d1fc5a91e2f716d8c86d5b1ec1",
+    "context": "\\begin{figure}[h] \\centering \\includegraphics[width=0.62\\linewidth]{fig_roc.png} \\caption{ROC curves at epoch 100 on the \\Ntest{} test volumes. The three arms plotted are nearly superimposed: the separation reported throughout this paper is a small, consistent shift in the high-specificity region rather than a difference visible in the curve as a whole. We include this so the effect size is not overstated by tables alone.} \\label{fig:roc} \\end{figure}",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "100",
+        "line": 1800
+      }
+    ]
+  },
+  {
+    "group": 90,
+    "file": "main_submission.tex",
+    "context_sha256": "29781af635156d5846ef42c81c74cdcbd28ca71c292f3b71d8b8651ccd5c4236",
+    "context": "\\paragraph{Dataset provenance and licence.} We name the governing terms explicitly rather than leave ``release terms'' to stand on its own. The cohort is the glaucoma arm of Harvard-FairVision~\\citep{luo2024fairvision}: 10{,}000 subjects distributed with a fixed 6{,}000/1{,}000/\\Ntest{} training, validation and test partition. The primary downstream comparisons use the \\Ntest{}-subject test partition; secondary diagnostic subsets are identified separately. The distribution states a data licence of CC BY-NC-ND 4.0, which permits non-commercial research and states that the data are not to be used for clinical decisions or patient care. The accompanying code repository carries a separate MIT software licence that covers code only and does not relax the data terms. Our use is non-commercial research measurement with no clinical deployment, which is what those terms allow. The data were taken from the public release. No application, data use agreement or credentialed-access step is recorded for this dataset in our project record. The release is distributed de-identified: each subject archive holds an OCT volume, a binary label, a visual-field mean deviation and coded demographic attributes, with no name, date or free text. We added no identifying field, attempted no re-identification, and linked to no external source. The artifacts we release are encoder weights, a fitted probe head and per-case prediction scores. We redistribute no image data.",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "10{,}000",
+        "line": 1819
+      },
+      {
+        "index": 2,
+        "value": "6{,}000",
+        "line": 1820
+      },
+      {
+        "index": 3,
+        "value": "1{,}000",
+        "line": 1820
+      },
+      {
+        "index": 4,
+        "value": "4.0",
+        "line": 1824
+      }
+    ]
+  },
+  {
+    "group": 91,
+    "file": "main_submission.tex",
+    "context_sha256": "9a8d7b5e8e7e12c69971b6050f991990b4f2fbb516af5dc11ab2fc1538ededdb",
+    "context": "MAE~\\citep{he2022mae} & random-75: 84.9 FT / 73.5 lin & block-75: 82.8 / 63.9; grid-75: 84.0 / 66.0 & random decisively better \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "-75",
+        "line": 1898
+      },
+      {
+        "index": 2,
+        "value": "84.9",
+        "line": 1898
+      },
+      {
+        "index": 3,
+        "value": "73.5",
+        "line": 1898
+      },
+      {
+        "index": 4,
+        "value": "-75",
+        "line": 1898
+      },
+      {
+        "index": 5,
+        "value": "82.8",
+        "line": 1898
+      },
+      {
+        "index": 6,
+        "value": "63.9",
+        "line": 1898
+      },
+      {
+        "index": 7,
+        "value": "-75",
+        "line": 1898
+      },
+      {
+        "index": 8,
+        "value": "84.0",
+        "line": 1898
+      },
+      {
+        "index": 9,
+        "value": "66.0",
+        "line": 1898
+      }
+    ]
+  },
+  {
+    "group": 92,
+    "file": "main_submission.tex",
+    "context_sha256": "4e3380964e1edd0dc8db8c106e320b9fdf331185fb3e31777d9a31ebad9c1faa",
+    "context": "SimMIM~\\citep{xie2022simmim} & 83.0 top-1 & best block 82.7; square 82.6 & random modestly better \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "83.0",
+        "line": 1899
+      },
+      {
+        "index": 3,
+        "value": "82.7",
+        "line": 1899
+      },
+      {
+        "index": 4,
+        "value": "82.6",
+        "line": 1899
+      }
+    ]
+  },
+  {
+    "group": 93,
+    "file": "main_submission.tex",
+    "context_sha256": "f89aa09494aa6268f96b8987668127ed6fe8c8460e9076e95d87f9b564158e89",
+    "context": "SemMAE~\\citep{li2022semmae} & random 66.8 lin & within-part 66.5; whole-part 52.9; adaptive 68.7 & naive semantics hurt; scheduled semantics help \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "66.8",
+        "line": 1900
+      },
+      {
+        "index": 2,
+        "value": "66.5",
+        "line": 1900
+      },
+      {
+        "index": 3,
+        "value": "52.9",
+        "line": 1900
+      },
+      {
+        "index": 4,
+        "value": "68.7",
+        "line": 1900
+      }
+    ]
+  },
+  {
+    "group": 94,
+    "file": "main_submission.tex",
+    "context_sha256": "6e1cf18e97d0f703c5302dc10332d3f1e4c9a013ac303dd69a13c5ece2d0470f",
+    "context": "SemMAE part quality~\\citep{li2022semmae} & no parts 63.7 & raw parts 63.6; refined 65.0 & an imperfect semantic model adds nothing \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "63.7",
+        "line": 1901
+      },
+      {
+        "index": 2,
+        "value": "63.6",
+        "line": 1901
+      },
+      {
+        "index": 3,
+        "value": "65.0",
+        "line": 1901
+      }
+    ]
+  },
+  {
+    "group": 95,
+    "file": "main_submission.tex",
+    "context_sha256": "2d3ac60ecef027265e309f03aeae4f1561db5a2213adb711e6695d23e0b02cdd",
+    "context": "AutoMAE~\\citep{chen2023automae} & MAE 83.26 FT & AutoMAE 83.32 & effectively tied \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "83.26",
+        "line": 1902
+      },
+      {
+        "index": 2,
+        "value": "83.32",
+        "line": 1902
+      }
+    ]
+  },
+  {
+    "group": 96,
+    "file": "main_submission.tex",
+    "context_sha256": "8b8ce7cbc678d78b795f1f2e789ae446f669b6d53e5185bf4ca64b5c9bb223f9",
+    "context": "HPM~\\citep{wang2023hpm} & random 82.49 & moderate 82.95; hardest-only 81.40 & benefit only with retained randomness \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "82.49",
+        "line": 1903
+      },
+      {
+        "index": 2,
+        "value": "82.95",
+        "line": 1903
+      },
+      {
+        "index": 3,
+        "value": "81.40",
+        "line": 1903
+      }
+    ]
+  },
+  {
+    "group": 97,
+    "file": "main_submission.tex",
+    "context_sha256": "07fa0e960196b1443bfb2f8f63a985db09caad03725197d77b69d0497c95356e",
+    "context": "AttMask~\\citep{kakogeorgiou2022attmask} & random 43.4 $k$-NN & high 43.5; hint 43.6 & nearly indistinguishable \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "43.4",
+        "line": 1904
+      },
+      {
+        "index": 2,
+        "value": "43.5",
+        "line": 1904
+      },
+      {
+        "index": 3,
+        "value": "43.6",
+        "line": 1904
+      }
+    ]
+  },
+  {
+    "group": 98,
+    "file": "main_submission.tex",
+    "context_sha256": "902a517998d6840b0aba7d4acf24222163e6f36497474eade82c2919abd9d674",
+    "context": "AttG-MAE~\\citep{sick2025attg} & MAE 78.5 @10\\% labels & guided 78.1 & guidance loses in this protocol \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "78.5",
+        "line": 1905
+      },
+      {
+        "index": 2,
+        "value": "10",
+        "line": 1905
+      },
+      {
+        "index": 3,
+        "value": "78.1",
+        "line": 1905
+      }
+    ]
+  },
+  {
+    "group": 99,
+    "file": "main_submission.tex",
+    "context_sha256": "09825db17ddb329fe2757ef5a709bdbf65a5231bff7af1d1d1e49e0cc450c0e9",
+    "context": "SSiT~\\citep{huang2024ssit} & no saliency 79.48 $\\kappa$ & 25\\% mask 77.53; 50\\% 79.97 & dataset-dependent, non-monotonic \\\\",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "79.48",
+        "line": 1906
+      },
+      {
+        "index": 2,
+        "value": "25",
+        "line": 1906
+      },
+      {
+        "index": 3,
+        "value": "77.53",
+        "line": 1906
+      },
+      {
+        "index": 4,
+        "value": "50",
+        "line": 1906
+      },
+      {
+        "index": 5,
+        "value": "79.97",
+        "line": 1906
+      }
+    ]
+  },
+  {
+    "group": 100,
+    "file": "main_submission.tex",
+    "context_sha256": "42faed28bfd832f9bf304a07eac92d125e01ccc3316977e579b3e4fb8a9b3564",
+    "context": "contrast & epoch & $\\Delta$ AUC & 95\\% CI & $p$ & $q$ \\\\",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "95",
+        "line": 1930
+      }
+    ]
+  },
+  {
+    "group": 101,
+    "file": "main_submission.tex",
+    "context_sha256": "c287a7e0aef706f35075d89dcbeb1958708cf9b731cc94bf82530b12bd4bb7b8",
+    "context": "Benjamini--Hochberg is applied within a declared primary family consisting of exactly these nine contrasts (the fp16 comparisons among \\textsc{random}, \\ArmBest{} and \\textsc{envelope} at epochs 50, 75 and 100) and the remaining 25 exploratory contrasts in the stored statistics are corrected as a separate family. The two families are never pooled, and the $q$ values printed above are those of the nine-contrast family only. Declaring the family fixes what is corrected together. It does not make these contrasts confirmatory, because the test split was inspected repeatedly before the family was fixed, and the paper reports them as descriptive throughout.",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "50",
+        "line": 1949
+      },
+      {
+        "index": 2,
+        "value": "75",
+        "line": 1949
+      },
+      {
+        "index": 3,
+        "value": "100",
+        "line": 1949
+      },
+      {
+        "index": 4,
+        "value": "25",
+        "line": 1950
+      }
+    ]
+  },
+  {
+    "group": 102,
+    "file": "main_submission.tex",
+    "context_sha256": "0391a70168988e4a67d89a1ac05a30bee9ed16f9b64142effd3984b9e739433e",
+    "context": "\\begin{figure}[h] \\centering \\includegraphics[width=0.46\\linewidth]{fig_precision_paradox.png} \\caption{Downstream AUC at matched epoch 50 against mask purity, the fraction of masked patches lying on retinal tissue. The policy whose masks are $97\\%$ on-tissue does not separate from the null, while policies at $40$--$43\\%$ purity gain the most. The ordering does not support the intuition that more accurate anatomical masking yields better representations. The AUC axis is truncated and no interval is drawn, and the dashed line is a least-squares fit through the arms shown; with four to five arms this is descriptive, not inferential. The point labelled \\texttt{oracle} is \\ArmBest{}.} \\label{fig:paradox} \\end{figure}",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "50",
+        "line": 1963
+      },
+      {
+        "index": 2,
+        "value": "97",
+        "line": 1964
+      },
+      {
+        "index": 3,
+        "value": "40",
+        "line": 1965
+      },
+      {
+        "index": 4,
+        "value": "43",
+        "line": 1965
+      }
+    ]
+  },
+  {
+    "group": 103,
+    "file": "main_submission.tex",
+    "context_sha256": "60b50c6e2d86e4e8900c1be5c56c0a9489a2e0a3ca908f3f59208f5866507bea",
+    "context": "\\begin{figure}[h] \\centering \\includegraphics[width=0.72\\linewidth]{fig_specificity_ladder.png} \\caption{The matched-epoch-50 result arranged as a ladder of increasing anatomical specificity, measured as the share of tissue each policy's targets hide (Table~\\ref{tab:geom}). Points are paired differences in test AUC against the unguided null on identical cases, with \\Nboot-resample percentile bootstrap intervals. The axis is centred on zero, a meaningful baseline for a difference, with the displayed range labeled explicitly. Filled markers denote intervals excluding zero. The two arms that separate from the null are not the two that hide the most anatomy, which is the observation Section~\\ref{sec:results-h3} develops. The intervals concern paired differences, not individual-arm AUC uncertainty. Companion to Figure~\\ref{fig:paradox}.} \\label{fig:ladder} \\end{figure}",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "-50",
+        "line": 1978
+      }
+    ]
+  },
+  {
+    "group": 104,
+    "file": "main_submission.tex",
+    "context_sha256": "28c18c2dcc0b0b1b62e6da24fbda27996078ed4e1c6a5985904c510304f252ca",
+    "context": "\\begin{figure}[h] \\centering \\includegraphics[width=\\linewidth]{fig_geometry_panel.png} \\caption{Measured mask geometry per policy, 600 training slices. Bars start at zero and no interval is drawn; each is a mean over those slices. The four rectangle policies have similar nominal target settings, but differ in realized masking ratio and context as well as anatomy hidden. The anatomy policy differs on all four axes (half the masking ratio, $1.6\\times$ the context, $0.4\\times$ the predictor loss slots), so its deficit cannot be attributed to target shape. Bars labelled \\texttt{oracle} and \\texttt{cover-f0.21} are \\ArmBest{} and \\textsc{cover}.} \\label{fig:geom} \\end{figure}",
+    "tokens": [
+      {
+        "index": 1,
+        "value": "1.6",
+        "line": 1999
+      },
+      {
+        "index": 2,
+        "value": "0.4",
+        "line": 1999
+      },
+      {
+        "index": 3,
+        "value": "0.21",
+        "line": 2001
+      }
+    ]
+  },
+  {
+    "group": 105,
+    "file": "main_submission.tex",
+    "context_sha256": "96fac57452ffc5770571d06861bb469a9c96aa76d2cfd9058164aef42482a9c6",
+    "context": "\\begin{table}[h] \\centering \\caption{Full fp32 re-probe against the original fp16 result, same frozen encoder in each row. The eight DeLong $p$-values are unadjusted diagnostics, not a family-wise test. The largest difference is $2\\times10^{-4}$.} \\label{tab:fp32} \\small \\input{auto/table_fp32} \\end{table}",
+    "tokens": [
+      {
+        "index": 2,
+        "value": "2",
+        "line": 2020
+      },
+      {
+        "index": 3,
+        "value": "10",
+        "line": 2020
+      },
+      {
+        "index": 4,
+        "value": "-4",
+        "line": 2020
+      }
+    ]
+  },
+  {
+    "group": 106,
+    "file": "main_submission.tex",
+    "context_sha256": "44168e4e42060c235832486d385f43da7eec48abdca9b70728145869da5b7c9a",
+    "context": "\\paragraph{Software and hardware environment.} Every number in this paper was produced under one environment, and the versions below were read from the live interpreter rather than recalled. Python 3.11.9 on 64-bit Windows (build 10.0.26200); PyTorch 2.7.1 compiled against CUDA 12.8 with cuDNN 9.7.1; one NVIDIA GeForce RTX 3090 with 24\\,GiB of memory, driver 610.62. The statistics and figures use NumPy 2.4.4, SciPy 1.17.1 and scikit-learn 1.9.0, and the manuscript is compiled by Tectonic 0.17.0. A lock file pinning 87 distributions accompanies the artifact. We re-resolved it against the live interpreter and every pin matches the installed version exactly, with no conflict. That interpreter also carries 16 further packages (test, plotting and PDF-inspection tools such as pytest 9.1.1, statsmodels 0.14.6 and seaborn 0.13.2), which are deliberately absent from the lock file because no reported number depends on them. The chain from stored per-case predictions through macros, tables and figures to the compiled archive runs as one ordered script, so the released predictions, the released head and the numbers printed here are joined by code rather than by transcription. We did not re-verify these results under a second CUDA or PyTorch version, so the fp32 re-encode of Appendix~\\ref{app:fp32} on different hardware is the only cross-environment evidence we have.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "3.11",
+        "line": 2031
+      },
+      {
+        "index": 1,
+        "value": "64",
+        "line": 2031
+      },
+      {
+        "index": 2,
+        "value": "10.0",
+        "line": 2032
+      },
+      {
+        "index": 3,
+        "value": "2.7",
+        "line": 2032
+      },
+      {
+        "index": 4,
+        "value": "12.8",
+        "line": 2032
+      },
+      {
+        "index": 5,
+        "value": "9.7",
+        "line": 2032
+      },
+      {
+        "index": 6,
+        "value": "3090",
+        "line": 2033
+      },
+      {
+        "index": 7,
+        "value": "24",
+        "line": 2033
+      },
+      {
+        "index": 8,
+        "value": "610.62",
+        "line": 2033
+      },
+      {
+        "index": 9,
+        "value": "2.4",
+        "line": 2034
+      },
+      {
+        "index": 10,
+        "value": "1.17",
+        "line": 2034
+      },
+      {
+        "index": 11,
+        "value": "1.9",
+        "line": 2034
+      },
+      {
+        "index": 12,
+        "value": "0.17",
+        "line": 2035
+      },
+      {
+        "index": 13,
+        "value": "87",
+        "line": 2035
+      },
+      {
+        "index": 14,
+        "value": "16",
+        "line": 2038
+      },
+      {
+        "index": 15,
+        "value": "9.1",
+        "line": 2039
+      },
+      {
+        "index": 16,
+        "value": "0.14",
+        "line": 2039
+      },
+      {
+        "index": 17,
+        "value": "0.13",
+        "line": 2039
+      }
+    ]
+  },
+  {
+    "group": 107,
+    "file": "main_submission.tex",
+    "context_sha256": "f5870f02a279f9e863d84205fc5fa0f50fba899ff87884cacfe2a70416f95584",
+    "context": "\\paragraph{Why the intervals are non-parametric.} The estimator choice was checked against the data rather than assumed. The per-case paired differences are strongly non-normal with heavy tails (Shapiro--Wilk $W=0.968$--$0.981$, $p<10^{-10}$), and the raw within-arm scores more so ($p\\approx10^{-37}$). Levene's test also rejects equal variance across arms ($F=21.4$, $p<0.001$), though the variance ratio is only $1.16$ and is detectable mainly because $n=9{,}000$. None of this invalidates what we report: a percentile bootstrap makes no distributional assumption about the deltas, which is the reason for choosing it, and an AUC is rank-based, so DeLong's variance is built from placement values rather than from Gaussian scores. The diagnostics are recorded here because ``the intervals are non-parametric'' is a claim a reader should be able to check, not take on trust. Where $n$ is small (the five-arm and four-arm correlations), a normality test has essentially no power, so we treat those as descriptive throughout and draw no inference from them.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "0.968",
+        "line": 2050
+      },
+      {
+        "index": 1,
+        "value": "0.981",
+        "line": 2050
+      },
+      {
+        "index": 2,
+        "value": "10",
+        "line": 2051
+      },
+      {
+        "index": 3,
+        "value": "-10",
+        "line": 2051
+      },
+      {
+        "index": 4,
+        "value": "10",
+        "line": 2051
+      },
+      {
+        "index": 5,
+        "value": "-37",
+        "line": 2051
+      },
+      {
+        "index": 6,
+        "value": "21.4",
+        "line": 2052
+      },
+      {
+        "index": 7,
+        "value": "0.001",
+        "line": 2052
+      },
+      {
+        "index": 8,
+        "value": "1.16",
+        "line": 2053
+      },
+      {
+        "index": 9,
+        "value": "9{,}000",
+        "line": 2054
+      }
+    ]
+  },
+  {
+    "group": 108,
+    "file": "main_submission.tex",
+    "context_sha256": "e6b2b924808afbafe845df4d805f870c933540034c5632bb64e7be8ac6c36cfc",
+    "context": "\\paragraph{Checkpoint identity.} The shared epoch-25 ancestor is identified by SHA-256 (\\texttt{e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b}), which was checked against the retained copies, and the replication chain of Appendix~\\ref{app:replication} re-hashes it before each leg. The frozen-probe implementation disables encoder gradients; file hashes bind the saved checkpoint but are not, by themselves, a check of every in-memory parameter update. The six proposed replication configurations differ in policy, seed and logging fields, not only seed.",
+    "tokens": [
+      {
+        "index": 0,
+        "value": "-25",
+        "line": 2087
+      }
+    ]
+  }
+]

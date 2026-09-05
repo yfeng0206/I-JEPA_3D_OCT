@@ -111,6 +111,23 @@ conditions before launch.
 - Parent integrated regression run: 149 tests passed across training, evaluation
   identity, mask/guide/collation and weight inventory. Release/evidence checks
   are a separate, still-pending acceptance path.
+- Reviewed engineering milestone published at `73e0b55` on the working branch.
+  Main remains unchanged.
+- The strict plot validator exposed a precision mismatch in the trajectory
+  figure. Parent fixed the selected null precision, added 11 regressions and
+  regenerated only that PNG; every generated table/macro stayed unchanged.
+- Seven legacy figure blockers were adjudicated: five unretained attribution
+  displays were excluded from the submission with an explicit limitation, and
+  two other figures were replaced from exact retained sources under new names.
+  All original images remain preserved.
+- Six residual literal-reporting issues were corrected without changing primary
+  statistics: cached-head reproduction scope, stale geometry agreement count,
+  subgroup-specific eligibility, unretained initial-audit count, a rounded
+  spread presented as an exact bound, and historical-environment scope.
+- Repaired credential-free Overleaf authentication succeeded in a new
+  discovery-only dry run. No remote edits/conflicts were observed; nothing was
+  pushed. Final publication will use the exact release manifest, not the broader
+  discovery list of historical files.
 
 ## Two tracks
 

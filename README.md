@@ -95,7 +95,7 @@ Each `.pth.tar` is a full training state (`encoder`, `target_encoder`, `predicto
 - Phase 2 (done): Probe architecture ablations — full 2×3 matrix (3 probes × frozen/fine-tune)
 - Phase 3 (done): Interpretability — occlusion attribution, patch aggregate, bootstrap CI
 - Masking strategy (Rung 1, done): anatomy-guided "oracle" masking beats random — frozen +0.010 (p<0.0005), fine-tune +0.008
-- Phase 4 (in progress): Foundation-model baselines on same Test split (DINOv3, OCTCube)
+- Phase 4 (deferred): Foundation-model baselines on the same Test split (DINOv3, OCTCube); no such job is started by the current investigation.
 - Phase 5 (planned): 3D-aware SSL extension (multi-view / axial)
 
 Details and backlog: [`docs/research_log.md`](docs/research_log.md).

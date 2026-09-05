@@ -1,316 +1,265 @@
-"""P13: build and VALIDATE the Overleaf submission ZIP.
+"""Build in a unique stage; publish ZIP/PDF/DOCX only after all release gates.
 
-Validation is the point of this script. It does not just archive files; it
-extracts the archive to a scratch directory, compiles it there with no access to
-the working tree, and refuses to declare success unless:
-
-  1. the archive compiles standalone (catches missing \\input or figure files)
-  2. main content fits the 9-page limit (references/appendix excluded)
-  3. there are no undefined citations or references
-  4. no author name, affiliation, or identifying URL appears (double-blind)
-  5. no unresolved \\ph{} placeholder remains, unless --allow-placeholders
-  6. every \\includegraphics target is present in the archive
-
-Usage:
-  python p13_build_zip.py [--allow-placeholders] [--out PATH]
+The manifest is published last and records the exact validated source tree.
+An interrupted multi-file promotion is detectable by its hashes. Failed gates
+leave the previous deliverables and release manifest untouched.
 """
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
-import os
+from pathlib import Path
 import re
-import shutil
 import subprocess
 import sys
 import zipfile
-from datetime import datetime
 
-PAPER = r"C:\Users\Gary\Desktop\jepa\paper\genai4health2026"
-SCRATCH = r"D:\jepa_phase0\autopilot_out\zip_validate"
+try:
+    from . import release_assets as assets
+except ImportError:
+    import release_assets as assets
+
+PAPER = str(assets.PAPER)
 TECTONIC = r"D:\jepa_phase0\tools\tectonic\tectonic.exe"
 PY = r"D:\jepa_phase0\.venv\Scripts\python.exe"
 PAGE_LIMIT = 9
-
-# Terms that would break double-blind review if present in the compiled PDF.
-IDENTIFYING = [
-    "yfeng", "Feng", "Gary", "Microsoft", "garyfeng",
-    "github.com/yfeng0206", "huggingface.co/yfeng0206",
-    "I-JEPA_3D_OCT", "ijepa-3d-oct-checkpoints",
-]
+IDENTIFYING = ["yfeng", "Gary Feng", "Microsoft", "garyfeng",
+              "github.com/yfeng0206", "huggingface.co/yfeng0206",
+              "I-JEPA_3D_OCT", "ijepa-3d-oct-checkpoints"]
+used_graphics = assets.graphics
 
 
-def used_graphics(tex_text):
-    """All \\includegraphics targets.
-
-    The options and the filename may be split across lines with a trailing `%`
-    line-continuation, so comment-continuations are folded away before matching.
-    A naive regex silently misses those and produces a false PASS on the
-    "all graphics present" check.
-    """
-    folded = re.sub(r"(?<!\\)%[^\n]*\n\s*", "", tex_text)
-    return set(re.findall(r"\\includegraphics\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}", folded))
+def identifying_text_hits(text):
+    normalized = re.sub(r"\s+", " ", text).casefold()
+    hits = [term for term in IDENTIFYING if term.casefold() in normalized]
+    if re.search(r"\b(?:[a-z]:[\\/]+)?users[\\/]+gary(?=[\\/]|\s|$)", text, re.I):
+        hits.append("author-specific local path")
+    return hits
 
 
-def build(out_zip, allow_ph, mark_uploaded=False):
-    src = os.path.join(PAPER, "main_submission.tex")
-    tex = open(src, encoding="utf-8").read()
+def inspect_pdf(pdf):
+    import fitz
+    with fitz.open(pdf) as doc:
+        headings, identifying = [], []
+        for i, page in enumerate(doc):
+            text = page.get_text()
+            for term in identifying_text_hits(text):
+                identifying.append({"page": i + 1, "term": term})
+            # A prose mention of references is not the References heading.
+            for block in page.get_text("dict")["blocks"]:
+                for line in block.get("lines", []):
+                    content = "".join(span["text"] for span in line["spans"]).strip()
+                    if content == "References":
+                        headings.append((i + 1, line["bbox"][1]))
+        metadata = {key: value for key, value in doc.metadata.items()
+                    if key in ("author", "subject", "keywords") and value}
+        refs, y = headings[0] if len(headings) == 1 else (None, None)
+        main_pages = refs - 1 if refs and y < 95 else refs
+        return {"total_pages": len(doc), "references_start_page": refs,
+                "references_heading_y": y, "main_content_pages": main_pages,
+                "identifying_terms_found": identifying, "identifying_metadata": metadata,
+                "references_headings": headings}
 
-    if os.path.isdir(SCRATCH):
-        shutil.rmtree(SCRATCH, ignore_errors=True)
-    os.makedirs(SCRATCH, exist_ok=True)
-    stage = os.path.join(SCRATCH, "stage")
-    os.makedirs(stage, exist_ok=True)
 
-    # ---- assemble
-    shutil.copy(src, os.path.join(stage, "main.tex"))
-    for f in ("neurips_2026.sty", "references.bib"):
-        shutil.copy(os.path.join(PAPER, f), os.path.join(stage, f))
-    # auto/ is small and fully generated, so it ships whole
-    s = os.path.join(PAPER, "auto")
-    if os.path.isdir(s):
-        shutil.copytree(s, os.path.join(stage, "auto"),
-                        ignore=shutil.ignore_patterns("*.aux", "*.log"))
-    # figures/ holds many images from earlier drafts; ship only what is cited,
-    # otherwise the archive carries several MB Overleaf will never render.
-    wanted_raw = used_graphics(tex)
-    os.makedirs(os.path.join(stage, "figures"), exist_ok=True)
-    for g in wanted_raw:
-        base = os.path.basename(g)
-        for ext in ("", ".png", ".pdf", ".jpg"):
-            cand = os.path.join(PAPER, "figures", base + ext)
-            if os.path.exists(cand):
-                shutil.copy(cand, os.path.join(stage, "figures", base + ext))
-                break
+def command_gate(script, arguments, cwd):
+    result = subprocess.run([PY, str(Path(__file__).with_name(script)), *arguments],
+                            cwd=cwd, capture_output=True, text=True)
+    output = (result.stdout or "") + (result.stderr or "")
+    print("\n".join(output.splitlines()[-12:]))
+    return result.returncode == 0
 
-    # ---- 6. every referenced graphic must exist
-    wanted = used_graphics(tex)
-    missing_gfx = []
-    for g in wanted:
-        found = False
-        for sub in ("figures", "auto", ""):
-            for ext in ("", ".png", ".pdf", ".jpg"):
-                if os.path.exists(os.path.join(stage, sub, g + ext)):
-                    found = True
-                    break
-            if found:
-                break
-        if not found:
-            missing_gfx.append(g)
 
-    # ---- 5. placeholders
-    # A \ph{} almost never appears literally in the manuscript: it lives in a
-    # \newcommand inside auto/auto_numbers.tex and reaches the page through a
-    # macro. Scanning only main_submission.tex therefore returned zero and
-    # passed this check while Table 1 was visibly rendering red placeholder
-    # cells. Resolve macros first, then report only those actually referenced.
-    placeholders = [p for p in re.findall(r"\\ph\{([^}]*)\}", tex)
-                    if "newcommand" not in p]
-    auto_p = os.path.join(PAPER, "auto", "auto_numbers.tex")
-    if os.path.exists(auto_p):
-        auto_txt = open(auto_p, encoding="utf-8").read()
-        for name, val in re.findall(r"\\newcommand\{\\(\w+)\}\{([^}]*\\ph\{[^}]*\}[^}]*)\}",
-                                    auto_txt):
-            if re.search(r"\\%s\b" % name, tex):
-                placeholders.append("%s (macro used in manuscript)" % name)
-
-    # ---- 1. standalone compile
-    rc = subprocess.call([TECTONIC, "-X", "compile", "main.tex", "--keep-logs",
-                          "--keep-intermediates"],
-                         cwd=stage, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-    pdf = os.path.join(stage, "main.pdf")
-    compiled = rc == 0 and os.path.exists(pdf)
-
-    # ---- 2/4. page budget and anonymity, from the compiled PDF
-    pages = refs_page = refs_y = None
-    found_ident = []
-    if compiled:
-        try:
-            import fitz
-            d = fitz.open(pdf)
-            pages = d.page_count
-            texts = [d.load_page(i).get_text() or "" for i in range(pages)]
-            for i in range(pages):
-                hits = d.load_page(i).search_for("References")
-                if hits and refs_page is None:
-                    refs_page = i + 1
-                    refs_y = hits[0].y0
-            body = "\n".join(texts[: (refs_page or pages)])
-            for term in IDENTIFYING:
-                if term.lower() in body.lower():
-                    found_ident.append(term)
-        except Exception as e:
-            print("[warn] pdf inspection failed:", e)
-
-    # Main content occupies pages 1..refs_page, EXCEPT when the References
-    # heading sits at the very top of its page, in which case the last page of
-    # main content is refs_page - 1. The NeurIPS text block starts at y=72pt
-    # (1 inch top margin), so a heading within ~20pt of that is page-topping.
-    if refs_page is not None:
-        main_pages = refs_page - 1 if (refs_y is not None and refs_y < 95) else refs_page
-    else:
-        main_pages = pages
-
-    # ---- 3. undefined refs
-    logp = os.path.join(stage, "main.log")
-    undefined = []
-    if os.path.exists(logp):
-        log = open(logp, encoding="utf-8", errors="replace").read()
-        undefined = re.findall(r"(?:Citation|Reference) `([^']+)' on page \d+ undefined", log)
-
-    checks = {
-        "1_compiles_standalone": compiled,
-        "2_main_content_within_%d_pages" % PAGE_LIMIT:
-            (main_pages is not None and main_pages <= PAGE_LIMIT),
-        "3_no_undefined_refs": len(undefined) == 0,
-        "4_anonymous": len(found_ident) == 0,
-        "5_no_placeholders": (len(placeholders) == 0) or allow_ph,
-        "6_all_graphics_present": len(missing_gfx) == 0,
-    }
-    ok = all(checks.values())
-
-    # ---- write the archive only from the staged (validated) tree
-    if os.path.exists(out_zip):
-        os.remove(out_zip)
-    with zipfile.ZipFile(out_zip, "w", zipfile.ZIP_DEFLATED) as z:
-        for root, _, files in os.walk(stage):
-            for fn in files:
-                if fn.endswith((".aux", ".log", ".out", ".blg", ".xdv", ".bbl")):
-                    continue
-                full = os.path.join(root, fn)
-                z.write(full, os.path.relpath(full, stage))
-        z.writestr("README_OVERLEAF.txt",
-                   "Upload this zip to Overleaf and set main.tex as the root document.\n"
-                   "Compiler: XeLaTeX or pdfLaTeX. Bibliography: BibTeX.\n"
-                   "All numeric quantities resolve through auto/auto_numbers.tex,\n"
-                   "which is generated from stored per-case predictions.\n"
-                   "Do not edit auto/ by hand.\n")
-
-    report = {"built": datetime.now().astimezone().isoformat(timespec="seconds"),
-              "zip": out_zip, "zip_bytes": os.path.getsize(out_zip),
-              "total_pages": pages, "references_start_page": refs_page, "references_heading_y": refs_y,
-              "main_content_pages": main_pages, "page_limit": PAGE_LIMIT,
-              "undefined_refs": undefined, "identifying_terms_found": found_ident,
-              "unresolved_placeholders": placeholders,
-              "missing_graphics": missing_gfx,
-              "checks": checks, "ALL_PASS": ok}
-    with open(os.path.join(SCRATCH, "validation.json"), "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=1)
-
-    print("\n=== ZIP VALIDATION ===")
-    for k, v in checks.items():
-        print("  %-40s %s" % (k, "PASS" if v else "FAIL"))
-    print("\n  total pages          : %s" % pages)
-    print("  references start page: %s (heading y=%s)" % (refs_page, refs_y));print("  main content pages   : %s (limit %d)" % (main_pages, PAGE_LIMIT))
-    if undefined:
-        print("  undefined refs       : %s" % undefined[:8])
-    if found_ident:
-        print("  IDENTIFYING TERMS    : %s" % found_ident)
-    if placeholders:
-        print("  placeholders         : %s" % placeholders)
-    if missing_gfx:
-        print("  missing graphics     : %s" % missing_gfx)
-    print("\n  archive: %s (%.2f MB)" % (out_zip, os.path.getsize(out_zip) / 1e6))
-
-    # Publish the validated PDF back into the repo. Without this the ZIP and
-    # paper/main_submission.pdf drift apart, because this script compiles in a
-    # scratch directory. A mock reviewer read the stale repo PDF and reported a
-    # missing appendix and a page-limit violation that the real artifact did not
-    # have, so the staleness cost a review round.
-    if compiled:
-        repo_pdf = os.path.join(PAPER, "main_submission.pdf")
-        try:
-            shutil.copy(pdf, repo_pdf)
-            print("  published validated PDF -> %s" % repo_pdf)
-        except Exception as e:
-            print("  [warn] could not publish PDF: %s" % e)
-
-    # Publish a loose-file mirror alongside the archive. Re-uploading a whole ZIP
-    # forces Overleaf to rebuild the project every time; replacing the two or
-    # three files that actually changed does not. CHANGED.txt is computed by
-    # content hash against the previous publish, so it lists exactly what needs
-    # re-uploading and nothing else.
-    if ok:
-        mirror = os.path.splitext(out_zip)[0] + "_files"
-        prev = {}
-        man = os.path.join(mirror, ".manifest.json")
-        # Baseline for CHANGED.txt. .manifest.json advances on EVERY successful
-        # build, so two builds in a row made CHANGED.txt report "nothing" even
-        # when the source had changed substantially since the operator last
-        # uploaded -- which defeats the point of the mirror. The upload baseline
-        # advances only when --mark-uploaded is passed, so CHANGED.txt
-        # accumulates across rebuilds and answers the question actually being
-        # asked: what have I not uploaded yet.
-        upl = os.path.join(mirror, ".uploaded.json")
-        base, base_src = {}, "the previous publish"
-        if os.path.exists(upl):
-            try:
-                base = json.load(open(upl, encoding="utf-8"))
-                base_src = "your last marked upload"
-            except Exception:
-                base = {}
-        if os.path.exists(man):
-            try:
-                prev = json.load(open(man, encoding="utf-8"))
-            except Exception:
-                prev = {}
-        if not base:
-            base = prev
-        changed, now = [], {}
-        for root, _dirs, files in os.walk(stage):
-            for fn in files:
-                if fn.endswith((".aux", ".log", ".out", ".blg", ".synctex.gz")):
-                    continue
-                full = os.path.join(root, fn)
-                rel = os.path.relpath(full, stage).replace("\\", "/")
-                h = hashlib.sha256(open(full, "rb").read()).hexdigest()
-                now[rel] = h
-                if base.get(rel) != h:
-                    changed.append(rel)
-                dst = os.path.join(mirror, rel)
-                os.makedirs(os.path.dirname(dst), exist_ok=True)
-                shutil.copy(full, dst)
-        removed = sorted(set(base) - set(now))
-        with open(man, "w", encoding="utf-8") as f:
-            json.dump(now, f, indent=1, sort_keys=True)
-        if mark_uploaded:
-            with open(upl, "w", encoding="utf-8") as f:
-                json.dump(now, f, indent=1, sort_keys=True)
-            print("  upload baseline  -> marked; CHANGED.txt starts fresh next build")
-        with open(os.path.join(mirror, "CHANGED.txt"), "w", encoding="utf-8") as f:
-            f.write("Files changed since %s (%s)\n"
-                    % (base_src, datetime.now().strftime("%Y-%m-%d %H:%M")))
-            f.write("Upload only these to Overleaf; the rest are unchanged.\n")
-            f.write("main.pdf and main.bbl are build outputs - Overleaf makes\n")
-            f.write("its own, so they never need uploading. main.pdf differs on\n")
-            f.write("every build because it embeds a timestamp.\n\n")
-            need = [c for c in sorted(changed)
-                    if c not in ("main.pdf", "main.bbl")]
-            if need:
-                f.write("UPLOAD THESE (%d):\n" % len(need))
-                for c in need:
-                    f.write("  %s\n" % c)
-            else:
-                f.write("UPLOAD THESE: nothing. No source file changed.\n")
-            if removed:
-                f.write("\nNo longer part of the project, delete in Overleaf:\n")
-                for r in removed:
-                    f.write("  %s\n" % r)
-        print("  loose files      -> %s" % mirror)
-        need_n = [c for c in changed if c not in ("main.pdf", "main.bbl")]
-        print("  needs re-upload  : %s"
-              % (", ".join(sorted(need_n)) if need_n else "nothing"))
-
-    print("  ALL_PASS = %s" % ok)
-    return 0 if ok else 1
+def build(out_zip, allow_ph=False, mark_uploaded=False, *, paper_dir=None,
+          staging_root=None, pdf_out=None, docx_out=None, manifest_out=None,
+          expected_docx_sha256=None, stats_dir=None, citation_record=None, review_file=None):
+    if allow_ph or mark_uploaded:
+        print("Release bypass/upload marking is unsupported; validate and sync explicitly.")
+        return 1
+    paper = Path(paper_dir or PAPER).resolve()
+    out_zip = Path(out_zip).resolve()
+    pdf_out = Path(pdf_out) if pdf_out else paper / "main_submission.pdf"
+    docx_out = Path(docx_out) if docx_out else paper / "main_submission.docx"
+    manifest_out = Path(manifest_out) if manifest_out else out_zip.with_suffix(".release.json")
+    work = assets.unique_work(staging_root)
+    stage = work / "stage"
+    stage.mkdir()
+    report = {"built": datetime.now(timezone.utc).isoformat(), "ALL_PASS": False,
+              "stage": str(stage), "checks": {}}
+    checks = report["checks"]
+    try:
+        snapshot = assets.input_hashes(paper)
+        review_receipt = assets.stage_numeric_review(paper, work, review_file)
+        report["numeric_review"] = review_receipt
+        destinations = [path.resolve() for path in
+                        (out_zip, pdf_out, docx_out, manifest_out, docx_out.with_suffix(".docx.provenance.json"))]
+        if len(destinations) != len(set(destinations)):
+            raise ValueError("release destinations must be distinct")
+        protected_inputs = {assets.safe_path(paper, rel) for rel in snapshot}
+        if review_receipt is not None:
+            protected_inputs.add(Path(review_receipt["source"]).resolve())
+        if set(destinations) & protected_inputs:
+            raise ValueError("release destination would overwrite a source input (including numeric review input)")
+        report["input_hashes"] = snapshot
+        # Compile exactly the inputs identified recursively, not all historical assets.
+        staged_snapshot = assets.copy_snapshot(paper, stage, snapshot, rename_main=True)
+        source_map = {}
+        for rel, digest in snapshot.items():
+            remote = "main.tex" if rel == "main_submission.tex" else rel
+            source_map[remote] = {"source": rel, "sha256": digest,
+                                  "kind": "compiled_input"}
+        asset_manifest = assets.asset_inventory(stage)
+        report["assets"] = asset_manifest
+        checks["immutable_figure_inputs"] = asset_manifest["ALL_PASS"]
+        text, _ = assets.source_tree(stage, "main.tex")
+        checks["no_placeholders"] = not re.search(r"\\ph\b", assets.expanded_body(text))
+        checks["all_graphics_present"] = all(assets.resolve_graphic(stage, name).is_file()
+                                            for name in assets.graphics(text))
+        gate_args = ["--paper-dir", str(stage)]
+        if stats_dir:
+            gate_args += ["--stats-dir", str(stats_dir)]
+        checks["manuscript"] = command_gate("check_manuscript.py", gate_args, stage)
+        numeric_report = work / "numeric_coverage.json"
+        report["evidence_paths"] = {"numbers": str(numeric_report)}
+        numeric_args = gate_args + ["--report", str(numeric_report)]
+        if review_receipt:
+            numeric_args += ["--review-file", review_receipt["archived"]]
+        checks["numeric_evidence"] = command_gate(
+            "p15_verify_numbers.py", numeric_args, stage)
+        checks["numeric_review_input"] = False
+        assets.verify_numeric_review(review_receipt)
+        if checks["numeric_evidence"]:
+            numeric_data = json.loads(numeric_report.read_text(encoding="utf-8"))
+            assets.verify_numeric_review(review_receipt, numeric_data.get("review_sha256"))
+            checks["numeric_evidence"] = (
+                numeric_data.get("ALL_PASS") is True and numeric_data.get("checked_auc", 0) > 0
+                and bool(numeric_data.get("items"))
+                and numeric_data.get("input_hashes") == assets.input_hashes(stage))
+        checks["numeric_review_input"] = True
+        citation_report = work / "citation_validation.json"
+        report["evidence_paths"]["citations"] = str(citation_report)
+        citation_args = ["--paper-dir", str(stage), "--report", str(citation_report)]
+        if citation_record:
+            citation_args += ["--record", str(citation_record)]
+        checks["citation_metadata"] = command_gate("verify_citations.py", citation_args, stage)
+        if checks["citation_metadata"]:
+            citation_data = json.loads(citation_report.read_text(encoding="utf-8"))
+            checks["citation_metadata"] = (
+                citation_data.get("ALL_PASS") is True and bool(citation_data.get("items"))
+                and all(item.get("status") == "matched" for item in citation_data["items"])
+                and citation_data.get("source_sha256") == hashlib.sha256(text.encode("utf-8")).hexdigest()
+                and citation_data.get("bib_sha256") == hashlib.sha256(
+                    (stage / "references.bib").read_text(encoding="utf-8").encode("utf-8")).hexdigest())
+        if not all(checks.values()):
+            raise ValueError("source/evidence gate failed; no deliverable replaced")
+        result = subprocess.run(
+            [TECTONIC, "-X", "compile", "main.tex", "--keep-logs", "--keep-intermediates"],
+            cwd=stage, capture_output=True, text=True)
+        (work / "compiler.txt").write_text((result.stdout or "") + (result.stderr or ""),
+                                          encoding="utf-8")
+        pdf = stage / "main.pdf"
+        checks["compiles_standalone"] = result.returncode == 0 and pdf.is_file()
+        if not checks["compiles_standalone"]:
+            raise ValueError("standalone compiler failed")
+        inspection = inspect_pdf(pdf)
+        report.update(inspection)
+        checks["page_limit"] = (inspection["main_content_pages"] is not None
+                                and inspection["main_content_pages"] <= PAGE_LIMIT)
+        checks["anonymous"] = not (inspection["identifying_terms_found"]
+                                   or inspection["identifying_metadata"])
+        log_path = stage / "main.log"
+        log = log_path.read_text(encoding="utf-8", errors="replace") if log_path.exists() else ""
+        checks["no_undefined_refs"] = log_path.is_file() and not re.search(
+            r"(?:citation|reference).*undefined|undefined (?:citation|reference)|"
+            r"There were undefined|Label\(s\) may have changed", log, re.I)
+        if not all(checks.values()):
+            raise ValueError("PDF validation failed")
+        receipt = docx_out.with_suffix(".docx.provenance.json")
+        old_word_hash = assets.check_word_conflict(docx_out, expected_docx_sha256, receipt)
+        docx = work / "main_submission.docx"
+        checks["docx_generated"] = command_gate(
+            "make_docx.py", ["--paper-dir", str(stage), "--aux", str(stage / "main.aux"),
+                             "--out", str(docx), "--staging-root", str(work)], stage)
+        checks["docx_complete"] = checks["docx_generated"] and command_gate(
+            "check_docx.py", ["--paper-dir", str(stage), "--aux", str(stage / "main.aux"),
+                              "--docx", str(docx)], stage)
+        if not all(checks.values()):
+            raise ValueError("Word validation failed")
+        assets.assert_unchanged(stage, staged_snapshot)
+        candidate_zip = work / "release.zip"
+        with zipfile.ZipFile(candidate_zip, "w", zipfile.ZIP_DEFLATED) as archive:
+            for rel in sorted(source_map):
+                archive.write(assets.safe_path(stage, rel), rel)
+            archive.write(pdf, "main.pdf")
+            archive.writestr("README_OVERLEAF.txt",
+                             "Set main.tex as root. XeLaTeX/pdfLaTeX and BibTeX.\n"
+                             "See the release manifest for evidence coverage and input hashes.\n"
+                             "Hash identity and citation metadata are not claim validation.\n")
+        with zipfile.ZipFile(candidate_zip) as archive:
+            for rel, digest in staged_snapshot.items():
+                if hashlib.sha256(archive.read(rel)).hexdigest() != digest:
+                    raise ValueError("archived input differs from captured snapshot: " + rel)
+        # Frozen attachments are separately checked, never collected by a second glob.
+        attachments = {"main_editable.docx": {
+            "source": "main_submission.docx", "sha256": assets.sha256(docx),
+            "kind": "word_attachment", "check": "check_docx.py"}}
+        docx_receipt = work / "docx.provenance.json"
+        generated_receipt = docx.with_suffix(".docx.provenance.json")
+        receipt_data = json.loads(generated_receipt.read_text(encoding="utf-8")) if generated_receipt.exists() else {}
+        assets.write_json(docx_receipt, {**receipt_data, "docx_sha256": assets.sha256(docx),
+                                        "inputs": snapshot, "aux_sha256": assets.sha256(stage / "main.aux"),
+                                        "aux_path": str(stage / "main.aux")})
+        assets.assert_unchanged(paper, snapshot)
+        assets.assert_unchanged(stage, staged_snapshot)
+        assets.verify_numeric_review(review_receipt)
+        if {key: value["sha256"] for key, value in source_map.items()} != staged_snapshot:
+            raise ValueError("staged source manifest differs from captured snapshot")
+        if (assets.sha256(docx_out) if docx_out.exists() else None) != old_word_hash:
+            raise ValueError("Word copy changed during build; preserving collaborator edits")
+        report.update({"ALL_PASS": True, "source_files": source_map,
+                       "attachments": attachments,
+                       "assets": asset_manifest,
+                       "aux": {"path": str(stage / "main.aux"),
+                               "sha256": assets.sha256(stage / "main.aux")},
+                       "limits": ["Metadata existence/title matching is not citation claim support.",
+                                  "Figure identities include baseline-pinned external inputs; hashes "
+                                  "do not validate plotted values.",
+                                  "Anonymity scanning covers selectable PDF text and selected metadata; "
+                                  "it is not an OCR/pixel-identity audit."],
+                       "evidence": {"numbers": json.loads(numeric_report.read_text(encoding="utf-8")),
+                                    "citations": json.loads(citation_report.read_text(encoding="utf-8"))},
+                       "artifacts": {
+                           "zip": {"path": str(out_zip), "sha256": assets.sha256(candidate_zip)},
+                           "pdf": {"path": str(pdf_out), "sha256": assets.sha256(pdf)},
+                           "docx": {"path": str(docx_out), "sha256": assets.sha256(docx)}}})
+        candidate_manifest = work / "release.json"
+        assets.write_json(candidate_manifest, report)
+        assets.promote([(candidate_zip, out_zip), (pdf, pdf_out), (docx, docx_out),
+                        (docx_receipt, receipt), (candidate_manifest, manifest_out)],
+                       expected_current={docx_out: old_word_hash})
+    except Exception as exc:
+        report["ALL_PASS"] = False
+        report["error"] = str(exc)
+        print("FAIL:", exc)
+    assets.write_json(work / "validation.json", report)
+    for name, passed in checks.items():
+        print("  %s: %s" % (name, "PASS" if passed else "FAIL"))
+    print("  evidence:", work / "validation.json")
+    print("  ALL_PASS =", report["ALL_PASS"])
+    return 0 if report["ALL_PASS"] else 1
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--allow-placeholders", action="store_true")
-    ap.add_argument("--mark-uploaded", action="store_true",
-                    help="Record the current files as uploaded to Overleaf. "
-                         "CHANGED.txt then reports only what changes after this "
-                         "point, instead of resetting on every rebuild.")
-    ap.add_argument("--out", default=r"C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_FINAL.zip")
-    a = ap.parse_args()
-    sys.exit(build(a.out, a.allow_placeholders, a.mark_uploaded))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", default=r"C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_FINAL.zip")
+    parser.add_argument("--paper-dir", default=PAPER)
+    parser.add_argument("--staging-root")
+    parser.add_argument("--pdf-out")
+    parser.add_argument("--docx-out")
+    parser.add_argument("--manifest-out")
+    parser.add_argument("--expected-docx-sha256")
+    parser.add_argument("--stats-dir")
+    parser.add_argument("--citation-record")
+    parser.add_argument("--review-file", help="Numeric binding/review input; archived as private QA evidence")
+    args = vars(parser.parse_args())
+    out = args.pop("out")
+    sys.exit(build(out, **args))

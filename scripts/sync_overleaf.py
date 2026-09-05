@@ -10,8 +10,9 @@ error-prone step left, and it has already misled once - CHANGED.txt reported
 the last build rather than the last upload.
 
 Overleaf exposes every project as a git remote, so the whole step can be one
-command. This script pushes the SAME staged tree that p13_build_zip.py
-validates, so what lands in Overleaf is byte-identical to what passed the gates.
+command. A successful release manifest selects the exact validated source tree
+and separately checked Word attachment. Text is LF-normalized for git; unused
+local figures are not implicitly uploaded. Remote-only files are preserved.
 
 THE DATA-LOSS BUG THIS VERSION CLOSES
 -------------------------------------
@@ -35,8 +36,8 @@ managed file falls into exactly one case:
 
 A refusal prints a unified diff of remote versus local so the operator can see
 exactly what would have been destroyed, and exits non-zero. The only ways past
-it are --force (push anyway, with a loud warning) or --pull (take Overleaf's
-copy instead).
+it are explicit reconciliation or --pull (take Overleaf's copy instead).
+There is no force-push or overwrite-conflicts option.
 
 .overleaf_sync.json holds hashes only. The project id is stored as a truncated
 SHA-256 so the file carries nothing sensitive and can be committed; committing
@@ -72,23 +73,25 @@ Requirements
    plan the remote will refuse authentication. If that happens, nothing here
    will work and the loose-file mirror remains the fallback.
 
-Configure either by environment variable or by flag:
+Configure credentials only in the process environment (not CLI arguments):
 
-    setx OVERLEAF_PROJECT_ID  <project id>
-    setx OVERLEAF_TOKEN       <token>
+Set OVERLEAF_PROJECT_ID or pass --project-id. Inject OVERLEAF_TOKEN from an
+existing secret store into this process's environment; do not put its value in
+shell arguments, checked-in files, or remote URLs.
 
-The token is never printed. It is scrubbed out of every line of git output this
-script emits, including failure messages.
+The clone URL is credential-free. Authentication is passed only through
+subprocess-scoped Git configuration in the environment, with credential
+helpers, prompting, redirects and tracing disabled. Nothing writes the token
+to argv, repository configuration, credential storage or diagnostic files.
 
 Usage
 -----
     python scripts/sync_overleaf.py --check          # test auth only
     python scripts/sync_overleaf.py --dry-run        # classify, push nothing
-    python scripts/sync_overleaf.py                  # validate, then push
+    python scripts/sync_overleaf.py --release-manifest PATH  # validate, then push
     python scripts/sync_overleaf.py --pull           # show what Overleaf would
                                                      # change locally
     python scripts/sync_overleaf.py --pull --yes     # actually write it locally
-    python scripts/sync_overleaf.py --force          # overwrite remote edits
 
 Exit codes
 ----------
@@ -101,16 +104,22 @@ The push is refused unless the build passes all of p13_build_zip.py's checks,
 so a broken or over-length paper can never reach the project.
 """
 import argparse
+import base64
 import difflib
 import hashlib
 import json
 import os
+from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if REPO not in sys.path:
+    sys.path.insert(0, REPO)
+from autopilot import release_assets as assets
 PAPER_DEFAULT = os.path.join(REPO, "paper", "genai4health2026")
 VENV_PY = r"D:\jepa_phase0\.venv\Scripts\python.exe"
 STATE_DEFAULT = os.path.join(REPO, ".overleaf_sync.json")
@@ -163,8 +172,45 @@ def say(text=""):
     print(scrub(str(text)))
 
 
-def run(cmd, cwd=None, check=True, quiet=False):
-    r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+def child_environment():
+    env = dict(os.environ)
+    for key in list(env):
+        if (key == "OVERLEAF_TOKEN" or key.startswith("GIT_TRACE")
+                or key.startswith("GIT_CONFIG_KEY_") or key.startswith("GIT_CONFIG_VALUE_")
+                or key in ("GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS", "GIT_CURL_VERBOSE")):
+            env.pop(key, None)
+    env.update({"GIT_TERMINAL_PROMPT": "0", "GCM_INTERACTIVE": "Never", "GIT_TRACE_REDACT": "1"})
+    return env
+
+
+def authentication_environment(token, remote_url):
+    if not remote_url.startswith("https://git.overleaf.com/") or "@" in remote_url:
+        raise ValueError("authentication requires a credential-free Overleaf HTTPS URL")
+    encoded = base64.b64encode(("git:" + token).encode("utf-8")).decode("ascii")
+    _SECRETS.extend((token, encoded))
+    env = child_environment()
+    configuration = [
+        ("credential.helper", ""),
+        ("http.extraHeader", ""),
+        ("http.%s.extraHeader" % remote_url, "Authorization: Basic " + encoded),
+        ("http.followRedirects", "false"),
+        ("credential.interactive", "never"),
+        ("core.hooksPath", os.devnull),
+        ("init.templateDir", ""),
+    ]
+    env["GIT_CONFIG_COUNT"] = str(len(configuration))
+    for index, (key, value) in enumerate(configuration):
+        env["GIT_CONFIG_KEY_%d" % index] = key
+        env["GIT_CONFIG_VALUE_%d" % index] = value
+    return env
+
+
+def run(cmd, cwd=None, check=True, quiet=False, env=None):
+    if any(secret and secret in str(argument) for secret in _SECRETS for argument in cmd):
+        raise ValueError("credential material must not enter command arguments")
+    r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True,
+                       env=env if env is not None else child_environment())
+    r.stdout, r.stderr = scrub(r.stdout), scrub(r.stderr)
     if not quiet and r.stdout.strip():
         say(r.stdout.rstrip())
     if check and r.returncode != 0:
@@ -182,13 +228,45 @@ def rmtree_force(path):
     and is not an empty directory". Clear the read-only bit and retry.
     """
     def onerror(func, p, _exc):
-        try:
-            os.chmod(p, 0o700)
-            func(p)
-        except OSError:
-            pass
+        os.chmod(p, 0o700)
+        func(p)
     if os.path.exists(path):
         shutil.rmtree(path, onerror=onerror)
+
+
+def sanitize_clone_config(clone):
+    """Sanitize legacy transport metadata; never print its contents."""
+    clone = Path(clone).resolve()
+    config = assets.safe_path(clone, os.path.join(".git", "config"))
+    candidates = [config, assets.safe_path(clone, os.path.join(".git", "FETCH_HEAD"))]
+    logs = assets.safe_path(clone, os.path.join(".git", "logs"))
+    if logs.is_dir():
+        for root, directories, filenames in os.walk(logs, followlinks=False):
+            directories[:] = [name for name in directories if not (Path(root) / name).is_symlink()]
+            for name in filenames:
+                candidates.append(assets.safe_path(clone, (Path(root) / name).relative_to(clone)))
+    for path in candidates:
+        if not path.is_file():
+            continue
+        raw = path.read_text(encoding="utf-8", errors="replace")
+        if (any(secret and secret in raw for secret in _SECRETS)
+                or re.search(r"https?://[^\s/]*@", raw)
+                or re.search(r"(?i)extraheader|credential", raw)):
+            os.chmod(path, 0o600)
+            replacement = "[core]\n\tbare = false\n" if path == config else "Legacy authentication metadata removed.\n"
+            path.write_text(replacement, encoding="utf-8")
+
+
+def cleanup_clone(clone):
+    try:
+        sanitize_clone_config(clone)
+        rmtree_force(clone)
+    except Exception:
+        try:
+            sanitize_clone_config(clone)
+        except Exception:
+            raise RuntimeError("clone cleanup failed; sanitization unconfirmed at " + str(clone)) from None
+        raise RuntimeError("clone cleanup failed; sanitized residual checkout retained at " + str(clone)) from None
 
 
 def sha256_file(path):
@@ -261,9 +339,12 @@ def save_state(path, project_id, action, files):
         "last_action": action,
         "files": {k: files[k] for k in sorted(files)},
     }
-    with open(path, "w", encoding="utf-8", newline="\n") as f:
-        json.dump(st, f, indent=1, sort_keys=False)
-        f.write("\n")
+    work = assets.unique_work(prefix="sync-state")
+    candidate = work / "state.json"
+    assets.write_json(candidate, st)
+    assets.promote([(candidate, path)])
+    candidate.unlink()
+    work.rmdir()
     return st
 
 
@@ -354,40 +435,101 @@ def show_diff(remote_path, local_path, remote_rel, local_rel, limit=DIFF_LINES):
 
 # --------------------------------------------------------------- validation
 
-def validate():
-    """Refuse to publish anything the gates have not cleared."""
+def verify_local_release(paper, manifest):
+    """Recheck identity after validation and immediately before publishing."""
+    if manifest.get("ALL_PASS") is not True or not manifest.get("checks"):
+        raise ValueError("manifest is not a successful release")
+    required = {"immutable_figure_inputs", "no_placeholders", "all_graphics_present", "manuscript", "numeric_evidence",
+                "numeric_review_input", "citation_metadata", "compiles_standalone", "page_limit", "anonymous",
+                "no_undefined_refs", "docx_generated", "docx_complete"}
+    if not required.issubset(manifest["checks"]) or not all(
+            manifest["checks"][name] is True for name in required):
+        raise ValueError("required release gates are missing or failed")
+    sources = manifest.get("source_files", {})
+    if not sources or "main.tex" not in sources:
+        raise ValueError("empty or incomplete validated source tree")
+    expected = {item["source"]: item["sha256"] for item in sources.values()}
+    current_inputs = assets.input_hashes(paper)
+    if current_inputs != expected:
+        raise ValueError("local release inputs changed since validation")
+    expected_names = {"main.tex" if rel == "main_submission.tex" else rel: rel
+                      for rel in current_inputs}
+    if {rel: item["source"] for rel, item in sources.items()} != expected_names:
+        raise ValueError("release source name mapping differs from the compiled tree")
+    if assets.asset_inventory(paper) != manifest.get("assets"):
+        raise ValueError("asset identity/producer declaration changed; rebuild release")
+    reported_review = manifest.get("evidence", {}).get("numbers", {}).get("review_sha256")
+    assets.verify_numeric_review(manifest.get("numeric_review"), reported_review)
+    for artifact in manifest["artifacts"].values():
+        if assets.sha256(artifact["path"]) != artifact["sha256"]:
+            raise ValueError("release artifact changed: " + artifact["path"])
+    for rel, item in manifest.get("attachments", {}).items():
+        if rel != "main_editable.docx" or item.get("check") != "check_docx.py":
+            raise ValueError("unsupported/unvalidated extra attachment: " + rel)
+        if assets.sha256(assets.safe_path(paper, item["source"])) != item["sha256"]:
+            raise ValueError("Word attachment changed; reconcile comments/edits before regenerating")
+    if "main_editable.docx" not in manifest.get("attachments", {}):
+        raise ValueError("required checked Word attachment is missing")
+
+
+def validate(paper, manifest_path, work):
+    """Freeze only manifest-declared bytes; independently enforce Word checks."""
+    import zipfile
+    manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    verify_local_release(paper, manifest)
+    sources = manifest["source_files"]
+    stage = Path(work) / "validated"
+    stage.mkdir()
+    items = []
+    with zipfile.ZipFile(manifest["artifacts"]["zip"]["path"]) as archive:
+        expected_names = set(sources) | {"main.pdf", "README_OVERLEAF.txt"}
+        if set(archive.namelist()) != expected_names or len(archive.namelist()) != len(expected_names):
+            raise ValueError("ZIP tree differs from the exact validated manifest")
+        for rel, item in sources.items():
+            data = archive.read(rel)
+            if hashlib.sha256(data).hexdigest() != item["sha256"]:
+                raise ValueError("ZIP source hash mismatch: " + rel)
+            target = assets.safe_path(stage, rel)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+            items.append((str(target), rel))
+    aux = manifest.get("aux")
+    if not aux or assets.sha256(aux["path"]) != aux["sha256"]:
+        raise ValueError("validated aux unavailable/changed; rebuild release")
+    word = assets.safe_path(paper, manifest["attachments"]["main_editable.docx"]["source"])
     py = VENV_PY if os.path.isfile(VENV_PY) else sys.executable
-    r = subprocess.run([py, os.path.join("autopilot", "p13_build_zip.py")],
-                       cwd=REPO, capture_output=True, text=True)
-    out = r.stdout
-    ok = "ALL_PASS = True" in out
-    for line in out.splitlines():
-        if "PASS" in line or "FAIL" in line or "main content" in line:
-            say("  " + line.strip())
-    if not ok:
-        raise SystemExit("build did not pass; refusing to push to Overleaf")
-    return True
+    result = run([py, os.path.join(REPO, "autopilot", "check_docx.py"),
+                  "--paper-dir", str(paper), "--docx", str(word), "--aux", aux["path"]],
+                 cwd=REPO, check=False, quiet=True)
+    if result.returncode:
+        raise ValueError("Word completeness gate failed: " + result.stdout[-1000:])
+    frozen_word = stage / "main_editable.docx"
+    shutil.copyfile(word, frozen_word)
+    if assets.sha256(frozen_word) != manifest["attachments"]["main_editable.docx"]["sha256"]:
+        raise ValueError("Word changed while freezing attachment")
+    items.append((str(frozen_word), "main_editable.docx"))
+    verify_local_release(paper, manifest)
+    return items, manifest
 
 
-def warn_if_docx_stale(paper):
-    """Say so if the Word copy predates the manuscript it was rendered from.
+def verify_remote_tip(clone, branch, expected, *, env=None):
+    result = run(GIT + ["ls-remote", "origin", "refs/heads/" + branch],
+                 cwd=clone, quiet=True, env=env)
+    rows = [line.split() for line in result.stdout.splitlines() if line.strip()]
+    if len(rows) != 1 or rows[0][0] != expected:
+        raise ValueError("Overleaf moved since conflict review; restart sync (no force)")
 
-    The .docx is a convenience for collaborators who do not write LaTeX, and a
-    stale one circulating among them is worse than none, because its numbers
-    look as authoritative as the current ones. This does not block the push:
-    the .tex is what gets submitted, and refusing to publish a corrected
-    manuscript because a derived Word file lagged would be the wrong trade.
-    """
-    tex = os.path.join(paper, "main_submission.tex")
-    docx = os.path.join(paper, "main_submission.docx")
-    if not os.path.exists(docx):
-        say("  note: no Word copy yet; build one with autopilot/make_docx.py")
-        return
-    if os.path.getmtime(docx) < os.path.getmtime(tex):
-        say("  WARNING: main_submission.docx is older than the .tex it renders.")
-        say("           Rebuild it: python autopilot/make_docx.py")
-    else:
-        say("  Word copy is newer than the manuscript")
+
+def verify_staged_bytes(clone, items):
+    """Git attributes/filters must not change what passed the release gates."""
+    for source, rel in items:
+        result = subprocess.run(GIT + ["show", ":" + rel], cwd=clone, capture_output=True,
+                                env=child_environment())
+        expected = Path(source).read_bytes()
+        if is_text(rel):
+            expected = expected.replace(b"\r\n", b"\n")
+        if result.returncode or result.stdout != expected:
+            raise ValueError("git staged bytes differ from validated source: " + rel)
 
 
 # ----------------------------------------------------------- classification
@@ -491,7 +633,7 @@ def do_pull(clone, rhashes, items, paper, state_path, project_id, yes):
         say("      %d managed local files are not in the project at all; a pull"
             % len(local_only))
         say("      records them as intentionally absent so later syncs do not")
-        say("      resurrect them. Use --force to push them anyway.")
+        say("      resurrect them. Reconcile intentionally absent files explicitly.")
 
     if not changes:
         say("\nlocal paper already matches Overleaf; nothing to write.")
@@ -526,11 +668,14 @@ def do_pull(clone, rhashes, items, paper, state_path, project_id, yes):
 
 # -------------------------------------------------------------------- main
 
-def main():
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if any(argument.startswith("--token") for argument in argv):
+        say("Token CLI arguments are disabled; use the process OVERLEAF_TOKEN environment variable.")
+        return 1
     ap = argparse.ArgumentParser(
         description="Two-way, conflict-aware Overleaf sync.")
     ap.add_argument("--project-id", default=os.environ.get("OVERLEAF_PROJECT_ID"))
-    ap.add_argument("--token", default=os.environ.get("OVERLEAF_TOKEN"))
     ap.add_argument("--dry-run", action="store_true",
                     help="classify everything and push nothing")
     ap.add_argument("--check", action="store_true", help="test auth only")
@@ -538,28 +683,40 @@ def main():
                     help="copy Overleaf's managed files back into the paper dir")
     ap.add_argument("--yes", action="store_true",
                     help="confirm a --pull that would change local files")
-    ap.add_argument("--force", action="store_true",
-                    help="push over remote edits (never the default)")
+    ap.add_argument("--release-manifest",
+                    help="successful p13 release manifest; required for a push")
     ap.add_argument("--paper-dir", default=PAPER_DEFAULT,
                     help="local paper directory (default: paper/genai4health2026)")
     ap.add_argument("--state", default=STATE_DEFAULT,
                     help="sync state file (default: .overleaf_sync.json)")
     ap.add_argument("--message", default="sync validated submission")
-    a = ap.parse_args()
-
-    if a.token:
-        _SECRETS.append(a.token)
+    a = ap.parse_args(argv)
+    token = os.environ.get("OVERLEAF_TOKEN")
+    if token:
+        _SECRETS.append(token)
     paper = os.path.abspath(a.paper_dir)
     state_path = os.path.abspath(a.state)
 
-    if a.pull and a.force:
-        say("--pull and --force are opposites; pick one.")
-        return 1
     if not os.path.isdir(paper):
         say("no such paper directory: %s" % paper)
         return 1
 
+    # Discovery-only operations retain the historical broad inventory. A push
+    # replaces it below with only the frozen, manifest-validated tree.
     items = collect(paper)
+    manifest = None
+    work = assets.unique_work(prefix="sync")
+    if not (a.pull or a.check) and (a.release_manifest or not a.dry_run):
+        if not a.release_manifest:
+            say("A successful --release-manifest is required; no files pushed.")
+            return 1
+        try:
+            items, manifest = validate(paper, a.release_manifest, work)
+        except (OSError, ValueError, KeyError) as exc:
+            say("Release validation failed: " + str(exc))
+            return 1
+    elif a.dry_run:
+        say("Discovery-only dry run: no release manifest supplied; not publication validation.")
     total = sum(os.path.getsize(s) for s, _ in items)
     say("local paper: %s" % paper)
     say("files we manage: %d, %.2f MB" % (len(items), total / 1e6))
@@ -582,26 +739,28 @@ def main():
     else:
         say("sync state: none recorded yet (first run)")
 
-    if not a.project_id or not a.token:
+    if not a.project_id or not token:
         say("\nMissing credentials. Set OVERLEAF_PROJECT_ID and OVERLEAF_TOKEN,")
-        say("or pass --project-id and --token.")
+        say("or pass --project-id with OVERLEAF_TOKEN set in the process environment.")
         say("Token: Overleaf Account Settings -> Git Integration -> Generate token.")
         say("Note: Overleaf git access is a premium feature; on a free plan this")
         say("will fail authentication and the loose-file mirror stays the fallback.")
         return 1
 
-    remote_url = "https://git:%s@git.overleaf.com/%s" % (a.token, a.project_id)
-    safe_url = "https://git:<REDACTED>@git.overleaf.com/%s" % a.project_id
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", a.project_id):
+        say("Invalid project identifier.")
+        return 1
+    remote_url = "https://git.overleaf.com/%s" % a.project_id
+    auth_env = authentication_environment(token, remote_url)
 
-    # The scratch checkout lives inside the repository (gitignored by _tmp_*)
+    # The scratch checkout lives inside the ignored _release_work tree
     # rather than in the system temp directory, so a crash leaves the evidence
     # next to the work instead of somewhere nobody will look.
-    clone = os.path.join(REPO, "_tmp_overleaf_clone")
-    rmtree_force(clone)
+    clone = str(work / "clone")
     try:
-        say("\ncloning %s" % safe_url)
+        say("\ncloning %s" % remote_url)
         r = run(GIT + ["clone", "--depth", "1", remote_url, clone],
-                check=False, quiet=True)
+                check=False, quiet=True, env=auth_env)
         if r.returncode != 0:
             say(r.stderr.strip()[:400])
             say("\nClone failed. Most likely causes: wrong project id, wrong or")
@@ -611,6 +770,8 @@ def main():
         # Persist the setting so add/commit agree with what was checked out.
         run(["git", "config", "core.autocrlf", "input"], cwd=clone, quiet=True)
         run(["git", "config", "core.eol", "lf"], cwd=clone, quiet=True)
+        remote_tip = run(GIT + ["rev-parse", "HEAD"], cwd=clone, quiet=True).stdout.strip()
+        branch = run(GIT + ["symbolic-ref", "--short", "HEAD"], cwd=clone, quiet=True).stdout.strip()
         if a.check:
             say("\n--check: authentication verified, nothing pushed")
             return 0
@@ -626,23 +787,17 @@ def main():
         report(records, paper, clone, verbose_diffs=True)
 
         conflicts = [r for r in records if r["status"] in CONFLICTS]
+        if manifest and any(record["status"] == AGREED_ABSENT for record in records):
+            say("REFUSING: a required validated input was intentionally deleted remotely; reconcile first.")
+            return 2
         to_push = [r for r in records if r["status"] in (ADD, UPDATE)]
-
-        if a.force and conflicts:
-            say("\n" + "!" * 68)
-            say("!! --force: these files will be OVERWRITTEN in Overleaf. Any edit")
-            say("!! made in the Overleaf editor since the last sync is LOST:")
-            for r in conflicts:
-                say("!!   %s" % r["remote"])
-            say("!" * 68)
-            to_push += conflicts
 
         # --dry-run reports and never fails. It writes nothing in either
         # direction, so giving it the refusal exit code would only make it
         # useless inside a shell that stops on error.
         if a.dry_run:
             say("\ndry run; nothing pushed, nothing written locally.")
-            if conflicts and not a.force:
+            if conflicts:
                 say("a real run would REFUSE: %d file(s) changed in Overleaf "
                     "since the last sync (exit 2)." % len(conflicts))
                 say("%d other file(s) would have been written." % len(to_push))
@@ -650,7 +805,7 @@ def main():
                 say("%d file(s) would be written to Overleaf." % len(to_push))
             return 0
 
-        if conflicts and not a.force:
+        if conflicts:
             say("\nREFUSING TO PUSH. %d file(s) changed in Overleaf since the last"
                 % len(conflicts))
             say("sync; pushing would destroy those changes.")
@@ -661,10 +816,12 @@ def main():
             say("\nChoose one:")
             say("  --pull          show what Overleaf would put back locally")
             say("  --pull --yes    take Overleaf's version into the repository")
-            say("  --force         keep ours and overwrite Overleaf")
+            say("  reconcile       review and merge edits before rebuilding a release")
             return 2
 
         if not to_push:
+            verify_local_release(paper, manifest)
+            verify_remote_tip(clone, branch, remote_tip, env=auth_env)
             say("\nOverleaf already matches the local paper; nothing to push.")
             files = {r["remote"]: {"remote_sha256": r["remote_sha256"],
                                    "local_sha256": r["local_sha256"]}
@@ -674,22 +831,23 @@ def main():
                 % (os.path.relpath(state_path, REPO), len(files)))
             return 0
 
-        say("\nvalidating before publish")
-        validate()
-        warn_if_docx_stale(paper)
+        say("\npublishing only the frozen validated source tree and checked Word attachment")
 
         # Update only what we manage. An earlier version wiped the checkout and
         # copied ours in, which would have deleted README_OVERLEAF.txt - a file
         # that exists only in the project. Anything Overleaf has that we do not
         # manage is left untouched.
         for r in to_push:
-            dst = os.path.join(clone, r["remote"].replace("/", os.sep))
+            dst = str(assets.safe_path(clone, r["remote"]))
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             shutil.copy2(r["local"], dst)
 
-        run(GIT + ["add", "-A"], cwd=clone, quiet=True)
+        run(GIT + ["add", "--"] + [record["remote"] for record in to_push], cwd=clone, quiet=True)
+        verify_staged_bytes(clone, [(record["local"], record["remote"]) for record in to_push])
         st = run(GIT + ["status", "--porcelain"], cwd=clone, quiet=True)
         if not st.stdout.strip():
+            verify_local_release(paper, manifest)
+            verify_remote_tip(clone, branch, remote_tip, env=auth_env)
             say("\nOverleaf already matches the local paper; nothing to push.")
         else:
             say("\nchanging in Overleaf:")
@@ -697,7 +855,9 @@ def main():
                 say("   %s" % line)
             run(GIT + ["-c", "user.email=sync@local", "-c", "user.name=paper-sync",
                        "commit", "-m", a.message], cwd=clone, quiet=True)
-            run(GIT + ["push", "origin", "HEAD"], cwd=clone, quiet=True)
+            verify_local_release(paper, manifest)
+            verify_remote_tip(clone, branch, remote_tip, env=auth_env)
+            run(GIT + ["push", "origin", "HEAD"], cwd=clone, quiet=True, env=auth_env)
             say("\npushed. Overleaf will recompile on next open.")
 
         # Record the agreement from the pushed bytes rather than a re-read of
@@ -714,12 +874,18 @@ def main():
             else:
                 files[r["remote"]] = {"remote_sha256": r["remote_sha256"],
                                       "local_sha256": r["local_sha256"]}
+        # Retain historical records for excluded attachments without touching
+        # their remote bytes or asserting that they were checked this time.
+        files = {**state.get("files", {}), **files}
         save_state(state_path, a.project_id, "push", files)
         say("recorded agreement in %s (%d files)"
             % (os.path.relpath(state_path, REPO), len(files)))
         return 0
+    except (OSError, ValueError, KeyError) as exc:
+        say("REFUSING TO PUSH: " + str(exc))
+        return 1
     finally:
-        rmtree_force(clone)
+        cleanup_clone(clone)
 
 
 if __name__ == "__main__":

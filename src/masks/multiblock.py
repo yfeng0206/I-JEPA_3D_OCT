@@ -46,6 +46,7 @@ class MaskCollator:
         npred=4,
         min_keep=10,
         allow_overlap=False,
+        audit_masks=False,
     ):
         self.patch_size = patch_size
         self.height = input_size[0] // patch_size  # grid rows
@@ -59,6 +60,8 @@ class MaskCollator:
         self.npred = npred
         self.min_keep = min_keep
         self.allow_overlap = allow_overlap
+        self.audit_masks = bool(audit_masks)
+        self.last_mask_audit = []
 
         # Seeded generator for block *sizes* (consistent within a batch).
         self._size_gen = torch.Generator()
@@ -107,7 +110,7 @@ class MaskCollator:
     # __call__
     # ------------------------------------------------------------------
 
-    def __call__(self, batch):
+    def __call__(self, batch, *, block_sizes=None):
         """Collate a batch and generate encoder / predictor masks.
 
         Args:
@@ -123,18 +126,24 @@ class MaskCollator:
 
         # Seed the size generator so block *sizes* are identical for every
         # image in this batch (locations still differ).
-        seed = random.randint(0, 2 ** 31)
-        self._size_gen.manual_seed(seed)
-
-        # Pre-compute block sizes for this batch (shared across images).
-        pred_sizes = [
-            self._sample_block_size(self.pred_mask_scale, self._size_gen)
-            for _ in range(self.npred)
-        ]
-        enc_sizes = [
-            self._sample_block_size(self.enc_mask_scale, self._size_gen)
-            for _ in range(self.nenc)
-        ]
+        if block_sizes is None:
+            seed = random.randint(0, 2 ** 31)
+            self._size_gen.manual_seed(seed)
+            pred_sizes = [
+                self._sample_block_size(self.pred_mask_scale, self._size_gen)
+                for _ in range(self.npred)
+            ]
+            enc_sizes = [
+                self._sample_block_size(self.enc_mask_scale, self._size_gen)
+                for _ in range(self.nenc)
+            ]
+        else:
+            pred_sizes, enc_sizes = block_sizes["pred"], block_sizes["enc"]
+            if len(pred_sizes) != self.npred or len(enc_sizes) != self.nenc:
+                raise ValueError("Injected sizes must match npred and nenc")
+            if any(not (1 <= h <= self.height and 1 <= w <= self.width)
+                   for h, w in list(pred_sizes) + list(enc_sizes)):
+                raise ValueError("Injected block sizes are out of bounds")
 
         # Per-image mask generation.
         masks_enc = [[] for _ in range(self.nenc)]   # nenc lists of B entries
@@ -181,9 +190,10 @@ class MaskCollator:
                         best_indices = [
                             i for i in all_patches if i not in pred_indices_union
                         ]
-                    # Guarantee min_keep even if grid is very small.
-                    if len(best_indices) < self.min_keep:
-                        best_indices = all_patches[:self.min_keep]
+                    # A smaller context is preferable to silently exposing
+                    # target tokens. With no context, the task is infeasible.
+                    if not best_indices:
+                        raise ValueError("No non-target context exists for sampled masks")
                 masks_enc[e].append(
                     torch.tensor(sorted(best_indices), dtype=torch.long)
                 )
@@ -194,7 +204,8 @@ class MaskCollator:
                     torch.tensor(per_image_pred[p], dtype=torch.long)
                 )
 
-        # Truncate encoder masks: per-group min (each enc mask independently)
+        # apply_masks concatenates groups along the batch dimension, so all
+        # context groups need the same token count (also when nenc > 1).
         collated_masks_enc = self._truncate_and_stack(masks_enc)
 
         # Truncate predictor masks: GLOBAL min across all pred groups and
@@ -209,6 +220,17 @@ class MaskCollator:
                 [t[:global_min_pred] for t in group], dim=0
             ))
 
+        if self.audit_masks:
+            self.last_mask_audit = [
+                {
+                    "intended_targets": [g[b].tolist() for g in masks_pred],
+                    "targets": [g[b].tolist() for g in collated_masks_pred],
+                    "context_before_collation": [g[b].tolist() for g in masks_enc],
+                    "context": [g[b].tolist() for g in collated_masks_enc],
+                    "target_sources": ["uniform"] * self.npred,
+                } for b in range(B)
+            ]
+
         return collated_batch, collated_masks_enc, collated_masks_pred
 
     # ------------------------------------------------------------------
@@ -216,14 +238,13 @@ class MaskCollator:
     @staticmethod
     def _truncate_and_stack(mask_groups):
         # type: (List[List[torch.Tensor]]) -> List[torch.Tensor]
-        """Truncate each group to the minimum length and stack.
+        """Truncate all groups to their shared minimum length and stack.
 
-        Returns a list of tensors, each (B, min_len) within its group.
+        Returns tensors of shape (B, min_len), with one K across all groups.
         """
         result = []
+        min_len = max(1, min(t.numel() for group in mask_groups for t in group))
         for group in mask_groups:
-            min_len = min(t.numel() for t in group)
-            min_len = max(min_len, 1)
             result.append(torch.stack(
                 [t[:min_len] for t in group], dim=0
             ))

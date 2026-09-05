@@ -1,0 +1,1520 @@
+{
+  "frozen_cover_random_ep100": {
+    "n": 3000,
+    "status": "RETRACTED",
+    "label_agreement": 1.0,
+    "overall_auc": 0.860733559108591,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8683640303358613,
+        "ci_lo": 0.7955037919826652,
+        "ci_hi": 0.9287716684723726
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.905425219941349,
+        "ci_lo": 0.8440738025415445,
+        "ci_hi": 0.956256109481916
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8080271114359758,
+        "ci_lo": 0.7529287660309656,
+        "ci_hi": 0.858267991228653
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8637842233667661,
+        "ci_lo": 0.8092945242613174,
+        "ci_hi": 0.911097180807807
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8462080379308031,
+        "ci_lo": 0.8248861069487622,
+        "ci_hi": 0.8663783463422271
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8748936170212765,
+        "ci_lo": 0.8515640404465978,
+        "ci_hi": 0.8957825995365494
+      }
+    ],
+    "skipped": [],
+    "gap": 0.09739810850537312,
+    "worst": 0.8080271114359758,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_cover_random_ep30": {
+    "n": 3000,
+    "status": "RETRACTED",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8557667850682396,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8634886240520043,
+        "ci_lo": 0.7922467497291441,
+        "ci_hi": 0.9222643553629469
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.8966275659824047,
+        "ci_lo": 0.8374816715542522,
+        "ci_hi": 0.9486864613880743
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8051033291248588,
+        "ci_lo": 0.749480031895807,
+        "ci_hi": 0.8558126785832946
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8584982380048793,
+        "ci_lo": 0.8049573055028463,
+        "ci_hi": 0.9074308755760369
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8407398295797642,
+        "ci_lo": 0.8191359895332454,
+        "ci_hi": 0.8613370272627647
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8698883505371814,
+        "ci_lo": 0.8457645881609438,
+        "ci_hi": 0.8913495892142405
+      }
+    ],
+    "skipped": [],
+    "gap": 0.09152423685754585,
+    "worst": 0.8051033291248588,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_cover_random_ep50": {
+    "n": 3000,
+    "status": "RETRACTED",
+    "label_agreement": 1.0,
+    "overall_auc": 0.858967540656444,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8605092091007583,
+        "ci_lo": 0.7843919284940412,
+        "ci_hi": 0.9203683640303358
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9029814271749755,
+        "ci_lo": 0.8406586021505377,
+        "ci_hi": 0.9550403225806452
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8043059339490997,
+        "ci_lo": 0.749609608611868,
+        "ci_hi": 0.8546763904578377
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8636486852805638,
+        "ci_lo": 0.8100975874220656,
+        "ci_hi": 0.9093250203307129
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.845015990875137,
+        "ci_lo": 0.8234354102833628,
+        "ci_hi": 0.8649212197794824
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8723446387191911,
+        "ci_lo": 0.8495399199494418,
+        "ci_hi": 0.893579207920792
+      }
+    ],
+    "skipped": [],
+    "gap": 0.09867549322587588,
+    "worst": 0.8043059339490997,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_cover_random_ep75": {
+    "n": 3000,
+    "status": "RETRACTED",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8611851244461599,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8721560130010835,
+        "ci_lo": 0.800650054171181,
+        "ci_hi": 0.9301327193932828
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9078690127077224,
+        "ci_lo": 0.8467680840664712,
+        "ci_hi": 0.957728494623656
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8082929098278956,
+        "ci_lo": 0.7530051830686424,
+        "ci_hi": 0.8575353844109243
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8625643805909461,
+        "ci_lo": 0.80792897804283,
+        "ci_hi": 0.9097316345893196
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8456779907409478,
+        "ci_lo": 0.8242979111220451,
+        "ci_hi": 0.8656495873683269
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8753528544343796,
+        "ci_lo": 0.8518428481145988,
+        "ci_hi": 0.8964035180113755
+      }
+    ],
+    "skipped": [],
+    "gap": 0.09957610287982677,
+    "worst": 0.8082929098278956,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_anatomy_ep30": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8582742955936472,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8634886240520043,
+        "ci_lo": 0.7906080715059588,
+        "ci_hi": 0.9206392199349945
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9120234604105572,
+        "ci_lo": 0.8543438416422288,
+        "ci_hi": 0.9574963343108503
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8019137484218221,
+        "ci_lo": 0.7476211043923184,
+        "ci_hi": 0.8536796464881388
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8563296286256438,
+        "ci_lo": 0.8027785307671456,
+        "ci_hi": 0.9036391976145296
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8436919911435153,
+        "ci_lo": 0.8215077270592445,
+        "ci_hi": 0.8646053720394516
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8724289024647146,
+        "ci_lo": 0.8490789972614283,
+        "ci_hi": 0.8935249631346113
+      }
+    ],
+    "skipped": [],
+    "gap": 0.11010971198873509,
+    "worst": 0.8019137484218221,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_bridge_ep35": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8661285531588674,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8621343445287107,
+        "ci_lo": 0.7857529794149513,
+        "ci_hi": 0.9252437703141928
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9198435972629521,
+        "ci_lo": 0.8672959433040078,
+        "ci_hi": 0.9640823558162268
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.7976609741511064,
+        "ci_lo": 0.7415741909761446,
+        "ci_hi": 0.8482324406937338
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8490105719707238,
+        "ci_lo": 0.7937076443480617,
+        "ci_hi": 0.8987564380590947
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8535012188848881,
+        "ci_lo": 0.8322364301209939,
+        "ci_hi": 0.8727043589112786
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8850347587950285,
+        "ci_lo": 0.8622160311775858,
+        "ci_hi": 0.9054495470823678
+      }
+    ],
+    "skipped": [],
+    "gap": 0.12218262311184569,
+    "worst": 0.7976609741511064,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_bridge_ep40": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8682514216192853,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8572589382448538,
+        "ci_lo": 0.7808708017334778,
+        "ci_hi": 0.9171248645720476
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.91911045943304,
+        "ci_lo": 0.866544477028348,
+        "ci_hi": 0.9616385630498534
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.796996478171307,
+        "ci_lo": 0.7412436042261944,
+        "ci_hi": 0.8471177486876204
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8408782867985904,
+        "ci_lo": 0.7832644348061806,
+        "ci_hi": 0.8929350772567091
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8582157314427571,
+        "ci_lo": 0.8374641603113189,
+        "ci_hi": 0.8767943886565429
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8896102801769539,
+        "ci_lo": 0.8680067410996419,
+        "ci_hi": 0.9091325047398356
+      }
+    ],
+    "skipped": [],
+    "gap": 0.122113981261733,
+    "worst": 0.796996478171307,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_bridge_ep50": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8653855047304304,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8865113759479957,
+        "ci_lo": 0.8206866197183098,
+        "ci_hi": 0.9368905742145178
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9217986314760508,
+        "ci_lo": 0.8707233626588465,
+        "ci_hi": 0.9643267350928642
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.7889560768157353,
+        "ci_lo": 0.7347763971027975,
+        "ci_hi": 0.8409960794737191
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8437245866088371,
+        "ci_lo": 0.7854398210897262,
+        "ci_hi": 0.8946869070208728
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8524769082817077,
+        "ci_lo": 0.8320721602218595,
+        "ci_hi": 0.8720717129246527
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8861428270486623,
+        "ci_lo": 0.8637112913419002,
+        "ci_hi": 0.9060586686328207
+      }
+    ],
+    "skipped": [],
+    "gap": 0.13284255466031547,
+    "worst": 0.7889560768157353,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_cover_f021_ep27": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.848346528260742,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.852112676056338,
+        "ci_lo": 0.776273022751896,
+        "ci_hi": 0.9119786023835319
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.895405669599218,
+        "ci_lo": 0.833822091886608,
+        "ci_hi": 0.947708944281525
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.7974616253571666,
+        "ci_lo": 0.740178749418566,
+        "ci_hi": 0.8483653398896936
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.850365952832746,
+        "ci_lo": 0.7941142586066684,
+        "ci_hi": 0.9005150447275685
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8322411826538143,
+        "ci_lo": 0.8102550153199294,
+        "ci_hi": 0.8531877753673428
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8640151674741943,
+        "ci_lo": 0.8408000842637455,
+        "ci_hi": 0.8855570886875921
+      }
+    ],
+    "skipped": [],
+    "gap": 0.09794404424205139,
+    "worst": 0.7974616253571666,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_cover_f021_ep30": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8522489776969856,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8559046587215602,
+        "ci_lo": 0.7803290899241603,
+        "ci_hi": 0.9146803900325027
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.8897849462365591,
+        "ci_lo": 0.8289283968719453,
+        "ci_hi": 0.9440493646138807
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8041730347531397,
+        "ci_lo": 0.7488205196358562,
+        "ci_hi": 0.8538225131237955
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.857007319056655,
+        "ci_lo": 0.8033274600162646,
+        "ci_hi": 0.9041745730550285
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8362646210274417,
+        "ci_lo": 0.8136685080401673,
+        "ci_hi": 0.8570731107284235
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8684895723614915,
+        "ci_lo": 0.8446499894670317,
+        "ci_hi": 0.8900768906677902
+      }
+    ],
+    "skipped": [],
+    "gap": 0.0856119114834194,
+    "worst": 0.8041730347531397,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_cover_f021_ep34": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8570825722015399,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.861863488624052,
+        "ci_lo": 0.784100758396533,
+        "ci_hi": 0.9228060671722643
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.8895405669599218,
+        "ci_lo": 0.8264846041055719,
+        "ci_hi": 0.9433101173020528
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8144727224400292,
+        "ci_lo": 0.759910957538707,
+        "ci_hi": 0.8631204731211376
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8469775006776904,
+        "ci_lo": 0.7917965573326105,
+        "ci_hi": 0.897133369476823
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8399503500100642,
+        "ci_lo": 0.8177362288372508,
+        "ci_hi": 0.8606842529018406
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8751127027596377,
+        "ci_lo": 0.8517898672846008,
+        "ci_hi": 0.8963354750368654
+      }
+    ],
+    "skipped": [],
+    "gap": 0.07506784451989257,
+    "worst": 0.8144727224400292,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_envelope_ep30": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8539169457730282,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8588840736728061,
+        "ci_lo": 0.786010292524377,
+        "ci_hi": 0.9163122968580715
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.8983382209188661,
+        "ci_lo": 0.8391862170087977,
+        "ci_hi": 0.9489369501466275
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.805834274702638,
+        "ci_lo": 0.7508787959332847,
+        "ci_hi": 0.8561515715329922
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8561940905394416,
+        "ci_lo": 0.8025210084033614,
+        "ci_hi": 0.9045811873136351
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8387963232169615,
+        "ci_lo": 0.8170518081989577,
+        "ci_hi": 0.8594313175139221
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8677185590899515,
+        "ci_lo": 0.8437832315146407,
+        "ci_hi": 0.8895150621445124
+      }
+    ],
+    "skipped": [],
+    "gap": 0.09250394621622804,
+    "worst": 0.805834274702638,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_fork_ep25": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.848680032941369,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8567172264355363,
+        "ci_lo": 0.7816901408450704,
+        "ci_hi": 0.9144298483206933
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.8973607038123167,
+        "ci_lo": 0.8389540566959922,
+        "ci_hi": 0.9462426686217009
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.7948700910359492,
+        "ci_lo": 0.7385158482291182,
+        "ci_hi": 0.8474333842780251
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8448088912984548,
+        "ci_lo": 0.7873373542965573,
+        "ci_hi": 0.8959067497966928
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8316104935924675,
+        "ci_lo": 0.8092266790418894,
+        "ci_hi": 0.8523697806007201
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8667663787655361,
+        "ci_lo": 0.8435489783020855,
+        "ci_hi": 0.8882201390351802
+      }
+    ],
+    "skipped": [],
+    "gap": 0.1024906127763675,
+    "worst": 0.7948700910359492,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_mirage_ep100": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8807433952733048,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8762188515709642,
+        "ci_lo": 0.8041508667388949,
+        "ci_hi": 0.9366197183098591
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9144672531769306,
+        "ci_lo": 0.8565493646138808,
+        "ci_hi": 0.9626160801564028
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8154694664097282,
+        "ci_lo": 0.7631686490796731,
+        "ci_hi": 0.8638480962190178
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8652073732718893,
+        "ci_lo": 0.8090946055841691,
+        "ci_hi": 0.914085795608566
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8727752555185293,
+        "ci_lo": 0.8529934806432135,
+        "ci_hi": 0.8909690693981616
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8958141984411208,
+        "ci_lo": 0.8743752896566253,
+        "ci_hi": 0.9148169896776911
+      }
+    ],
+    "skipped": [],
+    "gap": 0.09899778676720239,
+    "worst": 0.8154694664097282,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_mirage_ep50": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.876064102267654,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8802816901408451,
+        "ci_lo": 0.8128250270855905,
+        "ci_hi": 0.9352654387865655
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9152003910068426,
+        "ci_lo": 0.8598454301075269,
+        "ci_hi": 0.9612689393939394
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8182603495248854,
+        "ci_lo": 0.7652003455379095,
+        "ci_hi": 0.86736743305203
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8719165085388995,
+        "ci_lo": 0.8168118053673082,
+        "ci_hi": 0.9186771482786663
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8636772303356965,
+        "ci_lo": 0.8434680350233713,
+        "ci_hi": 0.8822930411737079
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8906909627132926,
+        "ci_lo": 0.8692483673899305,
+        "ci_hi": 0.9104073625447652
+      }
+    ],
+    "skipped": [],
+    "gap": 0.09694004148195723,
+    "worst": 0.8182603495248854,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "frozen_meanpool_mirage_ep75": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8803067264781372,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8690411700975081,
+        "ci_lo": 0.7937330715059588,
+        "ci_hi": 0.9308064734561212
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9192326490713587,
+        "ci_lo": 0.8633919843597263,
+        "ci_hi": 0.9645711143695015
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8120805369127517,
+        "ci_lo": 0.758251378829158,
+        "ci_hi": 0.8611220014618911
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.862496611547845,
+        "ci_lo": 0.8067159121713202,
+        "ci_hi": 0.9120459474112226
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8732057790799096,
+        "ci_lo": 0.8533535269384742,
+        "ci_hi": 0.8912089325252164
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8950157994522856,
+        "ci_lo": 0.8735332315146409,
+        "ci_hi": 0.914069359595534
+      }
+    ],
+    "skipped": [],
+    "gap": 0.10715211215860698,
+    "worst": 0.8120805369127517,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "sweep_random_ep50": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8640970649809413,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8643011917659805,
+        "ci_lo": 0.7930525460455038,
+        "ci_hi": 0.9230870801733477
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9046920821114369,
+        "ci_lo": 0.8499450146627566,
+        "ci_hi": 0.9496578690127078
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.808824506611735,
+        "ci_lo": 0.7541946308724833,
+        "ci_hi": 0.8582355970496378
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8452155055570615,
+        "ci_lo": 0.7858464353483329,
+        "ci_hi": 0.8961117511520738
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8526077427146468,
+        "ci_lo": 0.8319620691968779,
+        "ci_hi": 0.8718697302797844
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8808889825152728,
+        "ci_lo": 0.8582056562039183,
+        "ci_hi": 0.9015978512744891
+      }
+    ],
+    "skipped": [],
+    "gap": 0.09586757549970193,
+    "worst": 0.808824506611735,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "sweep_random_ep75": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8723021694701811,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8838028169014085,
+        "ci_lo": 0.8117416034669556,
+        "ci_hi": 0.9398903033586131
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9222873900293255,
+        "ci_lo": 0.8714442815249267,
+        "ci_hi": 0.9653042521994135
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8145391720380092,
+        "ci_lo": 0.7604134826234301,
+        "ci_hi": 0.8639818260349524
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8597180807806993,
+        "ci_lo": 0.8008945513689346,
+        "ci_hi": 0.9116325562483057
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8614787645651153,
+        "ci_lo": 0.8408666662939189,
+        "ci_hi": 0.880145818889361
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8824246892774383,
+        "ci_lo": 0.8609752475247525,
+        "ci_hi": 0.9029539182641668
+      }
+    ],
+    "skipped": [],
+    "gap": 0.10774821799131629,
+    "worst": 0.8145391720380092,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "sweep_random_ep100": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8745808957846787,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8760834236186349,
+        "ci_lo": 0.802386917659805,
+        "ci_hi": 0.9341854008667388
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9244868035190615,
+        "ci_lo": 0.8752352150537634,
+        "ci_hi": 0.9655455767350929
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8194896670875141,
+        "ci_lo": 0.7668233769685694,
+        "ci_hi": 0.8679397302146321
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8434535104364327,
+        "ci_lo": 0.7821852127947952,
+        "ci_hi": 0.8993646652209271
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8640585512043477,
+        "ci_lo": 0.8441067754344375,
+        "ci_hi": 0.8825932894236576
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8863619127870234,
+        "ci_lo": 0.8649650832104486,
+        "ci_hi": 0.9061939646092269
+      }
+    ],
+    "skipped": [],
+    "gap": 0.1049971364315474,
+    "worst": 0.8194896670875141,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "sweep_oracle_ep50": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8740299460522829,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8622697724810401,
+        "ci_lo": 0.7911700975081257,
+        "ci_hi": 0.9209100758396533
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.91727761485826,
+        "ci_lo": 0.8614308406647117,
+        "ci_hi": 0.9635935972629521
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8143065984450794,
+        "ci_lo": 0.7595155824307263,
+        "ci_hi": 0.8638132101800784
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8519924098671727,
+        "ci_lo": 0.796555638384386,
+        "ci_hi": 0.9018839793982107
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8664571824748954,
+        "ci_lo": 0.846854857647664,
+        "ci_hi": 0.8845657862366649
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8874468085106383,
+        "ci_lo": 0.8650212239309037,
+        "ci_hi": 0.9075480829997894
+      }
+    ],
+    "skipped": [],
+    "gap": 0.10297101641318063,
+    "worst": 0.8143065984450794,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "sweep_oracle_ep75": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8836355478637025,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8880010834236186,
+        "ci_lo": 0.8196099674972914,
+        "ci_hi": 0.9417659804983749
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9433040078201369,
+        "ci_lo": 0.9012707722385142,
+        "ci_hi": 0.9758064516129032
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8265333244733869,
+        "ci_lo": 0.77453651405409,
+        "ci_hi": 0.8746428334108579
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8663594470046083,
+        "ci_lo": 0.8134860395771212,
+        "ci_hi": 0.9140891840607209
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8740847180909356,
+        "ci_lo": 0.8543626573927046,
+        "ci_hi": 0.8924306130208217
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8940762586896988,
+        "ci_lo": 0.8718673372656415,
+        "ci_hi": 0.913404097324626
+      }
+    ],
+    "skipped": [],
+    "gap": 0.11677068334675,
+    "worst": 0.8265333244733869,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  },
+  "sweep_oracle_ep100": {
+    "n": 3000,
+    "status": "OK",
+    "label_agreement": 1.0,
+    "overall_auc": 0.8854851648224599,
+    "prevalence": 0.4886666666666667,
+    "axes": "race x gender",
+    "cells": [
+      {
+        "subgroup": "asian x female",
+        "n": 123,
+        "n_pos": 52,
+        "n_neg": 71,
+        "auc": 0.8904387865655471,
+        "ci_lo": 0.8244786023835319,
+        "ci_hi": 0.9423144637053087
+      },
+      {
+        "subgroup": "asian x male",
+        "n": 128,
+        "n_pos": 66,
+        "n_neg": 62,
+        "auc": 0.9408602150537635,
+        "ci_lo": 0.8983321114369501,
+        "ci_hi": 0.9750794232649072
+      },
+      {
+        "subgroup": "black x female",
+        "n": 250,
+        "n_pos": 149,
+        "n_neg": 101,
+        "auc": 0.8308525483420826,
+        "ci_lo": 0.7789529204598312,
+        "ci_hi": 0.8782659977407137
+      },
+      {
+        "subgroup": "black x male",
+        "n": 181,
+        "n_pos": 119,
+        "n_neg": 62,
+        "auc": 0.8662916779615072,
+        "ci_lo": 0.8131556654920032,
+        "ci_hi": 0.9148837760910816
+      },
+      {
+        "subgroup": "white x female",
+        "n": 1343,
+        "n_pos": 610,
+        "n_neg": 733,
+        "auc": 0.8761993156352739,
+        "ci_lo": 0.8569668776418492,
+        "ci_hi": 0.894337245320153
+      },
+      {
+        "subgroup": "white x male",
+        "n": 975,
+        "n_pos": 470,
+        "n_neg": 505,
+        "auc": 0.8962334105751001,
+        "ci_lo": 0.8746131767432063,
+        "ci_hi": 0.9153068253633874
+      }
+    ],
+    "skipped": [],
+    "gap": 0.11000766671168094,
+    "worst": 0.8308525483420826,
+    "worst_group": "black x female",
+    "best_group": "asian x male"
+  }
+}

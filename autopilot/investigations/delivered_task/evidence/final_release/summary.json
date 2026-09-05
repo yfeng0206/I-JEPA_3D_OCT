@@ -1,0 +1,79 @@
+{
+  "verified_utc": "2026-09-05T03:40:36.906494+00:00",
+  "source_release": "6f4d62e",
+  "branch": "fix/jepa-delivered-task-audit",
+  "main_merged": false,
+  "release_manifest_sha256": "513d41f8f9a7e70d9cf3f040b3587934cdf2ff665b849be7e00e35d660caea08",
+  "source_main_sha256": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
+  "numeric_review_sha256": "2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6",
+  "checks": {
+    "immutable_figure_inputs": true,
+    "no_placeholders": true,
+    "all_graphics_present": true,
+    "manuscript": true,
+    "numeric_evidence": true,
+    "numeric_review_input": true,
+    "citation_metadata": true,
+    "compiles_standalone": true,
+    "page_limit": true,
+    "anonymous": true,
+    "no_undefined_refs": true,
+    "docx_generated": true,
+    "docx_complete": true
+  },
+  "main_content_pages": 9,
+  "total_pages": 34,
+  "zip_members": [
+    "auto/auto_numbers.tex",
+    "auto/delivered_numbers.tex",
+    "auto/fig_fairness.png",
+    "auto/fig_labeleff.png",
+    "auto/fig_roc.png",
+    "auto/fig_trajectories_ci.png",
+    "auto/table_allprobes.tex",
+    "auto/table_fp32.tex",
+    "auto/table_labeleff.tex",
+    "auto/table_operating.tex",
+    "auto/table_paired_subgroup.tex",
+    "auto/table_subgroup_operating.tex",
+    "auto/table_subgroup_trends.tex",
+    "figures/figS5_mask_statistics.png",
+    "figures/fig_delivered_task_token_maps.png",
+    "figures/fig_geometry_panel.png",
+    "figures/fig_policy_family_token_maps.png",
+    "figures/fig_purity_auc_ep50_fp32.png",
+    "figures/fig_specificity_ladder.png",
+    "main.tex",
+    "neurips_2026.sty",
+    "references.bib",
+    "main.pdf",
+    "README_OVERLEAF.txt"
+  ],
+  "artifacts": {
+    "zip": {
+      "filename": "OCT_JEPA_GenAI4Health2026_FINAL.zip",
+      "sha256": "8b74953daa9be96491a701492fe77dc84b7bb92d5a6bd92e1336852b8ce215fc",
+      "bytes": 3151699
+    },
+    "pdf": {
+      "filename": "main_submission.pdf",
+      "sha256": "8c33542ef70d8f88bdc120f7c26d002e2ad696d683840ae4ec9cf616622f163a",
+      "bytes": 1812894
+    },
+    "docx": {
+      "filename": "main_submission.docx",
+      "sha256": "907a298e2150135661ecea30411cec60ff52f3cab20a2e6d6f1425506e583e78",
+      "bytes": 1612256
+    }
+  },
+  "overleaf": {
+    "published_managed_items": 23,
+    "fresh_post_push_dry_run": "all23identical;0changes; legacyremoteextraspreserved"
+  },
+  "limits": [
+    "Manual protocol/formula/citation reviews remain distinct from programmatic numerical checks.",
+    "Source-reviewed token illustrations are not mathematical-verification claims.",
+    "No corrected-policy pretraining or AUC result.",
+    "Use validated archive, not full Overleaf export; full third-party publications are local-only."
+  ]
+}

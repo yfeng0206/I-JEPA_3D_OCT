@@ -1,0 +1,1362 @@
+{
+    "image_sha256":  "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb",
+    "width":  731,
+    "language":  "en-US",
+    "limitations":  "OCR is fallible; extracted text is not numeric validation or proof of image provenance.",
+    "method":  "Windows.Media.Ocr, local CPU, no desktop display",
+    "lines":  [
+                  {
+                      "text":  "Occlusion attribution — representative B-scans across the 3 fine-tune probes",
+                      "words":  [
+                                    {
+                                        "y":  12,
+                                        "height":  14,
+                                        "width":  86,
+                                        "text":  "Occlusion",
+                                        "x":  13
+                                    },
+                                    {
+                                        "y":  12,
+                                        "height":  14,
+                                        "width":  95,
+                                        "text":  "attribution",
+                                        "x":  107
+                                    },
+                                    {
+                                        "y":  21,
+                                        "height":  2,
+                                        "width":  17,
+                                        "text":  "—",
+                                        "x":  210
+                                    },
+                                    {
+                                        "y":  12,
+                                        "height":  18,
+                                        "width":  132,
+                                        "text":  "representative",
+                                        "x":  235
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  13,
+                                        "width":  69,
+                                        "text":  "B-scans",
+                                        "x":  375
+                                    },
+                                    {
+                                        "y":  16,
+                                        "height":  10,
+                                        "width":  58,
+                                        "text":  "across",
+                                        "x":  451
+                                    },
+                                    {
+                                        "y":  12,
+                                        "height":  14,
+                                        "width":  30,
+                                        "text":  "the",
+                                        "x":  515
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  13,
+                                        "width":  10,
+                                        "text":  "3",
+                                        "x":  552
+                                    },
+                                    {
+                                        "y":  12,
+                                        "height":  14,
+                                        "width":  82,
+                                        "text":  "fine-tune",
+                                        "x":  569
+                                    },
+                                    {
+                                        "y":  12,
+                                        "height":  18,
+                                        "width":  60,
+                                        "text":  "probes",
+                                        "x":  659
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Left pane of each row: original B-scan. Right pane: per-patch Alogit overlay.",
+                      "words":  [
+                                    {
+                                        "y":  33,
+                                        "height":  14,
+                                        "width":  33,
+                                        "text":  "Left",
+                                        "x":  20
+                                    },
+                                    {
+                                        "y":  37,
+                                        "height":  14,
+                                        "width":  44,
+                                        "text":  "pane",
+                                        "x":  60
+                                    },
+                                    {
+                                        "y":  33,
+                                        "height":  14,
+                                        "width":  18,
+                                        "text":  "of",
+                                        "x":  111
+                                    },
+                                    {
+                                        "y":  33,
+                                        "height":  14,
+                                        "width":  42,
+                                        "text":  "each",
+                                        "x":  135
+                                    },
+                                    {
+                                        "y":  37,
+                                        "height":  10,
+                                        "width":  35,
+                                        "text":  "row:",
+                                        "x":  186
+                                    },
+                                    {
+                                        "y":  33,
+                                        "height":  18,
+                                        "width":  66,
+                                        "text":  "original",
+                                        "x":  230
+                                    },
+                                    {
+                                        "y":  34,
+                                        "height":  13,
+                                        "width":  64,
+                                        "text":  "B-scan.",
+                                        "x":  305
+                                    },
+                                    {
+                                        "y":  33,
+                                        "height":  18,
+                                        "width":  47,
+                                        "text":  "Right",
+                                        "x":  378
+                                    },
+                                    {
+                                        "y":  37,
+                                        "height":  14,
+                                        "width":  49,
+                                        "text":  "pane:",
+                                        "x":  432
+                                    },
+                                    {
+                                        "y":  33,
+                                        "height":  18,
+                                        "width":  85,
+                                        "text":  "per-patch",
+                                        "x":  490
+                                    },
+                                    {
+                                        "y":  33,
+                                        "height":  18,
+                                        "width":  52,
+                                        "text":  "Alogit",
+                                        "x":  583
+                                    },
+                                    {
+                                        "y":  33,
+                                        "height":  18,
+                                        "width":  69,
+                                        "text":  "overlay.",
+                                        "x":  642
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "[meanpool] vol 0661 slice 40 (axial —126/199)",
+                      "words":  [
+                                    {
+                                        "y":  101,
+                                        "height":  15,
+                                        "width":  85,
+                                        "text":  "[meanpool]",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  101,
+                                        "height":  12,
+                                        "width":  21,
+                                        "text":  "vol",
+                                        "x":  154
+                                    },
+                                    {
+                                        "y":  101,
+                                        "height":  12,
+                                        "width":  37,
+                                        "text":  "0661",
+                                        "x":  181
+                                    },
+                                    {
+                                        "y":  101,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  229
+                                    },
+                                    {
+                                        "y":  101,
+                                        "height":  12,
+                                        "width":  18,
+                                        "text":  "40",
+                                        "x":  267
+                                    },
+                                    {
+                                        "y":  101,
+                                        "height":  15,
+                                        "width":  40,
+                                        "text":  "(axial",
+                                        "x":  296
+                                    },
+                                    {
+                                        "y":  101,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "—126/199)",
+                                        "x":  343
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label=glaucoma pred=0.98 slice contribution=+O.109 (pushes toward glaucoma)",
+                      "words":  [
+                                    {
+                                        "y":  118,
+                                        "height":  15,
+                                        "width":  121,
+                                        "text":  "label=glaucoma",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  118,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "pred=0.98",
+                                        "x":  191
+                                    },
+                                    {
+                                        "y":  118,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  280
+                                    },
+                                    {
+                                        "y":  118,
+                                        "height":  12,
+                                        "width":  158,
+                                        "text":  "contribution=+O.109",
+                                        "x":  319
+                                    },
+                                    {
+                                        "y":  118,
+                                        "height":  15,
+                                        "width":  59,
+                                        "text":  "(pushes",
+                                        "x":  483
+                                    },
+                                    {
+                                        "y":  118,
+                                        "height":  12,
+                                        "width":  51,
+                                        "text":  "toward",
+                                        "x":  547
+                                    },
+                                    {
+                                        "y":  118,
+                                        "height":  15,
+                                        "width":  79,
+                                        "text":  "glaucoma)",
+                                        "x":  604
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "RNFL thinning visible",
+                      "words":  [
+                                    {
+                                        "y":  135,
+                                        "height":  12,
+                                        "width":  38,
+                                        "text":  "RNFL",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  135,
+                                        "height":  15,
+                                        "width":  62,
+                                        "text":  "thinning",
+                                        "x":  100
+                                    },
+                                    {
+                                        "y":  135,
+                                        "height":  12,
+                                        "width":  48,
+                                        "text":  "visible",
+                                        "x":  168
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Slice 40",
+                      "words":  [
+                                    {
+                                        "y":  176,
+                                        "height":  9,
+                                        "width":  25,
+                                        "text":  "Slice",
+                                        "x":  186
+                                    },
+                                    {
+                                        "y":  176,
+                                        "height":  9,
+                                        "width":  13,
+                                        "text":  "40",
+                                        "x":  215
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Patch contrib (Alogit)",
+                      "words":  [
+                                    {
+                                        "y":  162,
+                                        "height":  10,
+                                        "width":  28,
+                                        "text":  "Patch",
+                                        "x":  470
+                                    },
+                                    {
+                                        "y":  162,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "contrib",
+                                        "x":  502
+                                    },
+                                    {
+                                        "y":  162,
+                                        "height":  12,
+                                        "width":  38,
+                                        "text":  "(Alogit)",
+                                        "x":  544
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label—I predzO_98",
+                      "words":  [
+                                    {
+                                        "y":  176,
+                                        "height":  9,
+                                        "width":  41,
+                                        "text":  "label—I",
+                                        "x":  412
+                                    },
+                                    {
+                                        "y":  176,
+                                        "height":  12,
+                                        "width":  56,
+                                        "text":  "predzO_98",
+                                        "x":  461
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "[meanpool] vol 0388 slice 7 (axial —22/199)",
+                      "words":  [
+                                    {
+                                        "y":  504,
+                                        "height":  15,
+                                        "width":  85,
+                                        "text":  "[meanpool]",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  504,
+                                        "height":  12,
+                                        "width":  21,
+                                        "text":  "vol",
+                                        "x":  154
+                                    },
+                                    {
+                                        "y":  504,
+                                        "height":  12,
+                                        "width":  37,
+                                        "text":  "0388",
+                                        "x":  181
+                                    },
+                                    {
+                                        "y":  504,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  229
+                                    },
+                                    {
+                                        "y":  504,
+                                        "height":  12,
+                                        "width":  7,
+                                        "text":  "7",
+                                        "x":  268
+                                    },
+                                    {
+                                        "y":  504,
+                                        "height":  15,
+                                        "width":  39,
+                                        "text":  "(axial",
+                                        "x":  287
+                                    },
+                                    {
+                                        "y":  504,
+                                        "height":  15,
+                                        "width":  69,
+                                        "text":  "—22/199)",
+                                        "x":  333
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label=healthy pred=0.18 slice contribution—-0.075 (pushes toward healthy)",
+                      "words":  [
+                                    {
+                                        "y":  521,
+                                        "height":  15,
+                                        "width":  105,
+                                        "text":  "label=healthy",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  521,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "pred=0.18",
+                                        "x":  174
+                                    },
+                                    {
+                                        "y":  521,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  263
+                                    },
+                                    {
+                                        "y":  521,
+                                        "height":  12,
+                                        "width":  151,
+                                        "text":  "contribution—-0.075",
+                                        "x":  301
+                                    },
+                                    {
+                                        "y":  521,
+                                        "height":  15,
+                                        "width":  58,
+                                        "text":  "(pushes",
+                                        "x":  459
+                                    },
+                                    {
+                                        "y":  521,
+                                        "height":  12,
+                                        "width":  52,
+                                        "text":  "toward",
+                                        "x":  522
+                                    },
+                                    {
+                                        "y":  521,
+                                        "height":  15,
+                                        "width":  61,
+                                        "text":  "healthy)",
+                                        "x":  580
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Smooth healthy retina",
+                      "words":  [
+                                    {
+                                        "y":  539,
+                                        "height":  12,
+                                        "width":  56,
+                                        "text":  "Smooth",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  539,
+                                        "height":  15,
+                                        "width":  55,
+                                        "text":  "healthy",
+                                        "x":  121
+                                    },
+                                    {
+                                        "y":  539,
+                                        "height":  12,
+                                        "width":  43,
+                                        "text":  "retina",
+                                        "x":  182
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Slice 7",
+                      "words":  [
+                                    {
+                                        "y":  580,
+                                        "height":  9,
+                                        "width":  25,
+                                        "text":  "Slice",
+                                        "x":  189
+                                    },
+                                    {
+                                        "y":  580,
+                                        "height":  9,
+                                        "width":  5,
+                                        "text":  "7",
+                                        "x":  219
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Patch contrib Wogit)",
+                      "words":  [
+                                    {
+                                        "y":  566,
+                                        "height":  10,
+                                        "width":  28,
+                                        "text":  "Patch",
+                                        "x":  470
+                                    },
+                                    {
+                                        "y":  566,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "contrib",
+                                        "x":  502
+                                    },
+                                    {
+                                        "y":  566,
+                                        "height":  12,
+                                        "width":  38,
+                                        "text":  "Wogit)",
+                                        "x":  544
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label—O pred=C18 075",
+                      "words":  [
+                                    {
+                                        "y":  580,
+                                        "height":  9,
+                                        "width":  41,
+                                        "text":  "label—O",
+                                        "x":  415
+                                    },
+                                    {
+                                        "y":  580,
+                                        "height":  12,
+                                        "width":  56,
+                                        "text":  "pred=C18",
+                                        "x":  463
+                                    },
+                                    {
+                                        "y":  580,
+                                        "height":  9,
+                                        "width":  20,
+                                        "text":  "075",
+                                        "x":  617
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "[crossattn] vol 1592 slice 54 (axial —170/199)",
+                      "words":  [
+                                    {
+                                        "y":  908,
+                                        "height":  15,
+                                        "width":  80,
+                                        "text":  "[crossattn]",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  908,
+                                        "height":  12,
+                                        "width":  21,
+                                        "text":  "vol",
+                                        "x":  148
+                                    },
+                                    {
+                                        "y":  908,
+                                        "height":  12,
+                                        "width":  35,
+                                        "text":  "1592",
+                                        "x":  177
+                                    },
+                                    {
+                                        "y":  908,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  223
+                                    },
+                                    {
+                                        "y":  908,
+                                        "height":  12,
+                                        "width":  18,
+                                        "text":  "54",
+                                        "x":  262
+                                    },
+                                    {
+                                        "y":  908,
+                                        "height":  15,
+                                        "width":  40,
+                                        "text":  "(axial",
+                                        "x":  291
+                                    },
+                                    {
+                                        "y":  908,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "—170/199)",
+                                        "x":  338
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label=glaucoma pred=0.94 slice contribution=+O.170 (pushes toward glaucoma)",
+                      "words":  [
+                                    {
+                                        "y":  925,
+                                        "height":  15,
+                                        "width":  121,
+                                        "text":  "label=glaucoma",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  925,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "pred=0.94",
+                                        "x":  191
+                                    },
+                                    {
+                                        "y":  925,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  280
+                                    },
+                                    {
+                                        "y":  925,
+                                        "height":  12,
+                                        "width":  158,
+                                        "text":  "contribution=+O.170",
+                                        "x":  319
+                                    },
+                                    {
+                                        "y":  925,
+                                        "height":  15,
+                                        "width":  59,
+                                        "text":  "(pushes",
+                                        "x":  483
+                                    },
+                                    {
+                                        "y":  925,
+                                        "height":  12,
+                                        "width":  51,
+                                        "text":  "toward",
+                                        "x":  547
+                                    },
+                                    {
+                                        "y":  925,
+                                        "height":  15,
+                                        "width":  79,
+                                        "text":  "glaucoma)",
+                                        "x":  604
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Localized pathology",
+                      "words":  [
+                                    {
+                                        "y":  942,
+                                        "height":  12,
+                                        "width":  68,
+                                        "text":  "Localized",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  942,
+                                        "height":  15,
+                                        "width":  74,
+                                        "text":  "pathology",
+                                        "x":  133
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Slice 54",
+                      "words":  [
+                                    {
+                                        "y":  983,
+                                        "height":  9,
+                                        "width":  25,
+                                        "text":  "Slice",
+                                        "x":  186
+                                    },
+                                    {
+                                        "y":  983,
+                                        "height":  9,
+                                        "width":  12,
+                                        "text":  "54",
+                                        "x":  215
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "[crossattn] vol 1991 slice 6 (axial —18/199)",
+                      "words":  [
+                                    {
+                                        "y":  1311,
+                                        "height":  15,
+                                        "width":  80,
+                                        "text":  "[crossattn]",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  1311,
+                                        "height":  12,
+                                        "width":  21,
+                                        "text":  "vol",
+                                        "x":  148
+                                    },
+                                    {
+                                        "y":  1311,
+                                        "height":  12,
+                                        "width":  35,
+                                        "text":  "1991",
+                                        "x":  177
+                                    },
+                                    {
+                                        "y":  1311,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  223
+                                    },
+                                    {
+                                        "y":  1311,
+                                        "height":  12,
+                                        "width":  8,
+                                        "text":  "6",
+                                        "x":  262
+                                    },
+                                    {
+                                        "y":  1311,
+                                        "height":  15,
+                                        "width":  40,
+                                        "text":  "(axial",
+                                        "x":  281
+                                    },
+                                    {
+                                        "y":  1311,
+                                        "height":  15,
+                                        "width":  69,
+                                        "text":  "—18/199)",
+                                        "x":  328
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label=healthy pred=0.19 slice contribution—-0.055 (pushes toward healthy)",
+                      "words":  [
+                                    {
+                                        "y":  1328,
+                                        "height":  15,
+                                        "width":  105,
+                                        "text":  "label=healthy",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  1328,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "pred=0.19",
+                                        "x":  174
+                                    },
+                                    {
+                                        "y":  1328,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  263
+                                    },
+                                    {
+                                        "y":  1328,
+                                        "height":  12,
+                                        "width":  151,
+                                        "text":  "contribution—-0.055",
+                                        "x":  301
+                                    },
+                                    {
+                                        "y":  1328,
+                                        "height":  15,
+                                        "width":  58,
+                                        "text":  "(pushes",
+                                        "x":  459
+                                    },
+                                    {
+                                        "y":  1328,
+                                        "height":  12,
+                                        "width":  52,
+                                        "text":  "toward",
+                                        "x":  522
+                                    },
+                                    {
+                                        "y":  1328,
+                                        "height":  15,
+                                        "width":  61,
+                                        "text":  "healthy)",
+                                        "x":  580
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Patch contrib Wogit)",
+                      "words":  [
+                                    {
+                                        "y":  969,
+                                        "height":  10,
+                                        "width":  28,
+                                        "text":  "Patch",
+                                        "x":  470
+                                    },
+                                    {
+                                        "y":  969,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "contrib",
+                                        "x":  502
+                                    },
+                                    {
+                                        "y":  969,
+                                        "height":  12,
+                                        "width":  38,
+                                        "text":  "Wogit)",
+                                        "x":  544
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label—I predzO_94",
+                      "words":  [
+                                    {
+                                        "y":  983,
+                                        "height":  9,
+                                        "width":  41,
+                                        "text":  "label—I",
+                                        "x":  412
+                                    },
+                                    {
+                                        "y":  983,
+                                        "height":  12,
+                                        "width":  56,
+                                        "text":  "predzO_94",
+                                        "x":  461
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Patch contrib Wogit)",
+                      "words":  [
+                                    {
+                                        "y":  1372,
+                                        "height":  10,
+                                        "width":  28,
+                                        "text":  "Patch",
+                                        "x":  470
+                                    },
+                                    {
+                                        "y":  1372,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "contrib",
+                                        "x":  502
+                                    },
+                                    {
+                                        "y":  1372,
+                                        "height":  12,
+                                        "width":  38,
+                                        "text":  "Wogit)",
+                                        "x":  544
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label—O pred=O.Ig 055",
+                      "words":  [
+                                    {
+                                        "y":  1386,
+                                        "height":  9,
+                                        "width":  41,
+                                        "text":  "label—O",
+                                        "x":  415
+                                    },
+                                    {
+                                        "y":  1386,
+                                        "height":  12,
+                                        "width":  56,
+                                        "text":  "pred=O.Ig",
+                                        "x":  463
+                                    },
+                                    {
+                                        "y":  1386,
+                                        "height":  9,
+                                        "width":  20,
+                                        "text":  "055",
+                                        "x":  617
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Peripheral normal",
+                      "words":  [
+                                    {
+                                        "y":  1345,
+                                        "height":  15,
+                                        "width":  74,
+                                        "text":  "Peripheral",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  1345,
+                                        "height":  12,
+                                        "width":  51,
+                                        "text":  "normal",
+                                        "x":  139
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Slice 6",
+                      "words":  [
+                                    {
+                                        "y":  1386,
+                                        "height":  9,
+                                        "width":  24,
+                                        "text":  "Slice",
+                                        "x":  190
+                                    },
+                                    {
+                                        "y":  1386,
+                                        "height":  9,
+                                        "width":  6,
+                                        "text":  "6",
+                                        "x":  218
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Idi] vol 0100 slice 45 (axial -142/199)",
+                      "words":  [
+                                    {
+                                        "y":  1714,
+                                        "height":  15,
+                                        "width":  29,
+                                        "text":  "Idi]",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  1714,
+                                        "height":  12,
+                                        "width":  21,
+                                        "text":  "vol",
+                                        "x":  98
+                                    },
+                                    {
+                                        "y":  1714,
+                                        "height":  12,
+                                        "width":  37,
+                                        "text":  "0100",
+                                        "x":  125
+                                    },
+                                    {
+                                        "y":  1714,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  173
+                                    },
+                                    {
+                                        "y":  1714,
+                                        "height":  12,
+                                        "width":  18,
+                                        "text":  "45",
+                                        "x":  211
+                                    },
+                                    {
+                                        "y":  1714,
+                                        "height":  15,
+                                        "width":  40,
+                                        "text":  "(axial",
+                                        "x":  240
+                                    },
+                                    {
+                                        "y":  1714,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "-142/199)",
+                                        "x":  287
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label=glaucoma pred=0.94 slice contribution=+O.188 (pushes toward glaucoma)",
+                      "words":  [
+                                    {
+                                        "y":  1731,
+                                        "height":  15,
+                                        "width":  121,
+                                        "text":  "label=glaucoma",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  1731,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "pred=0.94",
+                                        "x":  191
+                                    },
+                                    {
+                                        "y":  1731,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  280
+                                    },
+                                    {
+                                        "y":  1731,
+                                        "height":  12,
+                                        "width":  158,
+                                        "text":  "contribution=+O.188",
+                                        "x":  319
+                                    },
+                                    {
+                                        "y":  1731,
+                                        "height":  15,
+                                        "width":  59,
+                                        "text":  "(pushes",
+                                        "x":  483
+                                    },
+                                    {
+                                        "y":  1731,
+                                        "height":  12,
+                                        "width":  51,
+                                        "text":  "toward",
+                                        "x":  547
+                                    },
+                                    {
+                                        "y":  1731,
+                                        "height":  15,
+                                        "width":  79,
+                                        "text":  "glaucoma)",
+                                        "x":  604
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Disc rim a-scan",
+                      "words":  [
+                                    {
+                                        "y":  1749,
+                                        "height":  12,
+                                        "width":  30,
+                                        "text":  "Disc",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  1749,
+                                        "height":  12,
+                                        "width":  23,
+                                        "text":  "rim",
+                                        "x":  95
+                                    },
+                                    {
+                                        "y":  1749,
+                                        "height":  12,
+                                        "width":  48,
+                                        "text":  "a-scan",
+                                        "x":  125
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Slice 45",
+                      "words":  [
+                                    {
+                                        "y":  1790,
+                                        "height":  9,
+                                        "width":  25,
+                                        "text":  "Slice",
+                                        "x":  186
+                                    },
+                                    {
+                                        "y":  1790,
+                                        "height":  9,
+                                        "width":  12,
+                                        "text":  "45",
+                                        "x":  215
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Patch contrib Wogit)",
+                      "words":  [
+                                    {
+                                        "y":  1776,
+                                        "height":  10,
+                                        "width":  28,
+                                        "text":  "Patch",
+                                        "x":  470
+                                    },
+                                    {
+                                        "y":  1776,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "contrib",
+                                        "x":  502
+                                    },
+                                    {
+                                        "y":  1776,
+                                        "height":  12,
+                                        "width":  38,
+                                        "text":  "Wogit)",
+                                        "x":  544
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label—I predzO_94",
+                      "words":  [
+                                    {
+                                        "y":  1790,
+                                        "height":  9,
+                                        "width":  41,
+                                        "text":  "label—I",
+                                        "x":  412
+                                    },
+                                    {
+                                        "y":  1790,
+                                        "height":  12,
+                                        "width":  56,
+                                        "text":  "predzO_94",
+                                        "x":  461
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "[dll vol 2469 slice 49 (axial -154/199)",
+                      "words":  [
+                                    {
+                                        "y":  2118,
+                                        "height":  15,
+                                        "width":  29,
+                                        "text":  "[dll",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  2118,
+                                        "height":  12,
+                                        "width":  21,
+                                        "text":  "vol",
+                                        "x":  98
+                                    },
+                                    {
+                                        "y":  2118,
+                                        "height":  12,
+                                        "width":  37,
+                                        "text":  "2469",
+                                        "x":  125
+                                    },
+                                    {
+                                        "y":  2118,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  173
+                                    },
+                                    {
+                                        "y":  2118,
+                                        "height":  12,
+                                        "width":  18,
+                                        "text":  "49",
+                                        "x":  211
+                                    },
+                                    {
+                                        "y":  2118,
+                                        "height":  15,
+                                        "width":  40,
+                                        "text":  "(axial",
+                                        "x":  240
+                                    },
+                                    {
+                                        "y":  2118,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "-154/199)",
+                                        "x":  287
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label=healthy pred=0.07 slice contribution—-0.432 (pushes toward healthy)",
+                      "words":  [
+                                    {
+                                        "y":  2135,
+                                        "height":  15,
+                                        "width":  105,
+                                        "text":  "label=healthy",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  2135,
+                                        "height":  15,
+                                        "width":  78,
+                                        "text":  "pred=0.07",
+                                        "x":  174
+                                    },
+                                    {
+                                        "y":  2135,
+                                        "height":  12,
+                                        "width":  33,
+                                        "text":  "slice",
+                                        "x":  263
+                                    },
+                                    {
+                                        "y":  2135,
+                                        "height":  12,
+                                        "width":  151,
+                                        "text":  "contribution—-0.432",
+                                        "x":  301
+                                    },
+                                    {
+                                        "y":  2135,
+                                        "height":  15,
+                                        "width":  58,
+                                        "text":  "(pushes",
+                                        "x":  459
+                                    },
+                                    {
+                                        "y":  2135,
+                                        "height":  12,
+                                        "width":  51,
+                                        "text":  "toward",
+                                        "x":  523
+                                    },
+                                    {
+                                        "y":  2135,
+                                        "height":  15,
+                                        "width":  60,
+                                        "text":  "healthy)",
+                                        "x":  581
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Strong healthy suppressor",
+                      "words":  [
+                                    {
+                                        "y":  2152,
+                                        "height":  15,
+                                        "width":  48,
+                                        "text":  "Strong",
+                                        "x":  58
+                                    },
+                                    {
+                                        "y":  2152,
+                                        "height":  15,
+                                        "width":  55,
+                                        "text":  "healthy",
+                                        "x":  113
+                                    },
+                                    {
+                                        "y":  2155,
+                                        "height":  12,
+                                        "width":  83,
+                                        "text":  "suppressor",
+                                        "x":  173
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Patch contrib (Alogit)",
+                      "words":  [
+                                    {
+                                        "y":  2179,
+                                        "height":  10,
+                                        "width":  28,
+                                        "text":  "Patch",
+                                        "x":  470
+                                    },
+                                    {
+                                        "y":  2179,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "contrib",
+                                        "x":  502
+                                    },
+                                    {
+                                        "y":  2179,
+                                        "height":  12,
+                                        "width":  38,
+                                        "text":  "(Alogit)",
+                                        "x":  544
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Slice 49",
+                      "words":  [
+                                    {
+                                        "y":  2193,
+                                        "height":  9,
+                                        "width":  25,
+                                        "text":  "Slice",
+                                        "x":  186
+                                    },
+                                    {
+                                        "y":  2193,
+                                        "height":  9,
+                                        "width":  13,
+                                        "text":  "49",
+                                        "x":  215
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "label—O pred=O.07",
+                      "words":  [
+                                    {
+                                        "y":  2193,
+                                        "height":  9,
+                                        "width":  41,
+                                        "text":  "label—O",
+                                        "x":  415
+                                    },
+                                    {
+                                        "y":  2193,
+                                        "height":  12,
+                                        "width":  56,
+                                        "text":  "pred=O.07",
+                                        "x":  463
+                                    }
+                                ]
+                  }
+              ],
+    "height":  2513
+}

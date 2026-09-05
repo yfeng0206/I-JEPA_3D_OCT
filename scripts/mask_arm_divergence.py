@@ -7,8 +7,8 @@ nearly the same cells, so the two arms trained on nearly the same task.  This
 script tests that directly instead of arguing about it.
 
 The measurement is the Jaccard overlap (IoU) between the four-block target
-unions produced by each arm on the SAME slice with the SAME RNG seed, so block
-sizes are identical and only placement differs.
+unions produced by each arm on the SAME cropped slice with explicitly injected
+shared block sizes. Placement seeds do not imply matched placement draws.
 
 The number that matters is the comparison against a within-arm control:
 
@@ -53,19 +53,20 @@ def _read(ds, idx):
     return ds[idx]
 
 
-def _union(generator, kind, img_t, guide, seed):
+def _union(generator, kind, img_t, guide, seed, sizes):
     """Union of the four target blocks, as a flat boolean over the 16x16 grid."""
     random.seed(seed)
     torch.manual_seed(seed)
     np.random.seed(seed % (2 ** 31))
     if kind == "oracle":
-        _, pred = generator.generate(batch_size=1, imgs_cpu=img_t.unsqueeze(0))
+        _, pred = generator.generate(batch_size=1, imgs_cpu=img_t.unsqueeze(0),
+                                     block_sizes=sizes)
     elif kind == "mirage":
         _, pred = generator.generate(
             batch_size=1, guide_grids=guide,
-            guide_valid=torch.ones(1, dtype=torch.bool))
+            guide_valid=torch.ones(1, dtype=torch.bool), block_sizes=sizes)
     else:
-        _, pred = generator.generate(batch_size=1)
+        _, pred = generator.generate(batch_size=1, block_sizes=sizes)
     out = np.zeros(GRID * GRID, dtype=bool)
     for blk in pred:
         out[blk[0].numpy()] = True
@@ -142,16 +143,22 @@ def main():
             retina = occ >= 0.25
             if retina.sum() < 24:
                 continue
-            guide = torch.from_numpy(
-                np.stack([occ, retina.astype(np.float32)], 0)).unsqueeze(0)
+            guide = guide_t.unsqueeze(0)
             sa, sb = 1000 + idx, 5000 + idx
+            size_rng = torch.Generator().manual_seed(sa)
+            sizes = dict(
+                pred=[g_mir._sample_block_size(g_mir.pred_mask_scale, size_rng)
+                      for _ in range(g_mir.npred)],
+                enc=[g_mir._sample_block_size(g_mir.enc_mask_scale, size_rng)
+                     for _ in range(g_mir.nenc)],
+            )
 
-            o_a = _union(g_ora, "oracle", img_t, guide, sa)
-            o_b = _union(g_ora, "oracle", img_t, guide, sb)
-            m_a = _union(g_mir, "mirage", img_t, guide, sa)
-            m_b = _union(g_mir, "mirage", img_t, guide, sb)
-            r_a = _union(g_rnd, "random", img_t, guide, sa)
-            r_b = _union(g_rnd, "random", img_t, guide, sb)
+            o_a = _union(g_ora, "oracle", img_t, guide, sa, sizes)
+            o_b = _union(g_ora, "oracle", img_t, guide, sb, sizes)
+            m_a = _union(g_mir, "mirage", img_t, guide, sa, sizes)
+            m_b = _union(g_mir, "mirage", img_t, guide, sb, sizes)
+            r_a = _union(g_rnd, "random", img_t, guide, sa, sizes)
+            r_b = _union(g_rnd, "random", img_t, guide, sb, sizes)
 
             acc["ora_mir"].append(_iou(o_a, m_a))   # between arms, same seed
             acc["mir_mir"].append(_iou(m_a, m_b))   # within MIRAGE, two seeds
@@ -171,7 +178,7 @@ def main():
 
     print("slices measured: %d" % n)
     print()
-    print("Target-union overlap (IoU), same slice, same RNG seed")
+    print("Target-union overlap (IoU), same crop and injected block sizes")
     print("  %-34s %.3f" % ("oracle  vs MIRAGE   [between arms]", s("ora_mir")))
     print("  %-34s %.3f" % ("MIRAGE  vs MIRAGE   [within, 2 seeds]", s("mir_mir")))
     print("  %-34s %.3f" % ("oracle  vs oracle   [within, 2 seeds]", s("ora_ora")))

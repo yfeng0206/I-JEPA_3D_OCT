@@ -13,6 +13,8 @@ Compatible with PyTorch 1.13.1 and Python 3.8.
 
 import argparse
 import copy
+import hashlib
+import json
 import math
 import os
 import random
@@ -36,7 +38,10 @@ _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _project_root not in sys.path:
     sys.path.insert(0, _project_root)
 
-from src.helper import init_patch_model, init_opt, load_checkpoint, save_checkpoint
+from src.helper import (
+    init_patch_model, init_opt, load_checkpoint, save_checkpoint,
+    capture_rng_state, optimizer_step, update_ema,
+)
 from src.masks.multiblock import MaskCollator
 from src.masks.curriculum import CurriculumMaskGenerator, MirageMaskCollator
 from src.masks.utils import apply_masks
@@ -114,6 +119,51 @@ def momentum_schedule(base_value, final_value, num_steps):
         yield value
 
 
+def accumulation_window_size(iteration, num_batches, accum_steps):
+    """Actual microbatch count of the current (possibly partial) window."""
+    if accum_steps < 1 or not 0 <= iteration < num_batches:
+        raise ValueError("Invalid accumulation window")
+    return min(accum_steps, num_batches - (iteration // accum_steps) * accum_steps)
+
+
+def jepa_forward_loss(encoder, predictor, target_encoder, images, masks_enc,
+                      masks_pred, use_amp=False, amp_target=False, h_full=None):
+    """Production selected-token Smooth-L1 path, also used by bounded diagnostics."""
+    with torch.no_grad():
+        if h_full is None:
+            with autocast(enabled=amp_target):
+                h_full = target_encoder(images)
+            h_full = F.layer_norm(h_full.float(), (h_full.size(-1),))
+        targets = apply_masks(h_full, masks_pred)
+        targets = repeat_interleave_batch(targets, images.size(0), len(masks_enc))
+    with autocast(enabled=use_amp):
+        predictions = predictor(encoder(images, masks_enc), masks_enc, masks_pred)
+        loss = F.smooth_l1_loss(predictions, targets)
+    return loss, predictions, targets
+
+
+def format_cover_stats(stats):
+    """Keep policy-complement diagnostics distinct from delivered context."""
+    message = (
+        '    [COVER] hidden=%.3f  visible_cells=%.1f  floor_ok=%.3f  '
+        'stats_scope=policy_target_complement  transition=%.2f  random=%.2f'
+        % (stats.get('cover_hidden_frac', 0.0),
+           stats.get('cover_visible_cells', 0.0),
+           stats.get('cover_floor_ok', 0.0),
+           stats.get('cover_transition_blocks', 0.0),
+           stats.get('cover_random_blocks', 0.0)))
+    fields = ('delivered_context_floor_satisfied', 'delivered_context_floor_unsatisfied',
+              'delivered_context_interventions')
+    if all(field in stats for field in fields):
+        message += ('  delivered_context_floor_satisfied=%d  '
+                    'delivered_context_floor_unsatisfied=%d  '
+                    'delivered_context_interventions=%d'
+                    % tuple(stats[field] for field in fields))
+    else:
+        message += '  delivered_context_floor=not_reported'
+    return message
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -128,6 +178,14 @@ def main(args):
     meta_cfg = config['meta']
     opt_cfg = config['optimization']
     log_cfg = config['logging']
+    resume_policy = meta_cfg.get('resume_policy', 'exact')
+    if resume_policy not in ('exact', 'fork'):
+        raise ValueError("meta.resume_policy must be 'exact' or 'fork'")
+    if resume_policy == 'fork' and not (
+            meta_cfg.get('load_checkpoint') and meta_cfg.get('read_checkpoint')):
+        raise ValueError("meta.resume_policy='fork' requires load_checkpoint and read_checkpoint")
+    if 'fork_start_epoch' in meta_cfg and resume_policy != 'fork':
+        raise ValueError("meta.fork_start_epoch requires meta.resume_policy='fork'")
 
     # ---- Distributed setup -------------------------------------------------
     world_size, rank = init_distributed()
@@ -294,6 +352,9 @@ def main(args):
                                 'transition' if curr_cfg.get('cover_transition', True)
                                 else 'random'),
                    curr_cfg.get('anatomy_tau', 0.10)))
+            log('  Cover delivery: algorithm=%s context_guard=%s'
+                % (curr_cfg.get('cover_algorithm', 'legacy_v1'),
+                   bool(curr_cfg.get('cover_context_guard', False))))
 
     # ---- Transforms --------------------------------------------------------
     transform = make_transforms(
@@ -510,6 +571,26 @@ def main(args):
 
     # ---- Load checkpoint ---------------------------------------------------
     start_epoch = 0
+    resume_state = {}
+    topology = {
+        'world_size': world_size,
+        'num_workers': data_cfg['num_workers'],
+        'val_num_workers': data_cfg.get('val_num_workers', 2),
+        'batch_size': data_cfg['batch_size'],
+        'accum_steps': accum_steps,
+        'train_batches': len(train_loader),
+        'seed': seed,
+        'persistent_workers': False,
+        'device_type': device.type,
+        'cuda_device_count': torch.cuda.device_count() if device.type == 'cuda' else 0,
+        'torch_version': str(torch.__version__),
+        'run_contract_sha256': hashlib.sha256(json.dumps({
+            'data': data_cfg, 'mask': mask_cfg, 'optimization': opt_cfg,
+            'model': {key: value for key, value in meta_cfg.items()
+                      if key not in ('load_checkpoint', 'read_checkpoint',
+                                     'resume_policy', 'fork_start_epoch')},
+        }, sort_keys=True).encode('utf-8')).hexdigest(),
+    }
     if meta_cfg.get('load_checkpoint', False) and meta_cfg.get('read_checkpoint'):
         r_path = meta_cfg['read_checkpoint']
         enc_unwrap = encoder.module if hasattr(encoder, 'module') else encoder
@@ -517,18 +598,50 @@ def main(args):
         enc_unwrap, pred_unwrap, target_encoder, optimizer, scaler, start_epoch = \
             load_checkpoint(device, r_path, enc_unwrap, pred_unwrap,
                             target_encoder, optimizer, scaler,
-                            mask_gen=mask_gen)
+                            mask_gen=mask_gen, training_state=resume_state,
+                            rank=rank, topology=topology, resume_policy=resume_policy)
+        if resume_policy == 'fork':
+            start_epoch = int(meta_cfg.get('fork_start_epoch', start_epoch))
+            if not 0 <= start_epoch <= opt_cfg['epochs']:
+                raise ValueError("meta.fork_start_epoch must be within the new optimization horizon")
+            random.seed(run_seed)
+            np.random.seed(run_seed)
+            torch.manual_seed(run_seed)
+            torch.cuda.manual_seed_all(run_seed)
+            for index, group in enumerate(optimizer.param_groups):
+                group['lr'] = opt_cfg['start_lr']
+                group['weight_decay'] = (opt_cfg['weight_decay']
+                                         if index in wd_scheduler._wd_group_indices else 0.0)
+            resume_state['lineage'].update({
+                'fork_start_epoch': start_epoch, 'seed': seed,
+                'seed_policy': 'config_seed_plus_rank',
+                'schedule_offset_updates': start_epoch * iterations_per_epoch,
+                'target_run_contract_sha256': topology['run_contract_sha256'],
+                'optimizer_lr_wd': 'reconstructed_from_new_schedules; moments/counters retained',
+            })
+            log('  FORK: start_epoch=%d; configured seed=%d; new LR/WD/EMA schedules, '
+                'fresh curriculum and best/patience; optimizer moments retained.'
+                % (start_epoch, seed))
+    exact_state = resume_state if resume_policy == 'exact' else {}
 
     # ---- Momentum schedule for EMA -----------------------------------------
     ema_start, ema_end = opt_cfg['ema']
     total_steps = opt_cfg['epochs'] * iterations_per_epoch
     mom_schedule = momentum_schedule(ema_start, ema_end, total_steps)
 
-    # Fast-forward all schedules if resuming
-    for _ in range(start_epoch * iterations_per_epoch):
-        next(mom_schedule)
-        lr_scheduler.step()
-        wd_scheduler.step()
+    successful_updates = exact_state.get('successful_updates',
+                                           start_epoch * iterations_per_epoch)
+    last_momentum = ema_start
+    if exact_state:
+        lr_scheduler.load_state_dict(exact_state['lr_scheduler'])
+        wd_scheduler.load_state_dict(exact_state['wd_scheduler'])
+    # Preserve the historical post-update scheduler phase. Only successful
+    # updates count; legacy checkpoints cannot reveal past AMP overflows.
+    for _ in range(successful_updates):
+        last_momentum = next(mom_schedule)
+        if not exact_state:
+            lr_scheduler.step()
+            wd_scheduler.step()
 
     # ---- Val loss evaluation function --------------------------------------
     @torch.no_grad()
@@ -569,8 +682,8 @@ def main(args):
     # ---- Training loop -----------------------------------------------------
     patience = opt_cfg.get('patience', 8)
     warmup_epochs = opt_cfg.get('warmup', 5)
-    best_val_loss = float('inf')
-    epochs_no_improve = 0
+    best_val_loss = exact_state.get('best_val_loss', float('inf'))
+    epochs_no_improve = exact_state.get('epochs_no_improve', 0)
 
     log('-' * 70)
     log('Starting training from epoch %d to %d (patience=%d, early-stop after epoch %d)'
@@ -578,12 +691,17 @@ def main(args):
     log('-' * 70)
 
     # Track last valid scheduler/EMA values for logging
-    lr_val = opt_cfg.get('start_lr', 0.0001)
-    wd_val = opt_cfg.get('weight_decay', 0.04)
-    m = ema_start
+    lr_val = optimizer.param_groups[0]['lr']
+    wd_val = optimizer.param_groups[0]['weight_decay']
+    m = exact_state.get('ema', last_momentum)
     num_micro_batches = len(train_loader)
+    stop_epoch = opt_cfg['epochs']
+    if (exact_state and start_epoch > warmup_epochs
+            and epochs_no_improve >= patience and math.isfinite(best_val_loss)):
+        log('Checkpoint already exhausted early-stopping patience; no new updates.')
+        stop_epoch = start_epoch
 
-    for epoch in range(start_epoch, opt_cfg['epochs']):
+    for epoch in range(start_epoch, stop_epoch):
         train_sampler.set_epoch(epoch)
         if use_curriculum:
             # ``epoch`` is the loop's 0-indexed counter; ``start_epoch`` was
@@ -696,42 +814,12 @@ def main(args):
                 if itr % accum_steps == 0:
                     optimizer.zero_grad(set_to_none=True)
 
-                # Target path (no gradient).  Reuse the precomputed h_full
-                # when curriculum mode already computed it; otherwise run
-                # the standard R1 target forward.
-                #
-                # The target forward is 59% of the step when run in fp32, and
-                # the reference I-JEPA implementation runs it under autocast.
-                # Enabling `amp_target` makes the step 1.66x faster (68 -> 41
-                # min/epoch).  It is OPT-IN because every previously trained
-                # arm used fp32 targets; the numerical effect is negligible
-                # (cosine 1.00000000, mean |diff| 2.5e-04 on layer-normed
-                # targets, versus ~0.4%/step EMA drift), but it is a change and
-                # is therefore recorded in the run log.  layer_norm is always
-                # taken in fp32 so the targets themselves stay well-conditioned.
-                with torch.no_grad():
-                    if h_full is None:
-                        with autocast(enabled=amp_target):
-                            h = target_encoder(imgs)  # (B, N, D)
-                        h = F.layer_norm(h.float(), (h.size(-1),))
-                    else:
-                        h = h_full
-                    # Extract target features at predicted positions
-                    h_pred_full = apply_masks(h, masks_pred)  # (B*npred, K_pred, D)
-                    # Repeat for each encoder mask
-                    h_rep = repeat_interleave_batch(h_pred_full, B, repeat=len(masks_enc))
-
-                # Context path (with gradient)
                 use_amp = (scaler is not None)
-                if use_amp:
-                    with autocast():
-                        z = encoder(imgs, masks_enc)  # masked context tokens
-                        z = predictor(z, masks_enc, masks_pred)  # predict targets
-                        loss = F.smooth_l1_loss(z, h_rep) / accum_steps
-                else:
-                    z = encoder(imgs, masks_enc)
-                    z = predictor(z, masks_enc, masks_pred)
-                    loss = F.smooth_l1_loss(z, h_rep) / accum_steps
+                raw_loss, z, h_rep = jepa_forward_loss(
+                    encoder, predictor, target_encoder, imgs, masks_enc, masks_pred,
+                    use_amp=use_amp, amp_target=amp_target, h_full=h_full)
+                window_size = accumulation_window_size(itr, num_micro_batches, accum_steps)
+                loss = raw_loss / window_size
 
                 if use_amp:
                     scaler.scale(loss).backward()
@@ -739,12 +827,9 @@ def main(args):
                     loss.backward()
 
                 # Step optimizer only at the end of accumulation window
+                did_step = False
                 if (itr + 1) % accum_steps == 0 or (itr + 1) == len(train_loader):
-                    if use_amp:
-                        scaler.step(optimizer)
-                        scaler.update()
-                    else:
-                        optimizer.step()
+                    did_step = optimizer_step(optimizer, scaler)
 
                 # Compute per-token L2 (for curriculum loss-guided / cluster
                 # update).  Use the same z and h_rep so the loss map matches
@@ -759,25 +844,22 @@ def main(args):
                 else:
                     per_token = None
 
-                return loss.item() * accum_steps, per_token  # report unscaled loss
+                return raw_loss.item(), per_token, did_step
 
             (fb_result, fwd_bwd_ms) = gpu_timer(_forward_backward)
-            loss_val, per_token_loss = fb_result
+            loss_val, per_token_loss, did_step = fb_result
 
             # Scheduler + EMA only on optimizer step iterations
             is_step = (itr + 1) % accum_steps == 0 or (itr + 1) == num_micro_batches
-            if is_step:
+            if did_step:
+                successful_updates += 1
                 lr_val = lr_scheduler.step()
                 wd_val = wd_scheduler.step()
                 try:
                     m = next(mom_schedule)
                 except StopIteration:
                     pass  # keep last momentum value
-                enc_unwrap = encoder.module if hasattr(encoder, 'module') else encoder
-                with torch.no_grad():
-                    for p_online, p_target in zip(enc_unwrap.parameters(),
-                                                  target_encoder.parameters()):
-                        p_target.data.mul_(m).add_((1.0 - m) * p_online.detach().data)
+                update_ema(encoder, target_encoder, m)
 
             # ---- Curriculum state update ----
             # Must run on every rank (collectives inside); never gated on
@@ -824,15 +906,7 @@ def main(args):
                                ms['accept_rate'], ms['mean_block_fill'],
                                ms['retina_visible'], ms['mean_attempts']))
                         if curr_cfg.get('mode') == 'mirage_cover':
-                            # hidden= is the experiment's whole point: the
-                            # fraction of anatomy MASS the targets removed.
-                            log('    [COVER] hidden=%.3f  visible_cells=%.1f  '
-                                'floor_ok=%.3f  transition=%.2f  random=%.2f'
-                                % (ms.get('cover_hidden_frac', 0.0),
-                                   ms.get('cover_visible_cells', 0.0),
-                                   ms.get('cover_floor_ok', 0.0),
-                                   ms.get('cover_transition_blocks', 0.0),
-                                   ms.get('cover_random_blocks', 0.0)))
+                            log(format_cover_stats(ms))
 
             # CSV log
             if csv_logger is not None:
@@ -939,15 +1013,6 @@ def main(args):
                     best_val_loss = val_loss
                     epochs_no_improve = 0
                     improved = ' *'
-                    if is_main:
-                        best_path = os.path.join(output_dir, '%s-best.pth.tar' % write_tag)
-                        save_checkpoint(
-                            best_path, encoder, predictor, target_encoder, optimizer,
-                            scaler, epoch + 1, val_loss, data_cfg['batch_size'],
-                            world_size, lr_val,
-                            mask_gen=mask_gen,
-                        )
-                        upload_to_blob(best_path, blob_prefix, log)
                 else:
                     epochs_no_improve += 1
 
@@ -955,8 +1020,34 @@ def main(args):
             % (epoch + 1, opt_cfg['epochs'], epoch_time, loss_meter.avg,
                val_str, improved))
 
+        local_state = {
+            'rng': capture_rng_state(),
+            'curriculum': mask_gen.state_dict() if mask_gen is not None else None,
+        }
+        rank_states = [local_state]
+        if dist.is_initialized() and world_size > 1:
+            rank_states = [None] * world_size
+            dist.all_gather_object(rank_states, local_state)
+        training_state = {
+            'version': 1, 'successful_updates': successful_updates,
+            'lr_scheduler': lr_scheduler.state_dict(),
+            'wd_scheduler': wd_scheduler.state_dict(),
+            'best_val_loss': best_val_loss, 'epochs_no_improve': epochs_no_improve,
+            'lr': lr_val, 'wd': wd_val, 'ema': m,
+            'topology': topology, 'rank_states': rank_states,
+            'resume_boundary': 'completed_epoch_nonpersistent_workers',
+            'lineage': resume_state.get('lineage'),
+        }
+
         # Save periodic + best checkpoints (main process only)
         if is_main:
+            if improved:
+                best_path = os.path.join(output_dir, '%s-best.pth.tar' % write_tag)
+                save_checkpoint(
+                    best_path, encoder, predictor, target_encoder, optimizer,
+                    scaler, epoch + 1, val_loss, data_cfg['batch_size'],
+                    world_size, lr_val, mask_gen=mask_gen, training_state=training_state)
+                upload_to_blob(best_path, blob_prefix, log)
             # Rolling resume point, written EVERY epoch.
             #
             # `-best` tracks validation loss, but validation uses a plain
@@ -974,7 +1065,7 @@ def main(args):
                 tmp_path, encoder, predictor, target_encoder, optimizer,
                 scaler, epoch + 1, loss_meter.avg, data_cfg['batch_size'],
                 world_size, lr_val,
-                mask_gen=mask_gen,
+                mask_gen=mask_gen, training_state=training_state,
             )
             os.replace(tmp_path, last_path)
 
@@ -985,7 +1076,7 @@ def main(args):
                     ep_path, encoder, predictor, target_encoder, optimizer,
                     scaler, epoch + 1, loss_meter.avg, data_cfg['batch_size'],
                     world_size, lr_val,
-                    mask_gen=mask_gen,
+                    mask_gen=mask_gen, training_state=training_state,
                 )
                 upload_to_blob(ep_path, blob_prefix, log)
             # Upload log CSV every 5 epochs

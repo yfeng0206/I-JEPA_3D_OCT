@@ -1,0 +1,68 @@
+{
+  "pid": 21284,
+  "config": {
+    "baseline": "de145d7",
+    "checkpoint": "D:\\jepa_phase0\\fairvision-glaucoma\\checkpoint-ep25\\jepa_patch-random_posfix-ep25.pth.tar",
+    "checkpoint_sha256": "e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b",
+    "seed": 20260904,
+    "fixtures_required": true,
+    "matched_guided_fixture": true,
+    "fixtures_sha256": "269f1c143af8e91daa179796fb0bfbd40583d91fafebbc0dbd45cba9c6c4692e",
+    "fixture_policies": [
+      "cover_legacy",
+      "cover_v2",
+      "cover_v2_guard"
+    ],
+    "fixture_selection": "first_two_predeclared_Training_observations_from_existing_600_scope_bs2",
+    "tissue_definition": "guide_channel_0_occupancy_ge_0.25_proxy_not_clinical_truth",
+    "model": {
+      "model_name": "vit_base",
+      "crop_size": 256,
+      "patch_size": 16,
+      "pred_depth": 6,
+      "pred_emb_dim": 384
+    },
+    "precisions": [
+      "fp32"
+    ],
+    "max_batches": 3,
+    "max_updates": 3,
+    "optimizer": {
+      "lr": 0.0001,
+      "weight_decay": 0.04
+    },
+    "ema": 0.996,
+    "output_dir": "autopilot\\investigations\\delivered_task\\evidence\\training_gpu_guided_v1",
+    "private_dir": ".audit\\delivered_task_training\\guided_loss",
+    "lease": "autopilot\\investigations\\delivered_task\\gpu_lease.json"
+  },
+  "config_sha256": "e20cf20f3f3d894f944c00208eea8760a9de382c3f9b6f44999902c2d3922a20",
+  "checkpoint_sha256": "e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b",
+  "code_sha256": {
+    "C:\\Users\\Gary\\Desktop\\jepa\\scripts\\training_layer_diagnostic.py": "701767d5fc6db20db1ce19409d4fd3855754037425ad58d6f90d703aafec4b17",
+    "src\\train_patch.py": "aa19998729d062887b2480ac3e86a8d7bb9499516e202185cc96ec46c9e77a34",
+    "src\\helper.py": "c0f063ef236bfca598cee79e4f19c16bd0188061c2085c15036a64b8be61b9ca",
+    "src\\models\\vision_transformer.py": "ab0de995167c62ecb817c0be6b01a43b90c9749d1484474f349a6b4c6f973bf0",
+    "src\\masks\\curriculum.py": "3bf373fc8a87cadfa776de416240096073994c1bb35dda23c7d4919ad41d2649",
+    "src\\masks\\multiblock.py": "d8985698cba486625bbc5fa0e5cc34dc468ff0cc1346eae6f9e5db409cc9fa98"
+  },
+  "torch": "2.7.1+cu128",
+  "cuda": "12.8",
+  "gpu_preflight": "1904, [Insufficient Permissions]\n6196, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\CrossDeviceResume.exe\n9180, C:\\Windows\\explorer.exe\n10608, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\SearchHost.exe\n10616, C:\\Windows\\SystemApps\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\StartMenuExperienceHost.exe\n12232, C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.53\\msedgewebview2.exe\n12708, C:\\Windows\\SystemApps\\ShellExperienceHost_cw5n1h2txyewy\\ShellExperienceHost.exe\n14436, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\TextInputHost.exe\n1200, C:\\Program Files\\WindowsApps\\Microsoft.ZuneVideo_10.26061.10051.0_x64__8wekyb3d8bbwe\\Video.UI.exe\n19520, C:\\Program Files\\WindowsApps\\Microsoft.Edge.GameAssist_1.0.4019.0_x64__8wekyb3d8bbwe\\EdgeGameAssist.exe\n16760, C:\\Program Files\\WindowsApps\\SpotifyAB.SpotifyMusic_1.298.301.0_x64__zpdnekdrzrea0\\SpotifyXboxGamebarWebView.exe\n19652, C:\\Windows\\SystemApps\\Microsoft.LockApp_cw5n1h2txyewy\\LockApp.exe\n11020, C:\\Program Files\\WindowsApps\\Microsoft.WindowsTerminal_1.24.11911.0_x64__8wekyb3d8bbwe\\WindowsTerminal.exe\n3076, C:\\Windows\\System32\\ShellHost.exe\n1044, C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.53\\msedgewebview2.exe\n7176, C:\\Windows\\System32\\ApplicationFrameHost.exe\n4692, C:\\Windows\\ImmersiveControlPanel\\SystemSettings.exe\n6456, C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\n6600, C:\\Program Files\\WindowsApps\\Microsoft.YourPhone_1.26071.164.0_x64__8wekyb3d8bbwe\\PhoneExperienceHost.exe\n",
+  "purpose": "bounded production layer/loss/EMA diagnostic; no training campaign",
+  "bounds": {
+    "max_updates": 3,
+    "max_batches": 3,
+    "max_images_per_batch": 2,
+    "max_forward_calls_per_batch": 7,
+    "max_backward_calls_per_batch": 1
+  },
+  "stop_conditions": [
+    "first nonfinite",
+    "contract failure",
+    "resource conflict",
+    "configured cap"
+  ],
+  "amp_scaler_initial_scale": 128.0,
+  "fixtures_sha256": "269f1c143af8e91daa179796fb0bfbd40583d91fafebbc0dbd45cba9c6c4692e"
+}

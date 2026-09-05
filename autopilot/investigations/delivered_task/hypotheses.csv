@@ -1,0 +1,11 @@
+hypothesis_id,contract,owner,state,evidence,interpretation
+H01,Image transforms and guide channels identify the same tissue,mask-data,checked_bounded,mask_report.md,Coordinate-coded and fixed real-input checks pass; clinical guide accuracy not established
+H02,Configured policy and ramp actually govern emitted target indices,mask-data,checked_and_repaired,mask_report.md,Dispatch works; source bookkeeping corrected and ramp flags distinguished from conditional fill
+H03,Guided and random-background targets survive to predictor loss,mask-data,measured_bounded,training_report.md,Actual tissue/background loss contributions reconcile on the predeclared real batch; no background quota claimed
+H04,Visible anatomy survives final encoder-context collation,mask-data,violated_then_versioned_fix,mask_report.md,Historical complement not final context; explicit second guide-aware guard satisfies the defined valid-guide replay criterion
+H05,Image context block and teacher target token ordering align,training-eval,checked_and_repaired,training_report.md,Ordering passes; multi-context rectangularization fixed without claiming historical single-context corruption
+H06,Online predictor gradients and teacher EMA are operational,training-eval,checked_bounded,training_report.md,Finite updates and exact EMA on bounded cases; not a full trajectory or semantic-collapse proof
+H07,AMP accumulation and checkpoint resume follow intended update semantics,training-eval,repaired,training_report.md,Partial accumulation and skipped updates corrected; exact/fork semantics and legacy limits explicit
+H08,Historical checkpoints heads precision and case order match claims,training-eval,partly_established,training_report.md,Recorded AUC and head identity supported; historical case IDs and some launch provenance remain incomplete
+H09,Literature importance and prediction objective correspond to our proposed intervention,literature,analogy_bounded,literature_matrix.md,Region selection and sequencing are distinct; context evidence motivates but does not prove OCT mechanism
+H10,Task difficulty and guide proxy remain alternatives to implementation failure,coordinator,unresolved_mechanism,RESULTS.md,No corrected-model AUC or isolated causal explanation; subsequent matched training requires authorization

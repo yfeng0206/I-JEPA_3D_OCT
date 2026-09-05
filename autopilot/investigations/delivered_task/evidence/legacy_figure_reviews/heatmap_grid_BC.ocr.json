@@ -1,0 +1,2994 @@
+{
+    "image_sha256":  "7dc88ae88c6449cecad1fe2b94bb07dfcb01c5936a5dd02ba40d88962cb9cd30",
+    "width":  1498,
+    "language":  "en-US",
+    "limitations":  "OCR is fallible; extracted text is not numeric validation or proof of image provenance.",
+    "method":  "Windows.Media.Ocr, local CPU, no desktop display",
+    "lines":  [
+                  {
+                      "text":  "Effect of shared color scale (B) and slice-mean subtraction (C) on patch-occlusion heatmaps",
+                      "words":  [
+                                    {
+                                        "y":  14,
+                                        "height":  16,
+                                        "width":  59,
+                                        "text":  "Effect",
+                                        "x":  245
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  16,
+                                        "width":  21,
+                                        "text":  "of",
+                                        "x":  312
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  16,
+                                        "width":  71,
+                                        "text":  "shared",
+                                        "x":  339
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  16,
+                                        "width":  52,
+                                        "text":  "color",
+                                        "x":  419
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  16,
+                                        "width":  53,
+                                        "text":  "scale",
+                                        "x":  478
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  19,
+                                        "width":  28,
+                                        "text":  "(B)",
+                                        "x":  541
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  16,
+                                        "width":  38,
+                                        "text":  "and",
+                                        "x":  578
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  16,
+                                        "width":  114,
+                                        "text":  "slice-mean",
+                                        "x":  625
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  16,
+                                        "width":  119,
+                                        "text":  "subtraction",
+                                        "x":  748
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  19,
+                                        "width":  28,
+                                        "text":  "(C)",
+                                        "x":  877
+                                    },
+                                    {
+                                        "y":  18,
+                                        "height":  12,
+                                        "width":  25,
+                                        "text":  "on",
+                                        "x":  914
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  20,
+                                        "width":  165,
+                                        "text":  "patch-occlusion",
+                                        "x":  949
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  20,
+                                        "width":  104,
+                                        "text":  "heatmaps",
+                                        "x":  1124
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "(same raw Alogit values; only the visualization changes)",
+                      "words":  [
+                                    {
+                                        "y":  37,
+                                        "height":  19,
+                                        "width":  64,
+                                        "text":  "(same",
+                                        "x":  436
+                                    },
+                                    {
+                                        "y":  41,
+                                        "height":  12,
+                                        "width":  37,
+                                        "text":  "raw",
+                                        "x":  509
+                                    },
+                                    {
+                                        "y":  37,
+                                        "height":  20,
+                                        "width":  61,
+                                        "text":  "Alogit",
+                                        "x":  554
+                                    },
+                                    {
+                                        "y":  37,
+                                        "height":  18,
+                                        "width":  74,
+                                        "text":  "values;",
+                                        "x":  622
+                                    },
+                                    {
+                                        "y":  37,
+                                        "height":  20,
+                                        "width":  44,
+                                        "text":  "only",
+                                        "x":  706
+                                    },
+                                    {
+                                        "y":  37,
+                                        "height":  16,
+                                        "width":  34,
+                                        "text":  "the",
+                                        "x":  757
+                                    },
+                                    {
+                                        "y":  37,
+                                        "height":  16,
+                                        "width":  131,
+                                        "text":  "visualization",
+                                        "x":  799
+                                    },
+                                    {
+                                        "y":  37,
+                                        "height":  20,
+                                        "width":  96,
+                                        "text":  "changes)",
+                                        "x":  939
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Col 1: per-image zero-centered scale",
+                      "words":  [
+                                    {
+                                        "y":  166,
+                                        "height":  14,
+                                        "width":  29,
+                                        "text":  "Col",
+                                        "x":  29
+                                    },
+                                    {
+                                        "y":  167,
+                                        "height":  13,
+                                        "width":  16,
+                                        "text":  "1:",
+                                        "x":  67
+                                    },
+                                    {
+                                        "y":  166,
+                                        "height":  18,
+                                        "width":  99,
+                                        "text":  "per-image",
+                                        "x":  92
+                                    },
+                                    {
+                                        "y":  166,
+                                        "height":  14,
+                                        "width":  137,
+                                        "text":  "zero-centered",
+                                        "x":  198
+                                    },
+                                    {
+                                        "y":  166,
+                                        "height":  14,
+                                        "width":  49,
+                                        "text":  "scale",
+                                        "x":  343
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "(current default, artifact-prone)",
+                      "words":  [
+                                    {
+                                        "y":  187,
+                                        "height":  16,
+                                        "width":  80,
+                                        "text":  "(current",
+                                        "x":  53
+                                    },
+                                    {
+                                        "y":  187,
+                                        "height":  17,
+                                        "width":  75,
+                                        "text":  "default,",
+                                        "x":  140
+                                    },
+                                    {
+                                        "y":  187,
+                                        "height":  18,
+                                        "width":  145,
+                                        "text":  "artifact-prone)",
+                                        "x":  223
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "±O.OOO (per-image)",
+                      "words":  [
+                                    {
+                                        "y":  248,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±O.OOO",
+                                        "x":  144
+                                    },
+                                    {
+                                        "y":  247,
+                                        "height":  14,
+                                        "width":  78,
+                                        "text":  "(per-image)",
+                                        "x":  199
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "min -0.000 max +0.000",
+                      "words":  [
+                                    {
+                                        "y":  263,
+                                        "height":  11,
+                                        "width":  24,
+                                        "text":  "min",
+                                        "x":  127
+                                    },
+                                    {
+                                        "y":  264,
+                                        "height":  10,
+                                        "width":  43,
+                                        "text":  "-0.000",
+                                        "x":  157
+                                    },
+                                    {
+                                        "y":  266,
+                                        "height":  8,
+                                        "width":  28,
+                                        "text":  "max",
+                                        "x":  210
+                                    },
+                                    {
+                                        "y":  264,
+                                        "height":  10,
+                                        "width":  48,
+                                        "text":  "+0.000",
+                                        "x":  245
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "mean -0.000 std 0.000",
+                      "words":  [
+                                    {
+                                        "y":  282,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  131
+                                    },
+                                    {
+                                        "y":  280,
+                                        "height":  10,
+                                        "width":  43,
+                                        "text":  "-0.000",
+                                        "x":  174
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  11,
+                                        "width":  20,
+                                        "text":  "std",
+                                        "x":  226
+                                    },
+                                    {
+                                        "y":  280,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "0.000",
+                                        "x":  252
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "o II",
+                      "words":  [
+                                    {
+                                        "y":  398,
+                                        "height":  8,
+                                        "width":  9,
+                                        "text":  "o",
+                                        "x":  16
+                                    },
+                                    {
+                                        "y":  401,
+                                        "height":  10,
+                                        "width":  5,
+                                        "text":  "II",
+                                        "x":  53
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "a- c II",
+                      "words":  [
+                                    {
+                                        "y":  765,
+                                        "height":  8,
+                                        "width":  12,
+                                        "text":  "a-",
+                                        "x":  13
+                                    },
+                                    {
+                                        "y":  764,
+                                        "height":  8,
+                                        "width":  9,
+                                        "text":  "c",
+                                        "x":  34
+                                    },
+                                    {
+                                        "y":  759,
+                                        "height":  10,
+                                        "width":  4,
+                                        "text":  "II",
+                                        "x":  53
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "C",
+                      "words":  [
+                                    {
+                                        "y":  1474,
+                                        "height":  8,
+                                        "width":  9,
+                                        "text":  "C",
+                                        "x":  16
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "u II",
+                      "words":  [
+                                    {
+                                        "y":  1186,
+                                        "height":  7,
+                                        "width":  9,
+                                        "text":  "u",
+                                        "x":  34
+                                    },
+                                    {
+                                        "y":  1185,
+                                        "height":  10,
+                                        "width":  5,
+                                        "text":  "II",
+                                        "x":  53
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "c II",
+                      "words":  [
+                                    {
+                                        "y":  1475,
+                                        "height":  7,
+                                        "width":  9,
+                                        "text":  "c",
+                                        "x":  34
+                                    },
+                                    {
+                                        "y":  1474,
+                                        "height":  10,
+                                        "width":  4,
+                                        "text":  "II",
+                                        "x":  53
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "II Q",
+                      "words":  [
+                                    {
+                                        "y":  1515,
+                                        "height":  11,
+                                        "width":  5,
+                                        "text":  "II",
+                                        "x":  36
+                                    },
+                                    {
+                                        "y":  1512,
+                                        "height":  8,
+                                        "width":  12,
+                                        "text":  "Q",
+                                        "x":  51
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "z II",
+                      "words":  [
+                                    {
+                                        "y":  1878,
+                                        "height":  9,
+                                        "width":  12,
+                                        "text":  "z",
+                                        "x":  13
+                                    },
+                                    {
+                                        "y":  1879,
+                                        "height":  11,
+                                        "width":  5,
+                                        "text":  "II",
+                                        "x":  36
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "aj II",
+                      "words":  [
+                                    {
+                                        "y":  1898,
+                                        "height":  8,
+                                        "width":  9,
+                                        "text":  "aj",
+                                        "x":  16
+                                    },
+                                    {
+                                        "y":  1900,
+                                        "height":  10,
+                                        "width":  5,
+                                        "text":  "II",
+                                        "x":  53
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "±O.OOO (per-image)",
+                      "words":  [
+                                    {
+                                        "y":  605,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±O.OOO",
+                                        "x":  144
+                                    },
+                                    {
+                                        "y":  604,
+                                        "height":  14,
+                                        "width":  78,
+                                        "text":  "(per-image)",
+                                        "x":  199
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "min -0.000 max +0.000",
+                      "words":  [
+                                    {
+                                        "y":  621,
+                                        "height":  11,
+                                        "width":  24,
+                                        "text":  "min",
+                                        "x":  127
+                                    },
+                                    {
+                                        "y":  622,
+                                        "height":  10,
+                                        "width":  43,
+                                        "text":  "-0.000",
+                                        "x":  157
+                                    },
+                                    {
+                                        "y":  624,
+                                        "height":  8,
+                                        "width":  28,
+                                        "text":  "max",
+                                        "x":  210
+                                    },
+                                    {
+                                        "y":  622,
+                                        "height":  10,
+                                        "width":  48,
+                                        "text":  "+0.000",
+                                        "x":  245
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "mean -0.000 std 0.000",
+                      "words":  [
+                                    {
+                                        "y":  640,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  131
+                                    },
+                                    {
+                                        "y":  638,
+                                        "height":  10,
+                                        "width":  43,
+                                        "text":  "-0.000",
+                                        "x":  174
+                                    },
+                                    {
+                                        "y":  637,
+                                        "height":  11,
+                                        "width":  20,
+                                        "text":  "std",
+                                        "x":  226
+                                    },
+                                    {
+                                        "y":  638,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "0.000",
+                                        "x":  252
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "±O.OOO (per-image)",
+                      "words":  [
+                                    {
+                                        "y":  963,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±O.OOO",
+                                        "x":  144
+                                    },
+                                    {
+                                        "y":  962,
+                                        "height":  14,
+                                        "width":  78,
+                                        "text":  "(per-image)",
+                                        "x":  199
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "min -0.000 max +0.000",
+                      "words":  [
+                                    {
+                                        "y":  979,
+                                        "height":  11,
+                                        "width":  24,
+                                        "text":  "min",
+                                        "x":  127
+                                    },
+                                    {
+                                        "y":  980,
+                                        "height":  10,
+                                        "width":  43,
+                                        "text":  "-0.000",
+                                        "x":  157
+                                    },
+                                    {
+                                        "y":  982,
+                                        "height":  8,
+                                        "width":  28,
+                                        "text":  "max",
+                                        "x":  210
+                                    },
+                                    {
+                                        "y":  980,
+                                        "height":  10,
+                                        "width":  48,
+                                        "text":  "+0.000",
+                                        "x":  245
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "mean -0.000 std 0.000",
+                      "words":  [
+                                    {
+                                        "y":  998,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  131
+                                    },
+                                    {
+                                        "y":  996,
+                                        "height":  10,
+                                        "width":  43,
+                                        "text":  "-0.000",
+                                        "x":  174
+                                    },
+                                    {
+                                        "y":  995,
+                                        "height":  11,
+                                        "width":  20,
+                                        "text":  "std",
+                                        "x":  226
+                                    },
+                                    {
+                                        "y":  996,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "0.000",
+                                        "x":  252
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "±O.OOO (per-image)",
+                      "words":  [
+                                    {
+                                        "y":  1321,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±O.OOO",
+                                        "x":  144
+                                    },
+                                    {
+                                        "y":  1320,
+                                        "height":  14,
+                                        "width":  78,
+                                        "text":  "(per-image)",
+                                        "x":  199
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "min -0.000 max +0.000",
+                      "words":  [
+                                    {
+                                        "y":  1336,
+                                        "height":  11,
+                                        "width":  24,
+                                        "text":  "min",
+                                        "x":  127
+                                    },
+                                    {
+                                        "y":  1337,
+                                        "height":  10,
+                                        "width":  43,
+                                        "text":  "-0.000",
+                                        "x":  157
+                                    },
+                                    {
+                                        "y":  1339,
+                                        "height":  8,
+                                        "width":  29,
+                                        "text":  "max",
+                                        "x":  210
+                                    },
+                                    {
+                                        "y":  1337,
+                                        "height":  10,
+                                        "width":  48,
+                                        "text":  "+0.000",
+                                        "x":  245
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "mean -0.000 std 0.000",
+                      "words":  [
+                                    {
+                                        "y":  1356,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  131
+                                    },
+                                    {
+                                        "y":  1354,
+                                        "height":  10,
+                                        "width":  43,
+                                        "text":  "-0.000",
+                                        "x":  174
+                                    },
+                                    {
+                                        "y":  1353,
+                                        "height":  11,
+                                        "width":  20,
+                                        "text":  "std",
+                                        "x":  226
+                                    },
+                                    {
+                                        "y":  1354,
+                                        "height":  10,
+                                        "width":  38,
+                                        "text":  "0.000",
+                                        "x":  252
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "±0.003 (per-image)",
+                      "words":  [
+                                    {
+                                        "y":  1679,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  144
+                                    },
+                                    {
+                                        "y":  1678,
+                                        "height":  14,
+                                        "width":  78,
+                                        "text":  "(per-image)",
+                                        "x":  199
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "min -0.002 max +0.003",
+                      "words":  [
+                                    {
+                                        "y":  1694,
+                                        "height":  11,
+                                        "width":  24,
+                                        "text":  "min",
+                                        "x":  127
+                                    },
+                                    {
+                                        "y":  1695,
+                                        "height":  10,
+                                        "width":  42,
+                                        "text":  "-0.002",
+                                        "x":  157
+                                    },
+                                    {
+                                        "y":  1697,
+                                        "height":  8,
+                                        "width":  29,
+                                        "text":  "max",
+                                        "x":  210
+                                    },
+                                    {
+                                        "y":  1695,
+                                        "height":  10,
+                                        "width":  48,
+                                        "text":  "+0.003",
+                                        "x":  245
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "mean +0.000 std 0.001",
+                      "words":  [
+                                    {
+                                        "y":  1713,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  128
+                                    },
+                                    {
+                                        "y":  1711,
+                                        "height":  10,
+                                        "width":  48,
+                                        "text":  "+0.000",
+                                        "x":  172
+                                    },
+                                    {
+                                        "y":  1710,
+                                        "height":  11,
+                                        "width":  20,
+                                        "text":  "std",
+                                        "x":  230
+                                    },
+                                    {
+                                        "y":  1711,
+                                        "height":  10,
+                                        "width":  37,
+                                        "text":  "0.001",
+                                        "x":  256
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "±0.003 (per-image)",
+                      "words":  [
+                                    {
+                                        "y":  2037,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  144
+                                    },
+                                    {
+                                        "y":  2036,
+                                        "height":  14,
+                                        "width":  78,
+                                        "text":  "(per-image)",
+                                        "x":  199
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "min -0.002 max +0.003",
+                      "words":  [
+                                    {
+                                        "y":  2052,
+                                        "height":  11,
+                                        "width":  24,
+                                        "text":  "min",
+                                        "x":  127
+                                    },
+                                    {
+                                        "y":  2053,
+                                        "height":  10,
+                                        "width":  42,
+                                        "text":  "-0.002",
+                                        "x":  157
+                                    },
+                                    {
+                                        "y":  2055,
+                                        "height":  8,
+                                        "width":  29,
+                                        "text":  "max",
+                                        "x":  210
+                                    },
+                                    {
+                                        "y":  2053,
+                                        "height":  10,
+                                        "width":  48,
+                                        "text":  "+0.003",
+                                        "x":  245
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "mean +0.000 std 0.001",
+                      "words":  [
+                                    {
+                                        "y":  2071,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  128
+                                    },
+                                    {
+                                        "y":  2069,
+                                        "height":  10,
+                                        "width":  48,
+                                        "text":  "+0.000",
+                                        "x":  172
+                                    },
+                                    {
+                                        "y":  2068,
+                                        "height":  11,
+                                        "width":  20,
+                                        "text":  "std",
+                                        "x":  230
+                                    },
+                                    {
+                                        "y":  2069,
+                                        "height":  10,
+                                        "width":  37,
+                                        "text":  "0.001",
+                                        "x":  256
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0002",
+                      "words":  [
+                                    {
+                                        "y":  307,
+                                        "height":  14,
+                                        "width":  64,
+                                        "text":  "0.0002",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0001",
+                      "words":  [
+                                    {
+                                        "y":  371,
+                                        "height":  14,
+                                        "width":  64,
+                                        "text":  "0.0001",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0000",
+                      "words":  [
+                                    {
+                                        "y":  434,
+                                        "height":  14,
+                                        "width":  65,
+                                        "text":  "0.0000",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.0001",
+                      "words":  [
+                                    {
+                                        "y":  497,
+                                        "height":  14,
+                                        "width":  80,
+                                        "text":  "-0.0001",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.0002",
+                      "words":  [
+                                    {
+                                        "y":  561,
+                                        "height":  14,
+                                        "width":  79,
+                                        "text":  "-0.0002",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.00010",
+                      "words":  [
+                                    {
+                                        "y":  683,
+                                        "height":  14,
+                                        "width":  77,
+                                        "text":  "0.00010",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.00005",
+                      "words":  [
+                                    {
+                                        "y":  738,
+                                        "height":  14,
+                                        "width":  77,
+                                        "text":  "0.00005",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.00000",
+                      "words":  [
+                                    {
+                                        "y":  792,
+                                        "height":  14,
+                                        "width":  77,
+                                        "text":  "0.00000",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.00005",
+                      "words":  [
+                                    {
+                                        "y":  846,
+                                        "height":  14,
+                                        "width":  92,
+                                        "text":  "-0.00005",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.00010",
+                      "words":  [
+                                    {
+                                        "y":  900,
+                                        "height":  14,
+                                        "width":  92,
+                                        "text":  "-0.00010",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0004",
+                      "words":  [
+                                    {
+                                        "y":  1019,
+                                        "height":  14,
+                                        "width":  65,
+                                        "text":  "0.0004",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0002",
+                      "words":  [
+                                    {
+                                        "y":  1085,
+                                        "height":  14,
+                                        "width":  64,
+                                        "text":  "0.0002",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0000",
+                      "words":  [
+                                    {
+                                        "y":  1150,
+                                        "height":  14,
+                                        "width":  65,
+                                        "text":  "0.0000",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.0002",
+                      "words":  [
+                                    {
+                                        "y":  1215,
+                                        "height":  14,
+                                        "width":  79,
+                                        "text":  "-0.0002",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.0004",
+                      "words":  [
+                                    {
+                                        "y":  1280,
+                                        "height":  14,
+                                        "width":  80,
+                                        "text":  "-0.0004",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0002",
+                      "words":  [
+                                    {
+                                        "y":  1388,
+                                        "height":  14,
+                                        "width":  64,
+                                        "text":  "0.0002",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0001",
+                      "words":  [
+                                    {
+                                        "y":  1448,
+                                        "height":  14,
+                                        "width":  64,
+                                        "text":  "0.0001",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0000",
+                      "words":  [
+                                    {
+                                        "y":  1508,
+                                        "height":  14,
+                                        "width":  65,
+                                        "text":  "0.0000",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.0001",
+                      "words":  [
+                                    {
+                                        "y":  1567,
+                                        "height":  14,
+                                        "width":  80,
+                                        "text":  "-0.0001",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.0002",
+                      "words":  [
+                                    {
+                                        "y":  1627,
+                                        "height":  14,
+                                        "width":  79,
+                                        "text":  "-0.0002",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  2119,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  2171,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  2223,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  2275,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  2328,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  386
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Col 2 — B: shared scale ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  166,
+                                        "height":  14,
+                                        "width":  29,
+                                        "text":  "Col",
+                                        "x":  572
+                                    },
+                                    {
+                                        "y":  167,
+                                        "height":  13,
+                                        "width":  10,
+                                        "text":  "2",
+                                        "x":  609
+                                    },
+                                    {
+                                        "y":  173,
+                                        "height":  3,
+                                        "width":  16,
+                                        "text":  "—",
+                                        "x":  627
+                                    },
+                                    {
+                                        "y":  167,
+                                        "height":  13,
+                                        "width":  18,
+                                        "text":  "B:",
+                                        "x":  651
+                                    },
+                                    {
+                                        "y":  166,
+                                        "height":  14,
+                                        "width":  66,
+                                        "text":  "shared",
+                                        "x":  677
+                                    },
+                                    {
+                                        "y":  166,
+                                        "height":  14,
+                                        "width":  50,
+                                        "text":  "scale",
+                                        "x":  751
+                                    },
+                                    {
+                                        "y":  167,
+                                        "height":  13,
+                                        "width":  67,
+                                        "text":  "±0.003",
+                                        "x":  809
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "(honest cross-cell comparison)",
+                      "words":  [
+                                    {
+                                        "y":  187,
+                                        "height":  16,
+                                        "width":  75,
+                                        "text":  "(honest",
+                                        "x":  573
+                                    },
+                                    {
+                                        "y":  187,
+                                        "height":  14,
+                                        "width":  92,
+                                        "text":  "cross-cell",
+                                        "x":  654
+                                    },
+                                    {
+                                        "y":  187,
+                                        "height":  18,
+                                        "width":  121,
+                                        "text":  "comparison)",
+                                        "x":  754
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  263,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  674
+                                    },
+                                    {
+                                        "y":  264,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  726
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "56% patches share sign of mean",
+                      "words":  [
+                                    {
+                                        "y":  280,
+                                        "height":  10,
+                                        "width":  29,
+                                        "text":  "56%",
+                                        "x":  613
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "patches",
+                                        "x":  648
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  11,
+                                        "width":  37,
+                                        "text":  "share",
+                                        "x":  706
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  14,
+                                        "width":  27,
+                                        "text":  "sign",
+                                        "x":  748
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  11,
+                                        "width":  13,
+                                        "text":  "of",
+                                        "x":  781
+                                    },
+                                    {
+                                        "y":  282,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  799
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  304,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  347,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  391,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  434,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  477,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  521,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  564,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  621,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  674
+                                    },
+                                    {
+                                        "y":  622,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  726
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "47% patches share Sign of mean",
+                      "words":  [
+                                    {
+                                        "y":  638,
+                                        "height":  10,
+                                        "width":  30,
+                                        "text":  "47%",
+                                        "x":  612
+                                    },
+                                    {
+                                        "y":  637,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "patches",
+                                        "x":  648
+                                    },
+                                    {
+                                        "y":  637,
+                                        "height":  11,
+                                        "width":  37,
+                                        "text":  "share",
+                                        "x":  706
+                                    },
+                                    {
+                                        "y":  640,
+                                        "height":  11,
+                                        "width":  27,
+                                        "text":  "Sign",
+                                        "x":  748
+                                    },
+                                    {
+                                        "y":  637,
+                                        "height":  11,
+                                        "width":  13,
+                                        "text":  "of",
+                                        "x":  781
+                                    },
+                                    {
+                                        "y":  640,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  799
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  661,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  705,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  748,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  792,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  835,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  879,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  922,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  979,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  674
+                                    },
+                                    {
+                                        "y":  980,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  726
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "45% patches share sign of mean",
+                      "words":  [
+                                    {
+                                        "y":  996,
+                                        "height":  10,
+                                        "width":  30,
+                                        "text":  "45%",
+                                        "x":  612
+                                    },
+                                    {
+                                        "y":  995,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "patches",
+                                        "x":  648
+                                    },
+                                    {
+                                        "y":  995,
+                                        "height":  11,
+                                        "width":  37,
+                                        "text":  "share",
+                                        "x":  706
+                                    },
+                                    {
+                                        "y":  995,
+                                        "height":  14,
+                                        "width":  27,
+                                        "text":  "sign",
+                                        "x":  748
+                                    },
+                                    {
+                                        "y":  995,
+                                        "height":  11,
+                                        "width":  13,
+                                        "text":  "of",
+                                        "x":  781
+                                    },
+                                    {
+                                        "y":  998,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  799
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  1019,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  1063,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  1106,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  1150,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  1193,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  1237,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  1280,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  1336,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  674
+                                    },
+                                    {
+                                        "y":  1337,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  726
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "43% patches share Sign of mean",
+                      "words":  [
+                                    {
+                                        "y":  1354,
+                                        "height":  10,
+                                        "width":  30,
+                                        "text":  "43%",
+                                        "x":  612
+                                    },
+                                    {
+                                        "y":  1353,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "patches",
+                                        "x":  648
+                                    },
+                                    {
+                                        "y":  1353,
+                                        "height":  11,
+                                        "width":  37,
+                                        "text":  "share",
+                                        "x":  706
+                                    },
+                                    {
+                                        "y":  1356,
+                                        "height":  11,
+                                        "width":  27,
+                                        "text":  "Sign",
+                                        "x":  748
+                                    },
+                                    {
+                                        "y":  1353,
+                                        "height":  11,
+                                        "width":  13,
+                                        "text":  "of",
+                                        "x":  781
+                                    },
+                                    {
+                                        "y":  1356,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  799
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  1377,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  1421,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  1464,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  1508,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  1551,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  1594,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  1638,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  1694,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  674
+                                    },
+                                    {
+                                        "y":  1695,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  726
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "48% patches share Sign of mean",
+                      "words":  [
+                                    {
+                                        "y":  1711,
+                                        "height":  10,
+                                        "width":  30,
+                                        "text":  "48%",
+                                        "x":  612
+                                    },
+                                    {
+                                        "y":  1710,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "patches",
+                                        "x":  648
+                                    },
+                                    {
+                                        "y":  1710,
+                                        "height":  11,
+                                        "width":  37,
+                                        "text":  "share",
+                                        "x":  706
+                                    },
+                                    {
+                                        "y":  1713,
+                                        "height":  11,
+                                        "width":  27,
+                                        "text":  "Sign",
+                                        "x":  748
+                                    },
+                                    {
+                                        "y":  1710,
+                                        "height":  11,
+                                        "width":  13,
+                                        "text":  "of",
+                                        "x":  781
+                                    },
+                                    {
+                                        "y":  1713,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  799
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  2052,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  674
+                                    },
+                                    {
+                                        "y":  2053,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  726
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "46% patches share Sign of mean",
+                      "words":  [
+                                    {
+                                        "y":  2069,
+                                        "height":  10,
+                                        "width":  30,
+                                        "text":  "46%",
+                                        "x":  612
+                                    },
+                                    {
+                                        "y":  2068,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "patches",
+                                        "x":  648
+                                    },
+                                    {
+                                        "y":  2068,
+                                        "height":  11,
+                                        "width":  37,
+                                        "text":  "share",
+                                        "x":  706
+                                    },
+                                    {
+                                        "y":  2071,
+                                        "height":  11,
+                                        "width":  27,
+                                        "text":  "Sign",
+                                        "x":  748
+                                    },
+                                    {
+                                        "y":  2068,
+                                        "height":  11,
+                                        "width":  13,
+                                        "text":  "of",
+                                        "x":  781
+                                    },
+                                    {
+                                        "y":  2071,
+                                        "height":  8,
+                                        "width":  37,
+                                        "text":  "mean",
+                                        "x":  799
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  2093,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  2136,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  2180,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  2223,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  900
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  2267,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  2310,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  2354,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  901
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "col 3 — B + C: A_local = A - mean(A)",
+                      "words":  [
+                                    {
+                                        "y":  166,
+                                        "height":  14,
+                                        "width":  29,
+                                        "text":  "col",
+                                        "x":  1057
+                                    },
+                                    {
+                                        "y":  167,
+                                        "height":  13,
+                                        "width":  10,
+                                        "text":  "3",
+                                        "x":  1094
+                                    },
+                                    {
+                                        "y":  173,
+                                        "height":  3,
+                                        "width":  16,
+                                        "text":  "—",
+                                        "x":  1112
+                                    },
+                                    {
+                                        "y":  167,
+                                        "height":  13,
+                                        "width":  11,
+                                        "text":  "B",
+                                        "x":  1136
+                                    },
+                                    {
+                                        "y":  169,
+                                        "height":  11,
+                                        "width":  12,
+                                        "text":  "+",
+                                        "x":  1156
+                                    },
+                                    {
+                                        "y":  167,
+                                        "height":  13,
+                                        "width":  18,
+                                        "text":  "C:",
+                                        "x":  1176
+                                    },
+                                    {
+                                        "y":  166,
+                                        "height":  18,
+                                        "width":  68,
+                                        "text":  "A_local",
+                                        "x":  1201
+                                    },
+                                    {
+                                        "y":  170,
+                                        "height":  7,
+                                        "width":  11,
+                                        "text":  "=",
+                                        "x":  1278
+                                    },
+                                    {
+                                        "y":  167,
+                                        "height":  13,
+                                        "width":  14,
+                                        "text":  "A",
+                                        "x":  1297
+                                    },
+                                    {
+                                        "y":  173,
+                                        "height":  2,
+                                        "width":  12,
+                                        "text":  "-",
+                                        "x":  1318
+                                    },
+                                    {
+                                        "y":  166,
+                                        "height":  16,
+                                        "width":  81,
+                                        "text":  "mean(A)",
+                                        "x":  1339
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared scale ±0.003 (reveals local structure)",
+                      "words":  [
+                                    {
+                                        "y":  187,
+                                        "height":  14,
+                                        "width":  66,
+                                        "text":  "shared",
+                                        "x":  1017
+                                    },
+                                    {
+                                        "y":  187,
+                                        "height":  14,
+                                        "width":  49,
+                                        "text":  "scale",
+                                        "x":  1091
+                                    },
+                                    {
+                                        "y":  188,
+                                        "height":  13,
+                                        "width":  68,
+                                        "text":  "±0.003",
+                                        "x":  1148
+                                    },
+                                    {
+                                        "y":  187,
+                                        "height":  16,
+                                        "width":  78,
+                                        "text":  "(reveals",
+                                        "x":  1224
+                                    },
+                                    {
+                                        "y":  187,
+                                        "height":  14,
+                                        "width":  44,
+                                        "text":  "local",
+                                        "x":  1310
+                                    },
+                                    {
+                                        "y":  187,
+                                        "height":  16,
+                                        "width":  98,
+                                        "text":  "structure)",
+                                        "x":  1362
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  263,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  1188
+                                    },
+                                    {
+                                        "y":  264,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  1240
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "local spread std=O.OOO",
+                      "words":  [
+                                    {
+                                        "y":  279,
+                                        "height":  11,
+                                        "width":  30,
+                                        "text":  "local",
+                                        "x":  1160
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  14,
+                                        "width":  45,
+                                        "text":  "spread",
+                                        "x":  1196
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  11,
+                                        "width":  70,
+                                        "text":  "std=O.OOO",
+                                        "x":  1247
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  303,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  347,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  390,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  434,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  478,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  521,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  565,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  621,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  1188
+                                    },
+                                    {
+                                        "y":  622,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  1240
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "local spread std=O.OOO",
+                      "words":  [
+                                    {
+                                        "y":  637,
+                                        "height":  11,
+                                        "width":  30,
+                                        "text":  "local",
+                                        "x":  1160
+                                    },
+                                    {
+                                        "y":  637,
+                                        "height":  14,
+                                        "width":  45,
+                                        "text":  "spread",
+                                        "x":  1196
+                                    },
+                                    {
+                                        "y":  637,
+                                        "height":  11,
+                                        "width":  70,
+                                        "text":  "std=O.OOO",
+                                        "x":  1247
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  661,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  704,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  748,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  792,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  836,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  879,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  923,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  979,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  1188
+                                    },
+                                    {
+                                        "y":  980,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  1240
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "local spread std=O.OOO",
+                      "words":  [
+                                    {
+                                        "y":  995,
+                                        "height":  11,
+                                        "width":  30,
+                                        "text":  "local",
+                                        "x":  1160
+                                    },
+                                    {
+                                        "y":  995,
+                                        "height":  14,
+                                        "width":  45,
+                                        "text":  "spread",
+                                        "x":  1196
+                                    },
+                                    {
+                                        "y":  995,
+                                        "height":  11,
+                                        "width":  70,
+                                        "text":  "std=O.OOO",
+                                        "x":  1247
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  1019,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  1062,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  1106,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  1150,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  1193,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  1237,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  1281,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  1336,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  1188
+                                    },
+                                    {
+                                        "y":  1337,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  1240
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "local spread std=O.OOO",
+                      "words":  [
+                                    {
+                                        "y":  1353,
+                                        "height":  11,
+                                        "width":  30,
+                                        "text":  "local",
+                                        "x":  1160
+                                    },
+                                    {
+                                        "y":  1353,
+                                        "height":  14,
+                                        "width":  45,
+                                        "text":  "spread",
+                                        "x":  1196
+                                    },
+                                    {
+                                        "y":  1353,
+                                        "height":  11,
+                                        "width":  70,
+                                        "text":  "std=O.OOO",
+                                        "x":  1247
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  1376,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  1420,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  1464,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  1508,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  1551,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  1595,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  1639,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  1694,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  1188
+                                    },
+                                    {
+                                        "y":  1695,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  1240
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "local spread std=O.001",
+                      "words":  [
+                                    {
+                                        "y":  1710,
+                                        "height":  11,
+                                        "width":  30,
+                                        "text":  "local",
+                                        "x":  1160
+                                    },
+                                    {
+                                        "y":  1710,
+                                        "height":  14,
+                                        "width":  45,
+                                        "text":  "spread",
+                                        "x":  1196
+                                    },
+                                    {
+                                        "y":  1710,
+                                        "height":  11,
+                                        "width":  70,
+                                        "text":  "std=O.001",
+                                        "x":  1247
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  1734,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  1778,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  1822,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  1865,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  1909,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  1953,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  1996,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "shared ±0.003",
+                      "words":  [
+                                    {
+                                        "y":  2052,
+                                        "height":  11,
+                                        "width":  46,
+                                        "text":  "shared",
+                                        "x":  1188
+                                    },
+                                    {
+                                        "y":  2053,
+                                        "height":  10,
+                                        "width":  49,
+                                        "text":  "±0.003",
+                                        "x":  1240
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "local spread std=O.001",
+                      "words":  [
+                                    {
+                                        "y":  2068,
+                                        "height":  11,
+                                        "width":  30,
+                                        "text":  "local",
+                                        "x":  1160
+                                    },
+                                    {
+                                        "y":  2068,
+                                        "height":  14,
+                                        "width":  45,
+                                        "text":  "spread",
+                                        "x":  1196
+                                    },
+                                    {
+                                        "y":  2068,
+                                        "height":  11,
+                                        "width":  70,
+                                        "text":  "std=O.001",
+                                        "x":  1247
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.003",
+                      "words":  [
+                                    {
+                                        "y":  2092,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.003",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.002",
+                      "words":  [
+                                    {
+                                        "y":  2136,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.002",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.001",
+                      "words":  [
+                                    {
+                                        "y":  2180,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.001",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  2223,
+                                        "height":  14,
+                                        "width":  52,
+                                        "text":  "0.000",
+                                        "x":  1414
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.001",
+                      "words":  [
+                                    {
+                                        "y":  2267,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.001",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.002",
+                      "words":  [
+                                    {
+                                        "y":  2311,
+                                        "height":  14,
+                                        "width":  67,
+                                        "text":  "-0.002",
+                                        "x":  1415
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.003",
+                      "words":  [
+                                    {
+                                        "y":  2354,
+                                        "height":  14,
+                                        "width":  68,
+                                        "text":  "-0.003",
+                                        "x":  1415
+                                    }
+                                ]
+                  }
+              ],
+    "height":  2386
+}

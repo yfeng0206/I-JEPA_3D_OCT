@@ -1,0 +1,356 @@
+{
+  "producer": "autopilot\\p15_literal_snapshots.py",
+  "producer_sha256": "cc65295c24223b7e8f3386337deff25ebfabac08d897586e057f29d100ec9fdf",
+  "inputs_sha256": {
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed42.json": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7",
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed1234.json": "025ece9ac1be1ed53f2e6b6b583d365eb31b4baa4cb0717de8a0a4a02e2b3579",
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed2026.json": "820448a0aeb5ae7c746a5ec35aff3b5066865683b2aebfa398a83d1b78c9b61e",
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\masking\\table2_geometry\\mask_geometry_600slices_bs64_coverf021_seed42.json": "3fd445f6c26763b4cc50eff2d11636613ff8881ffe54dfe07bb9b2bb48890f3e",
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\masking\\table2_geometry\\mask_geometry_600slices_bs64_coverf015_seed42.json": "c3693b987c7ca4bc797e669d8189be6b30089ce30987f867edac747424034536",
+    "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p1c_stats.json": "1653addb98ccba8cd4be8ca7f13dc1812ec749bd51b8e1b237db6768cf79f7b4"
+  },
+  "operations": [
+    "Independently reconstruct the one-decimal source formatting of Table geometry from seed42 fields.",
+    "Compare each source-formatted cell with the min/max of the three retained seed values and separately with redraw spread/rounding.",
+    "Ratios use the arithmetic mean of the four named rectangle arms; no manuscript numbers are inputs.",
+    "Spearman uses exact primary ep50 AUC fields and named bs64 geometry records."
+  ],
+  "rectangle_arms": [
+    "random",
+    "oracle",
+    "envelope",
+    "cover"
+  ],
+  "all_arms": [
+    "random",
+    "oracle",
+    "envelope",
+    "cover",
+    "anatomy"
+  ],
+  "cells": [
+    {
+      "arm": "random",
+      "field": "hidden_share_of_all_anat",
+      "seed_values": [
+        53.95463213891398,
+        53.7274866966844,
+        52.62616124964617
+      ],
+      "source_formatted": 54.0,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "random",
+      "field": "hidden_pct_on_anat",
+      "seed_values": [
+        31.466034477712412,
+        31.308327618593278,
+        30.285079600148094
+      ],
+      "source_formatted": 31.5,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "random",
+      "field": "hidden_frac_of_grid",
+      "seed_values": [
+        44.48828125,
+        43.670572916666664,
+        43.96158854166667
+      ],
+      "source_formatted": 44.5,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "random",
+      "field": "ctx_frac_of_grid",
+      "seed_values": [
+        41.869140625,
+        42.25260416666667,
+        42.249348958333336
+      ],
+      "source_formatted": 41.9,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "random",
+      "field": "n_slots_mean",
+      "seed_values": [
+        159.90666666666667,
+        158.76,
+        161.06
+      ],
+      "source_formatted": 159.9,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "oracle",
+      "field": "hidden_share_of_all_anat",
+      "seed_values": [
+        62.132389842416934,
+        62.23649201801065,
+        61.0823747394426
+      ],
+      "source_formatted": 62.1,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "oracle",
+      "field": "hidden_pct_on_anat",
+      "seed_values": [
+        40.008725298518314,
+        39.1254000675491,
+        38.09218128129414
+      ],
+      "source_formatted": 40.0,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "oracle",
+      "field": "hidden_frac_of_grid",
+      "seed_values": [
+        40.29231770833333,
+        40.47981770833333,
+        40.567708333333336
+      ],
+      "source_formatted": 40.3,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "oracle",
+      "field": "ctx_frac_of_grid",
+      "seed_values": [
+        45.495442708333336,
+        45.477213541666664,
+        45.137369791666664
+      ],
+      "source_formatted": 45.5,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "oracle",
+      "field": "n_slots_mean",
+      "seed_values": [
+        158.98666666666668,
+        159.59333333333333,
+        159.80666666666667
+      ],
+      "source_formatted": 159.0,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "envelope",
+      "field": "hidden_share_of_all_anat",
+      "seed_values": [
+        77.57703502960955,
+        77.36645517805977,
+        76.83934223731954
+      ],
+      "source_formatted": 77.6,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "envelope",
+      "field": "hidden_pct_on_anat",
+      "seed_values": [
+        43.30093279923807,
+        42.82881785608066,
+        42.91257670915911
+      ],
+      "source_formatted": 43.3,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "envelope",
+      "field": "hidden_frac_of_grid",
+      "seed_values": [
+        46.48307291666667,
+        45.96940104166667,
+        45.300130208333336
+      ],
+      "source_formatted": 46.5,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "envelope",
+      "field": "ctx_frac_of_grid",
+      "seed_values": [
+        40.62955729166667,
+        40.670572916666664,
+        41.729817708333336
+      ],
+      "source_formatted": 40.6,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "envelope",
+      "field": "n_slots_mean",
+      "seed_values": [
+        159.68,
+        159.64666666666668,
+        157.93333333333334
+      ],
+      "source_formatted": 159.7,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "cover",
+      "field": "hidden_share_of_all_anat",
+      "seed_values": [
+        73.54963364448459,
+        73.61082685223087,
+        73.0667284284207
+      ],
+      "source_formatted": 73.5,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "cover",
+      "field": "hidden_pct_on_anat",
+      "seed_values": [
+        44.18566087795465,
+        43.225418763614506,
+        43.094132289105424
+      ],
+      "source_formatted": 44.2,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "cover",
+      "field": "hidden_frac_of_grid",
+      "seed_values": [
+        43.1875,
+        43.336588541666664,
+        42.89453125
+      ],
+      "source_formatted": 43.2,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "cover",
+      "field": "ctx_frac_of_grid",
+      "seed_values": [
+        43.18359375,
+        43.423828125,
+        43.20833333333333
+      ],
+      "source_formatted": 43.2,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "cover",
+      "field": "n_slots_mean",
+      "seed_values": [
+        159.09333333333333,
+        159.68,
+        158.79333333333332
+      ],
+      "source_formatted": 159.1,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "anatomy",
+      "field": "hidden_share_of_all_anat",
+      "seed_values": [
+        79.88557663354412,
+        80.4748260335653,
+        80.61452945263645
+      ],
+      "source_formatted": 79.9,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "anatomy",
+      "field": "hidden_pct_on_anat",
+      "seed_values": [
+        97.0935374668334,
+        97.1643911781059,
+        96.96950936387556
+      ],
+      "source_formatted": 97.1,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "anatomy",
+      "field": "hidden_frac_of_grid",
+      "seed_values": [
+        21.347005208333332,
+        21.076822916666664,
+        21.031901041666668
+      ],
+      "source_formatted": 21.3,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "anatomy",
+      "field": "ctx_frac_of_grid",
+      "seed_values": [
+        67.74283854166666,
+        68.22526041666667,
+        67.74479166666667
+      ],
+      "source_formatted": 67.7,
+      "inside_unrounded_range": false,
+      "within_redraw_range_or_rounding": true
+    },
+    {
+      "arm": "anatomy",
+      "field": "n_slots_mean",
+      "seed_values": [
+        64.0,
+        64.0,
+        64.0
+      ],
+      "source_formatted": 64.0,
+      "inside_unrounded_range": true,
+      "within_redraw_range_or_rounding": true
+    }
+  ],
+  "inside_unrounded_range": 15,
+  "within_redraw_range_or_rounding": 25,
+  "cell_count": 25,
+  "spearman": {
+    "floor021": {
+      "rho": 0.7999999999999999,
+      "p": 0.2000000000000001
+    },
+    "floor015": {
+      "rho": 0.39999999999999997,
+      "p": 0.6000000000000001
+    }
+  },
+  "anatomy_context_over_rectangle_mean": 1.582982478159503,
+  "delivered_anatomy_context_over_rectangle_mean": 2.1445857350288207,
+  "anatomy_slots_over_rectangle_mean": 0.4014636696288552,
+  "rectangle_slots_min": 158.98666666666668,
+  "rectangle_slots_max": 159.90666666666667,
+  "rectangle_mask_percent_min": 40.29231770833333,
+  "rectangle_mask_percent_max": 46.48307291666667,
+  "proposed_target_k_from_mean_slots": 39.854166666666664,
+  "cover_hidden_floor021_bs64": 73.42636579572446,
+  "cover_hidden_floor015_bs64": 79.54284573538952
+}

@@ -1,0 +1,71 @@
+{
+  "producer": "autopilot\\p15_literal_snapshots.py",
+  "producer_sha256": "cc65295c24223b7e8f3386337deff25ebfabac08d897586e057f29d100ec9fdf",
+  "inputs_sha256": {
+    "D:\\jepa_phase0\\fairvision-glaucoma\\metadata\\data_summary_glaucoma.csv": "8626d46d41367d1172db1e568ce3e3582a4547d6dae55c240f6fbb9503fca4dd",
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\downstream\\meanpool_sweep_random\\ep100_test_predictions.npz": "cf8df03c04348c8d9cdcdee81a5e77571a3c109937a0344ae5e69fbabc879122",
+    "D:\\jepa_phase0\\runs\\rep_random_s1234\\jepa_patch_rep_random_s1234-log.csv": "e57fff991477269f2e4bbf2ff0cc2df027d3857376fa974297487e293a7969ef"
+  },
+  "operations": [
+    "Join immutable metadata CSV by exact sorted Test filenames; compare reconstructed labels to saved primary predictions.",
+    "Read only metadata, never OCT pixels. The selected filename-order digest records the scope without publishing identifiers.",
+    "Count complete versus incomplete replication iterations from its retained CSV; do not infer a completed probe."
+  ],
+  "test_n": 3000,
+  "test_filename_order_sha256": "5a1ed631892b5d48d1c3404051374bd2606469d3b27a1603c57e070cb778c7f0",
+  "split_sizes": {
+    "Training": 6000,
+    "Validation": 1000,
+    "Test": 3000
+  },
+  "age_min": 9.47,
+  "age_max": 97.96,
+  "categorical_counts": {
+    "gender": {
+      "female": 1716,
+      "male": 1284
+    },
+    "race": {
+      "asian": 251,
+      "white": 2318,
+      "black": 431
+    },
+    "ethnicity": {
+      "non-hispanic": 2894,
+      "hispanic": 106
+    },
+    "language": {
+      "english": 2782,
+      "other languages": 174,
+      "spanish": 44
+    },
+    "maritalstatus": {
+      "married or partnered": 1741,
+      "single": 776,
+      "widowed": 199,
+      "divorced": 191,
+      "unknown": 71,
+      "legally separated": 22
+    }
+  },
+  "marital_unknown_percent": 2.3666666666666667,
+  "severity_n": {
+    "severe": 334,
+    "moderate": 460,
+    "mild": 672
+  },
+  "md_sentinel": -1,
+  "md_sentinel_count": 3,
+  "md_sentinel_positive_count": 0,
+  "md_threshold_labels_agree": true,
+  "replication_iterations": {
+    "26": {
+      "distinct_iterations": 9375,
+      "maximum_iteration": 9375
+    },
+    "27": {
+      "distinct_iterations": 939,
+      "maximum_iteration": 939
+    }
+  }
+}

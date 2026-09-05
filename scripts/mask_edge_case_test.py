@@ -39,11 +39,6 @@ HERE = pathlib.Path(__file__).parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent))
 
-from budget_mask_prototype import build_budget_targets  # noqa: E402
-# The gate must exercise the PRODUCTION sampler, not the prototype: the
-# prototype samples its own block sizes, whereas production consumes the
-# batch-shared sizes drawn by CurriculumMaskGenerator.
-from src.masks.cover import build_targets as cover_build_targets  # noqa: E402
 from src.masks.curriculum import CurriculumMaskGenerator  # noqa: E402
 
 GRID = 16
@@ -82,7 +77,7 @@ def load_cases():
 
 
 def run(cases, floor, seed=42, fill=None):
-    rng = random.Random(seed)
+    random.seed(seed)
     gen = torch.Generator(); gen.manual_seed(seed)
     # Borrow the production size sampler so block geometry is bit-identical to
     # what training will draw.
@@ -91,33 +86,54 @@ def run(cases, floor, seed=42, fill=None):
         enc_mask_scale=(0.85, 1.0), pred_mask_scale=(0.15, 0.2),
         aspect_ratio=(0.75, 1.5), nenc=1, npred=4, min_keep=10,
         allow_overlap=False,
-        curriculum_cfg=dict(mode="mirage_cover", T_warm=0, T_total=1,
-                            r_max=1.0),
+        curriculum_cfg=dict(
+            mode="mirage_cover", T_warm=0, T_total=1, r_max=1.0,
+            cover_algorithm="delivered_v2", cover_context_guard=True,
+            mirage_occupancy_threshold=OCC_T,
+            cover_leave_frac=floor, cover_min_visible_frac=floor,
+            cover_fill=fill or "random_legal", audit_masks=True),
     )
+    sizer.set_epoch(1)
     rows = []
     for c in cases:
         n_anat = int(c["anat"].sum())
         block_sizes = [
             sizer._sample_block_size((0.15, 0.2), gen) for _ in range(4)
         ]
-        rects, info = cover_build_targets(
-            c["cs"], block_sizes, leave_frac=floor,
-            min_visible_frac=floor, min_visible_cells=4, rng=rng,
-            fill=fill, occupancy=c["anat"],
+        guides = torch.from_numpy(np.stack(
+            [c["anat_occ"], c["anat"].astype(np.float32), *c["cs"]]
+        ).astype(np.float32)).unsqueeze(0)
+        enc, pred = sizer.generate(
+            1, guide_grids=guides, guide_valid=torch.tensor([n_anat > 0]),
+            block_sizes=dict(pred=block_sizes, enc=[
+                sizer._sample_block_size((.85, 1.), gen)]),
         )
+        audit = sizer.last_mask_audit[0]
+        info = audit["policy_info"]
+        status = audit["context_floor"]["status"]
+        rects = []
+        for group in pred:
+            mask = np.zeros((16, 16), dtype=bool)
+            mask.ravel()[group[0].numpy()] = True
+            rects.append(mask)
+        context = np.zeros((16, 16), dtype=bool)
+        context.ravel()[enc[0][0].numpy()] = True
         u = np.logical_or.reduce(rects)
         hid = int((c["anat"] & u).sum())
         rows.append(dict(
             vol=c["vol"], slice=c["slice"], anat_cells=n_anat,
-            fallback=bool(info["fallback"]),
+            fallback=not bool(info),
             union=int(u.sum()),
             anat_hidden=hid,
-            anat_visible=n_anat - hid,
+            anat_visible=int((c["anat"] & context).sum()),
+            complement_anatomy=n_anat - hid,
+            context_mask=context,
+            context_status=status,
             anat_hidden_frac=(hid / n_anat) if n_anat else float("nan"),
-            n_cover=info["n_cover"], n_transition=info["n_transition"],
-            n_random=info["n_random"],
-            floor_violation=bool(info["floor_violation"]),
-            ok=bool(info["ok"]),
+            n_cover=info.get("n_cover", 0), n_transition=info.get("n_transition", 0),
+            n_random=info.get("n_random", 4),
+            floor_violation=status.startswith(("infeasible", "unsatisfied")),
+            ok=status in ("satisfied", "no_tissue", "invalid_guide"),
             masks=rects, union_mask=u,
         ))
     return rows
@@ -167,9 +183,8 @@ def main():
                          f"fallback={r['fallback']})")
         if r["floor_violation"]:
             fails.append(f"{r['vol']}/{r['slice']}: floor_violation flagged")
-        if r["anat_cells"] > 0 and r["fallback"]:
-            fails.append(f"{r['vol']}/{r['slice']}: fell back despite having "
-                         f"{r['anat_cells']} anatomy cells")
+        # A fallback on a sparse guide is legitimate. Its final context still
+        # has to satisfy the floor or carry an explicit infeasible status.
         # The arm's stated guarantee, checked under the OCCUPANCY definition
         # the audits use rather than the sampler's softer internal support.
         if r["anat_cells"] > 0:
@@ -251,9 +266,9 @@ def main():
 
         ax = axes[r_i, 2]
         vis_img = img.copy()
-        vis_img[up(r["union_mask"]) > 0] = 0.0
+        vis_img[up(r["context_mask"]) == 0] = 0.0
         ax.imshow(vis_img)
-        keep = c["anat"] & ~r["union_mask"]
+        keep = c["anat"] & r["context_mask"]
         ax.imshow(up(keep), cmap="cool", alpha=0.5 * (up(keep) > 0))
         ax.set_title(f"context  cyan = {r['anat_visible']} anatomy cells kept",
                      fontsize=7.5)
@@ -286,7 +301,7 @@ def main():
             ov[up(m) > 0] = matplotlib.colors.to_rgba(COLORS[k % 4])
         ov[..., 3] *= 0.5
         ax.imshow(ov)
-        keep = c["anat"] & ~r["union_mask"]
+        keep = c["anat"] & r["context_mask"]
         ax.imshow(up(keep), cmap="cool", alpha=0.75 * (up(keep) > 0))
         bad = (r["anat_cells"] > 0 and r["anat_visible"] <= 0)
         ax.set_title(f"{r['vol'][-5:]} s{r['slice'][-3:]}\n"

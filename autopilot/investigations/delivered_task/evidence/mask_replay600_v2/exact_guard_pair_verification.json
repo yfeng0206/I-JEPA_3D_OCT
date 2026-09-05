@@ -1,0 +1,17 @@
+[
+  {
+    "batch_size": 1,
+    "verified_exact_target_and_context_budget_pairs": 600,
+    "changed_contexts": 247
+  },
+  {
+    "batch_size": 2,
+    "verified_exact_target_and_context_budget_pairs": 600,
+    "changed_contexts": 258
+  },
+  {
+    "batch_size": 64,
+    "verified_exact_target_and_context_budget_pairs": 600,
+    "changed_contexts": 339
+  }
+]

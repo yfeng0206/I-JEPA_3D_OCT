@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Current direction
+
+- The active workshop paper studies anatomy-guided I-JEPA target selection on
+  retinal OCT. The delivered-task engineering investigation and its versioned
+  corrections are tracked in `autopilot\investigations\delivered_task\BOARD.md`.
+- The semantic-teacher work listed below is historical and archived, not the
+  current pretraining or submission plan.
+
 ### Changed
 
 - Narrowed the active semantic-teacher plan to local ImageNet-50 frozen I-JEPA/DINOv3/Qwen3-VL/Molmo evaluation and map review; guided training, adaptation, and OCT transfer are deferred until a positive screen.

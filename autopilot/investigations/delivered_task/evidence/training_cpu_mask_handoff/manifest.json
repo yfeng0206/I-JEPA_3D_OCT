@@ -1,0 +1,27 @@
+{
+  "baseline": "de145d7",
+  "interpreter": "D:\\jepa_phase0\\.venv\\Scripts\\python.exe",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "71",
+      "time": "16.075",
+      "timestamp": "2026-09-04T16:37:42.406493-07:00",
+      "hostname": "DESKTOP-CJETT24"
+    }
+  ],
+  "source_sha256": {
+    "src\\train_patch.py": "17a31df44781396fcca99c30bfb84f4ac400a074f2b86ec60814512e65aa6fa1",
+    "src\\helper.py": "e3d4c47ad50dc128219bf9aae6354f4a548a818f646ed7bc84a175a397236e93",
+    "src\\eval_downstream.py": "cad331b703a116985f2ce81e8abf02b12c300044a3825e22d4d6ab73c47b55ed",
+    "src\\utils\\schedulers.py": "73a6c24de751be786b1482085a1bdb10e9f89a65b117526b02c4523c92d8282a",
+    "tests\\test_training_contracts.py": "7d8a3c10997229d62bb56373988e61c0c4663eb37623b47632bcc00983cfe9b8",
+    "tests\\test_eval_identity.py": "37fc434e713357be3c12eb778c346240c5dd0c7fd6de06244777acd8272fad19",
+    "scripts\\training_layer_diagnostic.py": "71b2ae95faf11e9324b0fbec7910f5dc26054abc48a9bcd4b7df3ddb4cea796b"
+  },
+  "cpu_fixture_command": "python scripts\\training_layer_diagnostic.py --cpu-fixture autopilot\\investigations\\delivered_task\\evidence\\mask_replay64_v2\\synthetic_final_masks.pt --output autopilot\\investigations\\delivered_task\\evidence\\training_cpu_mask_handoff\\loss_partitions.json --tissue-threshold 0.25",
+  "gpu_updates": 0
+}

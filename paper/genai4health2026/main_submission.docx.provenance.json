@@ -1,0 +1,852 @@
+{
+  "docx_sha256": "907a298e2150135661ecea30411cec60ff52f3cab20a2e6d6f1425506e583e78",
+  "inputs": {
+    "auto/auto_numbers.tex": "d6f2c6201dd19c363ba51e1c006490eb7211af53615a45f2f62d4ef6bb80cbc2",
+    "auto/delivered_numbers.tex": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5",
+    "auto/fig_fairness.png": "003e4867ceffa5232d211ca4baa05697a23c3a76045e292fc118c7c4e7c1ac70",
+    "auto/fig_labeleff.png": "c38adc921b2d6d95771d4656549e6c127bc7b2052dcaef9136a9a2bc29c3d082",
+    "auto/fig_roc.png": "0dbe1d493de657e913431edc1d87f2cbe418828e559ee501bf8095f768767857",
+    "auto/fig_trajectories_ci.png": "09d8d84339ea9173ae3534726ed0cdca1290eb5d205e74997e330b02a7e147e7",
+    "auto/table_allprobes.tex": "dcc31d5a0bf5cf2c9538a65a1f223b6fe033586d4d4bbfc4ccc96879cfdd0bf5",
+    "auto/table_fp32.tex": "83c52c34e75872b1b4aa6f8d0a49aaefdc20e8011900a7579ec5c24206136317",
+    "auto/table_labeleff.tex": "8c3dc6b0b830055b9dfcf355aff970c6360f7fdf2b48f0fb18e29f87df4db546",
+    "auto/table_operating.tex": "4562025c084847f2bde3be36f2a44c9184a6ab250e343a1c0fc5267aad897d35",
+    "auto/table_paired_subgroup.tex": "074a1ecd38dafcec2c87c85bcc5fcc97ad45466f32e52a894f19db6b7a5db10a",
+    "auto/table_subgroup_operating.tex": "4fe8e8569a57d6ca61cdd5d381c7a850fbe048523858e5eb9167bfc11e6ed4c1",
+    "auto/table_subgroup_trends.tex": "4edc6013c4dec8a567168475b87db2cb3b57592bad699e6da786e38a988e10b2",
+    "figures/figS5_mask_statistics.png": "b3cd2f3642522c3aa6e6a101d9f07ec05d6a7454ac1db97696ed89e3c7e51e09",
+    "figures/fig_delivered_task_token_maps.png": "bb3dfe97ecfacf5ea412c984015f26503911d32e67ac2ce3abbf1b64db465354",
+    "figures/fig_geometry_panel.png": "d961ab632dcf907dc8c04e406c5837eba6e3fcf331b2806398cb2929c5aecb11",
+    "figures/fig_policy_family_token_maps.png": "876d8dbdc8d60bacec3a69906a8df239e824e3afa2ba99fb609c4deb5ed22512",
+    "figures/fig_purity_auc_ep50_fp32.png": "e9635409b46a295e1dd4da8398a08d1c3ba7014438dcb1039f8ef7485028e6c4",
+    "figures/fig_specificity_ladder.png": "412e51919d5d0028429e2320dfb7819252468b54de3d9d1ad05a3327e4edace5",
+    "main_submission.tex": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
+    "neurips_2026.sty": "c5287da23f9bd6b76c74f70360d977b4ea63c880297cadbe1d805f8a49d7bf86",
+    "references.bib": "36dae5e6a3663be19daacd6e1af63add0e6d5da1ec4d8e1d87ee2b4b1e75ec5e"
+  },
+  "aux_sha256": "1dd1e1a54fec0dd152ff8ae41e795e39e55395ef6ce1273eb25f51a168eaa330",
+  "aux_path": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\release-0d56ddb317a94dc7a7941b47c459dd50\\stage\\main.aux",
+  "references": [
+    {
+      "bookmark": "jeparef0000",
+      "key": "app:allprobes",
+      "number": "A",
+      "command": "\\ref{app:allprobes}"
+    },
+    {
+      "bookmark": "jeparef0001",
+      "key": "app:counter",
+      "number": "N",
+      "command": "\\ref{app:counter}"
+    },
+    {
+      "bookmark": "jeparef0002",
+      "key": "fig:policies",
+      "number": "1",
+      "command": "\\ref{fig:policies}"
+    },
+    {
+      "bookmark": "jeparef0003",
+      "key": "app:covbug",
+      "number": "G",
+      "command": "\\ref{app:covbug}"
+    },
+    {
+      "bookmark": "jeparef0004",
+      "key": "fig:policies5",
+      "number": "4",
+      "command": "\\ref{fig:policies5}"
+    },
+    {
+      "bookmark": "jeparef0005",
+      "key": "fig:policies5",
+      "number": "4",
+      "command": "\\ref{fig:policies5}"
+    },
+    {
+      "bookmark": "jeparef0006",
+      "key": "sec:limits",
+      "number": "6",
+      "command": "\\ref{sec:limits}"
+    },
+    {
+      "bookmark": "jeparef0007",
+      "key": "sec:subgroup",
+      "number": "5.5",
+      "command": "\\ref{sec:subgroup}"
+    },
+    {
+      "bookmark": "jeparef0008",
+      "key": "sec:policies",
+      "number": "3",
+      "command": "\\ref{sec:policies}"
+    },
+    {
+      "bookmark": "jeparef0009",
+      "key": "sec:results",
+      "number": "5",
+      "command": "\\ref{sec:results}"
+    },
+    {
+      "bookmark": "jeparef0010",
+      "key": "app:excluded",
+      "number": "F",
+      "command": "\\ref{app:excluded}"
+    },
+    {
+      "bookmark": "jeparef0011",
+      "key": "app:operating",
+      "number": "L",
+      "command": "\\ref{app:operating}"
+    },
+    {
+      "bookmark": "jeparef0012",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0013",
+      "key": "sec:precision",
+      "number": "5.6",
+      "command": "\\ref{sec:precision}"
+    },
+    {
+      "bookmark": "jeparef0014",
+      "key": "sec:limits",
+      "number": "6",
+      "command": "\\ref{sec:limits}"
+    },
+    {
+      "bookmark": "jeparef0015",
+      "key": "sec:setup",
+      "number": "4",
+      "command": "\\ref{sec:setup}"
+    },
+    {
+      "bookmark": "jeparef0016",
+      "key": "app:fp32",
+      "number": "P",
+      "command": "\\ref{app:fp32}"
+    },
+    {
+      "bookmark": "jeparef0017",
+      "key": "sec:policies",
+      "number": "3",
+      "command": "\\ref{sec:policies}"
+    },
+    {
+      "bookmark": "jeparef0018",
+      "key": "tab:delivered",
+      "number": "5",
+      "command": "\\ref{tab:delivered}"
+    },
+    {
+      "bookmark": "jeparef0019",
+      "key": "fig:traj",
+      "number": "2",
+      "command": "\\ref{fig:traj}"
+    },
+    {
+      "bookmark": "jeparef0020",
+      "key": "tab:contrasts",
+      "number": "15",
+      "command": "\\ref{tab:contrasts}"
+    },
+    {
+      "bookmark": "jeparef0021",
+      "key": "app:contrasts",
+      "number": "O",
+      "command": "\\ref{app:contrasts}"
+    },
+    {
+      "bookmark": "jeparef0022",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0023",
+      "key": "sec:results-bg",
+      "number": "5.3",
+      "command": "\\ref{sec:results-bg}"
+    },
+    {
+      "bookmark": "jeparef0024",
+      "key": "sec:setup",
+      "number": "4",
+      "command": "\\ref{sec:setup}"
+    },
+    {
+      "bookmark": "jeparef0025",
+      "key": "fig:traj",
+      "number": "2",
+      "command": "\\ref{fig:traj}"
+    },
+    {
+      "bookmark": "jeparef0026",
+      "key": "fig:traj",
+      "number": "2",
+      "command": "\\ref{fig:traj}"
+    },
+    {
+      "bookmark": "jeparef0027",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0028",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0029",
+      "key": "fig:maskstats",
+      "number": "3",
+      "command": "\\ref{fig:maskstats}"
+    },
+    {
+      "bookmark": "jeparef0030",
+      "key": "app:covbug",
+      "number": "G",
+      "command": "\\ref{app:covbug}"
+    },
+    {
+      "bookmark": "jeparef0031",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0032",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0033",
+      "key": "fig:paradox",
+      "number": "9",
+      "command": "\\ref{fig:paradox}"
+    },
+    {
+      "bookmark": "jeparef0034",
+      "key": "fig:ladder",
+      "number": "10",
+      "command": "\\ref{fig:ladder}"
+    },
+    {
+      "bookmark": "jeparef0035",
+      "key": "app:geomprov",
+      "number": "D",
+      "command": "\\ref{app:geomprov}"
+    },
+    {
+      "bookmark": "jeparef0036",
+      "key": "app:interp",
+      "number": "K",
+      "command": "\\ref{app:interp}"
+    },
+    {
+      "bookmark": "jeparef0037",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0038",
+      "key": "fig:geom",
+      "number": "11",
+      "command": "\\ref{fig:geom}"
+    },
+    {
+      "bookmark": "jeparef0039",
+      "key": "app:repro",
+      "number": "Q",
+      "command": "\\ref{app:repro}"
+    },
+    {
+      "bookmark": "jeparef0040",
+      "key": "app:covbug",
+      "number": "G",
+      "command": "\\ref{app:covbug}"
+    },
+    {
+      "bookmark": "jeparef0041",
+      "key": "app:delivered_audit",
+      "number": "H",
+      "command": "\\ref{app:delivered_audit}"
+    },
+    {
+      "bookmark": "jeparef0042",
+      "key": "app:delivered_audit",
+      "number": "H",
+      "command": "\\ref{app:delivered_audit}"
+    },
+    {
+      "bookmark": "jeparef0043",
+      "key": "app:bg",
+      "number": "I",
+      "command": "\\ref{app:bg}"
+    },
+    {
+      "bookmark": "jeparef0044",
+      "key": "app:labeleff",
+      "number": "J",
+      "command": "\\ref{app:labeleff}"
+    },
+    {
+      "bookmark": "jeparef0045",
+      "key": "app:subgroup",
+      "number": "E",
+      "command": "\\ref{app:subgroup}"
+    },
+    {
+      "bookmark": "jeparef0046",
+      "key": "tab:severity",
+      "number": "7",
+      "command": "\\ref{tab:severity}"
+    },
+    {
+      "bookmark": "jeparef0047",
+      "key": "tab:pairedsub",
+      "number": "8",
+      "command": "\\ref{tab:pairedsub}"
+    },
+    {
+      "bookmark": "jeparef0048",
+      "key": "app:operating",
+      "number": "L",
+      "command": "\\ref{app:operating}"
+    },
+    {
+      "bookmark": "jeparef0049",
+      "key": "app:subgroup",
+      "number": "E",
+      "command": "\\ref{app:subgroup}"
+    },
+    {
+      "bookmark": "jeparef0050",
+      "key": "app:intersectional",
+      "number": "E.1",
+      "command": "\\ref{app:intersectional}"
+    },
+    {
+      "bookmark": "jeparef0051",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0052",
+      "key": "sec:setup",
+      "number": "4",
+      "command": "\\ref{sec:setup}"
+    },
+    {
+      "bookmark": "jeparef0053",
+      "key": "app:fp32",
+      "number": "P",
+      "command": "\\ref{app:fp32}"
+    },
+    {
+      "bookmark": "jeparef0054",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0055",
+      "key": "sec:results-h3",
+      "number": "5.2",
+      "command": "\\ref{sec:results-h3}"
+    },
+    {
+      "bookmark": "jeparef0056",
+      "key": "app:replication",
+      "number": "B",
+      "command": "\\ref{app:replication}"
+    },
+    {
+      "bookmark": "jeparef0057",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0058",
+      "key": "app:covbug",
+      "number": "G",
+      "command": "\\ref{app:covbug}"
+    },
+    {
+      "bookmark": "jeparef0059",
+      "key": "app:ethics",
+      "number": "M",
+      "command": "\\ref{app:ethics}"
+    },
+    {
+      "bookmark": "jeparef0060",
+      "key": "tab:allprobes",
+      "number": "3",
+      "command": "\\ref{tab:allprobes}"
+    },
+    {
+      "bookmark": "jeparef0061",
+      "key": "app:excluded",
+      "number": "F",
+      "command": "\\ref{app:excluded}"
+    },
+    {
+      "bookmark": "jeparef0062",
+      "key": "sec:subgroup",
+      "number": "5.5",
+      "command": "\\ref{sec:subgroup}"
+    },
+    {
+      "bookmark": "jeparef0063",
+      "key": "tab:subtrends",
+      "number": "6",
+      "command": "\\ref{tab:subtrends}"
+    },
+    {
+      "bookmark": "jeparef0064",
+      "key": "fig:fair",
+      "number": "5",
+      "command": "\\ref{fig:fair}"
+    },
+    {
+      "bookmark": "jeparef0065",
+      "key": "app:excluded",
+      "number": "F",
+      "command": "\\ref{app:excluded}"
+    },
+    {
+      "bookmark": "jeparef0066",
+      "key": "sec:setup",
+      "number": "4",
+      "command": "\\ref{sec:setup}"
+    },
+    {
+      "bookmark": "jeparef0067",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0068",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0069",
+      "key": "app:covbug",
+      "number": "G",
+      "command": "\\ref{app:covbug}"
+    },
+    {
+      "bookmark": "jeparef0070",
+      "key": "fig:policies5",
+      "number": "4",
+      "command": "\\ref{fig:policies5}"
+    },
+    {
+      "bookmark": "jeparef0071",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0072",
+      "key": "sec:results-h3",
+      "number": "5.2",
+      "command": "\\ref{sec:results-h3}"
+    },
+    {
+      "bookmark": "jeparef0073",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0074",
+      "key": "tab:geomprov",
+      "number": "4",
+      "command": "\\ref{tab:geomprov}"
+    },
+    {
+      "bookmark": "jeparef0075",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0076",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0077",
+      "key": "tab:delivered",
+      "number": "5",
+      "command": "\\ref{tab:delivered}"
+    },
+    {
+      "bookmark": "jeparef0078",
+      "key": "sec:results-h3",
+      "number": "5.2",
+      "command": "\\ref{sec:results-h3}"
+    },
+    {
+      "bookmark": "jeparef0079",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0080",
+      "key": "sec:results-h3",
+      "number": "5.2",
+      "command": "\\ref{sec:results-h3}"
+    },
+    {
+      "bookmark": "jeparef0081",
+      "key": "sec:results-h3",
+      "number": "5.2",
+      "command": "\\ref{sec:results-h3}"
+    },
+    {
+      "bookmark": "jeparef0082",
+      "key": "app:replication",
+      "number": "B",
+      "command": "\\ref{app:replication}"
+    },
+    {
+      "bookmark": "jeparef0083",
+      "key": "tab:subtrends",
+      "number": "6",
+      "command": "\\ref{tab:subtrends}"
+    },
+    {
+      "bookmark": "jeparef0084",
+      "key": "app:excluded",
+      "number": "F",
+      "command": "\\ref{app:excluded}"
+    },
+    {
+      "bookmark": "jeparef0085",
+      "key": "tab:subtrends",
+      "number": "6",
+      "command": "\\ref{tab:subtrends}"
+    },
+    {
+      "bookmark": "jeparef0086",
+      "key": "fig:fair",
+      "number": "5",
+      "command": "\\ref{fig:fair}"
+    },
+    {
+      "bookmark": "jeparef0087",
+      "key": "tab:severity",
+      "number": "7",
+      "command": "\\ref{tab:severity}"
+    },
+    {
+      "bookmark": "jeparef0088",
+      "key": "tab:pairedsub",
+      "number": "8",
+      "command": "\\ref{tab:pairedsub}"
+    },
+    {
+      "bookmark": "jeparef0089",
+      "key": "sec:limits",
+      "number": "6",
+      "command": "\\ref{sec:limits}"
+    },
+    {
+      "bookmark": "jeparef0090",
+      "key": "app:intersectional",
+      "number": "E.1",
+      "command": "\\ref{app:intersectional}"
+    },
+    {
+      "bookmark": "jeparef0091",
+      "key": "app:operating",
+      "number": "L",
+      "command": "\\ref{app:operating}"
+    },
+    {
+      "bookmark": "jeparef0092",
+      "key": "tab:subtrends",
+      "number": "6",
+      "command": "\\ref{tab:subtrends}"
+    },
+    {
+      "bookmark": "jeparef0093",
+      "key": "app:excluded",
+      "number": "F",
+      "command": "\\ref{app:excluded}"
+    },
+    {
+      "bookmark": "jeparef0094",
+      "key": "tab:intersectional",
+      "number": "9",
+      "command": "\\ref{tab:intersectional}"
+    },
+    {
+      "bookmark": "jeparef0095",
+      "key": "tab:intersectional",
+      "number": "9",
+      "command": "\\ref{tab:intersectional}"
+    },
+    {
+      "bookmark": "jeparef0096",
+      "key": "tab:allprobes",
+      "number": "3",
+      "command": "\\ref{tab:allprobes}"
+    },
+    {
+      "bookmark": "jeparef0097",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0098",
+      "key": "app:delivered_audit",
+      "number": "H",
+      "command": "\\ref{app:delivered_audit}"
+    },
+    {
+      "bookmark": "jeparef0099",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0100",
+      "key": "sec:results",
+      "number": "5",
+      "command": "\\ref{sec:results}"
+    },
+    {
+      "bookmark": "jeparef0101",
+      "key": "tab:delivered_repair",
+      "number": "10",
+      "command": "\\ref{tab:delivered_repair}"
+    },
+    {
+      "bookmark": "jeparef0102",
+      "key": "tab:delivered_repair",
+      "number": "10",
+      "command": "\\ref{tab:delivered_repair}"
+    },
+    {
+      "bookmark": "jeparef0103",
+      "key": "sec:labeleff",
+      "number": "5.4",
+      "command": "\\ref{sec:labeleff}"
+    },
+    {
+      "bookmark": "jeparef0104",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0105",
+      "key": "sec:labeleff",
+      "number": "5.4",
+      "command": "\\ref{sec:labeleff}"
+    },
+    {
+      "bookmark": "jeparef0106",
+      "key": "tab:labeleff",
+      "number": "11",
+      "command": "\\ref{tab:labeleff}"
+    },
+    {
+      "bookmark": "jeparef0107",
+      "key": "fig:labeleff",
+      "number": "7",
+      "command": "\\ref{fig:labeleff}"
+    },
+    {
+      "bookmark": "jeparef0108",
+      "key": "app:covbug",
+      "number": "G",
+      "command": "\\ref{app:covbug}"
+    },
+    {
+      "bookmark": "jeparef0109",
+      "key": "tab:operating",
+      "number": "12",
+      "command": "\\ref{tab:operating}"
+    },
+    {
+      "bookmark": "jeparef0110",
+      "key": "fig:roc",
+      "number": "8",
+      "command": "\\ref{fig:roc}"
+    },
+    {
+      "bookmark": "jeparef0111",
+      "key": "tab:subop",
+      "number": "13",
+      "command": "\\ref{tab:subop}"
+    },
+    {
+      "bookmark": "jeparef0112",
+      "key": "tab:subop",
+      "number": "13",
+      "command": "\\ref{tab:subop}"
+    },
+    {
+      "bookmark": "jeparef0113",
+      "key": "sec:subgroup",
+      "number": "5.5",
+      "command": "\\ref{sec:subgroup}"
+    },
+    {
+      "bookmark": "jeparef0114",
+      "key": "app:operating",
+      "number": "L",
+      "command": "\\ref{app:operating}"
+    },
+    {
+      "bookmark": "jeparef0115",
+      "key": "app:intersectional",
+      "number": "E.1",
+      "command": "\\ref{app:intersectional}"
+    },
+    {
+      "bookmark": "jeparef0116",
+      "key": "app:subgroup",
+      "number": "E",
+      "command": "\\ref{app:subgroup}"
+    },
+    {
+      "bookmark": "jeparef0117",
+      "key": "tab:counter",
+      "number": "14",
+      "command": "\\ref{tab:counter}"
+    },
+    {
+      "bookmark": "jeparef0118",
+      "key": "sec:limits",
+      "number": "6",
+      "command": "\\ref{sec:limits}"
+    },
+    {
+      "bookmark": "jeparef0119",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0120",
+      "key": "sec:results-h3",
+      "number": "5.2",
+      "command": "\\ref{sec:results-h3}"
+    },
+    {
+      "bookmark": "jeparef0121",
+      "key": "fig:paradox",
+      "number": "9",
+      "command": "\\ref{fig:paradox}"
+    },
+    {
+      "bookmark": "jeparef0122",
+      "key": "tab:fp32",
+      "number": "16",
+      "command": "\\ref{tab:fp32}"
+    },
+    {
+      "bookmark": "jeparef0123",
+      "key": "sec:precision",
+      "number": "5.6",
+      "command": "\\ref{sec:precision}"
+    },
+    {
+      "bookmark": "jeparef0124",
+      "key": "sec:results-h3",
+      "number": "5.2",
+      "command": "\\ref{sec:results-h3}"
+    },
+    {
+      "bookmark": "jeparef0125",
+      "key": "app:replication",
+      "number": "B",
+      "command": "\\ref{app:replication}"
+    },
+    {
+      "bookmark": "jeparef0126",
+      "key": "sec:results-h3",
+      "number": "5.2",
+      "command": "\\ref{sec:results-h3}"
+    },
+    {
+      "bookmark": "jeparef0127",
+      "key": "sec:limits",
+      "number": "6",
+      "command": "\\ref{sec:limits}"
+    },
+    {
+      "bookmark": "jeparef0128",
+      "key": "tab:finetuned",
+      "number": "17",
+      "command": "\\ref{tab:finetuned}"
+    }
+  ],
+  "generated_images": {
+    "schematic_00.png": "aa66e7c17158e7668d1a397eea62bc0417fb83288e0872bfddc419a94f8ebc0e"
+  },
+  "check": {
+    "ALL_PASS": true,
+    "errors": [],
+    "docx_sha256": "907a298e2150135661ecea30411cec60ff52f3cab20a2e6d6f1425506e583e78",
+    "input_hashes": {
+      "auto/auto_numbers.tex": "d6f2c6201dd19c363ba51e1c006490eb7211af53615a45f2f62d4ef6bb80cbc2",
+      "auto/delivered_numbers.tex": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5",
+      "auto/fig_fairness.png": "003e4867ceffa5232d211ca4baa05697a23c3a76045e292fc118c7c4e7c1ac70",
+      "auto/fig_labeleff.png": "c38adc921b2d6d95771d4656549e6c127bc7b2052dcaef9136a9a2bc29c3d082",
+      "auto/fig_roc.png": "0dbe1d493de657e913431edc1d87f2cbe418828e559ee501bf8095f768767857",
+      "auto/fig_trajectories_ci.png": "09d8d84339ea9173ae3534726ed0cdca1290eb5d205e74997e330b02a7e147e7",
+      "auto/table_allprobes.tex": "dcc31d5a0bf5cf2c9538a65a1f223b6fe033586d4d4bbfc4ccc96879cfdd0bf5",
+      "auto/table_fp32.tex": "83c52c34e75872b1b4aa6f8d0a49aaefdc20e8011900a7579ec5c24206136317",
+      "auto/table_labeleff.tex": "8c3dc6b0b830055b9dfcf355aff970c6360f7fdf2b48f0fb18e29f87df4db546",
+      "auto/table_operating.tex": "4562025c084847f2bde3be36f2a44c9184a6ab250e343a1c0fc5267aad897d35",
+      "auto/table_paired_subgroup.tex": "074a1ecd38dafcec2c87c85bcc5fcc97ad45466f32e52a894f19db6b7a5db10a",
+      "auto/table_subgroup_operating.tex": "4fe8e8569a57d6ca61cdd5d381c7a850fbe048523858e5eb9167bfc11e6ed4c1",
+      "auto/table_subgroup_trends.tex": "4edc6013c4dec8a567168475b87db2cb3b57592bad699e6da786e38a988e10b2",
+      "figures/figS5_mask_statistics.png": "b3cd2f3642522c3aa6e6a101d9f07ec05d6a7454ac1db97696ed89e3c7e51e09",
+      "figures/fig_delivered_task_token_maps.png": "bb3dfe97ecfacf5ea412c984015f26503911d32e67ac2ce3abbf1b64db465354",
+      "figures/fig_geometry_panel.png": "d961ab632dcf907dc8c04e406c5837eba6e3fcf331b2806398cb2929c5aecb11",
+      "figures/fig_policy_family_token_maps.png": "876d8dbdc8d60bacec3a69906a8df239e824e3afa2ba99fb609c4deb5ed22512",
+      "figures/fig_purity_auc_ep50_fp32.png": "e9635409b46a295e1dd4da8398a08d1c3ba7014438dcb1039f8ef7485028e6c4",
+      "figures/fig_specificity_ladder.png": "412e51919d5d0028429e2320dfb7819252468b54de3d9d1ad05a3327e4edace5",
+      "main.tex": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
+      "neurips_2026.sty": "c5287da23f9bd6b76c74f70360d977b4ea63c880297cadbe1d805f8a49d7bf86",
+      "references.bib": "36dae5e6a3663be19daacd6e1af63add0e6d5da1ec4d8e1d87ee2b4b1e75ec5e"
+    },
+    "aux_sha256": "1dd1e1a54fec0dd152ff8ae41e795e39e55395ef6ce1273eb25f51a168eaa330",
+    "counts": {
+      "references": 129,
+      "table_captions": 17,
+      "figure_captions": 11,
+      "tables": 17,
+      "data_tables": 17,
+      "media": 11,
+      "bibliography": 45
+    },
+    "limits": [
+      "Conversion completeness does not establish scientific validity.",
+      "Data tables require exact ordered row/cell numeric sequences and spans; only empty spacer rows and drawing-only layout tables are ignored.",
+      "Numeric normalization equates grouping commas, TeX grouping, optional unary plus and minus glyphs, not changed values or precision."
+    ]
+  }
+}

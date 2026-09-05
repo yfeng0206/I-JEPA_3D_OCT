@@ -1,0 +1,33 @@
+{
+  "random_legal": {
+    "fill": "random_legal",
+    "n_slices": 5972,
+    "occ_visible_mean": 0.2068066113751713,
+    "occ_visible_min": 0.15,
+    "occ_visible_p1": 0.1506849315068493,
+    "occ_visible_p5": 0.15384615384615385,
+    "below_floor": 0,
+    "below_floor_pct": 0.0,
+    "zero_visible": 0,
+    "invalid_guide_slices": 25,
+    "invalid_guide_pct": 0.41687510421877605,
+    "invalid_guide_zero_visible": 1,
+    "anatomy_hidden_mean": 0.7931933886248287,
+    "anatomy_hidden_p95": 0.8461538461538461,
+    "target_cells_per_block": 39.819148936170215,
+    "context_tokens": 66.46808510638297,
+    "blocks_checked": 24000,
+    "perfect_rectangles_pct": 73.4,
+    "bbox_fill_mean": 0.9799687830687831,
+    "bbox_fill_min": 0.8571428571428571,
+    "block_h_mean": 6.427333333333333,
+    "block_w_mean": 6.402,
+    "fallbacks": 0.0,
+    "infeasible": 0.0,
+    "cover_hidden_frac": 0.8441790261550884,
+    "cover_visible_cells": 14.875,
+    "cover_floor_ok": 1.0,
+    "cover_transition_blocks": 0.0,
+    "cover_random_blocks": 0.5833333333333334
+  }
+}

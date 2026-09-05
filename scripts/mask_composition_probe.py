@@ -101,8 +101,9 @@ def build_arms(guide_dir, cover_floor=0.15):
     arms["cover"] = CurriculumMaskGenerator(
         **BASE_KW,
         # pred_target_k deliberately UNSET, exactly as the envelope arm: COVER
-        # targets are rectangles of the batch-shared sizes, so the stock
-        # global-min truncation is harmless and keeps the arms comparable.
+        # historical rectangle arms share the same global-min target budget,
+        # but prefix truncation can still remove scored tissue. This probe
+        # measures the delivered tensors, not the sampler's intended union.
         curriculum_cfg=dict(
             mode="mirage_cover", mirage_guide_dir=guide_dir,
             mirage_occupancy_threshold=OCC_THRESHOLD,
@@ -120,16 +121,16 @@ def build_arms(guide_dir, cover_floor=0.15):
     return arms
 
 
-def run_arm(name, arm, images, guides, valid):
+def run_arm(name, arm, images, guides, valid, block_sizes=None):
     """Return (list_of_context_index_sets, list_of_target_index_lists)."""
     B = images.size(0)
     if name == "random":
-        _, m_enc, m_pred = arm([images[i] for i in range(B)])
+        _, m_enc, m_pred = arm([images[i] for i in range(B)], block_sizes=block_sizes)
     elif name == "oracle":
-        m_enc, m_pred = arm.generate(batch_size=B, imgs_cpu=images)
+        m_enc, m_pred = arm.generate(batch_size=B, imgs_cpu=images, block_sizes=block_sizes)
     else:
         m_enc, m_pred = arm.generate(
-            batch_size=B, guide_grids=guides, guide_valid=valid
+            batch_size=B, guide_grids=guides, guide_valid=valid, block_sizes=block_sizes
         )
     ctx = [set(m_enc[0][b].tolist()) for b in range(B)]
     blocks = []
@@ -188,6 +189,7 @@ def aggregate(rows):
     for k, v in arr.items():
         out[f"{k}_mean"] = float(v.mean())
         out[f"{k}_sd"] = float(v.std())
+        out[f"{k}_quantiles"] = np.quantile(v, [0, .05, .5, .95, 1]).tolist()
     # Derived rates, computed from the means so they read as percentages.
     ctx, hid = arr["n_ctx"].mean(), arr["n_hidden"].mean()
     out["ctx_frac_of_grid"] = float(ctx / NPATCH)
@@ -257,11 +259,17 @@ def main():
 
     arms = build_arms(args.guide_dir, cover_floor=args.cover_floor)
     rows = {k: [] for k in arms}
+    size_rng = torch.Generator().manual_seed(args.seed)
 
     done = 0
     for start in range(0, len(idxs), args.batch_size):
         chunk = idxs[start:start + args.batch_size]
-        items = [ds[i] for i in chunk]
+        items = []
+        for i in chunk:
+            random.seed(args.seed + i)
+            np.random.seed((args.seed + i) % (2 ** 32))
+            torch.manual_seed(args.seed + i)
+            items.append(ds[i])
         images = torch.stack([it[0] for it in items], dim=0)
         guides = torch.stack([it[1] for it in items], dim=0)
         valid = torch.stack([it[2] for it in items], dim=0)
@@ -270,9 +278,18 @@ def main():
         occ = guides[:, 0].reshape(guides.size(0), -1).numpy()
         on_anat = (occ >= OCC_THRESHOLD)
 
+        sizer = arms["random"]
+        sizes = dict(
+            pred=[sizer._sample_block_size(BASE_KW["pred_mask_scale"], size_rng)
+                  for _ in range(BASE_KW["npred"])],
+            enc=[sizer._sample_block_size(BASE_KW["enc_mask_scale"], size_rng)
+                 for _ in range(BASE_KW["nenc"])],
+        )
         for name, arm in arms.items():
+            random.seed(args.seed + start)
+            torch.manual_seed(args.seed + start)
             try:
-                ctx, tgt = run_arm(name, arm, images, guides, valid)
+                ctx, tgt = run_arm(name, arm, images, guides, valid, sizes)
             except Exception as exc:  # noqa: BLE001
                 print(f"  ARM {name} FAILED: {type(exc).__name__}: {exc}",
                       flush=True)
@@ -293,7 +310,10 @@ def main():
         occupancy_threshold=OCC_THRESHOLD, guide_dir=args.guide_dir,
         anatomy_reference="MIRAGE guide occupancy channel 0 >= 0.25",
         grid=f"{GRID}x{GRID}", total_patches=NPATCH,
+        pairing="fixed crops and explicitly injected shared sizes; placement draws not paired",
+        quantile_order=["min", "p05", "p50", "p95", "max"],
     )
+    res["_per_image"] = rows
     pathlib.Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     pathlib.Path(args.out).write_text(json.dumps(res, indent=2))
     print("wrote", args.out)

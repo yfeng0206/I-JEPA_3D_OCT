@@ -1,0 +1,17 @@
+{
+  "status": "fixed_and_verified",
+  "targeted_tests_passed": 123,
+  "pytest_seconds": 12.64,
+  "reproduced_before_failures": 5,
+  "true_isolated_baseline_controls_passed": 15,
+  "adversarial_current_cover_change_rejected": true,
+  "saved600_scope_source_records_scanned": 5400,
+  "saved_source_labels_changed": 0,
+  "synthetic_failure_mask_pairs_unchanged": 4,
+  "real64_mask_source_input_pairs_unchanged": 192,
+  "current_source_hashes_match_recorded_validation": true,
+  "target_source_schema_version": 2,
+  "historical_algorithm_defaults_changed": false,
+  "figure_script_edited_by_mask_owner": false,
+  "gpu_work": false
+}

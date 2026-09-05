@@ -1,0 +1,745 @@
+{
+  "source_snapshot_sha256": "61d8d2cceb397f58313b166d481a03a3f94c2c0c914fb2ee8caca25cef7e27e6",
+  "scope": "Historical frozen61d findings; use current validation for revised-source blockers.",
+  "assigned": 382,
+  "pending": [
+    {
+      "group": 52,
+      "index": 0,
+      "value": "50",
+      "context": "Separately from missingness, a group with fewer than 50 cases, or fewer than 10 of either class, is still computed and reported but is marked underpowered and held out of the max--min gap summaries. That is an exclusion from the fairness claim, not from the data, and it is the only place a group is set aside."
+    },
+    {
+      "group": 52,
+      "index": 1,
+      "value": "10",
+      "context": "Separately from missingness, a group with fewer than 50 cases, or fewer than 10 of either class, is still computed and reported but is marked underpowered and held out of the max--min gap summaries. That is an exclusion from the fairness claim, not from the data, and it is the only place a group is set aside."
+    },
+    {
+      "group": 67,
+      "index": 5,
+      "value": "194",
+      "context": "\\paragraph{Measured consequences.} A one-off audit found that collation reduced \\textsc{cover}'s anatomy coverage. An independent sweep over $6{,}137$ slices gives $73.1\\%$ against $77.6\\%$ for \\textsc{envelope}. The arm intended to hide \\emph{more} anatomy than \\textsc{envelope} in fact hides \\emph{less}. Across $24{,}000$ emitted targets only $73.4\\%$ remain perfect rectangles. Because target cells are enumerated row-major, truncation keeps the top of each rectangle and discards the bottom, so the loss is directional rather than a neutral shrink. \\emph{Provenance:} the one-off CPU audit of 194 accepted slices that first exposed the defect was not persisted, so its pre- and post-truncation figures are no longer asserted. The $73.1\\%$ against $77.6\\%$ comparison, which is the only figure the body relies on, is backed by the stored floor sweep and is unaffected."
+    }
+  ],
+  "findings": [
+    {
+      "group": 30,
+      "index": 11,
+      "claim": "The eight recorded fp32 re-probes shift AUC by less than $2\\times10^{-4}$, orders of magnitude below the effects in Table~\\ref{tab:main}, so the differing autocast settings of Section~\\ref{sec:setup} are not the effect and every contrast is matched on precision (Appendix~\\ref{app:fp32}). The generating script, the epoch-100 \\ArmBest{} encoder, its head and its stored per-case predictions are released (links withheld for anonymity). Re-encoding the test split from those weights on different hardware, at fp32 rather than fp16 and with a different encoder chunk size, reproduces the reported AUC to $9.8\\times10^{-6}$: 22 discordant pairs out of $2{,}248{,}844$.",
+      "value": "22",
+      "result": {
+        "expected": "499",
+        "expression": {
+          "op": "format",
+          "args": [
+            {
+              "source": "lr_fixed_head",
+              "pointer": "/all_pair_order_disagreements"
+            }
+          ],
+          "format": "%d"
+        },
+        "source_hashes": {
+          "lr_fixed_head": "2d50dddf2fd4bc2aae2e7fcf0c8d25f6e0e3db6fb2e5af58912b5b3451acd88f"
+        },
+        "status": "mismatch"
+      }
+    },
+    {
+      "group": 42,
+      "index": 0,
+      "claim": "\\paragraph{Cell-level agreement and seed noise.} Table~\\ref{tab:geom} now carries the regenerated values, so the question is how stable they are across draws. 18 of the 25 cells fall inside the three-seed range of the measurement and do not exceed observed re-draw variation. Across the four rectangle arms the \\emph{loss slots} spread is smaller than the per-arm seed spread (Table~\\ref{tab:geomprov}), so that column's ordering carries no information and no claim in this paper depends on it. The rank order of the arms on anatomy hidden and on purity is identical across all three draws, which is what the rank correlations in the main text rely on.",
+      "value": "18",
+      "result": {
+        "expected": "15",
+        "expression": {
+          "op": "format",
+          "args": [
+            {
+              "source": "lr_geometry_derived",
+              "pointer": "/inside_unrounded_range"
+            }
+          ],
+          "format": "%d"
+        },
+        "source_hashes": {
+          "lr_geometry_derived": "6e3f6e672a16b71604658e6b0cbadc6eb4fdd61c52cca02e36d93db93a2f7854"
+        },
+        "status": "mismatch"
+      }
+    },
+    {
+      "group": 52,
+      "index": 0,
+      "value": "50",
+      "claim": "Separately from missingness, a group with fewer than 50 cases, or fewer than 10 of either class, is still computed and reported but is marked underpowered and held out of the max--min gap summaries. That is an exclusion from the fairness claim, not from the data, and it is the only place a group is set aside.",
+      "blocked_reason": "The50/10 rule belongs to p7_fairness, not the seven-attribute trend producer: subgroup_analysis uses min_n40 and skips unknown/blank/na. Stored Spanish n44 is included; marital unknown71 and legally-separated22 are omitted. Scope/reword the methods paragraph."
+    },
+    {
+      "group": 52,
+      "index": 1,
+      "value": "10",
+      "claim": "Separately from missingness, a group with fewer than 50 cases, or fewer than 10 of either class, is still computed and reported but is marked underpowered and held out of the max--min gap summaries. That is an exclusion from the fairness claim, not from the data, and it is the only place a group is set aside.",
+      "blocked_reason": "The50/10 rule belongs to p7_fairness, not the seven-attribute trend producer: subgroup_analysis uses min_n40 and skips unknown/blank/na. Stored Spanish n44 is included; marital unknown71 and legally-separated22 are omitted. Scope/reword the methods paragraph."
+    },
+    {
+      "group": 67,
+      "index": 5,
+      "value": "194",
+      "claim": "\\paragraph{Measured consequences.} A one-off audit found that collation reduced \\textsc{cover}'s anatomy coverage. An independent sweep over $6{,}137$ slices gives $73.1\\%$ against $77.6\\%$ for \\textsc{envelope}. The arm intended to hide \\emph{more} anatomy than \\textsc{envelope} in fact hides \\emph{less}. Across $24{,}000$ emitted targets only $73.4\\%$ remain perfect rectangles. Because target cells are enumerated row-major, truncation keeps the top of each rectangle and discards the bottom, so the loss is directional rather than a neutral shrink. \\emph{Provenance:} the one-off CPU audit of 194 accepted slices that first exposed the defect was not persisted, so its pre- and post-truncation figures are no longer asserted. The $73.1\\%$ against $77.6\\%$ comparison, which is the only figure the body relies on, is backed by the stored floor sweep and is unaffected.",
+      "blocked_reason": "The194-slice first audit was not persisted; its sample count survives only in narrative COVER_AUDIT.md, which is not an independent producing artifact. Remove the number or explicitly label it a historical unverified recollection."
+    },
+    {
+      "group": 78,
+      "index": 1,
+      "claim": "\\begin{figure}[h] \\centering \\includegraphics[width=0.60\\linewidth]{fig_labeleff.png} \\caption{The policies converge as labels are added and separate as they are removed. Shading is one standard deviation over \\LERepeats{} label subsets, with every arm seeing identical subsets. At full supervision the four arms lie within $0.027$ of one another; at $5\\%$ the spread is $0.085$.} \\label{fig:labeleff} \\end{figure}",
+      "value": "0.027",
+      "result": {
+        "expected": "0.027",
+        "expression": {
+          "op": "format",
+          "args": [
+            {
+              "op": "subtract",
+              "args": [
+                {
+                  "op": "max",
+                  "args": [
+                    {
+                      "source": "lr_le",
+                      "pointer": "/arms/random/1.00/auc_mean"
+                    },
+                    {
+                      "source": "lr_le",
+                      "pointer": "/arms/intensity/1.00/auc_mean"
+                    },
+                    {
+                      "source": "lr_le",
+                      "pointer": "/arms/envelope/1.00/auc_mean"
+                    },
+                    {
+                      "source": "lr_le",
+                      "pointer": "/arms/cover/1.00/auc_mean"
+                    }
+                  ]
+                },
+                {
+                  "op": "min",
+                  "args": [
+                    {
+                      "source": "lr_le",
+                      "pointer": "/arms/random/1.00/auc_mean"
+                    },
+                    {
+                      "source": "lr_le",
+                      "pointer": "/arms/intensity/1.00/auc_mean"
+                    },
+                    {
+                      "source": "lr_le",
+                      "pointer": "/arms/envelope/1.00/auc_mean"
+                    },
+                    {
+                      "source": "lr_le",
+                      "pointer": "/arms/cover/1.00/auc_mean"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "format": "%.17g"
+        },
+        "source_hashes": {
+          "lr_le": "e3415b7faece7e674a6a74429d9d465a33c73fbc0f5cfd63c235175e35eb412e"
+        },
+        "status": "mismatch",
+        "verification": "exact_source_inequality",
+        "assertion": {
+          "expression": {
+            "op": "subtract",
+            "args": [
+              {
+                "op": "max",
+                "args": [
+                  {
+                    "source": "lr_le",
+                    "pointer": "/arms/random/1.00/auc_mean"
+                  },
+                  {
+                    "source": "lr_le",
+                    "pointer": "/arms/intensity/1.00/auc_mean"
+                  },
+                  {
+                    "source": "lr_le",
+                    "pointer": "/arms/envelope/1.00/auc_mean"
+                  },
+                  {
+                    "source": "lr_le",
+                    "pointer": "/arms/cover/1.00/auc_mean"
+                  }
+                ]
+              },
+              {
+                "op": "min",
+                "args": [
+                  {
+                    "source": "lr_le",
+                    "pointer": "/arms/random/1.00/auc_mean"
+                  },
+                  {
+                    "source": "lr_le",
+                    "pointer": "/arms/intensity/1.00/auc_mean"
+                  },
+                  {
+                    "source": "lr_le",
+                    "pointer": "/arms/envelope/1.00/auc_mean"
+                  },
+                  {
+                    "source": "lr_le",
+                    "pointer": "/arms/cover/1.00/auc_mean"
+                  }
+                ]
+              }
+            ]
+          },
+          "relation": "le",
+          "bound": "0.027",
+          "component": 0
+        },
+        "computed_value": 0.027082803431451863,
+        "bound_value": 0.027,
+        "action": "Source value 0.027082803431451863 does not satisfy le 0.027"
+      }
+    },
+    {
+      "group": 106,
+      "index": 14,
+      "claim": "\\paragraph{Software and hardware environment.} Every number in this paper was produced under one environment, and the versions below were read from the live interpreter rather than recalled. Python 3.11.9 on 64-bit Windows (build 10.0.26200); PyTorch 2.7.1 compiled against CUDA 12.8 with cuDNN 9.7.1; one NVIDIA GeForce RTX 3090 with 24\\,GiB of memory, driver 610.62. The statistics and figures use NumPy 2.4.4, SciPy 1.17.1 and scikit-learn 1.9.0, and the manuscript is compiled by Tectonic 0.17.0. A lock file pinning 87 distributions accompanies the artifact. We re-resolved it against the live interpreter and every pin matches the installed version exactly, with no conflict. That interpreter also carries 16 further packages (test, plotting and PDF-inspection tools such as pytest 9.1.1, statsmodels 0.14.6 and seaborn 0.13.2), which are deliberately absent from the lock file because no reported number depends on them. The chain from stored per-case predictions through macros, tables and figures to the compiled archive runs as one ordered script, so the released predictions, the released head and the numbers printed here are joined by code rather than by transcription. We did not re-verify these results under a second CUDA or PyTorch version, so the fp32 re-encode of Appendix~\\ref{app:fp32} on different hardware is the only cross-environment evidence we have.",
+      "value": "16",
+      "result": {
+        "expected": "19",
+        "expression": {
+          "op": "format",
+          "args": [
+            {
+              "source": "lr_environment",
+              "pointer": "/extra_count"
+            }
+          ],
+          "format": "%d"
+        },
+        "source_hashes": {
+          "lr_environment": "e70223632d7170b7835d6b5f54a3148bf96124b1b7d32c1398bfce529ce589f2"
+        },
+        "status": "mismatch"
+      }
+    }
+  ],
+  "source_origins": {
+    "lr_cover_cfg": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\configs\\patch_cover_f021_ep25.yaml",
+      "sha256": "4119c33f35a5c2ba3bc7ff240a7e4172de6f8d2d31187967b3f89e771ff1463a",
+      "retained": {
+        "root": "repo",
+        "path": "configs\\patch_cover_f021_ep25.yaml",
+        "sha256": "4119c33f35a5c2ba3bc7ff240a7e4172de6f8d2d31187967b3f89e771ff1463a"
+      }
+    },
+    "lr_anatomy_cfg": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\configs\\patch_anatomy_v2.yaml",
+      "sha256": "7a8167f806017d2dd1cf825dae25c3f5c12a37c2260971c75d3e433e7a087059",
+      "retained": {
+        "root": "repo",
+        "path": "configs\\patch_anatomy_v2.yaml",
+        "sha256": "7a8167f806017d2dd1cf825dae25c3f5c12a37c2260971c75d3e433e7a087059"
+      }
+    },
+    "lr_v1_cfg": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\configs\\patch_mirage_anatomy.yaml",
+      "sha256": "0d98a2a971943ee315fc93405e91da0a8b940dcb45abebb266cd1a103998d1b4",
+      "retained": {
+        "root": "repo",
+        "path": "configs\\patch_mirage_anatomy.yaml",
+        "sha256": "0d98a2a971943ee315fc93405e91da0a8b940dcb45abebb266cd1a103998d1b4"
+      }
+    },
+    "lr_replication_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\scripts\\make_replication_configs.py",
+      "sha256": "7830192a89d1ff57e57f080bb9ea8ae4b34b99dca365bfa1e1c14663d237946e",
+      "retained": {
+        "root": "repo",
+        "path": "scripts\\make_replication_configs.py",
+        "sha256": "7830192a89d1ff57e57f080bb9ea8ae4b34b99dca365bfa1e1c14663d237946e"
+      }
+    },
+    "lr_primary_result": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\results\\downstream\\meanpool_sweep_random\\ep100_results.json",
+      "sha256": "3faf4113566d0dc5f384b5c1c5ce1329e43304bc0c9dd0de8920db3ee5fcbb76",
+      "retained": {
+        "root": "repo",
+        "path": "results\\downstream\\meanpool_sweep_random\\ep100_results.json",
+        "sha256": "3faf4113566d0dc5f384b5c1c5ce1329e43304bc0c9dd0de8920db3ee5fcbb76"
+      }
+    },
+    "lr_geom": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed42.json",
+      "sha256": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7",
+      "retained": {
+        "root": "repo",
+        "path": "results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed42.json",
+        "sha256": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7"
+      }
+    },
+    "lr_geom64": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\results\\masking\\table2_geometry\\mask_geometry_600slices_bs64_coverf021_seed42.json",
+      "sha256": "3fd445f6c26763b4cc50eff2d11636613ff8881ffe54dfe07bb9b2bb48890f3e",
+      "retained": {
+        "root": "repo",
+        "path": "results\\masking\\table2_geometry\\mask_geometry_600slices_bs64_coverf021_seed42.json",
+        "sha256": "3fd445f6c26763b4cc50eff2d11636613ff8881ffe54dfe07bb9b2bb48890f3e"
+      }
+    },
+    "lr_geom015": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\results\\masking\\table2_geometry\\mask_geometry_600slices_bs64_coverf015_seed42.json",
+      "sha256": "c3693b987c7ca4bc797e669d8189be6b30089ce30987f867edac747424034536",
+      "retained": {
+        "root": "repo",
+        "path": "results\\masking\\table2_geometry\\mask_geometry_600slices_bs64_coverf015_seed42.json",
+        "sha256": "c3693b987c7ca4bc797e669d8189be6b30089ce30987f867edac747424034536"
+      }
+    },
+    "lr_geometry_derived": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\geometry_reduction.json",
+      "sha256": "6e3f6e672a16b71604658e6b0cbadc6eb4fdd61c52cca02e36d93db93a2f7854",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\geometry_reduction.json",
+        "sha256": "6e3f6e672a16b71604658e6b0cbadc6eb4fdd61c52cca02e36d93db93a2f7854"
+      }
+    },
+    "lr_intersection_derived": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\intersectional_reduction.json",
+      "sha256": "5731372acd2f6b53b4dc3011550a2a9e1f2a3516fa8a7f9e08f9d2907811e757",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\intersectional_reduction.json",
+        "sha256": "5731372acd2f6b53b4dc3011550a2a9e1f2a3516fa8a7f9e08f9d2907811e757"
+      }
+    },
+    "lr_probability": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\probability_diagnostics.json",
+      "sha256": "f5e7d82f56b800f5863d5d2ab6f2cf2735179ef13d7929df1d546dd88f0fca30",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\probability_diagnostics.json",
+        "sha256": "f5e7d82f56b800f5863d5d2ab6f2cf2735179ef13d7929df1d546dd88f0fca30"
+      }
+    },
+    "lr_environment": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\environment_snapshot.json",
+      "sha256": "e70223632d7170b7835d6b5f54a3148bf96124b1b7d32c1398bfce529ce589f2",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\environment_snapshot.json",
+        "sha256": "e70223632d7170b7835d6b5f54a3148bf96124b1b7d32c1398bfce529ce589f2"
+      }
+    },
+    "lr_metadata": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\metadata_reduction.json",
+      "sha256": "4e3e07bf4d6e19961358438bf4aeaaaeb1e20e5ca2d2835b075ddbbf377f01fe",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\metadata_reduction.json",
+        "sha256": "4e3e07bf4d6e19961358438bf4aeaaaeb1e20e5ca2d2835b075ddbbf377f01fe"
+      }
+    },
+    "lr_hardware": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\hardware_snapshot.json",
+      "sha256": "8b9985040680961da27795263deeaafd20111dbdd67632819929f81d5707db8c",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\hardware_snapshot.json",
+        "sha256": "8b9985040680961da27795263deeaafd20111dbdd67632819929f81d5707db8c"
+      }
+    },
+    "lr_fixed_head": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\fixed_head_reproduction.json",
+      "sha256": "2d50dddf2fd4bc2aae2e7fcf0c8d25f6e0e3db6fb2e5af58912b5b3451acd88f",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\fixed_head_reproduction.json",
+        "sha256": "2d50dddf2fd4bc2aae2e7fcf0c8d25f6e0e3db6fb2e5af58912b5b3451acd88f"
+      }
+    },
+    "lr_parameters": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\probe_parameter_count.json",
+      "sha256": "c5347ed0323b127fe831b4fe2cad2ec8d6ee69cd88ca5c3063b5e6171bacb82a",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\probe_parameter_count.json",
+        "sha256": "c5347ed0323b127fe831b4fe2cad2ec8d6ee69cd88ca5c3063b5e6171bacb82a"
+      }
+    },
+    "lr_p1_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\p1c_stats.py",
+      "sha256": "18114fa4be8bc8d74dc147eb29e59285d9b1576229ce5f056c765448b9006ea9",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\p1c_stats.py",
+        "sha256": "18114fa4be8bc8d74dc147eb29e59285d9b1576229ce5f056c765448b9006ea9"
+      }
+    },
+    "lr_p17_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\p17_adjust_subgroup_multiplicity.py",
+      "sha256": "e600078ebadd0f9f119f9ee44bc3c298c0d4322fb215aeec660dc5b0b9433ba0",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\p17_adjust_subgroup_multiplicity.py",
+        "sha256": "e600078ebadd0f9f119f9ee44bc3c298c0d4322fb215aeec660dc5b0b9433ba0"
+      }
+    },
+    "lr_p8_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\p8_make_assets.py",
+      "sha256": "fdc233fbad0cc0a25cf3f64700f2f4c178d1a0ae63b4571c491465a608f1eff7",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\p8_make_assets.py",
+        "sha256": "fdc233fbad0cc0a25cf3f64700f2f4c178d1a0ae63b4571c491465a608f1eff7"
+      }
+    },
+    "lr_p5_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\p5_label_efficiency.py",
+      "sha256": "9572f60979c80c30547b31824e995dc1a56e5c8b8fa6dc0bd5ca79c131d70d2d",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\p5_label_efficiency.py",
+        "sha256": "9572f60979c80c30547b31824e995dc1a56e5c8b8fa6dc0bd5ca79c131d70d2d"
+      }
+    },
+    "lr_subgroup_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\scripts\\subgroup_analysis.py",
+      "sha256": "18ef057ec5ad71f50ce7a535d614cca447dd547bf166d484652f5be5b19b46ef",
+      "retained": {
+        "root": "repo",
+        "path": "paper\\genai4health2026\\scripts\\subgroup_analysis.py",
+        "sha256": "18ef057ec5ad71f50ce7a535d614cca447dd547bf166d484652f5be5b19b46ef"
+      }
+    },
+    "lr_intersection_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\scripts\\intersectional_analysis.py",
+      "sha256": "0cb48fa52e7220b2ea8c8a83e84ba11291e34898af9c84a6ddb1774ea47a40ae",
+      "retained": {
+        "root": "repo",
+        "path": "paper\\genai4health2026\\scripts\\intersectional_analysis.py",
+        "sha256": "0cb48fa52e7220b2ea8c8a83e84ba11291e34898af9c84a6ddb1774ea47a40ae"
+      }
+    },
+    "lr_fairness_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\p7_fairness.py",
+      "sha256": "c013ed7b6a71e2045e33784a841be596b9179f1c44adf090721ef6c8827c9d26",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\p7_fairness.py",
+        "sha256": "c013ed7b6a71e2045e33784a841be596b9179f1c44adf090721ef6c8827c9d26"
+      }
+    },
+    "lr_eval_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\src\\eval_downstream.py",
+      "sha256": "cad331b703a116985f2ce81e8abf02b12c300044a3825e22d4d6ab73c47b55ed",
+      "retained": {
+        "root": "repo",
+        "path": "src\\eval_downstream.py",
+        "sha256": "cad331b703a116985f2ce81e8abf02b12c300044a3825e22d4d6ab73c47b55ed"
+      }
+    },
+    "lr_interpretability_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\scripts\\deeper_interpretability_analysis.py",
+      "sha256": "ffb1ebefb9ba7420b27beae5f3e03a49aad73666468e0ee2d8f00c79f730f1cc",
+      "retained": {
+        "root": "repo",
+        "path": "scripts\\deeper_interpretability_analysis.py",
+        "sha256": "ffb1ebefb9ba7420b27beae5f3e03a49aad73666468e0ee2d8f00c79f730f1cc"
+      }
+    },
+    "lr_incremental": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\bgsig\\a2_region_incremental.json",
+      "sha256": "090882443003af8b4dd2913921f22eb81138022b9d2c777695a42f695222e345",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\bgsig\\a2_region_incremental.json",
+        "sha256": "090882443003af8b4dd2913921f22eb81138022b9d2c777695a42f695222e345"
+      }
+    },
+    "lr_incremental_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\bgsig\\a2_region_incremental.py",
+      "sha256": "44a7f54f4b3483256f71dcc4c3a09989e36b05cef823e6098b1396d41f48cea9",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\bgsig\\a2_region_incremental.py",
+        "sha256": "44a7f54f4b3483256f71dcc4c3a09989e36b05cef823e6098b1396d41f48cea9"
+      }
+    },
+    "lr_position": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\bgsig\\a3b_threshold_sweep.json",
+      "sha256": "6ec5d7ef06333482b8e9700b9d99796cb307b32d44a7b18b67951ae495dfcf68",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\bgsig\\a3b_threshold_sweep.json",
+        "sha256": "6ec5d7ef06333482b8e9700b9d99796cb307b32d44a7b18b67951ae495dfcf68"
+      }
+    },
+    "lr_position_code": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\bgsig\\a3b_threshold_sweep.py",
+      "sha256": "ad36a38b2bf9ba0edd1818c5dfa6789d74633ebf25496b38cf2ad2f58d15ccdb",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\bgsig\\a3b_threshold_sweep.py",
+        "sha256": "ad36a38b2bf9ba0edd1818c5dfa6789d74633ebf25496b38cf2ad2f58d15ccdb"
+      }
+    },
+    "lr_class_relations": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\results\\masking\\class_relations\\class_relations.json",
+      "sha256": "e0883e6aa87a1f287f8860e967c10f2a1de14d3c365fb830699f2d6781fe6c25",
+      "retained": {
+        "root": "repo",
+        "path": "results\\masking\\class_relations\\class_relations.json",
+        "sha256": "e0883e6aa87a1f287f8860e967c10f2a1de14d3c365fb830699f2d6781fe6c25"
+      }
+    },
+    "lr_training": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\src\\train_patch.py",
+      "sha256": "aa19998729d062887b2480ac3e86a8d7bb9499516e202185cc96ec46c9e77a34",
+      "retained": {
+        "root": "repo",
+        "path": "src\\train_patch.py",
+        "sha256": "aa19998729d062887b2480ac3e86a8d7bb9499516e202185cc96ec46c9e77a34"
+      }
+    },
+    "lr_lock": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\requirements-phase0.lock.txt",
+      "sha256": "2c338ce83ce8b8b470351c1bcf2604b8f5ee649bf6e27c01bc825bbfb78e3c2c",
+      "retained": {
+        "root": "repo",
+        "path": "requirements-phase0.lock.txt",
+        "sha256": "2c338ce83ce8b8b470351c1bcf2604b8f5ee649bf6e27c01bc825bbfb78e3c2c"
+      }
+    },
+    "lr_mask_probe": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\scripts\\mask_composition_probe.py",
+      "sha256": "6bb0a0a4e93ca5f2c96a280ed40780736bb1a1635f5c52d38e498a6c3b7544e7",
+      "retained": {
+        "root": "repo",
+        "path": "scripts\\mask_composition_probe.py",
+        "sha256": "6bb0a0a4e93ca5f2c96a280ed40780736bb1a1635f5c52d38e498a6c3b7544e7"
+      }
+    },
+    "lr_geometry_figure": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\make_fig_geometry_panel.py",
+      "sha256": "ca0a74656d8283e3b4eb9ab26489a96a82301448b1eca55f0af8de494f77a07c",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\make_fig_geometry_panel.py",
+        "sha256": "ca0a74656d8283e3b4eb9ab26489a96a82301448b1eca55f0af8de494f77a07c"
+      }
+    },
+    "lr_stats": {
+      "original": "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p1c_stats.json",
+      "sha256": "1653addb98ccba8cd4be8ca7f13dc1812ec749bd51b8e1b237db6768cf79f7b4",
+      "retained": {
+        "root": "stats",
+        "path": "p1c_stats.json",
+        "sha256": "1653addb98ccba8cd4be8ca7f13dc1812ec749bd51b8e1b237db6768cf79f7b4"
+      }
+    },
+    "lr_inventory": {
+      "original": "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p1b_full_inventory.json",
+      "sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6",
+      "retained": {
+        "root": "stats",
+        "path": "p1b_full_inventory.json",
+        "sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6"
+      }
+    },
+    "lr_fp32": {
+      "original": "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p3b_fp32.json",
+      "sha256": "896fc811a7d889bed8d3f837b0955d765a0d6815cca3e83726c9894d110731b5",
+      "retained": {
+        "root": "stats",
+        "path": "p3b_fp32.json",
+        "sha256": "896fc811a7d889bed8d3f837b0955d765a0d6815cca3e83726c9894d110731b5"
+      }
+    },
+    "lr_le": {
+      "original": "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p5_label_efficiency.json",
+      "sha256": "e3415b7faece7e674a6a74429d9d465a33c73fbc0f5cfd63c235175e35eb412e",
+      "retained": {
+        "root": "stats",
+        "path": "p5_label_efficiency.json",
+        "sha256": "e3415b7faece7e674a6a74429d9d465a33c73fbc0f5cfd63c235175e35eb412e"
+      }
+    },
+    "lr_trend": {
+      "original": "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p7b_gap_trend.json",
+      "sha256": "c9dcb106f1c7362a55a026f09b42cf440560fd98a4cf0608c735048effd1b88e",
+      "retained": {
+        "root": "stats",
+        "path": "p7b_gap_trend.json",
+        "sha256": "c9dcb106f1c7362a55a026f09b42cf440560fd98a4cf0608c735048effd1b88e"
+      }
+    },
+    "lr_fairness": {
+      "original": "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p7_fairness.json",
+      "sha256": "13d296aa7c0304f230be6328738bc6db808d2edfdaa583fce5f87f00fb5a0793",
+      "retained": {
+        "root": "stats",
+        "path": "p7_fairness.json",
+        "sha256": "13d296aa7c0304f230be6328738bc6db808d2edfdaa583fce5f87f00fb5a0793"
+      }
+    },
+    "lr_operating": {
+      "original": "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p8b_operating_points.json",
+      "sha256": "003ae00c4a53f9a3f07c3785e1c7afdbe9ef5b4017235e2737d00879e62169e1",
+      "retained": {
+        "root": "stats",
+        "path": "p8b_operating_points.json",
+        "sha256": "003ae00c4a53f9a3f07c3785e1c7afdbe9ef5b4017235e2737d00879e62169e1"
+      }
+    },
+    "lr_suboperating": {
+      "original": "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p16_subgroup_operating.json",
+      "sha256": "af852ce5ef2690b03f6b6c716bbf6a017c9a7d8a418ba4c24e3f8f74e676e7b7",
+      "retained": {
+        "root": "stats",
+        "path": "p16_subgroup_operating.json",
+        "sha256": "af852ce5ef2690b03f6b6c716bbf6a017c9a7d8a418ba4c24e3f8f74e676e7b7"
+      }
+    },
+    "lr_intersection": {
+      "original": "D:\\jepa_phase0\\reports\\subgroup\\intersectional_auc.json",
+      "sha256": "c02252f417430faac797bd8c794609cee262be87cd88008796d0ca0d199c15eb",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\retained_lr_intersection.json",
+        "sha256": "c02252f417430faac797bd8c794609cee262be87cd88008796d0ca0d199c15eb"
+      }
+    },
+    "lr_marginal": {
+      "original": "D:\\jepa_phase0\\reports\\subgroup\\subgroup_auc.json",
+      "sha256": "89dd2f4b5c92330c6d194461b4fd9d03630233a209b4f1f9e9ff3daf7bbab89d",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\retained_lr_marginal.json",
+        "sha256": "89dd2f4b5c92330c6d194461b4fd9d03630233a209b4f1f9e9ff3daf7bbab89d"
+      }
+    },
+    "lr_arm_stats": {
+      "original": "D:\\jepa_phase0\\reports\\arm_stats\\arm_stats.json",
+      "sha256": "d73d0baa8f21ae678006b8b0c7bb352f283457826f96d35236f32bd83f9c6e71",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\retained_lr_arm_stats.json",
+        "sha256": "d73d0baa8f21ae678006b8b0c7bb352f283457826f96d35236f32bd83f9c6e71"
+      }
+    },
+    "lr_floor": {
+      "original": "D:\\jepa_phase0\\reports\\arm_stats_sweep\\cover_floor_sweep.json",
+      "sha256": "0d5e89b6c3aff84accd09745c8eae3d6da5422fd404f229c19c5623078b1eba3",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\retained_lr_floor.json",
+        "sha256": "0d5e89b6c3aff84accd09745c8eae3d6da5422fd404f229c19c5623078b1eba3"
+      }
+    },
+    "lr_rectangles": {
+      "original": "D:\\jepa_phase0\\reports\\cover_random_scale\\scale_validation.json",
+      "sha256": "fdc8f5e040239b80a7b6084fe79970117b4c4c4f53f103b40442479a9b96c0c6",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\retained_lr_rectangles.json",
+        "sha256": "fdc8f5e040239b80a7b6084fe79970117b4c4c4f53f103b40442479a9b96c0c6"
+      }
+    },
+    "lr_public_mae": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\mae.pdf",
+      "sha256": "81bbc64bc197a64362927010470e46601a0f0311aa4c2014a355dfff0e5b3b6c",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\mae.pdf",
+        "sha256": "81bbc64bc197a64362927010470e46601a0f0311aa4c2014a355dfff0e5b3b6c"
+      }
+    },
+    "lr_public_simmim": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\simmim.pdf",
+      "sha256": "ea0a738441f245f8a53557b3ed753b0b3f187ff87f75e90cc90a9f4b00fd851f",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\simmim.pdf",
+        "sha256": "ea0a738441f245f8a53557b3ed753b0b3f187ff87f75e90cc90a9f4b00fd851f"
+      }
+    },
+    "lr_public_semmae": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\semmae.pdf",
+      "sha256": "8710c6a0bf66ce00a5b7687eb7d1487f8173763deb504f81a4547d26e21ae4b0",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\semmae.pdf",
+        "sha256": "8710c6a0bf66ce00a5b7687eb7d1487f8173763deb504f81a4547d26e21ae4b0"
+      }
+    },
+    "lr_public_automae": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\automae.pdf",
+      "sha256": "3d6f7b533f67ef5204ed0d82c3a07e46e093a4c13f0580efd883e6c08937d7e0",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\automae.pdf",
+        "sha256": "3d6f7b533f67ef5204ed0d82c3a07e46e093a4c13f0580efd883e6c08937d7e0"
+      }
+    },
+    "lr_public_hpm": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\hpm.pdf",
+      "sha256": "608dfd4e67807122987ab68fed213557ae8437d20df7f7809bd6b2916ad2e77f",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\hpm.pdf",
+        "sha256": "608dfd4e67807122987ab68fed213557ae8437d20df7f7809bd6b2916ad2e77f"
+      }
+    },
+    "lr_public_attmask": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\attmask.pdf",
+      "sha256": "c964a7d8c111263893469e5afd6c4c9942fa76f7941daa34dd13f7dd4cbd8daf",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\attmask.pdf",
+        "sha256": "c964a7d8c111263893469e5afd6c4c9942fa76f7941daa34dd13f7dd4cbd8daf"
+      }
+    },
+    "lr_public_attg": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\attg.pdf",
+      "sha256": "f1f274db024d8058a1f23ddd013fbff3959fd4449ee3048fad86082bb7c43373",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\attg.pdf",
+        "sha256": "f1f274db024d8058a1f23ddd013fbff3959fd4449ee3048fad86082bb7c43373"
+      }
+    },
+    "lr_public_ssit": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\ssit.pdf",
+      "sha256": "2fa7cd898e5f5754a773ffabf6d561b7ce00fb4edf77632984b9a3c71c7a367c",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\ssit.pdf",
+        "sha256": "2fa7cd898e5f5754a773ffabf6d561b7ce00fb4edf77632984b9a3c71c7a367c"
+      }
+    },
+    "lr_fairvision_card": {
+      "original": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\fairvision_readme.txt",
+      "sha256": "23f4339cd070c91fbc8fde93224e4504cb2e9099fbf945c88bd9b0392230f05b",
+      "retained": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\fairvision_readme.txt",
+        "sha256": "23f4339cd070c91fbc8fde93224e4504cb2e9099fbf945c88bd9b0392230f05b"
+      }
+    }
+  }
+}

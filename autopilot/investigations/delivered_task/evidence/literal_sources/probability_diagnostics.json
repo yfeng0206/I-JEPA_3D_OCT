@@ -1,0 +1,52 @@
+{
+  "producer": "autopilot\\p15_literal_snapshots.py",
+  "producer_sha256": "cc65295c24223b7e8f3386337deff25ebfabac08d897586e057f29d100ec9fdf",
+  "inputs_sha256": {
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\downstream\\meanpool_sweep_random\\ep100_test_predictions.npz": "cf8df03c04348c8d9cdcdee81a5e77571a3c109937a0344ae5e69fbabc879122",
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\downstream\\meanpool_sweep_oracle\\ep100_test_predictions.npz": "f440f5703f1b3b4b9ff5c6715c3917c7d3e76a852542ec728a4eb46ae01d8f66",
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\downstream\\meanpool_sweep_mirage\\ep100_test_predictions.npz": "db5b7fbf5536cbd4c86df244741fd7b8290090d7fc756db09ad4971692556134"
+  },
+  "operations": [
+    "Read only retained ep100 prediction NPZ labels/probs; confirm shared labels.",
+    "Subtract float64 probabilities before Shapiro-Wilk; raw-score tests use the same unmodified probabilities.",
+    "Levene median-centred statistic is descriptive only: the three vectors are paired, not independent samples."
+  ],
+  "n_subjects": 3000,
+  "n_stacked_scores": 9000,
+  "paired_deltas": {
+    "oracle_minus_random": {
+      "W": 0.9805235507813297,
+      "p": 7.074136299452872e-20
+    },
+    "envelope_minus_random": {
+      "W": 0.9684789866315395,
+      "p": 3.768086414431666e-25
+    },
+    "oracle_minus_envelope": {
+      "W": 0.9720505901483157,
+      "p": 9.027361652901645e-24
+    }
+  },
+  "raw_scores": {
+    "random": {
+      "W": 0.9174061699067435,
+      "p": 1.0699400803544373e-37,
+      "variance": 0.09371459307559087
+    },
+    "oracle": {
+      "W": 0.8956061421359118,
+      "p": 3.7625871368970345e-41,
+      "variance": 0.1089764531902102
+    },
+    "envelope": {
+      "W": 0.9000916078216475,
+      "p": 1.718207643999256e-40,
+      "variance": 0.1023468093246662
+    }
+  },
+  "levene": {
+    "statistic": 21.446227310301932,
+    "p": 5.106852568780567e-10
+  },
+  "variance_ratio": 1.1628546805118067
+}

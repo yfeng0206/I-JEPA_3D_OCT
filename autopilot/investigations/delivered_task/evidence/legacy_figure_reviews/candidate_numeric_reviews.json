@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "scope": "Legacy figure evidence candidate: no approvals. Original seven assets remain blocked; see inspection.json and REVIEW.md. Sources pin observations and retained summaries; they must not be treated as extracted empirical truth merely because their hashes match.",
+  "sources": {
+    "legacy_table2_geometry_seed42": {
+      "root": "repo",
+      "path": "results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed42.json",
+      "sha256": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7"
+    },
+    "legacy_auc_inventory": {
+      "root": "stats",
+      "path": "p1b_full_inventory.json",
+      "sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6"
+    },
+    "legacy_precision_pdf": {
+      "root": "paper",
+      "path": "figures\\fig_precision_paradox.pdf",
+      "sha256": "7c0369268bda2590fca6da1e12bc944a426d0d171812c428fdfd91f75543f70a"
+    },
+    "legacy_fig_masking_policies_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\fig_masking_policies.ocr.json",
+      "sha256": "409ca618056eabd10e23e665adcd8774dc5e19fe2896740000edeb330786353f"
+    },
+    "legacy_fig_precision_paradox_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\fig_precision_paradox.ocr.json",
+      "sha256": "af387ebc9d4d70bb9cbbc11ade4821198cf9314d0ba2a6baf9f0ea02188461bc"
+    },
+    "legacy_interp_04_window_occlusion_W7_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_04_window_occlusion_W7.ocr.json",
+      "sha256": "8b7557b504c2c2640cdb50ad6630f677d15d642a5e23959cc247cf20e6484bc1"
+    },
+    "legacy_summary_interp_04_window_occlusion_W7": {
+      "root": "repo",
+      "path": "results\\summary\\04_window_occlusion_W7.png",
+      "sha256": "84f240a96461acb3f2e0280f0aa943146e3b98bc06b9cdf921ee76a9716277dc"
+    },
+    "legacy_interp_14_odos_mirror_test_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_14_odos_mirror_test.ocr.json",
+      "sha256": "3687e8cea5c9b33eb68846f28a67ee3ea2a2721bb643ef2afbd7413ed84ab6a8"
+    },
+    "legacy_summary_interp_14_odos_mirror_test": {
+      "root": "repo",
+      "path": "results\\summary\\14_odos_mirror_test.png",
+      "sha256": "4bbbb9456e911aa5d590234bffa7048b2177d2da6a4169dd138bde4d8c3098b8"
+    },
+    "legacy_interp_heatmap_grid_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_heatmap_grid.ocr.json",
+      "sha256": "c67daee64af43d80da227bdfa6af68bbd25e708a54e0e629daa1d7acaf9baa39"
+    },
+    "legacy_summary_interp_heatmap_grid": {
+      "root": "repo",
+      "path": "results\\summary\\heatmap_grid.png",
+      "sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb"
+    },
+    "legacy_interp_slice_contribution_by_outcome_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_slice_contribution_by_outcome.ocr.json",
+      "sha256": "22b1dd4cb6acb37bec474d663cf4b8b2de2251e30da61116cccb203ac3f26b64"
+    },
+    "legacy_summary_interp_slice_contribution_by_outcome": {
+      "root": "repo",
+      "path": "results\\summary\\slice_contribution_by_outcome.png",
+      "sha256": "4ed73e379131a5cda85efb3a42205b88781e5bece0b2c25974640eb10357d8b1"
+    },
+    "legacy_interp_slice_contribution_curves_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_slice_contribution_curves.ocr.json",
+      "sha256": "d8022c8eab09abb71bdfe5c52c39aa000e188d3f46843aba08ddc777860c9562"
+    },
+    "legacy_summary_interp_slice_contribution_curves": {
+      "root": "repo",
+      "path": "results\\summary\\slice_contribution_curves.png",
+      "sha256": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6"
+    },
+    "legacy_summary_heatmap_grid_BC": {
+      "root": "repo",
+      "path": "results\\summary\\heatmap_grid_BC.png",
+      "sha256": "7dc88ae88c6449cecad1fe2b94bb07dfcb01c5936a5dd02ba40d88962cb9cd30"
+    },
+    "legacy_heatmap_grid_BC_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\heatmap_grid_BC.ocr.json",
+      "sha256": "3398e5d8c4870371b0c207ab4052d93ea0c327d940e1a1dfa06efb8d4eb87bd5"
+    },
+    "legacy_producer_interpretability": {
+      "root": "repo",
+      "path": "scripts\\interpretability.py",
+      "sha256": "bbdd6320f055b95347ce073f44bb73485fe76d03e604f220e27b3b67ed518ed9"
+    },
+    "legacy_producer_assemble_heatmap_grid": {
+      "root": "repo",
+      "path": "scripts\\assemble_heatmap_grid.py",
+      "sha256": "2cd3d678e2dc5b5190e997256d926faf098382f04efa14d3a36e2d7a3a05780d"
+    },
+    "legacy_producer_heatmap_BC_comparison": {
+      "root": "repo",
+      "path": "scripts\\heatmap_BC_comparison.py",
+      "sha256": "b3f93ace5b24baca72590c424496a407ed59d17381478bc6c906a4d096e1da84"
+    },
+    "legacy_producer_odos_mirror_test": {
+      "root": "repo",
+      "path": "scripts\\odos_mirror_test.py",
+      "sha256": "0b14b18bbdbb06c155fd57db69aaecdac7ea86f0062c555275dd4d3dacdeb1a6"
+    },
+    "legacy_producer_deeper_interpretability_analysis": {
+      "root": "repo",
+      "path": "scripts\\deeper_interpretability_analysis.py",
+      "sha256": "ffb1ebefb9ba7420b27beae5f3e03a49aad73666468e0ee2d8f00c79f730f1cc"
+    },
+    "legacy_interpretability_history": {
+      "root": "repo",
+      "path": "docs\\experiments\\interpretability.md",
+      "sha256": "8e97b3d566666f1e7e6558bdd31bdf6ea27d92e057a4bf31186cf1aca6f2c537"
+    },
+    "legacy_inspection_helper": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\audit_legacy_figures.py",
+      "sha256": "0b12125c95d917e39b5d339fec2d4756edac17a7efc232a131e231ff98b4ea4e"
+    },
+    "legacy_review_decisions": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\review_decisions.json",
+      "sha256": "4a588d8eb8a3e11d55aa9c5bf2b8b407cfb475614a238a4b9cdcfbe5d713ed40"
+    }
+  },
+  "figures": []
+}

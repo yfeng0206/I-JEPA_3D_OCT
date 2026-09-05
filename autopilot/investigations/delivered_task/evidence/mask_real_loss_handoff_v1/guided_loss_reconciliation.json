@@ -1,0 +1,41 @@
+{
+  "source_result_sha256": "ae132f65d6d711177bdca819abcce0e4d2114d485512a596cf4c35afc269dde8",
+  "gpu_used_original_container_sha256": "269f1c143af8e91daa179796fb0bfbd40583d91fafebbc0dbd45cba9c6c4692e",
+  "original_container_bs2_tensors_exactly_equal_narrowed_handoff": true,
+  "narrowed_handoff_sha256": "9effcc2d02daa7460375f7b8589fad4042192c25f20f49b0dafd65c6a5c0357b",
+  "real_guided_updates_by_training_owner": 3,
+  "mask_owner_verification": "CPU read-only reconciliation; no GPU work",
+  "interpretation": "Actual tissue/background and repeated-slot SmoothL1 terms verified; losses are not policy ranking. Guard nonbinding yields identical v2/guard losses.",
+  "cases": [
+    {
+      "policy": "cover_legacy",
+      "loss": 0.046599842607975006,
+      "tissue_contribution": 0.02612709403038025,
+      "background_contribution": 0.020472745597362518,
+      "first_occurrence_contribution": 0.034413236379623416,
+      "repeated_slot_contribution": 0.012186604738235473,
+      "context_tissue_sum": 35,
+      "mask_and_loss_slot_counts_match_exact_private_fixture": true
+    },
+    {
+      "policy": "cover_v2",
+      "loss": 0.09030718356370926,
+      "tissue_contribution": 0.04941365122795105,
+      "background_contribution": 0.040893536806106565,
+      "first_occurrence_contribution": 0.07256227731704712,
+      "repeated_slot_contribution": 0.01774490624666214,
+      "context_tissue_sum": 35,
+      "mask_and_loss_slot_counts_match_exact_private_fixture": true
+    },
+    {
+      "policy": "cover_v2_guard",
+      "loss": 0.09030718356370926,
+      "tissue_contribution": 0.04941365122795105,
+      "background_contribution": 0.040893536806106565,
+      "first_occurrence_contribution": 0.07256227731704712,
+      "repeated_slot_contribution": 0.01774490624666214,
+      "context_tissue_sum": 35,
+      "mask_and_loss_slot_counts_match_exact_private_fixture": true
+    }
+  ]
+}

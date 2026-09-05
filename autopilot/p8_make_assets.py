@@ -1,8 +1,8 @@
 """P8: generate LaTeX tables, macros and figures from verified artifacts only.
 
-Design rule: the manuscript must never contain a hand-typed number. Every
-quantity is emitted here as a \newcommand macro, so prose, tables and figures
-are guaranteed to agree and a re-run propagates corrections everywhere.
+Generated values retain named artifact lookups. Independent source/artist
+checks are still required: sharing a generator does not guarantee agreement
+between a table, a plot, and the interpretation in the manuscript.
 
 Inputs  (all produced and checked earlier in this run)
   p1b_full_inventory.json  - labelled, de-duplicated evidence inventory
@@ -92,6 +92,19 @@ def pfmt(p):
     if p < 1e-4:
         return "$<$0.0001"
     return "%.4f" % p
+
+
+def matched_trajectory_keys(arm, epoch, table):
+    """Select the same probe precision for both members of a plotted contrast."""
+    if arm not in ("envelope", "oracle", "cover-f021"):
+        raise ValueError("No trajectory precision contract for arm: " + arm)
+    precision = "fp32" if arm == "cover-f021" else "fp16"
+    source = "%s@ep%d@%s" % (arm, epoch, precision)
+    baseline = "random@ep%d@%s" % (epoch, precision)
+    missing = [key for key in (source, baseline) if key not in table]
+    if missing:
+        raise ValueError("Missing matched trajectory evidence: " + ", ".join(missing))
+    return source, baseline
 
 
 def main():
@@ -780,17 +793,10 @@ def main():
     for arm in ("envelope", "oracle", "cover-f021"):
         xs, ds, lo, hi = [], [], [], []
         for i, ep in enumerate(eps):
-            # cover was probed fp32; prefer an fp32 null where one exists
-            src = ("%s@ep%d@fp32" if arm == "cover-f021" else "%s@ep%d@fp16") % (arm, ep)
-            if src not in T:
-                continue
-            nul = next((c for c in ("random@ep%d@fp32" % ep, "random@ep%d@fp16" % ep)
-                        if c in T), None)
-            if nul is None:
-                continue
+            src, nul = matched_trajectory_keys(arm, ep, T)
             r = delta(src, nul)
             if r is None:
-                continue
+                raise ValueError("Missing paired trajectory contrast: %s minus %s" % (src, nul))
             d, l, h, p, c = r
             xs.append(i + off[arm])
             ds.append(d)

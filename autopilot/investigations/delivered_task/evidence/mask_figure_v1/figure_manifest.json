@@ -1,0 +1,80 @@
+{
+  "source_script": "scripts\\delivered_mask_figure.py",
+  "script_sha256": "b9216e0825946db1332cf36852f5f32aa79c014dae2591a7618ca3727b459cd6",
+  "input_evidence_sha256": {
+    "cover_legacy": "aeb30a5de1f6c4ee39e7c44977e9e05a2a7647aca36dd8795a71151a8fae940c",
+    "cover_v2_guard": "b8052be3604649963decde7e08667e259eb8b71cf5219ce79f6615a0f98b7e07"
+  },
+  "raw_oct_pixels_rendered": false,
+  "subject_identifiers_rendered": false,
+  "numeric_evidence": "aggregated only; descriptive fixed-scope means",
+  "guide_definition": "occupancy channel 0 >= 0.25",
+  "width_inches": 7.05,
+  "height_inches": 5.75,
+  "dpi": 300,
+  "publisher_compliance": "not asserted; parent verifies final manuscript placement",
+  "matplotlib_version": "3.11.0",
+  "torch_version": "2.7.1+cu128",
+  "metrics": [
+    {
+      "policy": "Legacy",
+      "metric": "hidden_guide_mass_percent",
+      "stage": "Scored",
+      "n": 573,
+      "mean": 78.50782221211611
+    },
+    {
+      "policy": "Legacy",
+      "metric": "hidden_guide_mass_percent",
+      "stage": "Delivered",
+      "n": 573,
+      "mean": 74.5704824283693
+    },
+    {
+      "policy": "Legacy",
+      "metric": "context_tissue_cells",
+      "stage": "Before",
+      "n": 576,
+      "mean": 13.39236111111111
+    },
+    {
+      "policy": "Legacy",
+      "metric": "context_tissue_cells",
+      "stage": "Final",
+      "n": 576,
+      "mean": 10.12673611111111
+    },
+    {
+      "policy": "V2 + guard",
+      "metric": "hidden_guide_mass_percent",
+      "stage": "Scored",
+      "n": 573,
+      "mean": 78.5604925466725
+    },
+    {
+      "policy": "V2 + guard",
+      "metric": "hidden_guide_mass_percent",
+      "stage": "Delivered",
+      "n": 573,
+      "mean": 78.56049256799109
+    },
+    {
+      "policy": "V2 + guard",
+      "metric": "context_tissue_cells",
+      "stage": "Before",
+      "n": 576,
+      "mean": 13.456597222222221
+    },
+    {
+      "policy": "V2 + guard",
+      "metric": "context_tissue_cells",
+      "stage": "Final",
+      "n": 576,
+      "mean": 15.119791666666666
+    }
+  ],
+  "outputs_sha256": {
+    "delivered_masks.png": "7136248a619ee64ff4054e6225717fb382a95afa42ac1cbaa53ae40deed9f455",
+    "delivered_masks.pdf": "f6d322be7f75dfa225173c9f08fbd1cb2f0e30a989257c9f5f8a322c3a587bd9"
+  }
+}

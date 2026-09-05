@@ -1,0 +1,9 @@
+policy,metric,stage,n,mean
+Legacy,hidden_guide_mass_percent,Scored,573,78.50782221211611
+Legacy,hidden_guide_mass_percent,Delivered,573,74.5704824283693
+Legacy,context_tissue_cells,Before,576,13.39236111111111
+Legacy,context_tissue_cells,Final,576,10.12673611111111
+V2 + guard,hidden_guide_mass_percent,Scored,573,78.5604925466725
+V2 + guard,hidden_guide_mass_percent,Delivered,573,78.56049256799109
+V2 + guard,context_tissue_cells,Before,576,13.456597222222221
+V2 + guard,context_tissue_cells,Final,576,15.119791666666666

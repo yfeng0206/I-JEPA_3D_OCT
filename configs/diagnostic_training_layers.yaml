@@ -1,0 +1,26 @@
+baseline: de145d7
+checkpoint: D:\jepa_phase0\fairvision-glaucoma\checkpoint-ep25\jepa_patch-random_posfix-ep25.pth.tar
+checkpoint_sha256: e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b
+data_dir: D:\jepa_phase0\fairvision-glaucoma\data\Training
+slice_cache: D:\jepa_phase0\fairvision-glaucoma\slice_cache\Training
+num_slices: 100
+slice_indices: [50, 150]
+seed: 20260904
+model:
+  model_name: vit_base
+  crop_size: 256
+  patch_size: 16
+  pred_depth: 6
+  pred_emb_dim: 384
+batches: [1, 2]
+nenc: 1
+npred: 4
+policies: [uniform, intensity_foreground]
+precisions: [fp32, amp]
+max_batches: 8
+max_updates: 8
+optimizer: {lr: 0.0001, weight_decay: 0.04}
+ema: 0.996
+output_dir: autopilot\investigations\delivered_task\evidence\training_gpu_v2
+private_dir: .audit\delivered_task_training\v2
+lease: autopilot\investigations\delivered_task\gpu_lease.json

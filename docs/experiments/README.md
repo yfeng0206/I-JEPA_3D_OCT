@@ -2,11 +2,21 @@
 
 This directory is the index for self-supervised pretraining, downstream evaluation, masking-method ablations, and interpretability work for the OCT I-JEPA project.
 
-## Method statement
+## Current study and historical method statements
 
-The masking contribution is **anatomy-shaped masking**. The `mirage_envelope` baseline uses MIRAGE to place ordinary rectangular I-JEPA targets on the retina. The `mirage_anatomy` method uses MIRAGE to shape connected, irregular targets to tissue. MIRAGE guidance is therefore not the novelty; target shape is.
+The current workshop study examines **anatomy-guided target selection and the
+task actually delivered to I-JEPA**. `mirage_envelope` places rectangular targets
+using a segmenter; `anatomical_prior` is the segmentation-free CENTROID policy
+(historically `oracle`); `mirage_anatomy` constructs anatomy-shaped targets.
+Target shape is not isolated from context, area, collation and historical
+provenance in the existing comparisons. See the root `VERSION_BOARD.md` and
+`autopilot\investigations\delivered_task\BOARD.md`.
 
-Measured sampler diagnostics support that distinction: `mirage_envelope` puts 30.7% of masked cells on anatomy with 3.57% dead targets, while `mirage_anatomy` puts 72.1% of masked cells on anatomy with 2.05% dead targets. The matched ep30 comparison is envelope 0.8528 ± 0.0018 test AUC versus anatomy 0.8582 ± 0.0003 test AUC, a +0.0054 difference with Welch p=0.00219 and Cohen's d=4.20. This does not establish that every MIRAGE-based variant is better; it isolates the shape change in that matched comparison.
+The older documents below preserve early sampler and repeated-probe summaries.
+They do not establish that shape alone caused the epoch-30 AUC difference, and
+probe-seed repeats are not independent pretraining runs. Use the current
+manuscript's matched prediction inventory for reported comparisons, not the
+older narrative that anatomy-shaped masking was already an isolated improvement.
 
 ## Recommended reading order
 

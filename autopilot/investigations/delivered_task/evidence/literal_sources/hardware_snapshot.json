@@ -1,0 +1,22 @@
+{
+  "producer": "autopilot\\p15_literal_snapshots.py",
+  "producer_sha256": "cc65295c24223b7e8f3386337deff25ebfabac08d897586e057f29d100ec9fdf",
+  "inputs_sha256": {
+    "D:\\jepa_phase0\\tools\\tectonic\\tectonic.exe": "99ffcfdbf1ebf8bdda9e791942e3d06aedb12463fddc33f07de6f5211c8bf08d"
+  },
+  "operations": [
+    "Read cached Windows display-driver registry values only; no CUDA initialization or GPU work.",
+    "NVIDIA display version = last five Windows driver digits with decimal before final two digits.",
+    "VRAM GiB = registry qwMemorySize / 2**30. Query only Tectonic --version, not a manuscript build."
+  ],
+  "devices": [
+    {
+      "name": "NVIDIA GeForce RTX 3090",
+      "vram_bytes": 25769803776,
+      "vram_GiB": 24.0,
+      "windows_driver_version": "32.0.16.1062",
+      "nvidia_driver_version": "610.62"
+    }
+  ],
+  "tectonic_version_output": "Tectonic 0.17.0"
+}

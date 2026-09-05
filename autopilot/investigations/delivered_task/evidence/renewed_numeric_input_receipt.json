@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "status": "numeric_PASS_awaiting_parent_final_freeze",
+  "input_hashes": {
+    "auto/auto_numbers.tex": "d6f2c6201dd19c363ba51e1c006490eb7211af53615a45f2f62d4ef6bb80cbc2",
+    "auto/delivered_numbers.tex": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5",
+    "auto/fig_fairness.png": "003e4867ceffa5232d211ca4baa05697a23c3a76045e292fc118c7c4e7c1ac70",
+    "auto/fig_labeleff.png": "c38adc921b2d6d95771d4656549e6c127bc7b2052dcaef9136a9a2bc29c3d082",
+    "auto/fig_roc.png": "0dbe1d493de657e913431edc1d87f2cbe418828e559ee501bf8095f768767857",
+    "auto/fig_trajectories_ci.png": "09d8d84339ea9173ae3534726ed0cdca1290eb5d205e74997e330b02a7e147e7",
+    "auto/table_allprobes.tex": "dcc31d5a0bf5cf2c9538a65a1f223b6fe033586d4d4bbfc4ccc96879cfdd0bf5",
+    "auto/table_fp32.tex": "83c52c34e75872b1b4aa6f8d0a49aaefdc20e8011900a7579ec5c24206136317",
+    "auto/table_labeleff.tex": "8c3dc6b0b830055b9dfcf355aff970c6360f7fdf2b48f0fb18e29f87df4db546",
+    "auto/table_operating.tex": "4562025c084847f2bde3be36f2a44c9184a6ab250e343a1c0fc5267aad897d35",
+    "auto/table_paired_subgroup.tex": "074a1ecd38dafcec2c87c85bcc5fcc97ad45466f32e52a894f19db6b7a5db10a",
+    "auto/table_subgroup_operating.tex": "4fe8e8569a57d6ca61cdd5d381c7a850fbe048523858e5eb9167bfc11e6ed4c1",
+    "auto/table_subgroup_trends.tex": "4edc6013c4dec8a567168475b87db2cb3b57592bad699e6da786e38a988e10b2",
+    "figures/figS5_mask_statistics.png": "b3cd2f3642522c3aa6e6a101d9f07ec05d6a7454ac1db97696ed89e3c7e51e09",
+    "figures/fig_delivered_task_token_maps.png": "bb3dfe97ecfacf5ea412c984015f26503911d32e67ac2ce3abbf1b64db465354",
+    "figures/fig_geometry_panel.png": "d961ab632dcf907dc8c04e406c5837eba6e3fcf331b2806398cb2929c5aecb11",
+    "figures/fig_policy_family_token_maps.png": "876d8dbdc8d60bacec3a69906a8df239e824e3afa2ba99fb609c4deb5ed22512",
+    "figures/fig_purity_auc_ep50_fp32.png": "e9635409b46a295e1dd4da8398a08d1c3ba7014438dcb1039f8ef7485028e6c4",
+    "figures/fig_specificity_ladder.png": "412e51919d5d0028429e2320dfb7819252468b54de3d9d1ad05a3327e4edace5",
+    "main_submission.tex": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
+    "neurips_2026.sty": "c5287da23f9bd6b76c74f70360d977b4ea63c880297cadbe1d805f8a49d7bf86",
+    "references.bib": "36dae5e6a3663be19daacd6e1af63add0e6d5da1ec4d8e1d87ee2b4b1e75ec5e"
+  },
+  "review_file": "autopilot\\investigations\\delivered_task\\evidence\\paper_release_numeric_candidate.json",
+  "review_sha256": "e21e113037a0e213842c937d37a867a5a3133c531a5867356b73ec89bfa54a16",
+  "coverage_report_sha256": "3f3c09cf957e8c69daca51b55023b95503efbbe18880da05d981859190aa2727",
+  "asset_registry_sha256": "67bf2b5602f649c19135f1b4ca525677325ffe87e3b31a08fcf062345ffa0aaa",
+  "withdrawn_from_required_inputs_but_retained": [
+    "figures/fig_masking_policies.png",
+    "figures/fig_precision_paradox.png",
+    "figures/interp_04_window_occlusion_W7.png",
+    "figures/interp_14_odos_mirror_test.png",
+    "figures/interp_heatmap_grid.png",
+    "figures/interp_slice_contribution_by_outcome.png",
+    "figures/interp_slice_contribution_curves.png"
+  ],
+  "required_figures": [
+    "figures/figS5_mask_statistics.png",
+    "figures/fig_delivered_task_token_maps.png",
+    "auto/fig_fairness.png",
+    "figures/fig_geometry_panel.png",
+    "auto/fig_labeleff.png",
+    "figures/fig_policy_family_token_maps.png",
+    "figures/fig_purity_auc_ep50_fp32.png",
+    "auto/fig_roc.png",
+    "figures/fig_specificity_ladder.png",
+    "auto/fig_trajectories_ci.png"
+  ],
+  "numeric_ALL_PASS": true,
+  "word_action": "Final renewed isolated Word deferred to release owner after parent stable-source signal. No production DOCX/PDF/ZIP or parent numeric_reviews file was modified.",
+  "repository_policy_inputs": {
+    ".gitignore": "f72407d0def169d5fc3f8b1bc4def3414ed1654ca71a92e8a9a36da90fe85b0b"
+  },
+  "local_only_source_policy_receipt_sha256": "357396601cb4d2ba0908a7a5a5462cb3ca18aff2afc3541879930137ac0be965"
+}

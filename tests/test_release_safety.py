@@ -49,6 +49,74 @@ def test_refresh_stops_on_mandatory_child_failure(monkeypatch):
         refresh_all.run("mandatory gate", ["unused"])
 
 
+def test_relative_evidence_paths_are_resolved_before_staged_gates(tmp_path, paper, monkeypatch):
+    evidence = tmp_path / "evidence"
+    evidence.mkdir()
+    authority = evidence / "citations.json"
+    authority.write_text('{"retained":"authority record"}')
+    out = tmp_path / "release.zip"
+    out.write_bytes(b"previous good ZIP")
+    monkeypatch.chdir(tmp_path)
+    visited = []
+
+    def gate(script, args, cwd):
+        visited.append(script)
+        if "--stats-dir" in args:
+            assert Path(args[args.index("--stats-dir") + 1]) == evidence
+        if script == "verify_citations.py":
+            path = Path(args[args.index("--record") + 1])
+            assert path == authority
+            assert path.is_absolute() and path.is_file()
+            return False
+        passing_gate_report(script, args, cwd)
+        return True
+
+    monkeypatch.setattr(release, "command_gate", gate)
+    assert release.build(
+        out, paper_dir=paper, staging_root=tmp_path / "work",
+        stats_dir="evidence", citation_record="evidence/citations.json"
+    ) == 1
+    assert visited == ["check_manuscript.py", "p15_verify_numbers.py", "verify_citations.py"]
+    assert out.read_bytes() == b"previous good ZIP"
+
+
+@pytest.mark.parametrize("destination", ["zip", "pdf", "docx", "manifest", "docx_receipt"])
+def test_citation_record_cannot_be_a_release_destination(tmp_path, paper, monkeypatch, destination):
+    paths = {
+        "zip": tmp_path / "release.zip",
+        "pdf": tmp_path / "paper.pdf",
+        "docx": tmp_path / "paper.docx",
+        "manifest": tmp_path / "release.json",
+        "docx_receipt": tmp_path / "paper.docx.provenance.json",
+    }
+    authority = paths[destination]
+    authority.write_bytes(b"retained authority evidence")
+    monkeypatch.setattr(
+        release, "command_gate",
+        lambda *args: pytest.fail("input/output collision must fail before gates")
+    )
+    assert release.build(
+        paths["zip"], paper_dir=paper, staging_root=tmp_path / "work",
+        pdf_out=paths["pdf"], docx_out=paths["docx"], manifest_out=paths["manifest"],
+        citation_record=authority
+    ) == 1
+    assert authority.read_bytes() == b"retained authority evidence"
+
+
+def test_explicit_statistics_input_cannot_be_overwritten(tmp_path, paper, monkeypatch):
+    stats = tmp_path / "stats"
+    stats.mkdir()
+    source = stats / "p1c_stats.json"
+    source.write_bytes(b"retained statistics")
+    monkeypatch.setattr(
+        release, "command_gate",
+        lambda *args: pytest.fail("statistics collision must fail before gates")
+    )
+    assert release.build(source, paper_dir=paper, staging_root=tmp_path / "work",
+                         stats_dir=stats) == 1
+    assert source.read_bytes() == b"retained statistics"
+
+
 def test_anonymity_distinguishes_cited_names_from_author_identifiers(tmp_path):
     import fitz
     pdf = tmp_path / "citations.pdf"

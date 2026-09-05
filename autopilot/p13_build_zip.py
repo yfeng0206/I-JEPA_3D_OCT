@@ -77,6 +77,8 @@ def build(out_zip, allow_ph=False, mark_uploaded=False, *, paper_dir=None,
         return 1
     paper = Path(paper_dir or PAPER).resolve()
     out_zip = Path(out_zip).resolve()
+    citation_record = Path(citation_record).resolve() if citation_record else None
+    stats_dir = Path(stats_dir).resolve() if stats_dir else None
     pdf_out = Path(pdf_out) if pdf_out else paper / "main_submission.pdf"
     docx_out = Path(docx_out) if docx_out else paper / "main_submission.docx"
     manifest_out = Path(manifest_out) if manifest_out else out_zip.with_suffix(".release.json")
@@ -97,6 +99,10 @@ def build(out_zip, allow_ph=False, mark_uploaded=False, *, paper_dir=None,
         protected_inputs = {assets.safe_path(paper, rel) for rel in snapshot}
         if review_receipt is not None:
             protected_inputs.add(Path(review_receipt["source"]).resolve())
+        if citation_record is not None:
+            protected_inputs.add(citation_record)
+        if stats_dir is not None and stats_dir.is_dir():
+            protected_inputs.update(path.resolve() for path in stats_dir.iterdir() if path.is_file())
         if set(destinations) & protected_inputs:
             raise ValueError("release destination would overwrite a source input (including numeric review input)")
         report["input_hashes"] = snapshot

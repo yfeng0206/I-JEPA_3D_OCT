@@ -6,9 +6,14 @@ Historical baseline: `de145d7005f57e871bc0181bf58b271775d1d25d`.
 
 ## Status
 
-Milestone A complete: baseline preserved; GitHub branches agree at de145d7;
-authenticated Overleaf dry-run found all 59 managed files identical.
-No collaborator edits need reconciliation at this baseline.
+Completed workshop/engineering track. Reviewed source release `6f4d62e` passed
+all release gates. The current PDF, ZIP and Word copy were published safely,
+then Overleaf was re-cloned: all 23 manifest-managed source/Word items matched,
+with zero pending changes. Main is not merged; no sustained training ran.
+See `RESULTS.md` and `evidence\final_release\summary.json`.
+
+At the initial baseline, GitHub branches agreed at de145d7 and all 59 Overleaf
+managed files matched. No collaborator edits were overwritten.
 
 Known-good release snapshot:
 `C:\Users\Gary\.copilot\session-state\66ccb9a5-db78-4934-afd2-9f61b6d9c57b\files\delivered_task\baseline_de145d7`.
@@ -23,11 +28,11 @@ No automatic main merge, sustained pretraining, or OpenReview submission.
 | Coordinator | GPT-6 Astra | Board, source integration, claims, paper, commits and sync | Active |
 | Mask/data engineer: repair-masks | GPT-6 Astra high | Masks, guides, dataset/paired transforms, mask regression tests and diagnostics | Complete; critic findings repaired |
 | Training/evaluation engineer: repair-training | GPT-6 Astra high | train_patch, helper, model/loss/eval state, training regressions, bounded GPU | Complete; GPU released; fork follow-up reviewed |
-| Release engineer: repair-release | GPT-6 Astra high | Release scripts, checkers, dependency/asset manifests, DOCX and sync tests | Implementation handed off; awaiting critic |
+| Release engineer: repair-release | GPT-6 Astra high | Release scripts, checkers, dependency/asset manifests, DOCX and sync tests | Complete; critic and real-release fixes verified |
 | Literature/design: literature-contract | Opus 5 xhigh | Primary methods, ablations, official code, glossary | Complete; narrowed after coordinator critique |
-| Independent critic/judge | GPT-5.6 Sol Fast xhigh | Reproduction and evidence adjudication after owner handoff | Pending |
-| Numeric coverage: complete-number-coverage | GPT-6 Astra high | Exact statistic bindings, structural-literal classification and evidence-receipt schema | Active |
-| Release critic: release-fix-critic | GPT-5.6 Sol Fast xhigh | Read-only review of failure preservation, Word and conflict-aware sync | Active |
+| Independent critic/judge | GPT-5.6 Sol Fast xhigh | Reproduction and evidence adjudication after owner handoff | Complete; source-backed findings resolved |
+| Numeric coverage: complete-number-coverage | GPT-6 Astra high | Exact statistic bindings, structural-literal classification and evidence-receipt schema | Complete; final default gate passes |
+| Release critic: release-fix-critic | GPT-5.6 Sol Fast xhigh | Read-only review of failure preservation, Word and conflict-aware sync | Complete; five original findings closed |
 
 One writer per source file. Mask engineer must request changes in train_patch
 through training engineer. Only coordinator edits the manuscript, this board,
@@ -137,3 +142,12 @@ explicit limitations, readable terminology and reliable release artifacts.
 Subsequent work: corrected multi-arm pretraining where required, not authorized
 by this investigation. A major engineering finding does not require rerunning
 every arm to finish an honest workshop submission.
+
+## Final delivery cautions
+
+Use the validated Downloads PDF/ZIP. A whole Overleaf export can contain preserved
+remote-only legacy assets that are not in the anonymous release. The old loose
+`_files` mirror is not updated by the new manifest workflow.
+
+Code-level repairs and bounded GPU checks do not establish a corrected-policy
+AUC or settle the masking mechanism. Those remain subsequent research.

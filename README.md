@@ -9,6 +9,12 @@ The canonical paper is `paper\genai4health2026\main_submission.tex`; the older
 investigation is recorded in `autopilot\investigations\delivered_task\BOARD.md`,
 with the baseline audit in `VERSION_BOARD.md`.
 
+The reviewed engineering/workshop release is documented in
+`autopilot\investigations\delivered_task\RESULTS.md`. It is on the separate
+`fix/jepa-delivered-task-audit` branch; the corrected COVER configurations remain
+untrained and have no new AUC result. The final source ZIP and editable Word
+copy are version-matched, rather than inferred current from a timestamp.
+
 The current paper compares **frozen MeanPool probes** after different masking
 policies. CENTROID (historically named `oracle`) reaches **0.8855** test AUC;
 the **0.8947** value below is from a different, fine-tuned evaluation regime.

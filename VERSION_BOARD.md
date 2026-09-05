@@ -1,5 +1,13 @@
 # OCT JEPA version and readiness board
 
+> **Completion update:** the engineering and workshop track below has now been
+> implemented on `fix/jepa-delivered-task-audit`, with reviewed source release
+> `6f4d62e`. The final PDF/ZIP/Word passed their release gates and the 23 managed
+> Overleaf source/Word items were rechecked after synchronization. See
+> `autopilot\investigations\delivered_task\RESULTS.md` for the completed work,
+> limits and actual deliverables. The September 4 audit below is retained as
+> the historical baseline, not a list of still-unfixed issues.
+
 **Fresh audit: 2026-09-04. Author-side AI-assisted working draft.**
 Baseline: `de145d7005f57e871bc0181bf58b271775d1d25d`.
 This board supersedes the readiness assurances in the August 27 conversation.

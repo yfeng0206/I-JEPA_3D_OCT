@@ -1,5 +1,38 @@
 # Paper workflow state
 
+## Current reviewed release
+
+Source release: `6f4d62e`, branch `fix/jepa-delivered-task-audit`.
+`main` is not merged. The approved engineering investigation, bounded GPU
+diagnostics, source review and workshop revision are complete; no corrected
+policy was pretrained. See
+`autopilot\investigations\delivered_task\RESULTS.md`.
+
+The delivered PDF has nine body pages (34 total). The current Word copy is
+`main_editable.docx` in Overleaf. The exact source/Word manifest was synchronized
+and independently rechecked; remote-only historical files remain preserved.
+Use the validated Downloads ZIP, not a whole-project export, for anonymous
+source submission. The old loose `_files` mirror is historical.
+
+Release commands from the repository root:
+
+    $env:MPLBACKEND = 'Agg'
+    D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p13_build_zip.py --citation-record autopilot\investigations\delivered_task\evidence\citation_authorities.json
+
+The publisher uses `paper\genai4health2026\numeric_reviews.json`, retained local
+statistics and source-review evidence. Full third-party PDFs are not committed;
+their acquisition manifest is under the investigation's `literal_sources\public`.
+Missing or changed evidence blocks release rather than being silently skipped.
+The Word conflict guard must not be bypassed if collaborators have edited it.
+
+For authorized sync, load credentials from Windows user scope in the same
+process without printing them, then use the newly generated release manifest:
+
+    D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py --release-manifest C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_FINAL.release.json
+
+No force sync, automatic main merge, sustained pretraining or actual OpenReview
+submission is implied by these commands.
+
 > **Historical snapshot below (August 27).** A fresh September 4 audit found
 > gaps in the earlier readiness, inference, and build-safety assurances.
 > See `VERSION_BOARD.md` and `autopilot\reports\fresh_audit_2026-09-04`

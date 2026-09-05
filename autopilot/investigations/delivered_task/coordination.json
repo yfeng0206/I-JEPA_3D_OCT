@@ -3,6 +3,8 @@
   "protected_baseline": "de145d7",
   "published_branch_baseline": "5a47648",
   "published_engineering_milestone": "73e0b55",
+  "reviewed_source_release": "6f4d62e",
+  "state": "completed_reviewed_release",
   "main_merge_authorized": false,
   "sustained_pretraining_authorized": false,
   "agents": {
@@ -17,13 +19,7 @@
     "legacy-figure-evidence": "ca444d25-19ec-45ca-b75c-4878046b8e34"
   },
   "manuscript_stable_sha256": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
-  "pending_acceptance": [
-    "Numeric owner targeted rereview after six genuine literal/scope corrections; original378of385 reviewed, remaining corrections now applied",
-    "Merge final literal candidate with parent diagnostic/policy-illustration receipts, rejecting unequal duplicates",
-    "Replacement purity scatter artist validator and policy-map receipt must pass on installed new files",
-    "Final integrated tests, isolated release build, Word validation and reviewed branch commits",
-    "Fresh remote conflict check and exact-manifest Overleaf sync; no main update"
-  ],
+  "pending_acceptance": [],
   "completed_bounds": {
     "sustained_training": "none",
     "production_gpu_updates": "8 initial independent checks plus 3 real guided-mask checks",
@@ -36,8 +32,10 @@
     "trajectory": "Wrong null precision fixed; 11 regressions; generated tables/macros unchanged",
     "release_safety": "Five critic findings closed, then numeric-review input/output collision fixed;83 current release tests",
     "figures": "Two source-verified replacements adopted; five unretained attribution displays excluded, originals preserved",
-    "word": "Isolated prior candidate has128refs17tables11figures45bibliography; regenerate for final5ec7source",
-    "overleaf": "Repaired nonpersistent auth dry-run succeeded; no remote edits/conflicts; nothing published yet"
+    "word": "Published final source5ec7 copy:129refs17tables11figures45bibliography",
+    "overleaf": "Published manifest source/Word; fresh post-push dry-run matched all23 managed items, zero changes",
+    "numeric": "Final default gate passes:8 programmatic plots,2 scoped illustrations,no unresolved values",
+    "release": "Protected actual build passes all13 gates;9body34totalpages;24-member anonymous ZIP inspected"
   },
   "do_not_stage": [
     "pre-existing autopilot/RESOURCE_MONITOR.csv modification",

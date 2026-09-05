@@ -355,8 +355,8 @@
     "replacement_policy_token_manifest": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\replacements\\source_manifest.json",
     "replacement_policy_token_validation": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\replacements\\independent_validation.json"
   },
-  "review_path": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\numeric_reviews.json",
-  "review_sha256": "2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6",
+  "review_path": "autopilot\\investigations\\delivered_task\\evidence\\paper_numeric_candidate_from_parent.json",
+  "review_sha256": "14f9a75efdcb19e188e7d1bf9f27baa71d52b55786fa23813189c9540284e278",
   "input_hashes": {
     "auto/auto_numbers.tex": "d6f2c6201dd19c363ba51e1c006490eb7211af53615a45f2f62d4ef6bb80cbc2",
     "auto/delivered_numbers.tex": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5",

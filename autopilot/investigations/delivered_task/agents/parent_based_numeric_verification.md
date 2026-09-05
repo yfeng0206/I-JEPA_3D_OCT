@@ -4,7 +4,7 @@ Status: **PASS**. No manuscript quantities were changed.
 Verification here means independently reformatting exact stored source fields, not rerunning scientific analyses.
 Historical illustration review is kept distinct from programmatic plotted-value verification.
 
-Binding/review input: `C:\Users\Gary\Desktop\jepa\paper\genai4health2026\numeric_reviews.json` (SHA-256 `2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6`).
+Binding/review input: `autopilot\investigations\delivered_task\evidence\paper_numeric_candidate_from_parent.json` (SHA-256 `14f9a75efdcb19e188e7d1bf9f27baa71d52b55786fa23813189c9540284e278`).
 
 ## Coverage
 

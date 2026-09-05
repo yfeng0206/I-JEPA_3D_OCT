@@ -6,8 +6,8 @@
   "original_pending_tokens": 385,
   "original_tokens_supported": 378,
   "candidate_61d_sha256": "549b66226798cbb3e02c73b1b6c5630efcc2b950c0a6cec5297427eb223b609c",
-  "candidate_current_sha256": "e21e113037a0e213842c937d37a867a5a3133c531a5867356b73ec89bfa54a16",
-  "current_report_sha256": "3f3c09cf957e8c69daca51b55023b95503efbbe18880da05d981859190aa2727",
+  "candidate_current_sha256": "14f9a75efdcb19e188e7d1bf9f27baa71d52b55786fa23813189c9540284e278",
+  "current_report_sha256": "4efc2d303e28208598467ab908d2dd9972d65d46b5c31b999c94849c4edb2056",
   "tests_passed": 103,
   "test_report_sha256": "c73d2b7d96a8bc8b29bac3397949651fb0f4d4189008c65dd9f1688b6db21695",
   "remaining_literal_tokens": [],
@@ -18,7 +18,11 @@
   "primary_statistics_modified": false,
   "summary": "All current quantities have exact source bindings or explicit reviews. Eight plotted figures independently verified; two selected engineering illustrations retain non-mathematical reviewed status. Full original/staged-root numeric gate passes. No production promotion or parent review-file write.",
   "all_current_text_quantities_pass": true,
-  "source_freeze_state": "awaiting_new_parent_stable_source_signal_before_final_Word_or_publication",
-  "candidate_current": "paper_release_numeric_candidate.json",
-  "test_report": "complete_numeric_release_tests.xml"
+  "source_freeze_state": "coordinator_approved_final_5ec_source_numeric_PASS_ready_for_release_owner_Word",
+  "candidate_current": "paper_numeric_candidate_from_parent.json",
+  "test_report": "complete_numeric_release_tests.xml",
+  "repository_policy_inputs": {
+    ".gitignore": "f72407d0def169d5fc3f8b1bc4def3414ed1654ca71a92e8a9a36da90fe85b0b"
+  },
+  "local_only_source_policy_receipt_sha256": "357396601cb4d2ba0908a7a5a5462cb3ca18aff2afc3541879930137ac0be965"
 }

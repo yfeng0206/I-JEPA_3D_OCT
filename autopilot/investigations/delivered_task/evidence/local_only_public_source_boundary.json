@@ -1,0 +1,90 @@
+{
+  "scope": "Full third-party documents stay local; review JSON contains references, hashes and short necessary locators/excerpts only. No redistribution permission inferred from availability.",
+  "repository_policy_inputs": {
+    ".gitignore": "f72407d0def169d5fc3f8b1bc4def3414ed1654ca71a92e8a9a36da90fe85b0b"
+  },
+  "local_only_files": [
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\attg.pdf",
+      "sha256": "f1f274db024d8058a1f23ddd013fbff3959fd4449ee3048fad86082bb7c43373",
+      "gitignored": true,
+      "git_tracked": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\attmask.pdf",
+      "sha256": "c964a7d8c111263893469e5afd6c4c9942fa76f7941daa34dd13f7dd4cbd8daf",
+      "gitignored": true,
+      "git_tracked": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\automae.pdf",
+      "sha256": "3d6f7b533f67ef5204ed0d82c3a07e46e093a4c13f0580efd883e6c08937d7e0",
+      "gitignored": true,
+      "git_tracked": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\hpm.pdf",
+      "sha256": "608dfd4e67807122987ab68fed213557ae8437d20df7f7809bd6b2916ad2e77f",
+      "gitignored": true,
+      "git_tracked": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\mae.pdf",
+      "sha256": "81bbc64bc197a64362927010470e46601a0f0311aa4c2014a355dfff0e5b3b6c",
+      "gitignored": true,
+      "git_tracked": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\semmae.pdf",
+      "sha256": "8710c6a0bf66ce00a5b7687eb7d1487f8173763deb504f81a4547d26e21ae4b0",
+      "gitignored": true,
+      "git_tracked": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\simmim.pdf",
+      "sha256": "ea0a738441f245f8a53557b3ed753b0b3f187ff87f75e90cc90a9f4b00fd851f",
+      "gitignored": true,
+      "git_tracked": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\ssit.pdf",
+      "sha256": "2fa7cd898e5f5754a773ffabf6d561b7ce00fb4edf77632984b9a3c71c7a367c",
+      "gitignored": true,
+      "git_tracked": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_sources\\public\\fairvision_readme.txt",
+      "sha256": "23f4339cd070c91fbc8fde93224e4504cb2e9099fbf945c88bd9b0392230f05b",
+      "gitignored": true,
+      "git_tracked": false
+    }
+  ],
+  "review_json_checks": [
+    {
+      "path": "paper\\genai4health2026\\numeric_reviews.json",
+      "sha256": "2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6",
+      "maximum_string_characters": 525,
+      "embedded_complete_pdf_or_readme": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\paper_numeric_candidate_from_parent.json",
+      "sha256": "14f9a75efdcb19e188e7d1bf9f27baa71d52b55786fa23813189c9540284e278",
+      "maximum_string_characters": 525,
+      "embedded_complete_pdf_or_readme": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\paper_release_numeric_candidate.json",
+      "sha256": "e21e113037a0e213842c937d37a867a5a3133c531a5867356b73ec89bfa54a16",
+      "maximum_string_characters": 525,
+      "embedded_complete_pdf_or_readme": false
+    },
+    {
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\literal_review_candidate_current.json",
+      "sha256": "f7dff325a1e6456025f47e96122da6c065e1d2f7e02a0746aaf2e20d142f2657",
+      "maximum_string_characters": 441,
+      "embedded_complete_pdf_or_readme": false
+    }
+  ],
+  "archive_instruction": "Publisher must archive only approved review JSON/metadata or short excerpts; never recursively archive literal_sources/public or full third-party document dependencies.",
+  "scientific_source_files_changed": false
+}

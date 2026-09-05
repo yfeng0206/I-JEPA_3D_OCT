@@ -1,0 +1,14 @@
+[
+  {
+    "arm": "cover_legacy",
+    "exact_single_context_mask_pairs": 64
+  },
+  {
+    "arm": "cover_v2",
+    "exact_single_context_mask_pairs": 64
+  },
+  {
+    "arm": "cover_v2_guard",
+    "exact_single_context_mask_pairs": 64
+  }
+]

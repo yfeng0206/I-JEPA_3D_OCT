@@ -1,0 +1,36 @@
+........................................................................ [ 97%]
+..                                                                       [100%]
+============================== warnings summary ===============================
+tests/test_training_contracts.py::test_positional_axes_and_teacher_normalization
+tests/test_training_contracts.py::test_historical_closure_reproduces_partial_window_underweight
+tests/test_training_contracts.py::test_production_loop_epoch_resume_matches_uninterrupted[False]
+tests/test_training_contracts.py::test_production_loop_epoch_resume_matches_uninterrupted[True]
+  C:\Users\Gary\Desktop\jepa\src\train_patch.py:134: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+    with autocast(enabled=amp_target):
+
+tests/test_training_contracts.py::test_positional_axes_and_teacher_normalization
+tests/test_training_contracts.py::test_historical_closure_reproduces_partial_window_underweight
+tests/test_training_contracts.py::test_production_loop_epoch_resume_matches_uninterrupted[False]
+tests/test_training_contracts.py::test_production_loop_epoch_resume_matches_uninterrupted[True]
+  C:\Users\Gary\Desktop\jepa\src\train_patch.py:139: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+    with autocast(enabled=use_amp):
+
+tests/test_training_contracts.py::test_historical_closure_reproduces_partial_window_underweight
+  <de145d7 closure>:714: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+
+tests/test_training_contracts.py::test_production_loop_epoch_resume_matches_uninterrupted[False]
+tests/test_training_contracts.py::test_production_loop_epoch_resume_matches_uninterrupted[True]
+  D:\jepa_phase0\.venv\Lib\site-packages\torch\utils\data\dataloader.py:665: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+    warnings.warn(warn_msg)
+
+tests/test_training_contracts.py::test_production_loop_epoch_resume_matches_uninterrupted[False]
+tests/test_training_contracts.py::test_production_loop_epoch_resume_matches_uninterrupted[True]
+  C:\Users\Gary\Desktop\jepa\src\train_patch.py:789: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+    with autocast(enabled=amp_target):
+
+tests/test_eval_identity.py::test_real_tiny_feature_cache_roundtrip_and_precision
+  C:\Users\Gary\Desktop\jepa\src\eval_downstream.py:479: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+    with autocast(enabled=use_amp):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+74 passed, 14 warnings in 15.83s

@@ -1,0 +1,50 @@
+{
+  "fixture_sha256": "9effcc2d02daa7460375f7b8589fad4042192c25f20f49b0dafd65c6a5c0357b",
+  "private_fixture_ready": true,
+  "gitignored": true,
+  "inputs_and_drawn_sizes_exactly_matched": true,
+  "frozen_masks_no_redraw": true,
+  "selection": "first2 predeclared Training observations from existing600-slice scope",
+  "guide_tissue_proxy": "schema2,channel0>=0.25",
+  "guard_nonbinding_on_predeclared_pair": true,
+  "public_content": "digests and aggregate counts only; no images or identifiers",
+  "coordinator_bound": "<=3 independent fp32 updates, same ancestor reset, one per policy; training owner holds lease",
+  "counts_not_loss_values": [
+    {
+      "policy": "cover_legacy",
+      "batch_size": 2,
+      "valid_guides": 2,
+      "target_slots": 320,
+      "target_tissue_slots": 177,
+      "target_background_slots": 143,
+      "unique_target_cells_summed_over_images": 244,
+      "repeated_target_slots": 76,
+      "final_context_tokens_summed_over_images": 252,
+      "final_context_tissue_summed_over_images": 35
+    },
+    {
+      "policy": "cover_v2",
+      "batch_size": 2,
+      "valid_guides": 2,
+      "target_slots": 320,
+      "target_tissue_slots": 178,
+      "target_background_slots": 142,
+      "unique_target_cells_summed_over_images": 242,
+      "repeated_target_slots": 78,
+      "final_context_tokens_summed_over_images": 264,
+      "final_context_tissue_summed_over_images": 35
+    },
+    {
+      "policy": "cover_v2_guard",
+      "batch_size": 2,
+      "valid_guides": 2,
+      "target_slots": 320,
+      "target_tissue_slots": 178,
+      "target_background_slots": 142,
+      "unique_target_cells_summed_over_images": 242,
+      "repeated_target_slots": 78,
+      "final_context_tokens_summed_over_images": 264,
+      "final_context_tissue_summed_over_images": 35
+    }
+  ]
+}

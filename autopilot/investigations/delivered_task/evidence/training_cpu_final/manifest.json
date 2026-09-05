@@ -1,0 +1,28 @@
+{
+  "baseline": "de145d7",
+  "branch": "fix/jepa-delivered-task-audit",
+  "interpreter": "D:\\jepa_phase0\\.venv\\Scripts\\python.exe",
+  "test_suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "70",
+      "time": "17.092",
+      "timestamp": "2026-09-04T16:27:03.587911-07:00",
+      "hostname": "DESKTOP-CJETT24"
+    }
+  ],
+  "code_sha256": {
+    "src\\train_patch.py": "810898228170aec7371329d46c928052acef9f6eeb710939dc1b774ef7eca71a",
+    "src\\helper.py": "e3d4c47ad50dc128219bf9aae6354f4a548a818f646ed7bc84a175a397236e93",
+    "src\\eval_downstream.py": "cad331b703a116985f2ce81e8abf02b12c300044a3825e22d4d6ab73c47b55ed",
+    "src\\utils\\schedulers.py": "73a6c24de751be786b1482085a1bdb10e9f89a65b117526b02c4523c92d8282a",
+    "tests\\test_training_contracts.py": "f861dcf7d87f2a4b1c986b3e2bc56ed8a291bf4911021e3dadabf15d2b8df6df",
+    "tests\\test_eval_identity.py": "37fc434e713357be3c12eb778c346240c5dd0c7fd6de06244777acd8272fad19",
+    "scripts\\training_layer_diagnostic.py": "38e037e6603e6ed46503bc03a73ce5fec6d36cf7378dce0225392d48230ab047"
+  },
+  "command": "python -m pytest tests\\test_training_contracts.py tests\\test_eval_identity.py tests\\test_pred_target_k.py tests\\test_mirage_anatomy_mode.py tests\\test_mirage_config_wiring.py -q --basetemp=.pytest_training_runtime",
+  "classification": "CPU invariants and production-loop replay; no downstream performance inference"
+}

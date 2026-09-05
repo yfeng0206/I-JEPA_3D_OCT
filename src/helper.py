@@ -10,8 +10,12 @@ Compatible with PyTorch 1.13.1 and Python 3.8.
 """
 
 import copy
+import hashlib
 import os
+import random
+import warnings
 
+import numpy as np
 import torch
 import torch.nn as nn
 
@@ -226,8 +230,48 @@ def init_opt(encoder, predictor, wd, final_wd, start_lr, ref_lr, final_lr,
 # Checkpoint save / load
 # ---------------------------------------------------------------------------
 
+def optimizer_step(optimizer, scaler=None):
+    """Return whether an optimizer update occurred (including AMP overflow)."""
+    if scaler is None:
+        optimizer.step()
+        return True
+    old_scale = scaler.get_scale()
+    scaler.step(optimizer)
+    scaler.update()
+    return scaler.get_scale() >= old_scale
+
+
+@torch.no_grad()
+def update_ema(encoder, target_encoder, momentum):
+    encoder = encoder.module if hasattr(encoder, 'module') else encoder
+    for online, target in zip(encoder.parameters(), target_encoder.parameters()):
+        target.mul_(momentum).add_((1.0 - momentum) * online.detach())
+
+
+def capture_rng_state():
+    """Capture the current rank's main-process RNGs, not DataLoader workers."""
+    numpy_state = np.random.get_state()
+    return {
+        'python': random.getstate(),
+        'numpy': (numpy_state[0], numpy_state[1].tolist(), *numpy_state[2:]),
+        'torch': torch.get_rng_state(),
+        'cuda': torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
+    }
+
+
+def restore_rng_state(state):
+    random.setstate(state['python'])
+    numpy_state = state['numpy']
+    np.random.set_state((numpy_state[0], np.asarray(numpy_state[1], dtype=np.uint32),
+                         *numpy_state[2:]))
+    torch.set_rng_state(state['torch'].cpu())
+    if state.get('cuda') is not None and torch.cuda.is_available():
+        torch.cuda.set_rng_state_all([value.cpu() for value in state['cuda']])
+
+
 def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, scaler,
-                    mask_gen=None):
+                    mask_gen=None, training_state=None, rank=0, topology=None,
+                    resume_policy='exact'):
     """Load a training checkpoint.
 
     Args:
@@ -243,11 +287,33 @@ def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, sca
             ``curriculum`` block in the checkpoint is restored into it.
             Missing or ``None`` is fine — fresh resume from R1 baseline
             won't carry curriculum state.
+        training_state: Optional output dict for successful-step schedules,
+            model-selection counters and rank-local epoch-boundary RNGs.
+            Passing a dict opts into restoration and legacy-state warnings.
+        rank: Current rank, selecting its saved RNG/curriculum state.
+        topology: Optional exact run/worker contract to check before restoration.
+        resume_policy: ``exact`` (default) restores continuation state and rejects
+            changed contracts. ``fork`` retains all three models and optimizer/
+            scaler, but does not restore RNG/curriculum/scheduler/selection state.
+            The caller deliberately reconstructs those from the new run config.
+
+    Global RNG restoration does not restore persistent workers or an in-flight
+    prefetched iterator. The trainer saves only completed-epoch boundaries with
+    nonpersistent workers. Changed topology/config is a new run, not exact resume.
 
     Returns:
         (encoder, predictor, target_encoder, opt, scaler, start_epoch)
     """
-    checkpoint = torch.load(r_path, map_location=device)
+    if resume_policy not in ('exact', 'fork'):
+        raise ValueError("resume_policy must be 'exact' or 'fork'")
+    # These are trusted local training checkpoints, including Python/NumPy RNG.
+    checkpoint = torch.load(r_path, map_location=device, weights_only=False)
+    resume = checkpoint.get('training_state')
+    if (resume_policy == 'exact' and resume is not None and topology is not None
+            and resume.get('topology') != topology):
+        raise ValueError("Resume worker/rank/batch/config contract differs from checkpoint; "
+                         "set meta.resume_policy='fork' for an intentional new run. "
+                         "Exact continuation refuses this mismatch.")
 
     encoder.load_state_dict(checkpoint['encoder'])
     predictor.load_state_dict(checkpoint['predictor'])
@@ -256,6 +322,44 @@ def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, sca
 
     if scaler is not None and 'scaler' in checkpoint and checkpoint['scaler'] is not None:
         scaler.load_state_dict(checkpoint['scaler'])
+
+    if resume_policy == 'fork':
+        digest = hashlib.sha256()
+        with open(r_path, 'rb') as stream:
+            for block in iter(lambda: stream.read(8 << 20), b''):
+                digest.update(block)
+        if training_state is not None:
+            training_state.clear()
+            training_state['lineage'] = {
+                'resume_policy': 'fork', 'source_checkpoint': os.path.realpath(r_path),
+                'source_checkpoint_sha256': digest.hexdigest(),
+                'source_epoch': checkpoint.get('epoch', 0),
+                'source_topology': resume.get('topology') if resume is not None else None,
+                'retained': ['encoder', 'predictor', 'target_encoder', 'optimizer_state',
+                             'scaler_when_present'],
+                'reset': ['rng_from_config_seed', 'curriculum', 'schedules_from_new_config',
+                          'best_val_loss', 'epochs_no_improve'],
+            }
+        print("[Checkpoint] Explicit FORK from %s (source epoch %d): retained "
+              "encoder/predictor/teacher, optimizer and available scaler; "
+              "RNG/curriculum/schedules/best/patience NOT restored."
+              % (r_path, checkpoint.get('epoch', 0)))
+        return encoder, predictor, target_encoder, opt, scaler, checkpoint.get('epoch', 0)
+
+    if training_state is not None:
+        training_state.clear()
+        if resume is None:
+            warnings.warn("Legacy checkpoint lacks RNG/scheduler/best/patience state; "
+                          "resume is not exact. Schedules are reconstructed from epoch.")
+        else:
+            training_state.update(resume)
+            rank_states = resume.get('rank_states', [])
+            if rank >= len(rank_states) or 'rng' not in rank_states[rank]:
+                warnings.warn("Checkpoint lacks this rank's RNG state; resume is not exact.")
+            else:
+                restore_rng_state(rank_states[rank]['rng'])
+                if mask_gen is not None and rank_states[rank].get('curriculum') is not None:
+                    checkpoint['curriculum'] = rank_states[rank]['curriculum']
 
     if mask_gen is not None:
         if checkpoint.get('curriculum') is not None:
@@ -277,9 +381,8 @@ def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, sca
         else:
             # No curriculum key — typical when resuming from R1.  This is
             # expected and benign; just log it.
-            print("[Checkpoint] No 'curriculum' key in %s — starting "
-                  "curriculum state from scratch (expected when resuming "
-                  "from R1 baseline)." % r_path)
+            warnings.warn("No curriculum state in %s; starting curriculum from scratch. "
+                          "This is a new curriculum branch, not exact resume." % r_path)
 
     start_epoch = checkpoint.get('epoch', 0)
     print("[Checkpoint] Loaded from %s  (epoch %d)" % (r_path, start_epoch))
@@ -288,7 +391,7 @@ def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, sca
 
 def save_checkpoint(path, encoder, predictor, target_encoder, optimizer,
                     scaler, epoch, loss, batch_size, world_size, lr,
-                    mask_gen=None):
+                    mask_gen=None, training_state=None):
     """Save a training checkpoint.
 
     Args:
@@ -306,6 +409,9 @@ def save_checkpoint(path, encoder, predictor, target_encoder, optimizer,
         mask_gen: Optional curriculum mask generator — if provided and it
             exposes a ``state_dict``, the dict is stored under ``curriculum``
             so an AML preempt + resume restores loss-map / cluster state.
+        training_state: Optional complete epoch-boundary state assembled by the
+            trainer on all ranks. Omitting it preserves the legacy file schema
+            fields but cannot provide exact RNG/scheduler/selection continuation.
     """
     enc_state = encoder.module.state_dict() if hasattr(encoder, 'module') else encoder.state_dict()
     pred_state = predictor.module.state_dict() if hasattr(predictor, 'module') else predictor.state_dict()
@@ -322,6 +428,7 @@ def save_checkpoint(path, encoder, predictor, target_encoder, optimizer,
         'batch_size': batch_size,
         'world_size': world_size,
         'lr': lr,
+        'training_state': training_state,
         'curriculum': (
             mask_gen.state_dict()
             if (mask_gen is not None and hasattr(mask_gen, 'state_dict'))
@@ -329,7 +436,7 @@ def save_checkpoint(path, encoder, predictor, target_encoder, optimizer,
         ),
     }
 
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
     torch.save(state, path)
 
 

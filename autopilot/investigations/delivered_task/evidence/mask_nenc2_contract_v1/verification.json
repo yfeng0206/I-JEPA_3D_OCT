@@ -1,0 +1,222 @@
+{
+  "baseline": "de145d7",
+  "status": "passing_after_reproduced_failure",
+  "cpu_only": true,
+  "checks": [
+    {
+      "sampler": "multiblock",
+      "B": 1,
+      "before_context_shapes": [
+        [
+          1,
+          69
+        ],
+        [
+          1,
+          157
+        ]
+      ],
+      "before_error": "Sizes of tensors must match except in dimension 0. Expected size 69 but got size 157 for tensor number 1 in the list.",
+      "after_context_shapes": [
+        [
+          1,
+          69
+        ],
+        [
+          1,
+          69
+        ]
+      ],
+      "actual_apply_masks_shape": [
+        2,
+        69,
+        3
+      ],
+      "targets_unchanged": true,
+      "after_equals_global_prefix": true
+    },
+    {
+      "sampler": "multiblock",
+      "B": 3,
+      "before_context_shapes": [
+        [
+          3,
+          49
+        ],
+        [
+          3,
+          133
+        ]
+      ],
+      "before_error": "Sizes of tensors must match except in dimension 0. Expected size 49 but got size 133 for tensor number 1 in the list.",
+      "after_context_shapes": [
+        [
+          3,
+          49
+        ],
+        [
+          3,
+          49
+        ]
+      ],
+      "actual_apply_masks_shape": [
+        6,
+        49,
+        3
+      ],
+      "targets_unchanged": true,
+      "after_equals_global_prefix": true
+    },
+    {
+      "sampler": "curriculum",
+      "B": 1,
+      "before_context_shapes": [
+        [
+          1,
+          69
+        ],
+        [
+          1,
+          157
+        ]
+      ],
+      "before_error": "Sizes of tensors must match except in dimension 0. Expected size 69 but got size 157 for tensor number 1 in the list.",
+      "after_context_shapes": [
+        [
+          1,
+          69
+        ],
+        [
+          1,
+          69
+        ]
+      ],
+      "actual_apply_masks_shape": [
+        2,
+        69,
+        3
+      ],
+      "targets_unchanged": true,
+      "after_equals_global_prefix": true
+    },
+    {
+      "sampler": "curriculum",
+      "B": 3,
+      "before_context_shapes": [
+        [
+          3,
+          49
+        ],
+        [
+          3,
+          133
+        ]
+      ],
+      "before_error": "Sizes of tensors must match except in dimension 0. Expected size 49 but got size 133 for tensor number 1 in the list.",
+      "after_context_shapes": [
+        [
+          3,
+          49
+        ],
+        [
+          3,
+          49
+        ]
+      ],
+      "actual_apply_masks_shape": [
+        6,
+        49,
+        3
+      ],
+      "targets_unchanged": true,
+      "after_equals_global_prefix": true
+    }
+  ],
+  "historical_nenc1_bitwise_controls": [
+    {
+      "arm": "random",
+      "seed": 0,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "random",
+      "seed": 7,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "random",
+      "seed": 42,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "oracle",
+      "seed": 0,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "oracle",
+      "seed": 7,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "oracle",
+      "seed": 42,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "envelope",
+      "seed": 0,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "envelope",
+      "seed": 7,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "envelope",
+      "seed": 42,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "anatomy",
+      "seed": 0,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "anatomy",
+      "seed": 7,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "anatomy",
+      "seed": 42,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "cover_legacy",
+      "seed": 0,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "cover_legacy",
+      "seed": 7,
+      "tensors_bitwise_equal": true
+    },
+    {
+      "arm": "cover_legacy",
+      "seed": 42,
+      "tensors_bitwise_equal": true
+    }
+  ],
+  "targeted_pytest": {
+    "passed": 113,
+    "reported_seconds": 11.7
+  },
+  "source_sha256": {
+    "src\\masks\\multiblock.py": "d8985698cba486625bbc5fa0e5cc34dc468ff0cc1346eae6f9e5db409cc9fa98",
+    "src\\masks\\curriculum.py": "3bf373fc8a87cadfa776de416240096073994c1bb35dda23c7d4919ad41d2649",
+    "scripts\\delivered_mask_audit.py": "0133cb559f823acbeeda490e0c372bb8ea0293c573a96340eb7b8989df4f1d48",
+    "tests\\test_delivered_masks.py": "73d00dd3fc918d8cda0d20010266ee352ca2b52ec2cbe881452e1dac43940b8a"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "baseline": "de145d7",
+  "interpreter": "D:\\jepa_phase0\\.venv\\Scripts\\python.exe",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "74",
+      "time": "15.826",
+      "timestamp": "2026-09-04T17:00:14.082003-07:00",
+      "hostname": "DESKTOP-CJETT24"
+    }
+  ],
+  "source_sha256": {
+    "src\\train_patch.py": "aa19998729d062887b2480ac3e86a8d7bb9499516e202185cc96ec46c9e77a34",
+    "src\\helper.py": "c0f063ef236bfca598cee79e4f19c16bd0188061c2085c15036a64b8be61b9ca",
+    "src\\eval_downstream.py": "cad331b703a116985f2ce81e8abf02b12c300044a3825e22d4d6ab73c47b55ed",
+    "src\\utils\\schedulers.py": "73a6c24de751be786b1482085a1bdb10e9f89a65b117526b02c4523c92d8282a",
+    "tests\\test_training_contracts.py": "972486ca83e7af34216c33f0106f23df7f12e90d09364b4ad3913807cf9269ed",
+    "tests\\test_eval_identity.py": "37fc434e713357be3c12eb778c346240c5dd0c7fd6de06244777acd8272fad19",
+    "scripts\\training_layer_diagnostic.py": "701767d5fc6db20db1ce19409d4fd3855754037425ad58d6f90d703aafec4b17",
+    "configs\\diagnostic_training_guided_loss.yaml": "e20cf20f3f3d894f944c00208eea8760a9de382c3f9b6f44999902c2d3922a20",
+    "configs\\downstream_frozen_meanpool_canonical.yaml": "cc645b7c9e5ea89f93d90356792194be2ac643cd40b0534dcc7802e7d5b73044"
+  },
+  "validation": "all scoped training/eval regressions plus original51 baseline mask integration tests",
+  "guided_gpu_evidence": "evidence\\training_gpu_guided_v1",
+  "private_fixture_published": false
+}

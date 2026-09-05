@@ -1,0 +1,109 @@
+FFFFF                                                                    [100%]
+================================== FAILURES ===================================
+____ test_cover_valid_nonviable_guide_is_infeasible_not_invalid[legacy_v1] ____
+
+algorithm = 'legacy_v1'
+
+    @pytest.mark.parametrize("algorithm", ["legacy_v1", "delivered_v2"])
+    def test_cover_valid_nonviable_guide_is_infeasible_not_invalid(algorithm):
+        small = torch.zeros(1, 4, 16, 16)
+        small[:, :2, 8:10, 8:10] = 1
+        small[:, 2, 8:10, 8:10] = 1
+        obj = generator(cover_algorithm=algorithm)
+        random.seed(0)
+        run(obj, small)
+        row = obj.last_mask_audit[0]
+        assert row["guide_valid"] and not row["guide_viable"]
+>       assert obj.mirage_stats["fallbacks"] == 0
+E       assert 1 == 0
+
+tests\test_delivered_masks.py:102: AssertionError
+__ test_cover_valid_nonviable_guide_is_infeasible_not_invalid[delivered_v2] ___
+
+algorithm = 'delivered_v2'
+
+    @pytest.mark.parametrize("algorithm", ["legacy_v1", "delivered_v2"])
+    def test_cover_valid_nonviable_guide_is_infeasible_not_invalid(algorithm):
+        small = torch.zeros(1, 4, 16, 16)
+        small[:, :2, 8:10, 8:10] = 1
+        small[:, 2, 8:10, 8:10] = 1
+        obj = generator(cover_algorithm=algorithm)
+        random.seed(0)
+        run(obj, small)
+        row = obj.last_mask_audit[0]
+        assert row["guide_valid"] and not row["guide_viable"]
+>       assert obj.mirage_stats["fallbacks"] == 0
+E       assert 1 == 0
+
+tests\test_delivered_masks.py:102: AssertionError
+_____ test_cover_mixed_ramp_failure_preserves_unguided_sources[legacy_v1] _____
+
+algorithm = 'legacy_v1'
+
+    @pytest.mark.parametrize("algorithm", ["legacy_v1", "delivered_v2"])
+    def test_cover_mixed_ramp_failure_preserves_unguided_sources(algorithm):
+        obj = generator(cover_algorithm=algorithm, r_max=.5,
+                        cover_min_visible_frac=1., cover_leave_frac=0.)
+        random.seed(0)
+        with patch("src.masks.curriculum.random.random", side_effect=[.9, .9, .1, .1]):
+            run(obj, guide_batch(1))
+        row = obj.last_mask_audit[0]
+        assert row["ramp_guided_flags"] == [False, False, True, True]
+        assert row["guide_valid"] and row["guide_viable"]
+        assert obj.mirage_stats["fallbacks"] == 0
+        assert obj.mirage_stats["infeasible"] == 1
+>       assert row["target_sources"] == ["unguided", "unguided", "infeasible", "infeasible"]
+E       AssertionError: assert ['infeasible'... 'infeasible'] == ['unguided', ... 'infeasible']
+E         
+E         At index 0 diff: 'infeasible' != 'unguided'
+E         Use -v to get more diff
+
+tests\test_delivered_masks.py:120: AssertionError
+___ test_cover_mixed_ramp_failure_preserves_unguided_sources[delivered_v2] ____
+
+algorithm = 'delivered_v2'
+
+    @pytest.mark.parametrize("algorithm", ["legacy_v1", "delivered_v2"])
+    def test_cover_mixed_ramp_failure_preserves_unguided_sources(algorithm):
+        obj = generator(cover_algorithm=algorithm, r_max=.5,
+                        cover_min_visible_frac=1., cover_leave_frac=0.)
+        random.seed(0)
+        with patch("src.masks.curriculum.random.random", side_effect=[.9, .9, .1, .1]):
+            run(obj, guide_batch(1))
+        row = obj.last_mask_audit[0]
+        assert row["ramp_guided_flags"] == [False, False, True, True]
+        assert row["guide_valid"] and row["guide_viable"]
+        assert obj.mirage_stats["fallbacks"] == 0
+        assert obj.mirage_stats["infeasible"] == 1
+>       assert row["target_sources"] == ["unguided", "unguided", "infeasible", "infeasible"]
+E       AssertionError: assert ['infeasible'... 'infeasible'] == ['unguided', ... 'infeasible']
+E         
+E         At index 0 diff: 'infeasible' != 'unguided'
+E         Use -v to get more diff
+
+tests\test_delivered_masks.py:120: AssertionError
+___________ test_historical_control_detects_current_cover_mutation ____________
+
+    def test_historical_control_detects_current_cover_mutation():
+        import src.masks.cover as current_cover
+        import src.masks.curriculum as current_curriculum
+        from scripts.delivered_mask_audit import historical_replay_controls
+        original = current_cover.build_targets
+    
+        def shifted_current_targets(*args, **kwargs):
+            masks, info = original(*args, **kwargs)
+            return [np.roll(mask, 1, axis=0) for mask in masks], info
+    
+        with patch.object(current_cover, "build_targets", shifted_current_targets), \
+                patch.object(current_curriculum, "cover_build_targets", shifted_current_targets):
+>           with pytest.raises(AssertionError, match="cover_legacy"):
+E           Failed: DID NOT RAISE AssertionError
+
+tests\test_delivered_masks.py:135: Failed
+=========================== short test summary info ===========================
+FAILED tests/test_delivered_masks.py::test_cover_valid_nonviable_guide_is_infeasible_not_invalid[legacy_v1]
+FAILED tests/test_delivered_masks.py::test_cover_valid_nonviable_guide_is_infeasible_not_invalid[delivered_v2]
+FAILED tests/test_delivered_masks.py::test_cover_mixed_ramp_failure_preserves_unguided_sources[legacy_v1]
+FAILED tests/test_delivered_masks.py::test_cover_mixed_ramp_failure_preserves_unguided_sources[delivered_v2]
+FAILED tests/test_delivered_masks.py::test_historical_control_detects_current_cover_mutation
+5 failed, 34 deselected in 5.39s

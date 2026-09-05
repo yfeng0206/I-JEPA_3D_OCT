@@ -11,9 +11,9 @@ output contract:
 The key differences from the random multiblock collator:
 
 * Pred-block *top-left location* can be biased toward "important" patches.
-* The encoder block sampling is bit-identical to ``MaskCollator`` so the
-  ablation only changes the predictor-target distribution (R1 vs R2/R3a/R3b
-  remain directly comparable on the encoder side).
+* Legacy encoder-block sampling mirrors ``MaskCollator``. Its delivered
+  context still depends on the target union and batch truncation; the opt-in
+  ``cover_context_guard`` is an additional guide-aware intervention.
 * State (loss-EMA grid, cluster centroids, per-cluster loss EMA) is held on
   the generator and updated via :meth:`update_after_iter` from the training
   loop.  Updates use DDP ``all_reduce`` unconditionally on every rank.
@@ -166,7 +166,7 @@ class MirageMaskCollator:
         self._generator.set_epoch(self.epoch, self.total_epochs)
         return self._generator
 
-    def __call__(self, batch):
+    def __call__(self, batch, *, block_sizes=None):
         images = torch.stack([item[0] for item in batch], dim=0)
         guides = torch.stack([item[1] for item in batch], dim=0)
         valid = torch.stack([item[2] for item in batch], dim=0)
@@ -175,6 +175,7 @@ class MirageMaskCollator:
             batch_size=images.size(0),
             guide_grids=guides,
             guide_valid=valid,
+            block_sizes=block_sizes,
         )
         return images, masks_enc, masks_pred, generator.mirage_stats
 
@@ -216,10 +217,8 @@ class CurriculumMaskGenerator:
         self.width = input_size[1] // patch_size
         # When set, every predictor target is resampled to exactly this many
         # indices instead of the whole batch being front-sliced to its
-        # minimum.  Off by default: rectangular targets are all the same size,
-        # so the min-truncate is harmless there and the old behaviour stays
-        # bit-identical.  Irregular anatomy targets are NOT the same size and
-        # lose 92.8% of their cells without this.
+        # minimum. Rectangle sizes differ BETWEEN target groups too; leaving
+        # this unset preserves their historical row-major prefix geometry.
         self.pred_target_k = pred_target_k
         self.num_patches = self.height * self.width
 
@@ -417,6 +416,21 @@ class CurriculumMaskGenerator:
             cfg.get("cover_min_visible_cells", 4)
         )
         self.cover_transition = bool(cfg.get("cover_transition", True))
+        self.cover_algorithm = cfg.get("cover_algorithm", "legacy_v1")
+        if self.cover_algorithm not in ("legacy_v1", "delivered_v2"):
+            raise ValueError("cover_algorithm must be legacy_v1 or delivered_v2")
+        self.cover_context_guard = bool(cfg.get("cover_context_guard", False))
+        if self.cover_algorithm == "delivered_v2" and (
+            self.mode != "mirage_cover" or self.pred_target_k is not None
+            or self.allow_overlap
+        ):
+            raise ValueError(
+                "delivered_v2 requires mirage_cover, no pred_target_k and no overlap"
+            )
+        if self.cover_context_guard and self.cover_algorithm != "delivered_v2":
+            raise ValueError("cover_context_guard requires delivered_v2")
+        self.audit_masks = bool(cfg.get("audit_masks", False))
+        self.last_mask_audit = []
         # How the per-group encoder mask is cut down to the batch-wide minimum
         # length.  "prefix" is the historical behaviour (t[:min_len] on sorted
         # indices), which is a row-major prefix and therefore systematically
@@ -434,8 +448,9 @@ class CurriculumMaskGenerator:
         # For "guard": how many anatomy cells the crop must never take away.
         # The crop has to drop SOMETHING to make the batch rectangular, but
         # nothing forces it to drop anatomy first; reserving a handful of
-        # anatomy tokens makes the arm's visibility guarantee hold end-to-end
-        # instead of only up to the target union.
+        # anatomy tokens protects only what already exists in the sampled
+        # context; it cannot guarantee the floor if tissue or budget is scarce.
+        # The separately versioned cover_context_guard checks final feasibility.
         #
         # NOTE: "random" and "guard" both scatter the retained tokens, which
         # destroys the spatial coherence of the context block -- stock I-JEPA
@@ -454,6 +469,10 @@ class CurriculumMaskGenerator:
         # all 10 workers would replay an identical tie-breaking stream every
         # epoch, correlating the crop across the whole run.
         self._enc_trunc_epoch = 0
+        self.enc_truncate_rng = cfg.get("enc_truncate_rng", "epoch_worker_v2")
+        if self.enc_truncate_rng not in ("legacy_v1", "epoch_worker_v2"):
+            raise ValueError("enc_truncate_rng must be legacy_v1 or epoch_worker_v2")
+        self._enc_trunc_key = None
         # How a block NOT needed for coverage is spent.  ``transition`` is the
         # shipped behaviour (straddle the anatomy/background boundary).
         # ``random_legal`` makes it a plain uniform I-JEPA rectangle but still
@@ -571,17 +590,21 @@ class CurriculumMaskGenerator:
         info = torch.utils.data.get_worker_info()
         if info is not None:
             wid = int(info.id)
-        rank = 0
+        rank = self.rank
         try:
             import torch.distributed as _d
             if _d.is_available() and _d.is_initialized():
                 rank = int(_d.get_rank())
         except Exception:  # noqa: BLE001
-            rank = 0
+            rank = self.rank
+        key = (self._enc_trunc_seed, self._enc_trunc_epoch, rank, wid)
+        if self.enc_truncate_rng != "legacy_v1" and key == self._enc_trunc_key:
+            return
         s = (self._enc_trunc_seed * 1_000_003
              + int(self._enc_trunc_epoch) * 9_176
              + rank * 131_071 + wid * 521) % (2 ** 63 - 1)
         self._enc_trunc_gen.manual_seed(int(s))
+        self._enc_trunc_key = key
 
     def set_epoch(self, epoch: int, total_epochs: Optional[int] = None) -> None:
         """Update ``self._r_t`` for the current epoch.
@@ -780,11 +803,13 @@ class CurriculumMaskGenerator:
                 segments = [segments[i] for i in rng.permutation(len(segments))]
 
             per_image_pred: List[List[int]] = []
+            slot_kind = ["envelope"] * len(pred_sizes)
             fills: List[float] = []
             guided_used = 0
             feasible = True
             for index, (bh, bw) in enumerate(pred_sizes):
                 if not biased_flags[index]:
+                    slot_kind[index] = "unguided"
                     indices = fixed_uniform[index]
                     per_image_pred.append(indices)
                     top = indices[0] // self.width
@@ -793,6 +818,7 @@ class CurriculumMaskGenerator:
                     continue
                 cached = candidate_cache[index]
                 if cached is None:
+                    slot_kind[index] = "infeasible_uniform"
                     feasible = False
                     top, left = self._sample_uniform_location(
                         bh, bw, self.height, self.width
@@ -840,6 +866,7 @@ class CurriculumMaskGenerator:
                         # No window anywhere reaches the fill threshold: this is
                         # an infeasible guide, not a successful guided mask.
                         feasible = False
+                        slot_kind[index] = "infeasible_uniform"
                         top, left = self._sample_uniform_location(
                             bh, bw, self.height, self.width
                         )
@@ -863,6 +890,7 @@ class CurriculumMaskGenerator:
                 "attempts": attempt + 1,
                 "feasible": feasible,
                 "accepted": feasible and visible >= self.mirage_min_retina_visible,
+                "slot_kind": slot_kind,
             }
             if (
                 best is None
@@ -1134,6 +1162,7 @@ class CurriculumMaskGenerator:
         h_for_cluster: Optional[torch.Tensor] = None,
         guide_grids: Optional[torch.Tensor] = None,
         guide_valid: Optional[torch.Tensor] = None,
+        block_sizes: Optional[dict] = None,
     ) -> Tuple[List[torch.Tensor], List[torch.Tensor]]:
         """Produce (masks_enc, masks_pred) with the MaskCollator contract.
 
@@ -1148,20 +1177,38 @@ class CurriculumMaskGenerator:
                 ``mirage_envelope`` mode.
             guide_valid: (B,) bool flags; images whose guide failed quality
                 control fall back to uniform random placement.
+            block_sizes: Diagnostic injection of already drawn ``pred`` and
+                ``enc`` (height, width) lists. No size RNG is consumed. This
+                pairs geometry explicitly, unlike reseeding different policies.
         """
         B = int(batch_size)
 
         # Shared block sizes for this batch (matches multiblock).
-        seed = random.randint(0, 2 ** 31)
-        self._size_gen.manual_seed(seed)
-        pred_sizes = [
-            self._sample_block_size(self.pred_mask_scale, self._size_gen)
-            for _ in range(self.npred)
-        ]
-        enc_sizes = [
-            self._sample_block_size(self.enc_mask_scale, self._size_gen)
-            for _ in range(self.nenc)
-        ]
+        if block_sizes is None:
+            seed = random.randint(0, 2 ** 31)
+            self._size_gen.manual_seed(seed)
+            pred_sizes = [
+                self._sample_block_size(self.pred_mask_scale, self._size_gen)
+                for _ in range(self.npred)
+            ]
+            enc_sizes = [
+                self._sample_block_size(self.enc_mask_scale, self._size_gen)
+                for _ in range(self.nenc)
+            ]
+        else:
+            pred_sizes, enc_sizes = block_sizes["pred"], block_sizes["enc"]
+            if len(pred_sizes) != self.npred or len(enc_sizes) != self.nenc:
+                raise ValueError("Injected sizes must match npred and nenc")
+            if any(not (1 <= h <= self.height and 1 <= w <= self.width)
+                   for h, w in list(pred_sizes) + list(enc_sizes)):
+                raise ValueError("Injected block sizes are out of bounds")
+        delivered_k = (
+            min(h * w for h, w in pred_sizes)
+            if self.cover_algorithm == "delivered_v2" else None
+        )
+        source_labels = []
+        policy_infos = []
+        branch_traces = []
 
         # ------------------------------------------------------------------
         # Decide whether biased sampling is ACTIVE this batch.
@@ -1257,6 +1304,9 @@ class CurriculumMaskGenerator:
             # --- Pred blocks ---
             pred_indices_union = set()
             per_image_pred = []
+            slot_sources = ["uniform"] * self.npred
+            policy_info = {}
+            branch_trace = {}
             if self.mode == "mirage_anatomy":
                 # Connected, anatomy-shaped targets that follow the retinal
                 # band instead of rectangles aimed at it.  Channel 0 of the
@@ -1279,6 +1329,7 @@ class CurriculumMaskGenerator:
                 # mixed anatomy shapes with random rectangles would not be a
                 # coherent partition of the retina.
                 use_anatomy = bool(usable and random.random() < self._r_t)
+                branch_trace["ramp_guided_flags"] = [use_anatomy] * self.npred
                 # A schema-2 guide carries P_inner and P_choroid in channels
                 # 2 and 3.  Class-aware growth is what the adapter sweep
                 # validated; channel 0 alone merges inner retina and choroid
@@ -1336,8 +1387,20 @@ class CurriculumMaskGenerator:
                         np.flatnonzero(np.asarray(p).ravel()).tolist()
                         for p in parts
                     ]
+                    slot_sources = ["anatomy"] * self.npred
+                    mirage_batch["guided_images"] += 1
                 else:
-                    mirage_batch["fallback_invalid"] += 1
+                    guide_ok = guide is not None and (
+                        guide_valid is None or bool(guide_valid[b])
+                    )
+                    if not guide_ok:
+                        reason = "fallback_invalid"
+                    elif not use_anatomy:
+                        reason = "unbiased_by_ramp"
+                    else:
+                        reason = "infeasible"
+                    mirage_batch[reason] += 1
+                    slot_sources = [reason] * self.npred
                     for p in range(self.npred):
                         bh, bw = pred_sizes[p]
                         top, left = self._sample_uniform_location(
@@ -1369,7 +1432,6 @@ class CurriculumMaskGenerator:
                         pred_indices_union
                     )
                 mirage_batch["images"] += 1
-                mirage_batch["guided_images"] += int(use_anatomy)
                 mirage_batch["patches_per_block_sum"] += sum(
                     len(indices) for indices in per_image_pred
                 )
@@ -1379,8 +1441,8 @@ class CurriculumMaskGenerator:
                 # anatomy instead of merely being aimed at it.  Block sizes
                 # come from ``pred_sizes`` -- sampled once per batch above and
                 # shared across every image, exactly as the envelope and stock
-                # arms do.  Only PLACEMENT differs, which is what keeps the
-                # comparison to a single variable.
+                # arms do. Legacy scores full candidates; delivered_v2 scores
+                # and excludes only their final, common-length prefixes.
                 guide = None
                 if guide_grids is not None:
                     guide = guide_grids[b].detach().to(
@@ -1405,10 +1467,8 @@ class CurriculumMaskGenerator:
                     class_scores = [occupancy.numpy()]
                 else:
                     class_scores = None
-                # Guide health and slice viability are evaluated INDEPENDENTLY
-                # of the ramp draw, so the fallback counters measure what they
-                # claim to: a missing/QC-invalid guide or an unusable slice is
-                # a fallback whatever the coin says.
+                # Guide validity and slice viability are separate: valid but
+                # unusable anatomy is infeasible, not a QC-invalid guide.
                 viable = (
                     class_scores is not None
                     and cover_is_viable(
@@ -1429,6 +1489,8 @@ class CurriculumMaskGenerator:
                     bool(usable and random.random() < self._r_t)
                     for _ in range(self.npred)
                 ]
+                branch_trace = {"guide_viable": bool(viable),
+                                "ramp_guided_flags": biased_flags}
                 # Draw the non-guided block locations ONCE so retries cannot
                 # quietly bias blocks the ramp designated as random.
                 fixed_uniform: List[Optional[List[int]]] = []
@@ -1465,6 +1527,7 @@ class CurriculumMaskGenerator:
                             if occupancy is not None
                             else None
                         ),
+                        delivered_k=delivered_k,
                     )
                     if not cover_info["ok"]:
                         # The hard floors could not be honoured on this slice.
@@ -1472,6 +1535,8 @@ class CurriculumMaskGenerator:
                         # stated guarantee, so it becomes a counted fallback.
                         cover_info = None
                 if cover_info is not None:
+                    slot_sources = list(cover_info["slot_kind"])
+                    policy_info = dict(cover_info)
                     per_image_pred = [
                         np.flatnonzero(np.asarray(p).ravel()).tolist()
                         for p in parts
@@ -1493,14 +1558,24 @@ class CurriculumMaskGenerator:
                         cover_info["n_random"]
                     )
                 else:
-                    if not (guide_ok and viable):
+                    if not guide_ok:
                         mirage_batch["fallback_invalid"] += 1
+                        reason = "fallback_invalid"
+                    elif not viable:
+                        mirage_batch["infeasible"] += 1
+                        reason = "infeasible"
                     elif not any(biased_flags):
                         mirage_batch["unbiased_by_ramp"] += 1
+                        reason = "unbiased_by_ramp"
                     else:
                         # Guide was fine and the ramp said go, but no legal
                         # placement existed.
                         mirage_batch["infeasible"] += 1
+                        reason = "infeasible"
+                    slot_sources = [
+                        "unguided" if reason == "infeasible" and not flag else reason
+                        for flag in biased_flags
+                    ]
                     for p in range(self.npred):
                         if fixed_uniform[p] is not None:
                             per_image_pred.append(fixed_uniform[p])
@@ -1512,6 +1587,9 @@ class CurriculumMaskGenerator:
                             per_image_pred.append(
                                 self._block_to_indices(top, left, bh, bw)
                             )
+                    if delivered_k is not None:
+                        per_image_pred = [indices[:delivered_k]
+                                          for indices in per_image_pred]
                 for indices in per_image_pred:
                     pred_indices_union.update(indices)
                 if occupancy is not None and pred_indices_union:
@@ -1550,6 +1628,7 @@ class CurriculumMaskGenerator:
                     bool(usable and random.random() < self._r_t)
                     for _ in range(self.npred)
                 ]
+                branch_trace["ramp_guided_flags"] = biased_flags
                 # Draw the non-guided block locations ONCE so retries cannot
                 # quietly bias blocks the ramp designated as random.
                 fixed_uniform: List[Optional[List[int]]] = []
@@ -1574,13 +1653,16 @@ class CurriculumMaskGenerator:
                     mirage_batch["block_fill_sum"] += stats["mean_block_fill"]
                     mirage_batch["retina_visible_sum"] += stats["retina_visible"]
                     mirage_batch["attempts_sum"] += stats["attempts"]
+                    slot_sources = list(stats["slot_kind"])
                 else:
                     if guide is None or (
                         guide_valid is not None and not bool(guide_valid[b])
                     ):
                         mirage_batch["fallback_invalid"] += 1
+                        slot_sources = ["fallback_invalid"] * self.npred
                     else:
                         mirage_batch["unbiased_by_ramp"] += 1
+                        slot_sources = ["unbiased_by_ramp"] * self.npred
                     per_image_pred = [
                         indices for indices in fixed_uniform if indices is not None
                     ]
@@ -1611,6 +1693,7 @@ class CurriculumMaskGenerator:
                         and random.random() < self._r_t
                     ):
                         top, left = self._sample_biased_location(bh, bw, weight_grid)
+                        slot_sources[p] = self.mode
                     else:
                         top, left = self._sample_uniform_location(
                             bh, bw, self.height, self.width
@@ -1646,7 +1729,8 @@ class CurriculumMaskGenerator:
                             i for i in all_patches if i not in pred_indices_union
                         ]
                     if len(best_indices) < self.min_keep:
-                        best_indices = all_patches[: self.min_keep]
+                        if not best_indices:
+                            raise ValueError("No non-target context exists for sampled masks")
                 masks_enc[e].append(
                     torch.tensor(sorted(best_indices), dtype=torch.long)
                 )
@@ -1657,13 +1741,18 @@ class CurriculumMaskGenerator:
                 masks_pred[p].append(
                     torch.tensor(per_image_pred[p], dtype=torch.long)
                 )
+            source_labels.append(slot_sources)
+            policy_infos.append(policy_info)
+            branch_traces.append(branch_trace)
 
-        # --- Per-group enc min-truncate ---
+        # --- GLOBAL enc min-truncate: apply_masks concatenates all groups ---
         # Per-image anatomy, used only by the "guard" truncation policy below.
         enc_anatomy: List[np.ndarray] = []
         if self.enc_truncate != "prefix":
             # Re-derive per call so each worker/rank/epoch gets its own stream.
-            self._enc_trunc_epoch = int(getattr(self, "epoch", 0) or 0)
+            self._enc_trunc_epoch = (
+                0 if self.enc_truncate_rng == "legacy_v1" else self._epoch
+            )
             self._reseed_enc_trunc()
         if self.enc_truncate in ("guard", "window") and guide_grids is not None:
             occ_all = (
@@ -1675,8 +1764,11 @@ class CurriculumMaskGenerator:
                 for i in range(occ_all.shape[0])
             ]
         collated_masks_enc = []
+        global_min_enc = max(
+            1, min(t.numel() for group in masks_enc for t in group)
+        )
         for group in masks_enc:
-            min_len = max(1, min(t.numel() for t in group))
+            min_len = global_min_enc
             # Truncating with ``t[:min_len]`` on SORTED indices is a ROW-MAJOR
             # PREFIX: it always discards the highest indices, i.e. the BOTTOM of
             # the image.  The retina is a roughly horizontal band, so on slices
@@ -1783,10 +1875,25 @@ class CurriculumMaskGenerator:
                     torch.stack([t[:global_min_pred] for t in group], dim=0)
                 )
 
+        context_status = self._guard_delivered_context(
+            collated_masks_enc, collated_masks_pred, guide_grids, guide_valid
+        ) if self.cover_algorithm == "delivered_v2" else []
+        if self.audit_masks:
+            self.last_mask_audit = self._audit_delivered_masks(
+                masks_enc, masks_pred, collated_masks_enc, collated_masks_pred,
+                guide_grids, guide_valid, source_labels, context_status,
+            )
+            for row, info, trace in zip(self.last_mask_audit, policy_infos, branch_traces):
+                row["policy_info"] = info
+                row.update(trace)
+                row["drawn_target_sizes"] = list(pred_sizes)
+                row["drawn_context_sizes"] = list(enc_sizes)
+
         if self.mode in ("mirage_envelope", "mirage_anatomy", "mirage_cover"):
             images = max(mirage_batch["images"], 1)
             guided = max(mirage_batch["guided_images"], 1)
             self._mirage_stats = {
+                "target_source_schema_version": 2,
                 "images": mirage_batch["images"],
                 "guided_images": mirage_batch["guided_images"],
                 # Guides that could not be used at all: QC-invalid or missing.
@@ -1817,8 +1924,110 @@ class CurriculumMaskGenerator:
                 "cover_random_blocks": mirage_batch["cover_random_sum"]
                 / guided,
             }
+            if context_status:
+                self._mirage_stats["delivered_context_floor_satisfied"] = sum(
+                    row["status"] == "satisfied" for row in context_status
+                )
+                self._mirage_stats["delivered_context_floor_unsatisfied"] = sum(
+                    row["status"] != "satisfied" for row in context_status
+                )
+                self._mirage_stats["delivered_context_interventions"] = sum(
+                    row["changed"] for row in context_status
+                )
+            if self.audit_masks:
+                self._mirage_stats["delivered_audit"] = self.last_mask_audit
 
         return collated_masks_enc, collated_masks_pred
+
+    def _guard_delivered_context(self, enc, pred, guides, valid):
+        """Explicit guide-aware repair, at unchanged final encoder token count.
+
+        It may reach outside the sampled context rectangle. This is a second
+        intervention, NOT a target-location-only policy. Infeasible budgets,
+        invalid guides and target unions are reported, never called satisfied.
+        """
+        rows = []
+        for b in range(enc[0].shape[0]):
+            row = {"status": "invalid_guide", "changed": False, "required": 0}
+            if guides is None or (valid is not None and not bool(valid[b])):
+                rows.append(row)
+                continue
+            occ = guides[b, 0] if guides.dim() == 4 else guides[b]
+            tissue = occ.detach().cpu().flatten() >= self.mirage_occupancy_threshold
+            n = int(tissue.sum())
+            required = max(math.ceil(self.cover_min_visible_frac * n),
+                           min(self.cover_min_visible_cells, n))
+            row["required"] = required
+            union = torch.cat([g[b].cpu() for g in pred]).unique()
+            available = tissue.clone()
+            available[union] = False
+            candidates = available.nonzero().flatten()
+            if n == 0:
+                row["status"] = "no_tissue"
+            elif candidates.numel() < required:
+                row["status"] = "infeasible_target_union"
+            elif any(g.shape[1] < required for g in enc):
+                row["status"] = "infeasible_context_budget"
+            else:
+                for group in enc:
+                    current = group[b]
+                    deficit = required - int(tissue[current].sum())
+                    if deficit > 0 and self.cover_context_guard:
+                        additions = candidates[~torch.isin(candidates, current)][:deficit]
+                        remove = (~tissue[current]).nonzero().flatten()[-deficit:]
+                        repaired = current.clone()
+                        repaired[remove] = additions
+                        group[b] = repaired.sort().values
+                        row["changed"] = True
+                row["status"] = (
+                    "satisfied" if all(int(tissue[g[b]].sum()) >= required for g in enc)
+                    else "unsatisfied_context_policy"
+                )
+            row["actual"] = [int(tissue[g[b]].sum()) for g in enc]
+            rows.append(row)
+        return rows
+
+    def _audit_delivered_masks(self, raw_enc, raw_pred, enc, pred, guides,
+                               valid, sources, statuses):
+        rows = []
+        for b in range(pred[0].shape[0]):
+            before = [g[b].tolist() for g in raw_pred]
+            after = [g[b].tolist() for g in pred]
+            if len(after) != self.npred or len(sources[b]) != self.npred:
+                raise ValueError("Target count/source bookkeeping mismatch")
+            flat = [i for group in after for i in group]
+            union = set(flat)
+            contexts = [g[b].tolist() for g in enc]
+            for group in after + contexts:
+                if not group or min(group) < 0 or max(group) >= self.num_patches:
+                    raise ValueError("Empty or out-of-bounds delivered mask")
+            if not self.allow_overlap and any(union.intersection(c) for c in contexts):
+                raise ValueError("Delivered context-target overlap")
+            row = {
+                "target_source_schema_version": 2,
+                "target_sources": sources[b], "r_t": self._r_t,
+                "guide_valid": guides is not None and (valid is None or bool(valid[b])),
+                "intended_targets": before, "targets": after,
+                "context_before_collation": [g[b].tolist() for g in raw_enc],
+                "context": contexts, "loss_slots": len(flat),
+                "unique_target_union": len(union),
+                "duplicate_loss_slots": len(flat) - len(union),
+            }
+            if guides is not None:
+                occ = guides[b, 0] if guides.dim() == 4 else guides[b]
+                tissue = (occ.cpu().flatten() >= self.mirage_occupancy_threshold).numpy()
+                row["tissue_cells"] = int(tissue.sum())
+                row["target_tissue_slots"] = int(tissue[flat].sum())
+                row["target_background_slots"] = len(flat) - row["target_tissue_slots"]
+                row["target_tissue_unique"] = int(tissue[list(union)].sum())
+                row["context_tissue"] = [int(tissue[c].sum()) for c in contexts]
+                row["context_tissue_before_collation"] = [
+                    int(tissue[g[b].numpy()].sum()) for g in raw_enc
+                ]
+            if statuses:
+                row["context_floor"] = statuses[b]
+            rows.append(row)
+        return rows
 
     # ------------------------------------------------------------------
     # update_after_iter

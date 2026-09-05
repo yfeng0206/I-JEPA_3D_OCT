@@ -78,7 +78,12 @@ Standard I-JEPA applied to individual 256x256 OCT slices. The encoder learns wit
 | Allow overlap | False |
 | Min keep | 10 patches |
 
-The encoder sees 85-100% of patches (context). The predictor must predict representations at 4 small target regions (each 15-20% of patches) using only the context tokens. This is the standard I-JEPA masking strategy.
+The 85-100% range describes the **candidate** context block before target
+exclusion and batch collation, not the fraction the encoder ultimately sees.
+Targets are removed and the remaining context may be truncated to the batch
+minimum. Target rectangles may overlap each other; `allow_overlap: false`
+governs context-target overlap. Report final delivered token counts when
+comparing policies, not these nominal scale ranges.
 
 ## 2. Slice-Level I-JEPA Architecture (Failed)
 

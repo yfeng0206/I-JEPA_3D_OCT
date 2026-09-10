@@ -1,8 +1,9 @@
 """Download pretrained model weights from HuggingFace Hub.
 
 Usage:
-    python scripts/download_weights.py --all          # Download everything
-    python scripts/download_weights.py --encoder      # Just the best encoder (ep32)
+    python scripts/download_weights.py --all          # Download the legacy weight set
+    python scripts/download_weights.py --encoder      # Legacy ImageNet-init encoder (ep32)
+    python scripts/download_weights.py --arm centroid # Current paper arm
     python scripts/download_weights.py --list         # List available weights
     python scripts/download_weights.py --ancestor-ep25 --output-dir D:\...
 
@@ -162,8 +163,8 @@ def download_ancestor(output_dir):
 
 def main():
     parser = argparse.ArgumentParser(description="Download model weights from HuggingFace")
-    parser.add_argument("--all", action="store_true", help="Download all weights")
-    parser.add_argument("--encoder", action="store_true", help="Download best encoder only")
+    parser.add_argument("--all", action="store_true", help="Download all legacy weights (use --arm for paper checkpoints)")
+    parser.add_argument("--encoder", action="store_true", help="Download the legacy ImageNet-init epoch-32 encoder")
     parser.add_argument("--list", action="store_true", help="List available weights")
     parser.add_argument("--ancestor-ep25", action="store_true",
                         help="Download the locked epoch-25 fork point and verify its SHA-256")
@@ -195,7 +196,7 @@ def main():
             print(f"    Size: {info['size']}  |  AUC: {info['auc']}")
             print()
         if not (args.all or args.encoder):
-            print("Use --arm NAME for a paper arm, --encoder for best encoder, --all for everything")
+            print("Use --arm NAME for a paper arm; --encoder and --all select legacy weights.")
         return
 
     try:

@@ -1,0 +1,2248 @@
+{
+    "image_sha256":  "4bbbb9456e911aa5d590234bffa7048b2177d2da6a4169dd138bde4d8c3098b8",
+    "width":  1806,
+    "language":  "en-US",
+    "limitations":  "OCR is fallible; extracted text is not numeric validation or proof of image provenance.",
+    "method":  "Windows.Media.Ocr, local CPU, no desktop display",
+    "lines":  [
+                  {
+                      "text":  "OD/OS mixing hypothesis: clustering on per-volume slice-contribution curves (glaucoma class only)",
+                      "words":  [
+                                    {
+                                        "y":  14,
+                                        "height":  16,
+                                        "width":  64,
+                                        "text":  "OD/OS",
+                                        "x":  385
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  19,
+                                        "width":  64,
+                                        "text":  "mixing",
+                                        "x":  458
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  19,
+                                        "width":  111,
+                                        "text":  "hypothesis:",
+                                        "x":  532
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  19,
+                                        "width":  96,
+                                        "text":  "clustering",
+                                        "x":  699
+                                    },
+                                    {
+                                        "y":  17,
+                                        "height":  11,
+                                        "width":  23,
+                                        "text":  "on",
+                                        "x":  804
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  19,
+                                        "width":  110,
+                                        "text":  "per-volume",
+                                        "x":  836
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  15,
+                                        "width":  170,
+                                        "text":  "slice-contribution",
+                                        "x":  954
+                                    },
+                                    {
+                                        "y":  17,
+                                        "height":  11,
+                                        "width":  64,
+                                        "text":  "curves",
+                                        "x":  1133
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  19,
+                                        "width":  102,
+                                        "text":  "(glaucoma",
+                                        "x":  1206
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  15,
+                                        "width":  48,
+                                        "text":  "class",
+                                        "x":  1317
+                                    },
+                                    {
+                                        "y":  13,
+                                        "height":  19,
+                                        "width":  48,
+                                        "text":  "only)",
+                                        "x":  1372
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "If mixing were real, cluster means would be mirror-images -4 right column should show two curves on top of each other.",
+                      "words":  [
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  12,
+                                        "text":  "If",
+                                        "x":  307
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  19,
+                                        "width":  64,
+                                        "text":  "mixing",
+                                        "x":  326
+                                    },
+                                    {
+                                        "y":  39,
+                                        "height":  11,
+                                        "width":  47,
+                                        "text":  "were",
+                                        "x":  399
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  17,
+                                        "width":  41,
+                                        "text":  "real,",
+                                        "x":  454
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  67,
+                                        "text":  "cluster",
+                                        "x":  504
+                                    },
+                                    {
+                                        "y":  39,
+                                        "height":  11,
+                                        "width":  64,
+                                        "text":  "means",
+                                        "x":  579
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  57,
+                                        "text":  "would",
+                                        "x":  651
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  23,
+                                        "text":  "be",
+                                        "x":  717
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  19,
+                                        "width":  137,
+                                        "text":  "mirror-images",
+                                        "x":  748
+                                    },
+                                    {
+                                        "y":  40,
+                                        "height":  8,
+                                        "width":  15,
+                                        "text":  "-4",
+                                        "x":  893
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  19,
+                                        "width":  45,
+                                        "text":  "right",
+                                        "x":  917
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  71,
+                                        "text":  "column",
+                                        "x":  969
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  63,
+                                        "text":  "should",
+                                        "x":  1049
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  50,
+                                        "text":  "show",
+                                        "x":  1121
+                                    },
+                                    {
+                                        "y":  36,
+                                        "height":  14,
+                                        "width":  36,
+                                        "text":  "two",
+                                        "x":  1178
+                                    },
+                                    {
+                                        "y":  39,
+                                        "height":  11,
+                                        "width":  64,
+                                        "text":  "curves",
+                                        "x":  1222
+                                    },
+                                    {
+                                        "y":  39,
+                                        "height":  11,
+                                        "width":  23,
+                                        "text":  "on",
+                                        "x":  1294
+                                    },
+                                    {
+                                        "y":  36,
+                                        "height":  18,
+                                        "width":  31,
+                                        "text":  "top",
+                                        "x":  1325
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  19,
+                                        "text":  "of",
+                                        "x":  1364
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  46,
+                                        "text":  "each",
+                                        "x":  1390
+                                    },
+                                    {
+                                        "y":  35,
+                                        "height":  15,
+                                        "width":  55,
+                                        "text":  "other.",
+                                        "x":  1444
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "meanpool — raw cluster means corr(c1,c2) —",
+                      "words":  [
+                                    {
+                                        "y":  70,
+                                        "height":  20,
+                                        "width":  104,
+                                        "text":  "meanpool",
+                                        "x":  215
+                                    },
+                                    {
+                                        "y":  79,
+                                        "height":  2,
+                                        "width":  20,
+                                        "text":  "—",
+                                        "x":  328
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  12,
+                                        "width":  37,
+                                        "text":  "raw",
+                                        "x":  358
+                                    },
+                                    {
+                                        "y":  70,
+                                        "height":  16,
+                                        "width":  73,
+                                        "text":  "cluster",
+                                        "x":  404
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  12,
+                                        "width":  71,
+                                        "text":  "means",
+                                        "x":  485
+                                    },
+                                    {
+                                        "y":  70,
+                                        "height":  19,
+                                        "width":  115,
+                                        "text":  "corr(c1,c2)",
+                                        "x":  578
+                                    },
+                                    {
+                                        "y":  80,
+                                        "height":  2,
+                                        "width":  14,
+                                        "text":  "—",
+                                        "x":  704
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "u",
+                      "words":  [
+                                    {
+                                        "y":  647,
+                                        "height":  9,
+                                        "width":  10,
+                                        "text":  "u",
+                                        "x":  16
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "E",
+                      "words":  [
+                                    {
+                                        "y":  717,
+                                        "height":  15,
+                                        "width":  10,
+                                        "text":  "E",
+                                        "x":  16
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.04",
+                      "words":  [
+                                    {
+                                        "y":  134,
+                                        "height":  13,
+                                        "width":  37,
+                                        "text":  "0.04",
+                                        "x":  66
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.02",
+                      "words":  [
+                                    {
+                                        "y":  204,
+                                        "height":  13,
+                                        "width":  36,
+                                        "text":  "0.02",
+                                        "x":  66
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.00",
+                      "words":  [
+                                    {
+                                        "y":  275,
+                                        "height":  13,
+                                        "width":  37,
+                                        "text":  "0.00",
+                                        "x":  66
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.02",
+                      "words":  [
+                                    {
+                                        "y":  346,
+                                        "height":  13,
+                                        "width":  50,
+                                        "text":  "-0.02",
+                                        "x":  52
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.020",
+                      "words":  [
+                                    {
+                                        "y":  532,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.020",
+                                        "x":  54
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.015",
+                      "words":  [
+                                    {
+                                        "y":  570,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.015",
+                                        "x":  54
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.010",
+                      "words":  [
+                                    {
+                                        "y":  609,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.010",
+                                        "x":  55
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.005",
+                      "words":  [
+                                    {
+                                        "y":  647,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.005",
+                                        "x":  54
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  685,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.000",
+                                        "x":  55
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.005",
+                      "words":  [
+                                    {
+                                        "y":  724,
+                                        "height":  13,
+                                        "width":  62,
+                                        "text":  "-0.005",
+                                        "x":  41
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.010",
+                      "words":  [
+                                    {
+                                        "y":  762,
+                                        "height":  13,
+                                        "width":  62,
+                                        "text":  "-0.010",
+                                        "x":  41
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.04",
+                      "words":  [
+                                    {
+                                        "y":  946,
+                                        "height":  13,
+                                        "width":  37,
+                                        "text":  "0.04",
+                                        "x":  66
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.02",
+                      "words":  [
+                                    {
+                                        "y":  999,
+                                        "height":  13,
+                                        "width":  36,
+                                        "text":  "0.02",
+                                        "x":  66
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.00",
+                      "words":  [
+                                    {
+                                        "y":  1052,
+                                        "height":  13,
+                                        "width":  37,
+                                        "text":  "0.00",
+                                        "x":  66
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.02",
+                      "words":  [
+                                    {
+                                        "y":  1105,
+                                        "height":  13,
+                                        "width":  50,
+                                        "text":  "-0.02",
+                                        "x":  52
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.04",
+                      "words":  [
+                                    {
+                                        "y":  1158,
+                                        "height":  13,
+                                        "width":  51,
+                                        "text":  "-0.04",
+                                        "x":  52
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "- -0.124",
+                      "words":  [
+                                    {
+                                        "y":  76,
+                                        "height":  2,
+                                        "width":  14,
+                                        "text":  "-",
+                                        "x":  704
+                                    },
+                                    {
+                                        "y":  70,
+                                        "height":  16,
+                                        "width":  68,
+                                        "text":  "-0.124",
+                                        "x":  727
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "175",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "175",
+                                        "x":  758
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "- -0.478",
+                      "words":  [
+                                    {
+                                        "y":  483,
+                                        "height":  2,
+                                        "width":  14,
+                                        "text":  "-",
+                                        "x":  700
+                                    },
+                                    {
+                                        "y":  477,
+                                        "height":  16,
+                                        "width":  68,
+                                        "text":  "-0.478",
+                                        "x":  724
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "175",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "175",
+                                        "x":  758
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "meanpool — mirror test corr(c1,flip(c2)) —",
+                      "words":  [
+                                    {
+                                        "y":  70,
+                                        "height":  20,
+                                        "width":  104,
+                                        "text":  "meanpool",
+                                        "x":  1128
+                                    },
+                                    {
+                                        "y":  79,
+                                        "height":  2,
+                                        "width":  20,
+                                        "text":  "—",
+                                        "x":  1241
+                                    },
+                                    {
+                                        "y":  70,
+                                        "height":  16,
+                                        "width":  65,
+                                        "text":  "mirror",
+                                        "x":  1271
+                                    },
+                                    {
+                                        "y":  71,
+                                        "height":  15,
+                                        "width":  41,
+                                        "text":  "test",
+                                        "x":  1343
+                                    },
+                                    {
+                                        "y":  70,
+                                        "height":  20,
+                                        "width":  165,
+                                        "text":  "corr(c1,flip(c2))",
+                                        "x":  1406
+                                    },
+                                    {
+                                        "y":  80,
+                                        "height":  2,
+                                        "width":  14,
+                                        "text":  "—",
+                                        "x":  1582
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 1 (n=843)",
+                      "words":  [
+                                    {
+                                        "y":  113,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  185
+                                    },
+                                    {
+                                        "y":  114,
+                                        "height":  13,
+                                        "width":  8,
+                                        "text":  "1",
+                                        "x":  253
+                                    },
+                                    {
+                                        "y":  113,
+                                        "height":  16,
+                                        "width":  73,
+                                        "text":  "(n=843)",
+                                        "x":  269
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 2 (n=623)",
+                      "words":  [
+                                    {
+                                        "y":  140,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  185
+                                    },
+                                    {
+                                        "y":  141,
+                                        "height":  13,
+                                        "width":  9,
+                                        "text":  "2",
+                                        "x":  252
+                                    },
+                                    {
+                                        "y":  140,
+                                        "height":  16,
+                                        "width":  72,
+                                        "text":  "(n=623)",
+                                        "x":  270
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "25",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "25",
+                                        "x":  231
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "50",
+                                        "x":  320
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "75",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "75",
+                                        "x":  408
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "100",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "100",
+                                        "x":  492
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "125",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "125",
+                                        "x":  580
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "150",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "150",
+                                        "x":  669
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "slice native position (1199)",
+                      "words":  [
+                                    {
+                                        "y":  437,
+                                        "height":  14,
+                                        "width":  39,
+                                        "text":  "slice",
+                                        "x":  386
+                                    },
+                                    {
+                                        "y":  437,
+                                        "height":  14,
+                                        "width":  54,
+                                        "text":  "native",
+                                        "x":  433
+                                    },
+                                    {
+                                        "y":  437,
+                                        "height":  18,
+                                        "width":  69,
+                                        "text":  "position",
+                                        "x":  495
+                                    },
+                                    {
+                                        "y":  437,
+                                        "height":  16,
+                                        "width":  52,
+                                        "text":  "(1199)",
+                                        "x":  572
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "crossattn — raw cluster means",
+                      "words":  [
+                                    {
+                                        "y":  478,
+                                        "height":  15,
+                                        "width":  98,
+                                        "text":  "crossattn",
+                                        "x":  218
+                                    },
+                                    {
+                                        "y":  486,
+                                        "height":  2,
+                                        "width":  20,
+                                        "text":  "—",
+                                        "x":  325
+                                    },
+                                    {
+                                        "y":  481,
+                                        "height":  12,
+                                        "width":  38,
+                                        "text":  "raw",
+                                        "x":  354
+                                    },
+                                    {
+                                        "y":  477,
+                                        "height":  16,
+                                        "width":  73,
+                                        "text":  "cluster",
+                                        "x":  400
+                                    },
+                                    {
+                                        "y":  481,
+                                        "height":  12,
+                                        "width":  70,
+                                        "text":  "means",
+                                        "x":  482
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 1 (n",
+                      "words":  [
+                                    {
+                                        "y":  520,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  452
+                                    },
+                                    {
+                                        "y":  521,
+                                        "height":  13,
+                                        "width":  8,
+                                        "text":  "1",
+                                        "x":  520
+                                    },
+                                    {
+                                        "y":  520,
+                                        "height":  16,
+                                        "width":  16,
+                                        "text":  "(n",
+                                        "x":  536
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 2 (n",
+                      "words":  [
+                                    {
+                                        "y":  547,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  452
+                                    },
+                                    {
+                                        "y":  548,
+                                        "height":  13,
+                                        "width":  9,
+                                        "text":  "2",
+                                        "x":  519
+                                    },
+                                    {
+                                        "y":  547,
+                                        "height":  16,
+                                        "width":  16,
+                                        "text":  "(n",
+                                        "x":  537
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "corr(c1,c2) —",
+                      "words":  [
+                                    {
+                                        "y":  477,
+                                        "height":  19,
+                                        "width":  116,
+                                        "text":  "corr(c1,c2)",
+                                        "x":  574
+                                    },
+                                    {
+                                        "y":  487,
+                                        "height":  2,
+                                        "width":  14,
+                                        "text":  "—",
+                                        "x":  700
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "25",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "25",
+                                        "x":  231
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 1 (n",
+                      "words":  [
+                                    {
+                                        "y":  926,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  185
+                                    },
+                                    {
+                                        "y":  927,
+                                        "height":  13,
+                                        "width":  8,
+                                        "text":  "1",
+                                        "x":  253
+                                    },
+                                    {
+                                        "y":  926,
+                                        "height":  16,
+                                        "width":  16,
+                                        "text":  "(n",
+                                        "x":  269
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 2 (n",
+                      "words":  [
+                                    {
+                                        "y":  953,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  185
+                                    },
+                                    {
+                                        "y":  954,
+                                        "height":  13,
+                                        "width":  9,
+                                        "text":  "2",
+                                        "x":  252
+                                    },
+                                    {
+                                        "y":  953,
+                                        "height":  16,
+                                        "width":  16,
+                                        "text":  "(n",
+                                        "x":  270
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "25",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "25",
+                                        "x":  231
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "50",
+                                        "x":  320
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "75",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "75",
+                                        "x":  408
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "100",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "100",
+                                        "x":  492
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-820)",
+                      "words":  [
+                                    {
+                                        "y":  520,
+                                        "height":  16,
+                                        "width":  54,
+                                        "text":  "-820)",
+                                        "x":  555
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-646)",
+                      "words":  [
+                                    {
+                                        "y":  547,
+                                        "height":  16,
+                                        "width":  54,
+                                        "text":  "-646)",
+                                        "x":  555
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "125",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "125",
+                                        "x":  580
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "150",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "150",
+                                        "x":  669
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "slice native position (1199)",
+                      "words":  [
+                                    {
+                                        "y":  843,
+                                        "height":  14,
+                                        "width":  39,
+                                        "text":  "slice",
+                                        "x":  386
+                                    },
+                                    {
+                                        "y":  843,
+                                        "height":  14,
+                                        "width":  54,
+                                        "text":  "native",
+                                        "x":  433
+                                    },
+                                    {
+                                        "y":  843,
+                                        "height":  18,
+                                        "width":  69,
+                                        "text":  "position",
+                                        "x":  495
+                                    },
+                                    {
+                                        "y":  843,
+                                        "height":  16,
+                                        "width":  52,
+                                        "text":  "(1199)",
+                                        "x":  572
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "dl — raw cluster means corr(c1,c2) =",
+                      "words":  [
+                                    {
+                                        "y":  883,
+                                        "height":  16,
+                                        "width":  25,
+                                        "text":  "dl",
+                                        "x":  249
+                                    },
+                                    {
+                                        "y":  892,
+                                        "height":  2,
+                                        "width":  20,
+                                        "text":  "—",
+                                        "x":  283
+                                    },
+                                    {
+                                        "y":  887,
+                                        "height":  12,
+                                        "width":  37,
+                                        "text":  "raw",
+                                        "x":  313
+                                    },
+                                    {
+                                        "y":  883,
+                                        "height":  16,
+                                        "width":  73,
+                                        "text":  "cluster",
+                                        "x":  359
+                                    },
+                                    {
+                                        "y":  887,
+                                        "height":  12,
+                                        "width":  70,
+                                        "text":  "means",
+                                        "x":  440
+                                    },
+                                    {
+                                        "y":  883,
+                                        "height":  19,
+                                        "width":  115,
+                                        "text":  "corr(c1,c2)",
+                                        "x":  533
+                                    },
+                                    {
+                                        "y":  889,
+                                        "height":  6,
+                                        "width":  14,
+                                        "text":  "=",
+                                        "x":  659
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "+0.228",
+                      "words":  [
+                                    {
+                                        "y":  883,
+                                        "height":  16,
+                                        "width":  76,
+                                        "text":  "+0.228",
+                                        "x":  684
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "=807)",
+                      "words":  [
+                                    {
+                                        "y":  926,
+                                        "height":  16,
+                                        "width":  54,
+                                        "text":  "=807)",
+                                        "x":  288
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-659)",
+                      "words":  [
+                                    {
+                                        "y":  953,
+                                        "height":  16,
+                                        "width":  54,
+                                        "text":  "-659)",
+                                        "x":  288
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "50",
+                                        "x":  320
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "200",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "200",
+                                        "x":  846
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "u",
+                      "words":  [
+                                    {
+                                        "y":  647,
+                                        "height":  9,
+                                        "width":  10,
+                                        "text":  "u",
+                                        "x":  916
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "E",
+                      "words":  [
+                                    {
+                                        "y":  717,
+                                        "height":  15,
+                                        "width":  10,
+                                        "text":  "E",
+                                        "x":  916
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "200",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "200",
+                                        "x":  846
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "200",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "200",
+                                        "x":  846
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.04",
+                      "words":  [
+                                    {
+                                        "y":  134,
+                                        "height":  13,
+                                        "width":  37,
+                                        "text":  "0.04",
+                                        "x":  966
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.02",
+                      "words":  [
+                                    {
+                                        "y":  204,
+                                        "height":  13,
+                                        "width":  36,
+                                        "text":  "0.02",
+                                        "x":  966
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.00",
+                      "words":  [
+                                    {
+                                        "y":  275,
+                                        "height":  13,
+                                        "width":  37,
+                                        "text":  "0.00",
+                                        "x":  966
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.02",
+                      "words":  [
+                                    {
+                                        "y":  346,
+                                        "height":  13,
+                                        "width":  50,
+                                        "text":  "-0.02",
+                                        "x":  953
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.020",
+                      "words":  [
+                                    {
+                                        "y":  532,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.020",
+                                        "x":  955
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.015",
+                      "words":  [
+                                    {
+                                        "y":  570,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.015",
+                                        "x":  955
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.010",
+                      "words":  [
+                                    {
+                                        "y":  609,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.010",
+                                        "x":  955
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.005",
+                      "words":  [
+                                    {
+                                        "y":  647,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.005",
+                                        "x":  955
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.000",
+                      "words":  [
+                                    {
+                                        "y":  685,
+                                        "height":  13,
+                                        "width":  48,
+                                        "text":  "0.000",
+                                        "x":  955
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.005",
+                      "words":  [
+                                    {
+                                        "y":  724,
+                                        "height":  13,
+                                        "width":  62,
+                                        "text":  "-0.005",
+                                        "x":  941
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.010",
+                      "words":  [
+                                    {
+                                        "y":  762,
+                                        "height":  13,
+                                        "width":  62,
+                                        "text":  "-0.010",
+                                        "x":  941
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.04",
+                      "words":  [
+                                    {
+                                        "y":  946,
+                                        "height":  13,
+                                        "width":  37,
+                                        "text":  "0.04",
+                                        "x":  966
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.02",
+                      "words":  [
+                                    {
+                                        "y":  999,
+                                        "height":  13,
+                                        "width":  36,
+                                        "text":  "0.02",
+                                        "x":  966
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.00",
+                      "words":  [
+                                    {
+                                        "y":  1052,
+                                        "height":  13,
+                                        "width":  37,
+                                        "text":  "0.00",
+                                        "x":  966
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.02",
+                      "words":  [
+                                    {
+                                        "y":  1105,
+                                        "height":  13,
+                                        "width":  50,
+                                        "text":  "-0.02",
+                                        "x":  953
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.04",
+                      "words":  [
+                                    {
+                                        "y":  1158,
+                                        "height":  13,
+                                        "width":  51,
+                                        "text":  "-0.04",
+                                        "x":  953
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 1",
+                      "words":  [
+                                    {
+                                        "y":  113,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  1085
+                                    },
+                                    {
+                                        "y":  114,
+                                        "height":  13,
+                                        "width":  8,
+                                        "text":  "1",
+                                        "x":  1153
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 2 FLIPPED along slice axis",
+                      "words":  [
+                                    {
+                                        "y":  140,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  1085
+                                    },
+                                    {
+                                        "y":  141,
+                                        "height":  13,
+                                        "width":  9,
+                                        "text":  "2",
+                                        "x":  1152
+                                    },
+                                    {
+                                        "y":  141,
+                                        "height":  13,
+                                        "width":  70,
+                                        "text":  "FLIPPED",
+                                        "x":  1176
+                                    },
+                                    {
+                                        "y":  140,
+                                        "height":  18,
+                                        "width":  48,
+                                        "text":  "along",
+                                        "x":  1253
+                                    },
+                                    {
+                                        "y":  140,
+                                        "height":  14,
+                                        "width":  39,
+                                        "text":  "slice",
+                                        "x":  1309
+                                    },
+                                    {
+                                        "y":  140,
+                                        "height":  14,
+                                        "width":  35,
+                                        "text":  "axis",
+                                        "x":  1355
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "25",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "25",
+                                        "x":  1131
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "50",
+                                        "x":  1220
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "75",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "75",
+                                        "x":  1308
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "100",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "100",
+                                        "x":  1392
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "125",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "125",
+                                        "x":  1481
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "— +0.971",
+                      "words":  [
+                                    {
+                                        "y":  76,
+                                        "height":  2,
+                                        "width":  14,
+                                        "text":  "—",
+                                        "x":  1582
+                                    },
+                                    {
+                                        "y":  70,
+                                        "height":  16,
+                                        "width":  76,
+                                        "text":  "+0.971",
+                                        "x":  1607
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "150",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "150",
+                                        "x":  1569
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "175",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "175",
+                                        "x":  1658
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "slice native position (1199)",
+                      "words":  [
+                                    {
+                                        "y":  437,
+                                        "height":  14,
+                                        "width":  39,
+                                        "text":  "slice",
+                                        "x":  1286
+                                    },
+                                    {
+                                        "y":  437,
+                                        "height":  14,
+                                        "width":  54,
+                                        "text":  "native",
+                                        "x":  1333
+                                    },
+                                    {
+                                        "y":  437,
+                                        "height":  18,
+                                        "width":  69,
+                                        "text":  "position",
+                                        "x":  1395
+                                    },
+                                    {
+                                        "y":  437,
+                                        "height":  16,
+                                        "width":  52,
+                                        "text":  "(1199)",
+                                        "x":  1472
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "crossattn — mirror test corr(c1,flip(c2)) = +0.988",
+                      "words":  [
+                                    {
+                                        "y":  478,
+                                        "height":  15,
+                                        "width":  98,
+                                        "text":  "crossattn",
+                                        "x":  1131
+                                    },
+                                    {
+                                        "y":  486,
+                                        "height":  2,
+                                        "width":  20,
+                                        "text":  "—",
+                                        "x":  1238
+                                    },
+                                    {
+                                        "y":  477,
+                                        "height":  16,
+                                        "width":  65,
+                                        "text":  "mirror",
+                                        "x":  1267
+                                    },
+                                    {
+                                        "y":  478,
+                                        "height":  15,
+                                        "width":  41,
+                                        "text":  "test",
+                                        "x":  1339
+                                    },
+                                    {
+                                        "y":  477,
+                                        "height":  20,
+                                        "width":  166,
+                                        "text":  "corr(c1,flip(c2))",
+                                        "x":  1402
+                                    },
+                                    {
+                                        "y":  483,
+                                        "height":  6,
+                                        "width":  14,
+                                        "text":  "=",
+                                        "x":  1578
+                                    },
+                                    {
+                                        "y":  477,
+                                        "height":  16,
+                                        "width":  77,
+                                        "text":  "+0.988",
+                                        "x":  1603
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 1",
+                      "words":  [
+                                    {
+                                        "y":  520,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  1085
+                                    },
+                                    {
+                                        "y":  521,
+                                        "height":  13,
+                                        "width":  8,
+                                        "text":  "1",
+                                        "x":  1153
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 2 FLIPPED along slice axis",
+                      "words":  [
+                                    {
+                                        "y":  547,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  1085
+                                    },
+                                    {
+                                        "y":  548,
+                                        "height":  13,
+                                        "width":  9,
+                                        "text":  "2",
+                                        "x":  1152
+                                    },
+                                    {
+                                        "y":  548,
+                                        "height":  13,
+                                        "width":  70,
+                                        "text":  "FLIPPED",
+                                        "x":  1176
+                                    },
+                                    {
+                                        "y":  547,
+                                        "height":  18,
+                                        "width":  48,
+                                        "text":  "along",
+                                        "x":  1253
+                                    },
+                                    {
+                                        "y":  547,
+                                        "height":  14,
+                                        "width":  39,
+                                        "text":  "slice",
+                                        "x":  1309
+                                    },
+                                    {
+                                        "y":  547,
+                                        "height":  14,
+                                        "width":  35,
+                                        "text":  "axis",
+                                        "x":  1355
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "25",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "25",
+                                        "x":  1131
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "50",
+                                        "x":  1220
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "75",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "75",
+                                        "x":  1308
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "100",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "100",
+                                        "x":  1392
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "125",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "125",
+                                        "x":  1481
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "slice native position (1199)",
+                      "words":  [
+                                    {
+                                        "y":  843,
+                                        "height":  14,
+                                        "width":  39,
+                                        "text":  "slice",
+                                        "x":  1286
+                                    },
+                                    {
+                                        "y":  843,
+                                        "height":  14,
+                                        "width":  54,
+                                        "text":  "native",
+                                        "x":  1333
+                                    },
+                                    {
+                                        "y":  843,
+                                        "height":  18,
+                                        "width":  69,
+                                        "text":  "position",
+                                        "x":  1395
+                                    },
+                                    {
+                                        "y":  843,
+                                        "height":  16,
+                                        "width":  52,
+                                        "text":  "(1199)",
+                                        "x":  1472
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "dl — mirror test corr(c1,flip(c2)) =",
+                      "words":  [
+                                    {
+                                        "y":  883,
+                                        "height":  16,
+                                        "width":  25,
+                                        "text":  "dl",
+                                        "x":  1167
+                                    },
+                                    {
+                                        "y":  892,
+                                        "height":  2,
+                                        "width":  20,
+                                        "text":  "—",
+                                        "x":  1201
+                                    },
+                                    {
+                                        "y":  883,
+                                        "height":  16,
+                                        "width":  65,
+                                        "text":  "mirror",
+                                        "x":  1231
+                                    },
+                                    {
+                                        "y":  884,
+                                        "height":  15,
+                                        "width":  41,
+                                        "text":  "test",
+                                        "x":  1303
+                                    },
+                                    {
+                                        "y":  883,
+                                        "height":  20,
+                                        "width":  166,
+                                        "text":  "corr(c1,flip(c2))",
+                                        "x":  1365
+                                    },
+                                    {
+                                        "y":  889,
+                                        "height":  6,
+                                        "width":  14,
+                                        "text":  "=",
+                                        "x":  1542
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 1",
+                      "words":  [
+                                    {
+                                        "y":  926,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  1085
+                                    },
+                                    {
+                                        "y":  927,
+                                        "height":  13,
+                                        "width":  8,
+                                        "text":  "1",
+                                        "x":  1153
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cluster 2 FLIPPED along slice axis",
+                      "words":  [
+                                    {
+                                        "y":  953,
+                                        "height":  14,
+                                        "width":  61,
+                                        "text":  "cluster",
+                                        "x":  1085
+                                    },
+                                    {
+                                        "y":  954,
+                                        "height":  13,
+                                        "width":  9,
+                                        "text":  "2",
+                                        "x":  1152
+                                    },
+                                    {
+                                        "y":  954,
+                                        "height":  13,
+                                        "width":  70,
+                                        "text":  "FLIPPED",
+                                        "x":  1176
+                                    },
+                                    {
+                                        "y":  953,
+                                        "height":  18,
+                                        "width":  48,
+                                        "text":  "along",
+                                        "x":  1253
+                                    },
+                                    {
+                                        "y":  953,
+                                        "height":  14,
+                                        "width":  39,
+                                        "text":  "slice",
+                                        "x":  1309
+                                    },
+                                    {
+                                        "y":  953,
+                                        "height":  14,
+                                        "width":  35,
+                                        "text":  "axis",
+                                        "x":  1355
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "75",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "75",
+                                        "x":  408
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "100",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "100",
+                                        "x":  492
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "125",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "125",
+                                        "x":  580
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "150",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "150",
+                                        "x":  669
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "175",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "175",
+                                        "x":  758
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "25",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "25",
+                                        "x":  1131
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "50",
+                                        "x":  1220
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "75",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  20,
+                                        "text":  "75",
+                                        "x":  1308
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "100",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "100",
+                                        "x":  1392
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "125",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "125",
+                                        "x":  1481
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "150",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "150",
+                                        "x":  1569
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "+0.237",
+                      "words":  [
+                                    {
+                                        "y":  883,
+                                        "height":  16,
+                                        "width":  76,
+                                        "text":  "+0.237",
+                                        "x":  1567
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "150",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "150",
+                                        "x":  1569
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "175",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "175",
+                                        "x":  1658
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "175",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "175",
+                                        "x":  1658
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "200",
+                      "words":  [
+                                    {
+                                        "y":  412,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "200",
+                                        "x":  1746
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "200",
+                      "words":  [
+                                    {
+                                        "y":  819,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "200",
+                                        "x":  1746
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "200",
+                      "words":  [
+                                    {
+                                        "y":  1225,
+                                        "height":  13,
+                                        "width":  31,
+                                        "text":  "200",
+                                        "x":  1746
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "slice native position (1199)",
+                      "words":  [
+                                    {
+                                        "y":  1249,
+                                        "height":  14,
+                                        "width":  39,
+                                        "text":  "slice",
+                                        "x":  386
+                                    },
+                                    {
+                                        "y":  1249,
+                                        "height":  14,
+                                        "width":  54,
+                                        "text":  "native",
+                                        "x":  433
+                                    },
+                                    {
+                                        "y":  1249,
+                                        "height":  18,
+                                        "width":  69,
+                                        "text":  "position",
+                                        "x":  495
+                                    },
+                                    {
+                                        "y":  1249,
+                                        "height":  16,
+                                        "width":  52,
+                                        "text":  "(1199)",
+                                        "x":  572
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "slice native position (1199)",
+                      "words":  [
+                                    {
+                                        "y":  1249,
+                                        "height":  14,
+                                        "width":  39,
+                                        "text":  "slice",
+                                        "x":  1286
+                                    },
+                                    {
+                                        "y":  1249,
+                                        "height":  14,
+                                        "width":  54,
+                                        "text":  "native",
+                                        "x":  1333
+                                    },
+                                    {
+                                        "y":  1249,
+                                        "height":  18,
+                                        "width":  69,
+                                        "text":  "position",
+                                        "x":  1395
+                                    },
+                                    {
+                                        "y":  1249,
+                                        "height":  16,
+                                        "width":  52,
+                                        "text":  "(1199)",
+                                        "x":  1472
+                                    }
+                                ]
+                  }
+              ],
+    "height":  1280
+}

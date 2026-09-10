@@ -1,0 +1,60 @@
+{
+  "status": "passed",
+  "scope": "synthetic CPU selected-token partition; not production-size GPU",
+  "fixture_sha256": "a482d0a76c80ead340319d7e8d77c659e34ba263425a0ad19734f25d2e203277",
+  "fixture_metadata": {
+    "source": "synthetic_coordinate_codes",
+    "policy": "cover_v2_guard",
+    "seed": 120
+  },
+  "images_preprocessing": "supplied [0,1] coordinates -> fixed ImageNet normalization",
+  "tissue_definition": {
+    "guide_channel": 0,
+    "threshold": 0.25
+  },
+  "model": {
+    "encoder_dim": 16,
+    "encoder_depth": 2,
+    "predictor_dim": 16,
+    "predictor_depth": 2
+  },
+  "batch": 2,
+  "nenc": 1,
+  "npred": 4,
+  "loss": 0.43737465143203735,
+  "slots": 320,
+  "per_target_loss": [
+    0.44956499338150024,
+    0.4314366281032562,
+    0.43739867210388184,
+    0.4310981333255768
+  ],
+  "partitions": {
+    "tissue": {
+      "slots": 100,
+      "loss_sum": 45.84076690673828
+    },
+    "background": {
+      "slots": 220,
+      "loss_sum": 94.1191177368164
+    },
+    "first_occurrence": {
+      "slots": 233,
+      "loss_sum": 102.39449310302734
+    },
+    "duplicate": {
+      "slots": 87,
+      "loss_sum": 37.56538772583008
+    }
+  },
+  "finite_online_predictor_gradients": true,
+  "teacher_gradients": false,
+  "optimizer_updates": 0,
+  "masks_redrawn": false,
+  "code_sha256": {
+    "scripts\\training_layer_diagnostic.py": "71b2ae95faf11e9324b0fbec7910f5dc26054abc48a9bcd4b7df3ddb4cea796b",
+    "scripts\\delivered_mask_audit.py": "deba34e6d576bb445ef2d1b87e8d929cca397423d94f1ddd0cccad456387d2fb",
+    "src\\train_patch.py": "17a31df44781396fcca99c30bfb84f4ac400a074f2b86ec60814512e65aa6fa1",
+    "src\\models\\vision_transformer.py": "ab0de995167c62ecb817c0be6b01a43b90c9749d1484474f349a6b4c6f973bf0"
+  }
+}

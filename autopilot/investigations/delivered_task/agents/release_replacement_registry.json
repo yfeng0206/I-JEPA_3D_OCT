@@ -1,0 +1,180 @@
+{
+  "registry_sha256": "67bf2b5602f649c19135f1b4ca525677325ffe87e3b31a08fcf062345ffa0aaa",
+  "items": [
+    {
+      "path": "figures/figS5_mask_statistics.png",
+      "sha256": "b3cd2f3642522c3aa6e6a101d9f07ec05d6a7454ac1db97696ed89e3c7e51e09",
+      "kind": "available_generator",
+      "script": "paper/genai4health2026/scripts/make_story_figures.py",
+      "entrypoint": "fig_mask_stats",
+      "inputs": [
+        "D:\\jepa_phase0\\reports\\composition_vs_auc\\composition_vs_auc_ep50.json"
+      ],
+      "identity_status": "generated_input_hashed"
+    },
+    {
+      "path": "figures/fig_delivered_task_token_maps.png",
+      "sha256": "bb3dfe97ecfacf5ea412c984015f26503911d32e67ac2ce3abbf1b64db465354",
+      "kind": "available_generator",
+      "script": "scripts/delivered_mask_figure.py",
+      "script_sha256_at_export": "19fe12a1262e163b27e9a25534975f6ca6919971c139f6b56062e8b514c3ede8",
+      "arguments": [
+        "--maps-only",
+        "--evidence",
+        "autopilot/investigations/delivered_task/evidence/mask_replay600_v2",
+        "--out",
+        "autopilot/investigations/delivered_task/evidence/mask_figure_manuscript_v2"
+      ],
+      "inputs": [
+        "autopilot/investigations/delivered_task/evidence/mask_replay600_v2/cover_legacy_bs64.jsonl",
+        "autopilot/investigations/delivered_task/evidence/mask_replay600_v2/cover_v2_guard_bs64.jsonl",
+        "results/masking/table2_geometry/mask_geometry_600slices_bs64_coverf021_seed42.json",
+        "configs/patch_cover_f021_ep25.yaml",
+        "scripts/delivered_mask_audit.py"
+      ],
+      "evidence_manifest": "autopilot/investigations/delivered_task/evidence/mask_figure_manuscript_v2/figure_manifest.json",
+      "evidence_manifest_sha256": "4111cb9012a39c00f4b4775462a5c28b6a1a991e1338958ce39835c39bba7aa3",
+      "exported_filename": "delivered_token_maps.png",
+      "expected_output_sha256": "bb3dfe97ecfacf5ea412c984015f26503911d32e67ac2ce3abbf1b64db465354",
+      "refresh_policy": "pinned reviewed export; regeneration requires a new reviewed receipt",
+      "evidence_scope": "Illustration of one selected audited failure; no aggregate chart, frequency estimate or downstream AUC assertion. Aggregate DT values are separately source-bound.",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": false,
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_delivered_task_token_maps.pdf": "fc820c751befece1ab57a61284eedb224a196b8b463e7c1e4f13704267285ab6",
+        "figures/fig_delivered_task_token_maps.svg": "b38c2590306f389b21aacadca11e8e457a8f41b424c5d37775aaf27a51fc37cd"
+      },
+      "identity_status": "generated_input_hashed"
+    },
+    {
+      "path": "auto/fig_fairness.png",
+      "sha256": "003e4867ceffa5232d211ca4baa05697a23c3a76045e292fc118c7c4e7c1ac70",
+      "kind": "available_generator",
+      "script": "autopilot/p8_make_assets.py",
+      "inputs": [
+        "p7_fairness.json",
+        "p7_gap_correlation.json"
+      ],
+      "identity_status": "generated_input_hashed"
+    },
+    {
+      "path": "figures/fig_geometry_panel.png",
+      "sha256": "d961ab632dcf907dc8c04e406c5837eba6e3fcf331b2806398cb2929c5aecb11",
+      "kind": "available_generator",
+      "script": "autopilot/make_fig_geometry_panel.py",
+      "inputs": [
+        "results/masking/table2_geometry/mask_geometry_600slices_bs1_coverf021_seed42.json"
+      ],
+      "identity_status": "generated_input_hashed"
+    },
+    {
+      "path": "auto/fig_labeleff.png",
+      "sha256": "c38adc921b2d6d95771d4656549e6c127bc7b2052dcaef9136a9a2bc29c3d082",
+      "kind": "available_generator",
+      "script": "autopilot/p8_make_assets.py",
+      "inputs": [
+        "p5_label_efficiency.json"
+      ],
+      "identity_status": "generated_input_hashed"
+    },
+    {
+      "path": "figures/fig_policy_family_token_maps.png",
+      "sha256": "876d8dbdc8d60bacec3a69906a8df239e824e3afa2ba99fb609c4deb5ed22512",
+      "kind": "available_generator",
+      "script": "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/generate_replacements.py",
+      "script_sha256_at_export": "bd6b7a2b4e7470cee7feb36fc62255bd8f420552ba6e90bd3395a1a0eeb4cef0",
+      "entrypoint": "build_token_maps",
+      "arguments": [
+        "--out",
+        "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/replacements"
+      ],
+      "inputs": [
+        "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/replacements/source_manifest.json",
+        "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/replacements/independent_validation.json"
+      ],
+      "private_fixture_sha256": "269f1c143af8e91daa179796fb0bfbd40583d91fafebbc0dbd45cba9c6c4692e",
+      "private_fixture_redistributed": false,
+      "evidence_manifest": "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/replacements/source_manifest.json",
+      "evidence_manifest_sha256": "d0b133a0a5427d1ff7ac2818118b7eb5282f0b7ab84357002d154c4c3ab0647c",
+      "independent_validator": "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/verify_replacements.py:verify_token_artists",
+      "validator_sha256_at_export": "570c44aa85dfb7b6943fdad21896a769ea6a0016cd1049de8c97b619266abc8c",
+      "review_receipt": "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/replacements/candidate_replacement_reviews.json",
+      "review_receipt_sha256": "b75a05a195de83c3c49190afbf1c2b323e2cfe264ad52be140f4f9bbbd107135",
+      "expected_output_sha256": "876d8dbdc8d60bacec3a69906a8df239e824e3afa2ba99fb609c4deb5ed22512",
+      "refresh_policy": "pinned reviewed export; regeneration requires a new reviewed receipt",
+      "evidence_scope": "One predeclared BS2 ordinal-zero engineering view: exact stored target unions, context and guide-positive cells. Source-reviewed illustration, not population geometry, clinical interpretation, AUC or retraining evidence.",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": false,
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_policy_family_token_maps.pdf": "0bdeb58eb8af7296b57d375cc17ccc938f8a602379895e37515d5879b8aa4aea",
+        "figures/fig_policy_family_token_maps.svg": "96521a8bc7b2fbbfd67132e1d432ea8410ebfd6b4ce94426161422cb777a3adb"
+      },
+      "identity_status": "generated_input_hashed"
+    },
+    {
+      "path": "figures/fig_purity_auc_ep50_fp32.png",
+      "sha256": "e9635409b46a295e1dd4da8398a08d1c3ba7014438dcb1039f8ef7485028e6c4",
+      "kind": "available_generator",
+      "script": "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/generate_replacements.py",
+      "script_sha256_at_export": "bd6b7a2b4e7470cee7feb36fc62255bd8f420552ba6e90bd3395a1a0eeb4cef0",
+      "entrypoint": "build_scatter",
+      "arguments": [
+        "--out",
+        "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/replacements"
+      ],
+      "inputs": [
+        "results/masking/table2_geometry/mask_geometry_600slices_bs1_coverf021_seed42.json",
+        "D:\\jepa_phase0\\autopilot_out\\p1_stats\\p1b_full_inventory.json"
+      ],
+      "evidence_manifest": "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/replacements/source_manifest.json",
+      "evidence_manifest_sha256": "d0b133a0a5427d1ff7ac2818118b7eb5282f0b7ab84357002d154c4c3ab0647c",
+      "independent_validator": "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/verify_replacements.py:verify_scatter_artists",
+      "validator_sha256_at_export": "570c44aa85dfb7b6943fdad21896a769ea6a0016cd1049de8c97b619266abc8c",
+      "numeric_validator_registration": "autopilot/investigations/delivered_task/evidence/legacy_figure_reviews/replacements/numeric_validator_registration.json",
+      "numeric_validator_registration_sha256": "1d8dacce11d9163965ac74049e25fdc74c713279682ac513ff209f1d9978b591",
+      "expected_output_sha256": "e9635409b46a295e1dd4da8398a08d1c3ba7014438dcb1039f8ef7485028e6c4",
+      "refresh_policy": "pinned reviewed export; regenerate and revalidate before updating identity",
+      "evidence_scope": "Quantitative five-point scatter: current geometry-source purity and unique primary frozen-probe epoch-50 fp32 AUC records. Requires independent source-to-artist and exact PNG checks; not approved by registry identity alone. No fit, uncertainty or causal ranking claim.",
+      "companions": {
+        "figures/fig_purity_auc_ep50_fp32.pdf": "75aabad698e213ab4873a93a995d3987bdcdadacb00a02a80439ea3bf69135b3",
+        "figures/fig_purity_auc_ep50_fp32.svg": "3878182eae9b1f58d8493921e970f70d810fc72df7a8369500a848cf68c57137"
+      },
+      "identity_status": "generated_input_hashed"
+    },
+    {
+      "path": "auto/fig_roc.png",
+      "sha256": "0dbe1d493de657e913431edc1d87f2cbe418828e559ee501bf8095f768767857",
+      "kind": "available_generator",
+      "script": "autopilot/p8_make_assets.py",
+      "inputs": [
+        "p1b_full_inventory.json",
+        "per-case prediction files"
+      ],
+      "identity_status": "generated_input_hashed"
+    },
+    {
+      "path": "figures/fig_specificity_ladder.png",
+      "sha256": "412e51919d5d0028429e2320dfb7819252468b54de3d9d1ad05a3327e4edace5",
+      "kind": "available_generator",
+      "script": "autopilot/make_fig_specificity_ladder.py",
+      "inputs": [
+        "paper/genai4health2026/auto/auto_numbers.tex",
+        "results/masking/table2_geometry/mask_geometry_600slices_bs1_coverf021_seed42.json"
+      ],
+      "identity_status": "generated_input_hashed"
+    },
+    {
+      "path": "auto/fig_trajectories_ci.png",
+      "sha256": "09d8d84339ea9173ae3534726ed0cdca1290eb5d205e74997e330b02a7e147e7",
+      "kind": "available_generator",
+      "script": "autopilot/p8_make_assets.py",
+      "inputs": [
+        "p1c_stats.json"
+      ],
+      "identity_status": "generated_input_hashed"
+    }
+  ],
+  "ALL_PASS": true
+}

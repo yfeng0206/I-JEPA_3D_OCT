@@ -1,0 +1,50 @@
+{
+  "status": "FINAL ISOLATED WORD/PARITY PASS; NOT PROMOTED OR PUBLISHED",
+  "main_sha256": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
+  "bib_sha256": "36dae5e6a3663be19daacd6e1af63add0e6d5da1ec4d8e1d87ee2b4b1e75ec5e",
+  "delivered_numbers_sha256": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5",
+  "review_sha256": "2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6",
+  "word_path": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-5ec7-c3ce64e6a2824229940bc487db057f20\\main_submission.docx",
+  "word_sha256": "8d2dd3f81875f00ae340f5421d647547b1683c4444d11f8c6708762bedc3045b",
+  "receipt_path": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-5ec7-c3ce64e6a2824229940bc487db057f20\\main_submission.docx.provenance.json",
+  "receipt_sha256": "0e30b3c3538e10da75b70691e706e3d5ae2e9c8fef208d81fb95bbe0f0a603c6",
+  "counts": {
+    "references": 129,
+    "table_captions": 17,
+    "figure_captions": 11,
+    "tables": 17,
+    "data_tables": 17,
+    "media": 11,
+    "bibliography": 45
+  },
+  "parity_ALL_PASS": true,
+  "pdf": {
+    "total_pages": 34,
+    "references_start_page": 9,
+    "references_heading_y": 629.18359375,
+    "main_content_pages": 9,
+    "identifying_terms_found": [],
+    "identifying_metadata": {},
+    "references_headings": [
+      [
+        9,
+        629.18359375
+      ]
+    ]
+  },
+  "live_inputs_unchanged": true,
+  "production_word_sha256": "7610d2c8137a17990381ee79843c9b9d44c73d6156f47ece3ba4fd94eff3a9ee",
+  "production_word_unchanged": true,
+  "numeric_release_approval": "Numeric gate confirmed for selected e21e... review bundle; parent full p13/promotion remains required.",
+  "publisher_ownership": "parent only",
+  "numeric_gate_confirmed": {
+    "ALL_PASS": true,
+    "source_sha256": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
+    "selected_review_path": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\paper_release_numeric_candidate.json",
+    "selected_review_sha256": "e21e113037a0e213842c937d37a867a5a3133c531a5867356b73ec89bfa54a16",
+    "report_path": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\number_coverage_report.json",
+    "report_sha256": "3f3c09cf957e8c69daca51b55023b95503efbbe18880da05d981859190aa2727",
+    "programmatically_verified_plots": 8,
+    "source_reviewed_illustrations": 2
+  }
+}

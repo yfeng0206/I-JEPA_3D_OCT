@@ -2,3 +2,13 @@
 *.wnids.txt text eol=lf
 requirements*.txt text eol=lf
 *.pth.tar filter=lfs diff=lfs merge=lfs -text
+*.pdf binary
+
+# Preserve the exact bytes recorded in the reviewed release receipts.
+autopilot/investigations/submission_refresh_20260910/** -text whitespace=cr-at-eol
+autopilot/release_assets.json -text whitespace=cr-at-eol
+paper/genai4health2026/numeric_reviews.json -text whitespace=cr-at-eol
+paper/genai4health2026/main_submission.docx.provenance.json -text whitespace=cr-at-eol
+# These generated/captured artifacts also retain their original whitespace.
+paper/genai4health2026/figures/fig_oct_*.svg -text -whitespace
+autopilot/investigations/submission_refresh_20260910/figure/octdl_primary_license.html -text -whitespace

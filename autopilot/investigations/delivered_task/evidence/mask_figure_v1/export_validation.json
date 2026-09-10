@@ -1,0 +1,34 @@
+{
+  "png": {
+    "pixels": [
+      2115,
+      1725
+    ],
+    "mode": "RGB",
+    "dpi": [
+      299.9994,
+      299.9994
+    ]
+  },
+  "pdf": {
+    "pages": 1,
+    "points": [
+      0.0,
+      0.0,
+      507.6000061035156,
+      414.0
+    ],
+    "font_types": [
+      "Type0"
+    ],
+    "embedded_raster_images": 0
+  },
+  "current_script_and_output_hashes_verified": true,
+  "headless_visual_review": "No remaining title, legend or axis-label collisions; diagram uses hatching and tissue-circle redundancy. Final manuscript scale/compliance remains parent review.",
+  "palette_limitations": "Blue/orange similar grayscale lightness; never use color alone.",
+  "targeted_pytest": {
+    "passed": 116,
+    "reported_seconds": 11.51
+  },
+  "test_sha256": "7728c2e6cc18f8c3dd9fd8a9bef7627487377fca39e9690ec26d94ca021821ee"
+}

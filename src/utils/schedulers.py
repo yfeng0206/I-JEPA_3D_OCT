@@ -8,7 +8,23 @@ returns the new value so it can be logged easily.
 import math
 
 
-class WarmupCosineSchedule:
+class _StatefulSchedule:
+    def state_dict(self):
+        return {key: value for key, value in self.__dict__.items() if key != 'optimizer'}
+
+    def load_state_dict(self, state):
+        expected = set(self.__dict__) - {'optimizer'}
+        if set(state) != expected:
+            raise ValueError("Incomplete or incompatible scheduler state")
+        for key in expected - {'_step'}:
+            if state[key] != getattr(self, key):
+                raise ValueError("Resume scheduler configuration changed: %s" % key)
+        if int(state['_step']) < 0:
+            raise ValueError("Negative scheduler step")
+        self._step = int(state['_step'])
+
+
+class WarmupCosineSchedule(_StatefulSchedule):
     """Cosine-annealing learning-rate schedule with linear warmup.
 
     During the first ``warmup_steps`` steps the LR is linearly ramped from
@@ -61,7 +77,7 @@ class WarmupCosineSchedule:
         return lr
 
 
-class CosineWDSchedule:
+class CosineWDSchedule(_StatefulSchedule):
     """Cosine weight-decay schedule.
 
     Anneals weight decay from ``ref_wd`` to ``final_wd`` over ``T_max``

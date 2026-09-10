@@ -1,0 +1,20 @@
+{
+  "producer": "autopilot\\p15_literal_snapshots.py",
+  "producer_sha256": "cc65295c24223b7e8f3386337deff25ebfabac08d897586e057f29d100ec9fdf",
+  "inputs_sha256": {
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\downstream\\finetune_random\\attentive_results.json": "468e95c41d0d7deabc2a5adb3d0315eec2b55753f29ca618261010f7e25ae072",
+    "C:\\Users\\Gary\\Desktop\\jepa\\src\\eval_downstream.py": "cad331b703a116985f2ce81e8abf02b12c300044a3825e22d4d6ab73c47b55ed",
+    "C:\\Users\\Gary\\Desktop\\jepa\\src\\models\\vision_transformer.py": "ab0de995167c62ecb817c0be6b01a43b90c9749d1484474f349a6b4c6f973bf0"
+  },
+  "operations": [
+    "Use the stored finetuned configuration (64 slices, one block), not the 100-slice frozen configuration.",
+    "AttentiveProbe/Block arithmetic: depth*(12*d*d+13*d)+d+(slices+1)*d+2*d, with d=768 for ViT-Base.",
+    "No model instantiated, trained or executed."
+  ],
+  "embed_dim": 768,
+  "num_slices": 64,
+  "depth": 1,
+  "per_block": 7087872,
+  "parameters": 7140096,
+  "parameters_millions": 7.140096
+}

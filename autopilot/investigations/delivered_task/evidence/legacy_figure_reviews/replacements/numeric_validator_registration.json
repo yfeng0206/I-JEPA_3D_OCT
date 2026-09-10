@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "producer": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\generate_replacements.py",
+  "producer_sha256": "bd6b7a2b4e7470cee7feb36fc62255bd8f420552ba6e90bd3395a1a0eeb4cef0",
+  "new_paper_path": "figures/fig_purity_auc_ep50_fp32.png",
+  "staged_path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\replacements\\fig_purity_auc_ep50_fp32.png",
+  "build_function": "build_scatter(geometry_path, inventory_path)",
+  "independent_validator": "verify_replacements.verify_scatter_artists(fig, geometry_path, inventory_path)",
+  "png_serializer": "generate_replacements.png_bytes(fig)",
+  "public_source_hashes": {
+    "geometry42": {
+      "root": "repo",
+      "path": "results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed42.json",
+      "sha256": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7"
+    },
+    "p1b_full_inventory.json": {
+      "root": "stats",
+      "path": "p1b_full_inventory.json",
+      "sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6"
+    }
+  },
+  "expected_semantic_series": [
+    {
+      "arm": "random",
+      "display_label": "Random",
+      "observed_xy": [
+        31.466034477712412,
+        0.8641212996544002
+      ],
+      "x_expression": {
+        "source": "geometry42",
+        "pointer": "/random/hidden_pct_on_anat"
+      },
+      "y_expression": {
+        "source": "p1b_full_inventory.json",
+        "pointer": "/records/34/auc"
+      },
+      "epoch": 50,
+      "precision": "fp32"
+    },
+    {
+      "arm": "oracle",
+      "display_label": "Centroid",
+      "observed_xy": [
+        40.008725298518314,
+        0.8740152718463352
+      ],
+      "x_expression": {
+        "source": "geometry42",
+        "pointer": "/oracle/hidden_pct_on_anat"
+      },
+      "y_expression": {
+        "source": "p1b_full_inventory.json",
+        "pointer": "/records/29/auc"
+      },
+      "epoch": 50,
+      "precision": "fp32"
+    },
+    {
+      "arm": "envelope",
+      "display_label": "Envelope",
+      "observed_xy": [
+        43.30093279923807,
+        0.8760634352582928
+      ],
+      "x_expression": {
+        "source": "geometry42",
+        "pointer": "/envelope/hidden_pct_on_anat"
+      },
+      "y_expression": {
+        "source": "p1b_full_inventory.json",
+        "pointer": "/records/23/auc"
+      },
+      "epoch": 50,
+      "precision": "fp32"
+    },
+    {
+      "arm": "anatomy-v2",
+      "display_label": "ANATOMY-v2",
+      "observed_xy": [
+        97.0935374668334,
+        0.8653855047304304
+      ],
+      "x_expression": {
+        "source": "geometry42",
+        "pointer": "/anatomy/hidden_pct_on_anat"
+      },
+      "y_expression": {
+        "source": "p1b_full_inventory.json",
+        "pointer": "/records/9/auc"
+      },
+      "epoch": 50,
+      "precision": "fp32"
+    },
+    {
+      "arm": "cover-f021",
+      "display_label": "COVER",
+      "observed_xy": [
+        44.18566087795465,
+        0.864281381901101
+      ],
+      "x_expression": {
+        "source": "geometry42",
+        "pointer": "/cover/hidden_pct_on_anat"
+      },
+      "y_expression": {
+        "source": "p1b_full_inventory.json",
+        "pointer": "/records/17/auc"
+      },
+      "epoch": 50,
+      "precision": "fp32"
+    }
+  ],
+  "expected_point_gids": [
+    "purity_auc__random",
+    "purity_auc__oracle",
+    "purity_auc__envelope",
+    "purity_auc__anatomy-v2",
+    "purity_auc__cover-f021"
+  ],
+  "expected_counts": {
+    "axes": 1,
+    "scatter_collections": 5,
+    "annotations": 5,
+    "lines": 0,
+    "images": 0
+  },
+  "required_checks": [
+    "strict primary frozen_probe epoch50 fp32 semantic row selection; reject duplicates",
+    "source expressions vs every marker offset and annotation anchor; no fit, reference, or interval artists",
+    "exact PNG bytes after independent artist verification; do not trust producer success or manifest values alone"
+  ],
+  "caption": "Delivered target-union tissue purity and frozen-probe test AUC for five policy families. Purity uses the current Table 2 geometry audit; all AUC points use epoch-50 fp32 probes. Centroid is the artifact arm named oracle, and ANATOMY-v2 is the shaped-policy representative; ANATOMY-v1 is not shown. Points are descriptive estimates from the evaluated continuations, with no fitted line or uncertainty intervals. The AUC axis does not start at zero. These confounded implementations do not isolate the effect of tissue purity or establish a policy ranking over retrainings.",
+  "scope": "Registration handoff, not a numeric_reviews schema method or claim of existing gate integration."
+}

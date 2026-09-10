@@ -1,0 +1,26 @@
+{
+  "baseline": "de145d7",
+  "role": "repair-release",
+  "tests": {
+    "tests": "64",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "17.241"
+  },
+  "source_hashes": {
+    ".gitignore": "e36438ea0116597b1372b89e311a7cdb67b1d7c2587149e906e83d01a2948506",
+    "autopilot/release_assets.py": "f766c9805963920edb2e0911b859a50d153c81f8c4e30fd5071c7e0f48f463f4",
+    "autopilot/p13_build_zip.py": "77529fef6364b6f0b3cc15c8bb67225534d4d8652f4d945e6b1c97de2bbdb183",
+    "autopilot/make_docx.py": "d4291d1eb225dd724c783eb9e0559178014d4cd8aa759d1a78a291f20ae652a5",
+    "autopilot/check_docx.py": "8c3cb577d07520a46973c9b8d9550f24441047f9eefe39adb5500c16533f725d",
+    "scripts/sync_overleaf.py": "107ea174f5f22c8bd1ec9118f6185125674504a00927013cb8c64c607eaf3ec8",
+    "tests/test_release_safety.py": "29d998db3981c6b21fab08313254c86deb19e33af49d76fd3a1033d96c6d96ef",
+    "tests/test_release_word_strict.py": "1c7a75d2e096924be4cfd1dda4cf649c027b344c23fa65bbf6eedaefacd776fd",
+    "tests/test_release_sync.py": "82c9169f1138bf15682770ffc5e6f7bdc1913901d69113ab891016afcc9aa644"
+  },
+  "test_report_sha256": "c7a0cde2124a9b09f6386974d228e8a7cdbb811a7318f48a8b567cb62cb0815d",
+  "full_word_report_sha256": "3fff0890973315541911b7a919f5e25bceb0c257a10d5db1544c948203506856",
+  "scope": "Five accepted critic fixes; no p15/manuscript edits; no actual Overleaf authentication",
+  "recovery_contract": "Windows exclusive handles plus no-overwrite claim/install; brief absent-path window; manifest last; retain recovery copies"
+}

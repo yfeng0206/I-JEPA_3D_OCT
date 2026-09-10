@@ -1,0 +1,1 @@
+Four token-grid maps compare historical COVER before and after collation with the opt-in correction. Historical final context contains no tissue-marked cells in the illustrative view; corrected guarded context retains them. Raw OCT pixels are absent.

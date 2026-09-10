@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "scope": "One new source-reviewed token illustration only. Scatter needs strict registered artist validation. Parent must install the new exact asset and unchanged caption before applying.",
+  "sources": {
+    "replacement_policy_token_manifest": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\replacements\\source_manifest.json",
+      "sha256": "d0b133a0a5427d1ff7ac2818118b7eb5282f0b7ab84357002d154c4c3ab0647c"
+    },
+    "replacement_policy_token_validation": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\replacements\\independent_validation.json",
+      "sha256": "8a0f73cce23dfdc4c3a1581768aa840b8f896bf89b9d08da61c6e9954b6f9f3d"
+    }
+  },
+  "figures": [
+    {
+      "path": "figures/fig_policy_family_token_maps.png",
+      "sha256": "876d8dbdc8d60bacec3a69906a8df239e824e3afa2ba99fb609c4deb5ed22512",
+      "caption_sha256": "dad5c20b338a2c3ce91fad24f386b6c0ebede2ae363f5113f77c2fc8428e6423",
+      "inputs": [
+        {
+          "source": "replacement_policy_token_manifest",
+          "pointer": "/token_maps",
+          "sha256": "d0b133a0a5427d1ff7ac2818118b7eb5282f0b7ab84357002d154c4c3ab0647c"
+        },
+        {
+          "source": "replacement_policy_token_validation",
+          "pointer": "/token_maps",
+          "sha256": "8a0f73cce23dfdc4c3a1581768aa840b8f896bf89b9d08da61c6e9954b6f9f3d"
+        }
+      ],
+      "validation": {
+        "method": "reviewed_source_illustration",
+        "reviewer": "GitHub Copilot source-figure review, 2026-09-04",
+        "quantitative_scope": "illustrative_only",
+        "limitations": "Exact stored BS2 ordinal-zero target unions, context memberships and guide-positive circles were independently checked against the frozen private fixture and byte-replayed to this PNG. This is one predeclared engineering view with a tissue proxy, not raw OCT, clinical interpretation, population geometry, downstream AUC or retraining evidence. Anatomy is the v2 representative and COVER is historical; placements are not exactly paired and unions omit duplicate loss weights. Private image/guide tensors are not distributed."
+      }
+    }
+  ]
+}

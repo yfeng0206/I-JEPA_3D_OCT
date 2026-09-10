@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "batches": 3,
+  "optimizer_updates": 3,
+  "elapsed_seconds": 6.944116600003326,
+  "overfit_test": "omitted: finite active paths, actual parameter updates and correct EMA were decisive",
+  "downstream_probe": "omitted: no discrepancy requiring new probe; no AUC inference"
+}

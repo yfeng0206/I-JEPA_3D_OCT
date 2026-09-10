@@ -1,0 +1,11 @@
+{
+  "parent_review_file": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\numeric_reviews.json",
+  "parent_review_sha256": "2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6",
+  "literal_candidate_sha256": "f7dff325a1e6456025f47e96122da6c065e1d2f7e02a0746aaf2e20d142f2657",
+  "merged_candidate": "autopilot\\investigations\\delivered_task\\evidence\\paper_numeric_candidate_from_parent.json",
+  "merged_candidate_sha256": "14f9a75efdcb19e188e7d1bf9f27baa71d52b55786fa23813189c9540284e278",
+  "parent_macros_preserved": true,
+  "parent_figures_preserved": true,
+  "parent_bytes_unchanged": true,
+  "added_literal_count": 0
+}

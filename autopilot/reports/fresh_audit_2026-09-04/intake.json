@@ -1,0 +1,50 @@
+{
+  "schema_version": "2.0",
+  "review_id": "OCT-JEPA-FRESH-20260904",
+  "material": {
+    "status": "public_preprint",
+    "contains_personal_or_sensitive_data": false
+  },
+  "authorization": {
+    "basis": "author_request",
+    "documented": true,
+    "local_processing_authorized": true,
+    "external_processing_authorized": false
+  },
+  "reviewer": {
+    "capacity": "author_requested_reader",
+    "human_accountable": true,
+    "competence_areas": ["software", "ml_methods", "statistical_reporting"],
+    "competence_limits": [
+      "Author-side AI-assisted working draft, not an independent editorial review or acceptance prediction.",
+      "No clinical validation, complete retraining, or access to private OpenReview decisions.",
+      "Earlier assistant authored revisions; this potential anchoring is disclosed to the author and prior scores are not treated as evidence."
+    ],
+    "conflict_status": "none_identified",
+    "conflicts": []
+  },
+  "venue_policy": {
+    "checked": true,
+    "peer_review_model": "double_anonymized",
+    "confidential_editor_notes_supported": false
+  },
+  "ai_use": {
+    "policy": "permitted_with_disclosure",
+    "planned": "approved_ai_assistance",
+    "permission_confirmed": true,
+    "disclosure_planned": true
+  },
+  "handling": {
+    "local_only": true,
+    "external_service_use": false,
+    "data_reuse_permitted": false,
+    "retention_rule": "public_material",
+    "deletion_or_retention_record_planned": true
+  },
+  "scope": {
+    "manuscript_type": "retrospective_ml_representation_study",
+    "requested_focus": ["claims", "statistics", "code", "artifacts", "versions", "delivery"],
+    "out_of_scope": ["clinical_deployment", "new_training", "publishing", "unused_slice_pipeline"],
+    "specialist_review_needed": []
+  }
+}

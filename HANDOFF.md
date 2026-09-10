@@ -7,25 +7,30 @@ Inventory generated: 2026-08-26T16:19:27-07:00
 
 ## Read this first
 
-Every number in the manuscript resolves through a LaTeX macro in
-`paper/genai4health2026/auto/auto_numbers.tex`, which is regenerated from
-saved per-case test predictions. No number is typed into the prose. That
-means you can replace an experiment and the entire paper - text, tables,
-figures - updates itself.
+The tables below identify saved prediction artifacts and their recorded status.
+Many manuscript results are generated through
+`paper/genai4health2026/auto/auto_numbers.tex`; protocol, geometry and
+literature values also need explicit source review. A resolving macro is
+not proof of a correct claim, and an old AUC is not a result of fixed code.
+See `VERSION_BOARD.md` and `autopilot/investigations/delivered_task/BOARD.md`
+for the current engineering and paper state.
 
-To regenerate everything after adding or replacing a run:
+The release workflow after reviewing new or changed evidence:
 
 ```
 D:\jepa_phase0\.venv\Scripts\python.exe autopilot\refresh_all.py
 ```
 
-That rebuilds macros, tables, figures, the PDF, and the validated Overleaf
-ZIP. `autopilot/check_manuscript.py` runs as a gate and fails the build on
-undefined macros, dangling references, banned phrases, or hand-typed numbers.
+Review the workflow's explicit coverage and asset manifest before publishing.
+Externally produced figures are retained inputs unless their producer is
+registered. Preserve the prior release if any required check fails.
+Generated Word copies must also preserve collaborator edits and source references.
 
 ## Placeholders currently in the paper
 
-None. Every macro in the paper currently resolves to a measured value.
+No red pending macros detected by this inventory helper.
+This is not a claim that every macro is measured: explicit `not run`
+and dash markers, such as the corrected-COVER slot, remain non-results.
 
 ## Every probe behind the paper
 
@@ -107,11 +112,12 @@ None. Every macro in the paper currently resolves to a measured value.
 
 ### Priority: the corrected COVER arm
 
-This is the single highest-value contribution to this paper. The shipped
+A corrected comparative run is subsequent work requiring approval. The historical
 `cover-f021` arm never realised the coverage it was configured for: the
 collator truncates every predictor target to the shortest in the microbatch
-AFTER the sampler has chosen placement, so delivered masks hide about 73.1
-percent of anatomy against `envelope`'s 77.6. Full account in
+AFTER the sampler has chosen placement, changing the delivered task.
+Use the versioned real-data diagnostic rather than unscoped geometry values.
+The original account is in
 `autopilot/COVER_AUDIT.md`.
 
 What a corrected run needs:
@@ -119,11 +125,12 @@ What a corrected run needs:
 1. Score and enforce coverage against the prefix-truncated shapes that
    actually reach the model, not the full rectangles. The truncation is at
    `src/masks/curriculum.py`, the `global_min_pred` branch.
-2. Log coverage again AFTER collation. It is currently logged before, which
-   is why every training log reported the intended figure.
+2. Measure targets and actual encoder context AFTER collation, with explicit
+   counters for infeasible constraints and random/background supervision.
 3. Restart from the shared epoch-25 ancestor. Patching mid-trajectory would
-   splice two masking policies into one curve. Roughly 82 GPU-hours at the
-   measured 57.7 min/epoch, plus about 8 hours of probes.
+   splice two masking policies into one curve. Do not start sustained training
+   merely to complete the workshop: retain valid historical evidence and
+   label the corrected comparison as future work when unrun.
 
 Where to put the results:
 
@@ -134,9 +141,8 @@ D:\jepa_phase0\runs\frozen_meanpool_coverfix_ep<N>\test_predictions.npz
 Then run `refresh_all.py`. The paper has an inert slot for this: the macros
 `\AUCCoverFixed*` and `\CoverFixedStatus` currently render `---` and
 `not run`, and the appendix states plainly that the over-coverage question
-is OPEN. When your run lands they resolve and that paragraph activates. The
-paper does not assert the conclusion your data is expected to support, and
-it should not be edited to do so before the data exists.
+is OPEN. A new result needs explicit lineage, status, source mapping and
+an independently reviewed interpretation before those entries can change.
 
 ### Any other run
 
@@ -148,13 +154,13 @@ the tables above, for example:
 D:\jepa_phase0\runs\frozen_meanpool_<arm>_ep<N>\test_predictions.npz
 ```
 
-Then run `refresh_all.py`. The new probe is picked up automatically, enters
-the inventory, and any macro it satisfies stops rendering as a placeholder.
+Confirm that the inventory recognizes the new arm, epoch and precision,
+and that the required source mapping is complete before invoking refresh.
 
-Two rules the build enforces, so you do not have to remember them:
+Two required interpretation rules:
 
-1. Comparisons are epoch-matched and precision-matched. A probe compared
-   across mismatched epochs or precisions is rejected, not silently used.
+1. Comparisons must be epoch- and precision-matched unless a separately
+   labeled sensitivity analysis explicitly studies that difference.
 2. No arm's numbers may ever be reported under another arm's name. Each
    AUC stays bound to the artifact that produced it, listed above.
 
@@ -167,7 +173,7 @@ Two rules the build enforces, so you do not have to remember them:
 - Measured mask geometry (600 slices) reports that `envelope` hides more
   anatomy than `cover` while keeping less context, which inverts COVER's
   design intent. The audit covers this discrepancy.
-- Each policy was pretrained once. Probe-seed variation is bounded at
-  0.0003 to 0.0018, but those are technical replicates, not independent
-  pretraining runs. This is the study's principal limitation.
+- Each reported policy has one completed pretraining continuation. There
+  is no completed continuation-level replication result. The earlier
+  probe-seed variance claim is not supported by retained repeat artifacts.
 

@@ -1,0 +1,169 @@
+{
+  "selection": "first TWO predeclared existing600 Training observations; exact audited bs2 masks; no outcome selection",
+  "observations": 2,
+  "precision": "fp32",
+  "source_results_sha256": "ae132f65d6d711177bdca819abcce0e4d2114d485512a596cf4c35afc269dde8",
+  "source_fixture_sha256": "269f1c143af8e91daa179796fb0bfbd40583d91fafebbc0dbd45cba9c6c4692e",
+  "policies": [
+    {
+      "policy": "cover_legacy",
+      "scalar_loss": 0.046599842607975006,
+      "context_cells_per_image": [
+        126,
+        126
+      ],
+      "final_context_tissue_per_image": [
+        18,
+        17
+      ],
+      "target_complement_tissue_per_image": [
+        22,
+        18
+      ],
+      "partitions": {
+        "tissue": {
+          "slots": 177,
+          "contribution_to_scalar": 0.026127094455296172
+        },
+        "background": {
+          "slots": 143,
+          "contribution_to_scalar": 0.020472745566803497
+        },
+        "tissue_first": {
+          "slots": 122,
+          "contribution_to_scalar": 0.01721671224804595
+        },
+        "tissue_repeat": {
+          "slots": 55,
+          "contribution_to_scalar": 0.008910382207250222
+        },
+        "background_first": {
+          "slots": 122,
+          "contribution_to_scalar": 0.01719652295432752
+        },
+        "background_repeat": {
+          "slots": 21,
+          "contribution_to_scalar": 0.0032762226124759763
+        }
+      },
+      "random_fill": {
+        "unit": "delivered target blocks, NOT curriculum image draws",
+        "blocks": 1,
+        "block_denominator": 8,
+        "images_with_no_random_fill": 1,
+        "image_denominator": 2,
+        "details": [
+          {
+            "row_ordinal": 0,
+            "target_group": 3,
+            "source": "random_legal",
+            "tissue_slots": 14,
+            "background_slots": 26,
+            "actual_mean_smooth_l1": 0.06196470411960036
+          }
+        ]
+      }
+    },
+    {
+      "policy": "cover_v2",
+      "scalar_loss": 0.09030718356370926,
+      "context_cells_per_image": [
+        132,
+        132
+      ],
+      "final_context_tissue_per_image": [
+        18,
+        17
+      ],
+      "target_complement_tissue_per_image": [
+        18,
+        17
+      ],
+      "partitions": {
+        "tissue": {
+          "slots": 178,
+          "contribution_to_scalar": 0.04941364881815389
+        },
+        "background": {
+          "slots": 142,
+          "contribution_to_scalar": 0.0408935351704713
+        },
+        "tissue_first": {
+          "slots": 127,
+          "contribution_to_scalar": 0.036598318663891405
+        },
+        "tissue_repeat": {
+          "slots": 51,
+          "contribution_to_scalar": 0.012815330154262483
+        },
+        "background_first": {
+          "slots": 115,
+          "contribution_to_scalar": 0.035963958923821336
+        },
+        "background_repeat": {
+          "slots": 27,
+          "contribution_to_scalar": 0.004929576246649958
+        }
+      },
+      "random_fill": {
+        "unit": "delivered target blocks, NOT curriculum image draws",
+        "blocks": 0,
+        "block_denominator": 8,
+        "images_with_no_random_fill": 2,
+        "image_denominator": 2,
+        "details": []
+      }
+    },
+    {
+      "policy": "cover_v2_guard",
+      "scalar_loss": 0.09030718356370926,
+      "context_cells_per_image": [
+        132,
+        132
+      ],
+      "final_context_tissue_per_image": [
+        18,
+        17
+      ],
+      "target_complement_tissue_per_image": [
+        18,
+        17
+      ],
+      "partitions": {
+        "tissue": {
+          "slots": 178,
+          "contribution_to_scalar": 0.04941364881815389
+        },
+        "background": {
+          "slots": 142,
+          "contribution_to_scalar": 0.0408935351704713
+        },
+        "tissue_first": {
+          "slots": 127,
+          "contribution_to_scalar": 0.036598318663891405
+        },
+        "tissue_repeat": {
+          "slots": 51,
+          "contribution_to_scalar": 0.012815330154262483
+        },
+        "background_first": {
+          "slots": 115,
+          "contribution_to_scalar": 0.035963958923821336
+        },
+        "background_repeat": {
+          "slots": 27,
+          "contribution_to_scalar": 0.004929576246649958
+        }
+      },
+      "random_fill": {
+        "unit": "delivered target blocks, NOT curriculum image draws",
+        "blocks": 0,
+        "block_denominator": 8,
+        "images_with_no_random_fill": 2,
+        "image_denominator": 2,
+        "details": []
+      }
+    }
+  ],
+  "guard_modified_images": 0
+}

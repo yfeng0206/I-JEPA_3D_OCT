@@ -3,16 +3,15 @@ Downstream glaucoma classification using pretrained I-JEPA encoder.
 
 Supports both patch-level and slice-level pretrained models:
   - Patch-level: each slice is encoded by the frozen ViT, mean-pooled to one
-    token per slice, then a trainable attentive probe (single transformer
-    block with learnable [CLS] token) aggregates across slices, followed by
-    a linear classifier.  Follows the I-JEPA evaluation protocol (Assran
-    et al., 2023).
+    token per slice, then the configured probe aggregates across slices.
+    The canonical frozen protocol uses parameter-free MeanPool + LinearHead.
+    Attentive probes remain available for historical-config compatibility.
   - Slice-level: slices are encoded by frozen ConvNeXt + frozen slice encoder,
     then mean-pooled and classified by a trainable MLP head.
 
 Usage:
-    # Patch-level pretrained -> AttentiveProbe + Linear
-    python eval_downstream.py --config configs/downstream_patch.yaml
+    # Canonical frozen MeanPool + LinearHead, fp32, verified source-aware cache
+    python eval_downstream.py --config configs/downstream_frozen_meanpool_canonical.yaml
 
     # Slice-level pretrained -> MLP only
     python eval_downstream.py --config configs/downstream_slice.yaml
@@ -28,6 +27,7 @@ import os
 import random
 import sys
 import time
+import warnings
 
 import numpy as np
 import torch
@@ -102,7 +102,7 @@ def _build_probe(probe_type, num_slices, embed_dim, model_cfg, device):
         )
     if probe_type == 'mean_pool':
         probe = MeanPool(num_slices=num_slices, embed_dim=embed_dim).to(device)
-        desc = 'mean_pool (0 params, ablation floor)'
+        desc = 'mean_pool (0 params)'
     elif probe_type == 'cross_attn_pool':
         head_dim = model_cfg.get('probe_head_dim', 64)
         probe = CrossAttnPool(
@@ -124,7 +124,7 @@ try:
 except ImportError:
     FrozenFeatureExtractor = None  # Slice-level approach (archived)
 from src.datasets.oct_volumes import OCTVolumeDataset
-from src.helper import _VIT_CONFIGS
+from src.helper import _VIT_CONFIGS, optimizer_step
 from src.utils.distributed import init_distributed
 
 
@@ -339,38 +339,128 @@ def evaluate(probe, head, loader, criterion, device, return_predictions=False):
 # Feature pre-computation (one-time cost, cached to disk)
 # ---------------------------------------------------------------------------
 
+def file_sha256(path):
+    digest = hashlib.sha256()
+    with open(path, 'rb') as stream:
+        for block in iter(lambda: stream.read(8 << 20), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _identity_digest(identity):
+    return hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(',', ':'),
+                                     default=str).encode('utf-8')).hexdigest()
+
+
+def dataset_order_manifest(dataset, split, encoder_source=None):
+    """Local provenance; file stems identify source cases, not verified patients."""
+    files = []
+    for path in dataset.file_paths:
+        stat = os.stat(path)
+        files.append({'name': os.path.basename(path), 'bytes': stat.st_size,
+                      'mtime_ns': stat.st_mtime_ns})
+    ids = [hashlib.sha256(os.path.splitext(item['name'])[0].encode('utf-8')).hexdigest()
+           for item in files]
+    if len(set(ids)) != len(ids):
+        raise ValueError("Duplicate source-case identifiers in %s" % split)
+    return {
+        'schema_version': 2,
+        'dataset_root': os.path.realpath(dataset.data_dir),
+        'split': split, 'ordered_files': files, 'subject_ids': ids,
+        'subject_id_scheme': 'sha256(source_file_stem); case identity, patient linkage unverified',
+        'dataset_identity_kind': 'ordered_paths_sizes_mtimes_not_volume_content_hashes',
+        'encoder_source': encoder_source,
+        'num_slices': dataset.num_slices, 'slice_size': dataset.slice_size,
+        'slice_indices': dataset.slice_indices.tolist(),
+        'preprocessing': 'PIL-bilinear-RGB/ImageNet-normalize/patch-token-mean-v1',
+        'dataset_code_sha256': file_sha256(sys.modules[OCTVolumeDataset.__module__].__file__),
+        'model_code_sha256': file_sha256(sys.modules[VisionTransformer.__module__].__file__),
+    }
+
+
+def _encoder_source(encoder, source_identity):
+    if source_identity is not None:
+        return source_identity
+    digest = hashlib.sha256()
+    for name, tensor in encoder.state_dict().items():
+        digest.update(name.encode('utf-8'))
+        digest.update(str((tuple(tensor.shape), tensor.dtype)).encode('utf-8'))
+        digest.update(tensor.detach().cpu().contiguous().numpy().tobytes())
+    return {'state_dict_sha256': digest.hexdigest(), 'class': type(encoder).__name__}
+
+
+def _validate_feature_cache(data, manifest, allow_unverified=False):
+    expected_n = len(manifest['subject_ids'])
+    features, labels = data['features'], data['labels']
+    if (features.ndim != 3 or features.shape[:2] != (expected_n, manifest['num_slices'])
+            or labels.shape != (expected_n,)):
+        raise ValueError("Feature cache shape/order length mismatch")
+    if not torch.isfinite(features).all() or not torch.isfinite(labels).all():
+        raise ValueError("Feature cache contains nonfinite values")
+    if not torch.all((labels == 0) | (labels == 1)):
+        raise ValueError("Feature cache has invalid binary labels")
+    if data.get('source_manifest') != manifest and not allow_unverified:
+        raise ValueError("Feature cache source identity mismatch or missing provenance")
+    return features, labels
+
+
+def save_predictions(path, labels, probs, manifest):
+    if not len(labels) == len(probs) == len(manifest['subject_ids']):
+        raise ValueError("Prediction/subject-order length mismatch")
+    np.savez(path, labels=labels, probs=probs,
+             subject_ids=np.asarray(manifest['subject_ids']),
+             row_index=np.arange(len(labels)),
+             subject_order_verified=np.asarray('legacy_cache_unverified' not in manifest),
+             source_manifest_sha256=np.asarray(_identity_digest(manifest)))
+    with open(os.path.splitext(path)[0] + '.manifest.json', 'w', encoding='utf-8') as stream:
+        json.dump(manifest, stream, indent=2)
+
+
 def precompute_features(encoder, data_dir, split, num_slices, slice_size,
                         device, chunk_size=50, cache_dir=None, use_amp=True,
-                        cache_key=''):
+                        cache_key='', source_identity=None, return_manifest=False,
+                        legacy_cache_policy='reject', num_workers=4):
     """Encode all volumes in a split with the frozen ViT and cache to disk.
 
     Returns:
-        features: (N, num_slices, embed_dim) float32
+        features: (N, num_slices, embed_dim), encoder-output dtype (AMP or fp32)
         labels:   (N,) long
     """
+    if legacy_cache_policy not in ('reject', 'allow_unverified'):
+        raise ValueError("Unknown legacy_cache_policy")
+    dataset = OCTVolumeDataset(
+        os.path.join(data_dir, split), num_slices=num_slices,
+        slice_size=slice_size, return_label=True)
+    manifest = dataset_order_manifest(dataset, split, _encoder_source(encoder, source_identity))
+    manifest.update({'use_amp': bool(use_amp), 'chunk_size': chunk_size,
+                     'torch_version': torch.__version__})
     cache_path = None
     if cache_dir:
-        # The key must contain everything that determines the features.
-        # Precision matters (an fp16 cache silently served an fp32 run), but so
-        # does the ENCODER: keeping output_dir while pointing at a different
-        # checkpoint would otherwise evaluate a stale encoder's features and
-        # report them as the new one's.
         suffix = 'amp' if use_amp else 'fp32'
         parts = [split, 's%d' % num_slices, 'r%d' % slice_size, suffix]
         if cache_key:
             parts.append(cache_key)
-        cache_path = os.path.join(cache_dir, '%s.pt' % '_'.join(parts))
+        legacy_path = os.path.join(cache_dir, '%s.pt' % '_'.join(parts))
+        cache_path = os.path.join(cache_dir, '%s_v2_%s.pt' %
+                                  (split, _identity_digest(manifest)))
         if os.path.exists(cache_path):
             print('  Loading cached %s features from %s' % (split, cache_path))
-            data = torch.load(cache_path, map_location='cpu')
-            return data['features'], data['labels']
+            data = torch.load(cache_path, map_location='cpu', weights_only=False)
+            result = _validate_feature_cache(data, manifest)
+            return result + (manifest,) if return_manifest else result
+        if os.path.exists(legacy_path):
+            if legacy_cache_policy == 'reject':
+                raise ValueError("Legacy cache lacks verified source identity: %s. "
+                                 "Use a fresh output directory or explicitly allow_unverified."
+                                 % legacy_path)
+            warnings.warn("Using legacy cache with unverified source/order: %s" % legacy_path)
+            data = torch.load(legacy_path, map_location='cpu', weights_only=False)
+            result = _validate_feature_cache(data, manifest, allow_unverified=True)
+            manifest['legacy_cache_unverified'] = os.path.realpath(legacy_path)
+            return result + (manifest,) if return_manifest else result
 
-    split_dir = os.path.join(data_dir, split)
-    dataset = OCTVolumeDataset(
-        split_dir, num_slices=num_slices, slice_size=slice_size, return_label=True,
-    )
     loader = DataLoader(dataset, batch_size=1, shuffle=False,
-                        num_workers=4, pin_memory=True)
+                        num_workers=num_workers, pin_memory=True)
 
     all_features = []
     all_labels = []
@@ -386,7 +476,7 @@ def precompute_features(encoder, data_dir, split, num_slices, slice_size,
             for j in range(0, flat.size(0), chunk_size):
                 chunk = flat[j:j + chunk_size]
                 chunk = imagenet_normalize(chunk)  # match pretraining distribution
-                with amp_ctx():
+                with autocast(enabled=use_amp):
                     out = encoder(chunk)      # (chunk, patches, D)
                 parts.append(out.mean(dim=1).cpu())  # (chunk, D)
 
@@ -406,11 +496,13 @@ def precompute_features(encoder, data_dir, split, num_slices, slice_size,
 
     if cache_path:
         os.makedirs(cache_dir, exist_ok=True)
-        torch.save({'features': features, 'labels': labels}, cache_path)
+        torch.save({'features': features, 'labels': labels,
+                    'source_manifest': manifest}, cache_path)
         size_mb = os.path.getsize(cache_path) / (1024 * 1024)
         print('  Cached to %s (%.1f MB)' % (cache_path, size_mb))
 
-    return features, labels
+    result = (features, labels)
+    return result + (manifest,) if return_manifest else result
 
 
 # ---------------------------------------------------------------------------
@@ -495,7 +587,7 @@ def run_patch_downstream(config, device):
 
     Protocol:
       1. Pre-compute: encode all volumes with frozen ViT, cache to disk
-      2. Train: AttentiveProbe (2 blocks) + LinearHead on cached features
+      2. Train: configured pooling probe + classification head on cached features
       3. Early stop on val AUC, patience=5
       4. Evaluate best model on test set, report test AUC
     """
@@ -508,7 +600,7 @@ def run_patch_downstream(config, device):
     os.makedirs(output_dir, exist_ok=True)
 
     print('=' * 70)
-    print('Downstream Classification — I-JEPA Attentive Probe')
+    print('Downstream Classification — Frozen Encoder Probe')
     print('=' * 70)
 
     # ---- Load pretrained encoder -------------------------------------------
@@ -523,7 +615,7 @@ def run_patch_downstream(config, device):
 
     ckpt_path = model_cfg['encoder_checkpoint']
     print('Loading encoder from %s ...' % ckpt_path)
-    ckpt = torch.load(ckpt_path, map_location=device)
+    ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
     encoder.load_state_dict(ckpt['target_encoder'])
     print('  Loaded target_encoder weights (epoch %d)' % ckpt.get('epoch', -1))
 
@@ -546,18 +638,28 @@ def run_patch_downstream(config, device):
     cache_dir = os.path.join(output_dir, 'feature_cache')
     # Identify the cache by the encoder that produced it, so a config that
     # swaps checkpoints but keeps output_dir cannot reuse stale features.
-    enc_key = hashlib.sha256(
-        open(ckpt_path, 'rb').read(1 << 20)).hexdigest()[:12]
+    source = {'checkpoint_path': os.path.realpath(ckpt_path),
+              'checkpoint_sha256': file_sha256(ckpt_path),
+              'checkpoint_component': 'target_encoder',
+              'model_config': model_cfg}
+    # Recognize the historical short-prefix filename only for explicit legacy
+    # rejection/opt-in. The v2 cache uses the complete source manifest.
+    with open(ckpt_path, 'rb') as stream:
+        enc_key = hashlib.sha256(stream.read(1 << 20)).hexdigest()[:12]
+    cache_kwargs = dict(
+        use_amp=use_amp, cache_key=enc_key, source_identity=source, return_manifest=True,
+        legacy_cache_policy=data_cfg.get('legacy_cache_policy', 'reject'),
+        num_workers=data_cfg.get('num_workers', 4))
 
-    train_feats, train_labels = precompute_features(
+    train_feats, train_labels, train_manifest = precompute_features(
         encoder, data_cfg['data_dir'], 'Training',
-        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp, cache_key=enc_key)
-    val_feats, val_labels = precompute_features(
+        num_slices, slice_size, device, chunk_size, cache_dir, **cache_kwargs)
+    val_feats, val_labels, val_manifest = precompute_features(
         encoder, data_cfg['data_dir'], 'Validation',
-        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp, cache_key=enc_key)
-    test_feats, test_labels = precompute_features(
+        num_slices, slice_size, device, chunk_size, cache_dir, **cache_kwargs)
+    test_feats, test_labels, test_manifest = precompute_features(
         encoder, data_cfg['data_dir'], 'Test',
-        num_slices, slice_size, device, chunk_size, cache_dir, use_amp=use_amp, cache_key=enc_key)
+        num_slices, slice_size, device, chunk_size, cache_dir, **cache_kwargs)
 
     # Free encoder from GPU after feature extraction
     encoder.cpu()
@@ -652,9 +754,8 @@ def run_patch_downstream(config, device):
 
             optimizer.zero_grad(set_to_none=True)
             scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-            scheduler.step()
+            if optimizer_step(optimizer, scaler):
+                scheduler.step()
 
             total_loss += loss.item() * labels.size(0)
             n_samples += labels.size(0)
@@ -744,12 +845,19 @@ def run_patch_downstream(config, device):
 
     # ---- Save predictions --------------------------------------------------
     if test_labels is not None:
-        np.savez(os.path.join(output_dir, 'test_predictions.npz'),
-                 labels=test_labels, probs=test_probs)
+        prediction_source = {
+            'head_checkpoint_sha256': file_sha256(best_path),
+            'model_config': model_cfg, 'training_config': train_cfg,
+            'probe_type': probe_type, 'head_type': head_type,
+        }
+        test_manifest = dict(test_manifest, prediction_source=prediction_source)
+        val_manifest = dict(val_manifest, prediction_source=prediction_source)
+        save_predictions(os.path.join(output_dir, 'test_predictions.npz'),
+                         test_labels, test_probs, test_manifest)
         print('  Saved test_predictions.npz (%d samples)' % len(test_labels))
     if val_labels_final is not None:
-        np.savez(os.path.join(output_dir, 'val_predictions.npz'),
-                 labels=val_labels_final, probs=val_probs_final)
+        save_predictions(os.path.join(output_dir, 'val_predictions.npz'),
+                         val_labels_final, val_probs_final, val_manifest)
         print('  Saved val_predictions.npz (%d samples)' % len(val_labels_final))
 
     # ---- Generate diagnostic plots -----------------------------------------
@@ -842,7 +950,7 @@ def run_slice_downstream(config, device):
 
     ckpt_path = model_cfg['slice_encoder_checkpoint']
     print('Loading slice encoder from %s ...' % ckpt_path)
-    ckpt = torch.load(ckpt_path, map_location=device)
+    ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
     slice_encoder.load_state_dict(ckpt['target_encoder'])
     print('  Loaded target_encoder weights (epoch %d)' % ckpt.get('epoch', -1))
 
@@ -928,9 +1036,8 @@ def run_slice_downstream(config, device):
 
             optimizer.zero_grad(set_to_none=True)
             scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-            scheduler.step()
+            if optimizer_step(optimizer, scaler):
+                scheduler.step()
 
             total_loss += loss.item() * labels.size(0)
             n_samples += labels.size(0)
@@ -1114,7 +1221,7 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
     ckpt_path = model_cfg['encoder_checkpoint']
     if is_main:
         print('Loading encoder from %s ...' % ckpt_path)
-    ckpt = torch.load(ckpt_path, map_location='cpu')
+    ckpt = torch.load(ckpt_path, map_location='cpu', weights_only=False)
     encoder.load_state_dict(ckpt['target_encoder'])
     if is_main:
         print('  Loaded target_encoder weights (epoch %d)' % ckpt.get('epoch', -1))
@@ -1203,7 +1310,7 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
             print('  Optimizer: AdamW + flat (encoder=%.2e, probe=%.2e, head=%.2e)'
                   % (param_groups[0]['lr'], param_groups[-2]['lr'], param_groups[-1]['lr']))
     optimizer = torch.optim.AdamW(param_groups, weight_decay=train_cfg.get('weight_decay', 0.01))
-    steps_per_epoch = len(train_loader) // accum_steps
+    steps_per_epoch = math.ceil(len(train_loader) / accum_steps)
     scheduler = cosine_schedule_with_warmup(
         optimizer, train_cfg.get('warmup_epochs', 3),
         train_cfg['epochs'], max(steps_per_epoch, 1),
@@ -1242,17 +1349,17 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
 
             with amp_ctx():
                 logits = model(volumes)
-                loss = criterion(logits, labels) / accum_steps
+                window_size = min(accum_steps, len(train_loader) - (step // accum_steps) * accum_steps)
+                loss = criterion(logits, labels) / window_size
 
             scaler.scale(loss).backward()
 
             if (step + 1) % accum_steps == 0 or (step + 1) == len(train_loader):
-                scaler.step(optimizer)
-                scaler.update()
+                if optimizer_step(optimizer, scaler):
+                    scheduler.step()
                 optimizer.zero_grad(set_to_none=True)
-                scheduler.step()
 
-            total_loss += loss.item() * accum_steps * labels.size(0)
+            total_loss += loss.item() * window_size * labels.size(0)
             n_samples += labels.size(0)
 
         elapsed = time.time() - t0
@@ -1371,8 +1478,15 @@ def run_patch_finetune(config, device, rank=0, world_size=1):
                   % (sensitivity, specificity))
 
         # Save predictions
-        np.savez(os.path.join(output_dir, 'test_predictions.npz'),
-                 labels=test_labels, probs=test_probs)
+        test_manifest = dataset_order_manifest(
+            test_dataset, 'Test',
+            {'checkpoint_path': os.path.realpath(best_path),
+             'checkpoint_sha256': file_sha256(best_path) if os.path.isfile(best_path) else None,
+             'selected_checkpoint_exists': os.path.isfile(best_path),
+             'model_config': model_cfg, 'training_config': train_cfg})
+        test_manifest['use_amp'] = _USE_AMP
+        save_predictions(os.path.join(output_dir, 'test_predictions.npz'),
+                         test_labels, test_probs, test_manifest)
         print('  Saved test_predictions.npz (%d samples)' % len(test_labels))
 
         # Diagnostic plots
@@ -1454,8 +1568,3 @@ if __name__ == '__main__':
                         help='Path to YAML config file')
     args = parser.parse_args()
     main(args)
-
-
-
-
-

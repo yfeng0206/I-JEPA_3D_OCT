@@ -1,0 +1,530 @@
+{
+    "image_sha256":  "7493287e756cfc7f2739bfed1bc28ad1abfcefb775137f8af5159df04afb4fe1",
+    "width":  2666,
+    "language":  "en-US",
+    "limitations":  "OCR is fallible; extracted text is not numeric validation or proof of image provenance.",
+    "method":  "Windows.Media.Ocr, local CPU, no desktop display",
+    "lines":  [
+                  {
+                      "text":  "5 slices (volume idx 2652) - one colour per predictor block, production samplers",
+                      "words":  [
+                                    {
+                                        "y":  10,
+                                        "height":  18,
+                                        "width":  11,
+                                        "text":  "5",
+                                        "x":  1054
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  18,
+                                        "width":  61,
+                                        "text":  "slices",
+                                        "x":  1075
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  22,
+                                        "width":  91,
+                                        "text":  "(volume",
+                                        "x":  1146
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  18,
+                                        "width":  32,
+                                        "text":  "idx",
+                                        "x":  1247
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  22,
+                                        "width":  66,
+                                        "text":  "2652)",
+                                        "x":  1288
+                                    },
+                                    {
+                                        "y":  20,
+                                        "height":  3,
+                                        "width":  7,
+                                        "text":  "-",
+                                        "x":  1364
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  14,
+                                        "width":  41,
+                                        "text":  "one",
+                                        "x":  1379
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  18,
+                                        "width":  71,
+                                        "text":  "colour",
+                                        "x":  1429
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  19,
+                                        "width":  37,
+                                        "text":  "per",
+                                        "x":  1508
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  23,
+                                        "width":  102,
+                                        "text":  "predictor",
+                                        "x":  1553
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  21,
+                                        "width":  65,
+                                        "text":  "block,",
+                                        "x":  1663
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  23,
+                                        "width":  121,
+                                        "text":  "production",
+                                        "x":  1738
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  23,
+                                        "width":  102,
+                                        "text":  "samplers",
+                                        "x":  1869
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "B-scan + anatomy",
+                      "words":  [
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  55,
+                                        "text":  "B-scan",
+                                        "x":  130
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  12,
+                                        "text":  "+",
+                                        "x":  192
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  16,
+                                        "width":  74,
+                                        "text":  "anatomy",
+                                        "x":  211
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "random",
+                      "words":  [
+                                    {
+                                        "y":  113,
+                                        "height":  12,
+                                        "width":  60,
+                                        "text":  "random",
+                                        "x":  556
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "AUC 0.8746 (eplOO)",
+                      "words":  [
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  33,
+                                        "text":  "AUC",
+                                        "x":  506
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  53,
+                                        "text":  "0.8746",
+                                        "x":  546
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  15,
+                                        "width":  60,
+                                        "text":  "(eplOO)",
+                                        "x":  606
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "All masking arms on the SAME",
+                      "words":  [
+                                    {
+                                        "y":  10,
+                                        "height":  18,
+                                        "width":  27,
+                                        "text":  "All",
+                                        "x":  695
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  23,
+                                        "width":  93,
+                                        "text":  "masking",
+                                        "x":  732
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  14,
+                                        "width":  55,
+                                        "text":  "arms",
+                                        "x":  835
+                                    },
+                                    {
+                                        "y":  14,
+                                        "height":  14,
+                                        "width":  26,
+                                        "text":  "on",
+                                        "x":  899
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  18,
+                                        "width":  37,
+                                        "text":  "the",
+                                        "x":  934
+                                    },
+                                    {
+                                        "y":  10,
+                                        "height":  18,
+                                        "width":  63,
+                                        "text":  "SAME",
+                                        "x":  980
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "oracle",
+                      "words":  [
+                                    {
+                                        "y":  113,
+                                        "height":  12,
+                                        "width":  49,
+                                        "text":  "oracle",
+                                        "x":  941
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "AUC 0.8855 (ep100)",
+                      "words":  [
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  34,
+                                        "text":  "AUC",
+                                        "x":  885
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  53,
+                                        "text":  "0.8855",
+                                        "x":  925
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  16,
+                                        "width":  60,
+                                        "text":  "(ep100)",
+                                        "x":  985
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "pred block O",
+                      "words":  [
+                                    {
+                                        "y":  1937,
+                                        "height":  18,
+                                        "width":  36,
+                                        "text":  "pred",
+                                        "x":  907
+                                    },
+                                    {
+                                        "y":  1937,
+                                        "height":  14,
+                                        "width":  43,
+                                        "text":  "block",
+                                        "x":  951
+                                    },
+                                    {
+                                        "y":  1938,
+                                        "height":  13,
+                                        "width":  10,
+                                        "text":  "O",
+                                        "x":  1000
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "anatomy-v2",
+                      "words":  [
+                                    {
+                                        "y":  113,
+                                        "height":  15,
+                                        "width":  93,
+                                        "text":  "anatomy-v2",
+                                        "x":  2057
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "AUC 0.8683 (ep40)",
+                      "words":  [
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  33,
+                                        "text":  "AUC",
+                                        "x":  2029
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  53,
+                                        "text":  "0.8683",
+                                        "x":  2068
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  16,
+                                        "width":  50,
+                                        "text":  "(ep40)",
+                                        "x":  2128
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "cover-f021",
+                      "words":  [
+                                    {
+                                        "y":  113,
+                                        "height":  12,
+                                        "width":  84,
+                                        "text":  "cover-f021",
+                                        "x":  2441
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "AUC 0.8643 (ep50)",
+                      "words":  [
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  33,
+                                        "text":  "AUC",
+                                        "x":  2408
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  54,
+                                        "text":  "0.8643",
+                                        "x":  2447
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  16,
+                                        "width":  50,
+                                        "text":  "(ep50)",
+                                        "x":  2508
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "pred block 1",
+                      "words":  [
+                                    {
+                                        "y":  1937,
+                                        "height":  18,
+                                        "width":  36,
+                                        "text":  "pred",
+                                        "x":  1093
+                                    },
+                                    {
+                                        "y":  1937,
+                                        "height":  14,
+                                        "width":  44,
+                                        "text":  "block",
+                                        "x":  1136
+                                    },
+                                    {
+                                        "y":  1938,
+                                        "height":  13,
+                                        "width":  8,
+                                        "text":  "1",
+                                        "x":  1187
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "envelope",
+                      "words":  [
+                                    {
+                                        "y":  113,
+                                        "height":  15,
+                                        "width":  72,
+                                        "text":  "envelope",
+                                        "x":  1309
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "AUC 0.8807 (ep100)",
+                      "words":  [
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  33,
+                                        "text":  "AUC",
+                                        "x":  1265
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  54,
+                                        "text":  "0.8807",
+                                        "x":  1304
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  16,
+                                        "width":  60,
+                                        "text":  "(ep100)",
+                                        "x":  1365
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "pred block 2",
+                      "words":  [
+                                    {
+                                        "y":  1937,
+                                        "height":  18,
+                                        "width":  36,
+                                        "text":  "pred",
+                                        "x":  1278
+                                    },
+                                    {
+                                        "y":  1937,
+                                        "height":  14,
+                                        "width":  44,
+                                        "text":  "block",
+                                        "x":  1321
+                                    },
+                                    {
+                                        "y":  1938,
+                                        "height":  13,
+                                        "width":  9,
+                                        "text":  "2",
+                                        "x":  1371
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "pred block 3",
+                      "words":  [
+                                    {
+                                        "y":  1937,
+                                        "height":  18,
+                                        "width":  36,
+                                        "text":  "pred",
+                                        "x":  1463
+                                    },
+                                    {
+                                        "y":  1937,
+                                        "height":  14,
+                                        "width":  43,
+                                        "text":  "block",
+                                        "x":  1507
+                                    },
+                                    {
+                                        "y":  1938,
+                                        "height":  13,
+                                        "width":  8,
+                                        "text":  "3",
+                                        "x":  1557
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "anatomy-vl",
+                      "words":  [
+                                    {
+                                        "y":  113,
+                                        "height":  15,
+                                        "width":  94,
+                                        "text":  "anatomy-vl",
+                                        "x":  1677
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "AUC 0.8583 (ep30)",
+                      "words":  [
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  34,
+                                        "text":  "AUC",
+                                        "x":  1649
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  13,
+                                        "width":  53,
+                                        "text":  "0.8583",
+                                        "x":  1689
+                                    },
+                                    {
+                                        "y":  132,
+                                        "height":  16,
+                                        "width":  50,
+                                        "text":  "(ep30)",
+                                        "x":  1749
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "anatomy boundary",
+                      "words":  [
+                                    {
+                                        "y":  1938,
+                                        "height":  17,
+                                        "width":  74,
+                                        "text":  "anatomy",
+                                        "x":  1648
+                                    },
+                                    {
+                                        "y":  1937,
+                                        "height":  18,
+                                        "width":  80,
+                                        "text":  "boundary",
+                                        "x":  1728
+                                    }
+                                ]
+                  }
+              ],
+    "height":  1972
+}

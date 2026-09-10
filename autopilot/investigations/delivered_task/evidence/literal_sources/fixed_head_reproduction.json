@@ -1,0 +1,27 @@
+{
+  "producer": "autopilot\\p15_literal_snapshots.py",
+  "producer_sha256": "cc65295c24223b7e8f3386337deff25ebfabac08d897586e057f29d100ec9fdf",
+  "inputs_sha256": {
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_oracle_ep100_fp32\\feature_cache\\Test_s100_r256_fp32_52d1a1812356.pt": "06d0ff1f2187518b6d0a8910e6b746fc54a0a0cbc550208136132c6915470025",
+    "D:\\jepa_phase0\\checkpoints_hf\\downstream-heads\\frozen-meanpool\\oracle-ep100-head.pt": "801e6a5eec6585510ec9ce7eff8c4038c9ca609f0f0ae839819af938d010a0c2",
+    "C:\\Users\\Gary\\Desktop\\jepa\\results\\downstream\\meanpool_sweep_oracle\\ep100_test_predictions.npz": "f440f5703f1b3b4b9ff5c6715c3917c7d3e76a852542ec728a4eb46ae01d8f66",
+    "D:\\jepa_phase0\\fairvision-glaucoma\\checkpoint-ep25\\jepa_patch-random_posfix-ep25.pth.tar": "e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b"
+  },
+  "operations": [
+    "Apply the saved head (no fitting) to memory-mapped cached fp32 features on CPU: mean over slices, LayerNorm eps1e-5, Linear, sigmoid.",
+    "Compare positive-negative pair ordering, distinguishing strict flips, tie changes and net AUC-equivalent pair changes.",
+    "Hash checkpoint bytes by streaming; no encoder loading/forward pass."
+  ],
+  "auc": 0.8854753820184948,
+  "reference_auc": 0.88548516482246,
+  "delta": -9.782803965130427e-06,
+  "n_pos": 1466,
+  "n_neg": 1534,
+  "pair_count": 2248844,
+  "net_concordance_pair_equivalents": -22.0,
+  "strict_order_flips": 175,
+  "tie_status_changes": 324,
+  "all_pair_order_disagreements": 499,
+  "ancestor_bytes": 1507519602,
+  "ancestor_sha256": "e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b"
+}

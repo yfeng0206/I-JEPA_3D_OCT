@@ -1,0 +1,65 @@
+{
+  "fig_masking_policies": {
+    "status": "blocked_mixed_image_and_empirical_annotations",
+    "classification": "Selected mask illustrations plus six empirical AUC annotations; epochs and image-selection indices are metadata.",
+    "source_keys": ["legacy_fig_masking_policies_ocr", "legacy_auc_inventory"],
+    "rationale": "Actual OCR reads six AUC/epoch headings. All six displayed four-decimal AUCs agree with the retained original-precision inventory rows, but this does not verify the colored target masks, sampler provenance, selected volume, or seed. The whole asset is not nonquantitative.",
+    "limitations": "No historical mask coordinates, seed/selection receipt, or exact producer was recovered. OCR is fallible. AUC source agreement is an annotation check, not mathematical verification of the image grid. Unequal epochs cannot establish a policy comparison.",
+    "unresolved_scientific_claim": "Whether the displayed historical target masks were actually produced by the stated production samplers and faithfully instantiate the named policies.",
+    "minimal_action": "Prefer removing this redundant appendix grid and referring to the already independently reviewed delivered-mask figure. Alternatively retain only the existing mask-image panels without AUC annotations, explicitly label them selected historical illustrations with unrecovered draw provenance, and review the new exact asset/caption. Do not replace these fine-grained examples with invented masks or call the current whole asset illustrative-only."
+  },
+  "fig_precision_paradox": {
+    "status": "blocked_stale_quantitative_geometry",
+    "classification": "Quantitative AUC-versus-purity scatter with fitted and null-reference lines; not an illustration.",
+    "source_keys": ["legacy_precision_pdf", "legacy_fig_precision_paradox_ocr", "legacy_table2_geometry_seed42", "legacy_auc_inventory", "legacy_inspection_helper"],
+    "rationale": "PDF vector tick labels and coordinates independently recover five data points; PNG spines and colored-marker centers agree with the PDF geometry. All five purity values fail the current Table2 geometry source even after one-decimal rounding tolerance. AUC coordinates agree with historical inventory values rounded to six decimals.",
+    "limitations": "The historical AUC points mix fp16 rectangle-arm probes with fp32 shaped/coverage probes. The vector extraction verifies retained summary-to-mark agreement, not generation of raw masks or validity of the interpretation. Full raster numeric-label reading is not certified: some labels overlap.",
+    "unresolved_scientific_claim": "The title's general statement that masking anatomy more accurately does not help, and any significance/non-separation claim inferred from a point plot with no intervals.",
+    "minimal_action": "Parent may regenerate from the exact Table2 seed42 hidden_pct_on_anat fields and explicitly chosen matched-epoch, matched-precision AUC inventory rows. Use a descriptive title, exactly five arms, defined target-union purity, and clear no-retraining/no-causal-ranking limits. Otherwise remove the scatter and point readers to the verified geometry and performance tables."
+  },
+  "interp_04_window_occlusion_W7": {
+    "status": "blocked_unretained_empirical_attribution",
+    "classification": "Six quantitative class-mean attribution curves, sample counts, and an empirical sevenfold-amplification title.",
+    "source_keys": ["legacy_interp_04_window_occlusion_W7_ocr", "legacy_summary_interp_04_window_occlusion_W7", "legacy_interpretability_history", "legacy_producer_deeper_interpretability_analysis"],
+    "rationale": "The actual image title says it amplifies single-slice signal 7x while smoothing noise. The asset equals the retained summary PNG, but no window_contrib arrays or independently extracted vector series were recovered. Window size seven is protocol; sevenfold gain is an empirical claim, not the same kind of number.",
+    "limitations": "Historical documentation asserts the same conclusion but is not independent numeric evidence. Even disclosure that arrays are unavailable does not verify displayed curves, means, counts, amplification, or noise reduction.",
+    "unresolved_scientific_claim": "Sevenfold amplification, systematic underestimation by single-slice occlusion, and improved signal/noise or completeness.",
+    "minimal_action": "Remove this figure and its empirical comparison unless original window/slice summary arrays can be retained and independently checked. A non-results method description may state that zeroing a contiguous window is a different perturbation; do not claim a recovered gain or smoothing effect."
+  },
+  "interp_14_odos_mirror_test": {
+    "status": "blocked_unretained_empirical_attribution",
+    "classification": "Six quantitative cluster-mean line panels with correlations and cluster sample counts.",
+    "source_keys": ["legacy_interp_14_odos_mirror_test_ocr", "legacy_summary_interp_14_odos_mirror_test", "legacy_producer_odos_mirror_test", "legacy_interpretability_history"],
+    "rationale": "Actual labels include mirrored correlations +0.971, +0.988 and +0.237, with distinct raw correlations and cluster sizes. The retained code describes L2 normalization, k-means with two clusters, and reversal of cluster-mean curves; arrays needed to validate those results are absent.",
+    "limitations": "No ground-truth eye-laterality labels exist in the described evidence. Mirror similarity cannot establish actual OD/OS storage reversal; clustering and flipping are model-derived, not external validation. A historical PNG/code match cannot reproduce correlations.",
+    "unresolved_scientific_claim": "Near-perfect mirror structure of two probes, the population-mixture explanation, and identification of that mixture as OD/OS.",
+    "minimal_action": "Remove empirical OD/OS and mirror-clustering findings without retained attribution summaries. It is defensible to keep only a methodological caution that averaging over unknown orientations can obscure interpretation, without claiming the phenomenon was demonstrated in these data."
+  },
+  "interp_heatmap_grid": {
+    "status": "blocked_caption_transform_mismatch_and_empirical_annotations",
+    "classification": "Selected historical B-scan overlays with empirical probabilities and signed slice contributions, plus unverified clinical/descriptive diagnoses.",
+    "source_keys": ["legacy_interp_heatmap_grid_ocr", "legacy_summary_interp_heatmap_grid", "legacy_summary_heatmap_grid_BC", "legacy_heatmap_grid_BC_ocr", "legacy_producer_assemble_heatmap_grid", "legacy_producer_interpretability", "legacy_producer_heatmap_BC_comparison", "legacy_interpretability_history"],
+    "rationale": "The released file is byte-identical to results/summary/heatmap_grid.png, not heatmap_grid_BC.png. Its six row labels match the assembler, including probabilities, signed slice contributions, and 'RNFL thinning visible'/'Localized pathology'. The corresponding producer scales each overlay by its own max absolute delta with interpolation; the separately retained B+C figure is the shared-scale/mean-subtracted alternative. The current caption misidentifies that transformation.",
+    "limitations": "The exact historical execution and per-patch arrays are unretained. Code correspondence and identity establish a documented variant discrepancy, not an independent rerun. No colorbar means no readable magnitude; normalization cannot be recovered uniquely from blended RGB pixels. Clinical labels have not been independently reviewed.",
+    "unresolved_scientific_claim": "Shared normalization and mean subtraction in this specific figure; broadly distributed attribution or stronger slice-than-patch agreement inferred from selected images; printed patient-level model predictions/contributions and clinical interpretations.",
+    "minimal_action": "Prefer omitting this grid and any main-text claim resting on it. Conditional illustration-only retention requires removing unsupported quantitative/clinical headings and describing selected historical, interpolated, per-image-normalized overlays without cross-case magnitude, disease-localization, coverage, policy-mechanism, or representativeness claims. Review the resulting exact asset and corrected caption anew; this is not approval of the current asset."
+  },
+  "interp_slice_contribution_by_outcome": {
+    "status": "blocked_unretained_empirical_attribution",
+    "classification": "Twelve outcome-mean attribution curves across three panels, with empirical accuracies and outcome counts.",
+    "source_keys": ["legacy_interp_slice_contribution_by_outcome_ocr", "legacy_summary_interp_slice_contribution_by_outcome", "legacy_interpretability_history", "legacy_producer_deeper_interpretability_analysis"],
+    "rationale": "Actual figure headings include accuracy percentages; legends include TP/FN/TN/FP counts. The image is not a qualitative anatomy illustration. No matching attribution/probability arrays or retained mean-series tables are available for curve or stratification validation.",
+    "limitations": "Outcome labels/counts in the PNG or prose do not validate the plotted means. No uncertainty is shown. Descriptive mean-shape similarity cannot establish the anatomical cause of errors.",
+    "unresolved_scientific_claim": "Errors preserve the correct anatomical pattern at lower amplitude, confidence-invariant attribution, and error-rate association with attribution amplitude.",
+    "minimal_action": "Remove this result and its empirical error-pattern interpretation unless the original stratified summary arrays and threshold definition can be validated. Do not substitute frozen-policy probe data for these fine-tuned models."
+  },
+  "interp_slice_contribution_curves": {
+    "status": "blocked_unretained_empirical_attribution",
+    "classification": "Six class-mean signed attribution curves with sample counts and a native-position/subset-index axis mapping.",
+    "source_keys": ["legacy_interp_slice_contribution_curves_ocr", "legacy_summary_interp_slice_contribution_curves", "legacy_interpretability_history", "legacy_producer_interpretability"],
+    "rationale": "Actual labels give three fine-tuned probes, glaucoma n=1466 and healthy n=1534, and a 64-slice subset relabeling of a 200-position native axis. No retained per-volume or mean-series arrays support independent verification of the visible curve values.",
+    "limitations": "Near-zero signed population means can arise from cancellation, not genuinely unused slices. A shared curve envelope is not causal anatomy evidence or validation of frozen-policy AUC rankings. The 7.14M manuscript versus 7.17M documentation counts are configuration-dependent and are not resolved or overwritten here.",
+    "unresolved_scientific_claim": "Cross-probe convergence of attribution structure, diffuse middle-volume use, and the assertion that near-zero means imply unused slices.",
+    "minimal_action": "Remove the quantitative result without recoverable series. A methods-only description can define signed delta-logit as baseline minus occluded logit and warn that a near-zero class mean does not prove nonuse. Do not relabel these empirical curves illustrative-only."
+  }
+}

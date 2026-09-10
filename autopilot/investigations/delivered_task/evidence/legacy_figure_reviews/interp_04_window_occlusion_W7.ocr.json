@@ -1,0 +1,559 @@
+{
+    "image_sha256":  "84f240a96461acb3f2e0280f0aa943146e3b98bc06b9cdf921ee76a9716277dc",
+    "width":  1785,
+    "language":  "en-US",
+    "limitations":  "OCR is fallible; extracted text is not numeric validation or proof of image provenance.",
+    "method":  "Windows.Media.Ocr, local CPU, no desktop display",
+    "lines":  [
+                  {
+                      "text":  "Window occlusion (W=7 consecutive slices)",
+                      "words":  [
+                                    {
+                                        "y":  16,
+                                        "height":  19,
+                                        "width":  97,
+                                        "text":  "Window",
+                                        "x":  658
+                                    },
+                                    {
+                                        "y":  16,
+                                        "height":  19,
+                                        "width":  114,
+                                        "text":  "occlusion",
+                                        "x":  765
+                                    },
+                                    {
+                                        "y":  16,
+                                        "height":  23,
+                                        "width":  68,
+                                        "text":  "(W=7",
+                                        "x":  890
+                                    },
+                                    {
+                                        "y":  16,
+                                        "height":  19,
+                                        "width":  148,
+                                        "text":  "consecutive",
+                                        "x":  969
+                                    },
+                                    {
+                                        "y":  16,
+                                        "height":  23,
+                                        "width":  76,
+                                        "text":  "slices)",
+                                        "x":  1127
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Amplifies single-slice signal 7x while smoothing noise",
+                      "words":  [
+                                    {
+                                        "y":  43,
+                                        "height":  24,
+                                        "width":  115,
+                                        "text":  "Amplifies",
+                                        "x":  595
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  24,
+                                        "width":  137,
+                                        "text":  "single-slice",
+                                        "x":  720
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  24,
+                                        "width":  71,
+                                        "text":  "signal",
+                                        "x":  867
+                                    },
+                                    {
+                                        "y":  44,
+                                        "height":  18,
+                                        "width":  28,
+                                        "text":  "7x",
+                                        "x":  950
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  19,
+                                        "width":  64,
+                                        "text":  "while",
+                                        "x":  988
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  24,
+                                        "width":  129,
+                                        "text":  "smoothing",
+                                        "x":  1062
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  19,
+                                        "width":  64,
+                                        "text":  "noise",
+                                        "x":  1203
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.2",
+                      "words":  [
+                                    {
+                                        "y":  112,
+                                        "height":  16,
+                                        "width":  29,
+                                        "text":  "0.2",
+                                        "x":  65
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.1",
+                      "words":  [
+                                    {
+                                        "y":  224,
+                                        "height":  16,
+                                        "width":  30,
+                                        "text":  "0.1",
+                                        "x":  65
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.0",
+                      "words":  [
+                                    {
+                                        "y":  336,
+                                        "height":  16,
+                                        "width":  30,
+                                        "text":  "0.0",
+                                        "x":  65
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.1",
+                      "words":  [
+                                    {
+                                        "y":  448,
+                                        "height":  16,
+                                        "width":  46,
+                                        "text":  "-0.1",
+                                        "x":  49
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.2",
+                      "words":  [
+                                    {
+                                        "y":  559,
+                                        "height":  16,
+                                        "width":  46,
+                                        "text":  "-0.2",
+                                        "x":  49
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.3",
+                      "words":  [
+                                    {
+                                        "y":  671,
+                                        "height":  16,
+                                        "width":  46,
+                                        "text":  "-0.3",
+                                        "x":  49
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "25",
+                      "words":  [
+                                    {
+                                        "y":  738,
+                                        "height":  16,
+                                        "width":  23,
+                                        "text":  "25",
+                                        "x":  306
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + MeanPool (glaucoma, n=1466)",
+                      "words":  [
+                                    {
+                                        "y":  92,
+                                        "height":  14,
+                                        "width":  20,
+                                        "text":  "FT",
+                                        "x":  1302
+                                    },
+                                    {
+                                        "y":  94,
+                                        "height":  12,
+                                        "width":  12,
+                                        "text":  "+",
+                                        "x":  1330
+                                    },
+                                    {
+                                        "y":  91,
+                                        "height":  15,
+                                        "width":  87,
+                                        "text":  "MeanPool",
+                                        "x":  1351
+                                    },
+                                    {
+                                        "y":  91,
+                                        "height":  19,
+                                        "width":  102,
+                                        "text":  "(glaucoma,",
+                                        "x":  1447
+                                    },
+                                    {
+                                        "y":  91,
+                                        "height":  18,
+                                        "width":  80,
+                                        "text":  "n=1466)",
+                                        "x":  1558
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + MeanPool (healthy, n-1534)",
+                      "words":  [
+                                    {
+                                        "y":  121,
+                                        "height":  14,
+                                        "width":  21,
+                                        "text":  "FT",
+                                        "x":  1301
+                                    },
+                                    {
+                                        "y":  123,
+                                        "height":  12,
+                                        "width":  12,
+                                        "text":  "+",
+                                        "x":  1330
+                                    },
+                                    {
+                                        "y":  120,
+                                        "height":  15,
+                                        "width":  87,
+                                        "text":  "MeanPool",
+                                        "x":  1351
+                                    },
+                                    {
+                                        "y":  120,
+                                        "height":  19,
+                                        "width":  81,
+                                        "text":  "(healthy,",
+                                        "x":  1447
+                                    },
+                                    {
+                                        "y":  120,
+                                        "height":  18,
+                                        "width":  80,
+                                        "text":  "n-1534)",
+                                        "x":  1537
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + CrossAttnPool (glaucoma, n=1466)",
+                      "words":  [
+                                    {
+                                        "y":  149,
+                                        "height":  14,
+                                        "width":  20,
+                                        "text":  "FT",
+                                        "x":  1302
+                                    },
+                                    {
+                                        "y":  151,
+                                        "height":  12,
+                                        "width":  12,
+                                        "text":  "+",
+                                        "x":  1330
+                                    },
+                                    {
+                                        "y":  148,
+                                        "height":  15,
+                                        "width":  127,
+                                        "text":  "CrossAttnPool",
+                                        "x":  1351
+                                    },
+                                    {
+                                        "y":  148,
+                                        "height":  19,
+                                        "width":  102,
+                                        "text":  "(glaucoma,",
+                                        "x":  1487
+                                    },
+                                    {
+                                        "y":  148,
+                                        "height":  18,
+                                        "width":  80,
+                                        "text":  "n=1466)",
+                                        "x":  1598
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT CrossAttnPool (healthy, n=1534)",
+                      "words":  [
+                                    {
+                                        "y":  177,
+                                        "height":  14,
+                                        "width":  21,
+                                        "text":  "FT",
+                                        "x":  1301
+                                    },
+                                    {
+                                        "y":  176,
+                                        "height":  15,
+                                        "width":  127,
+                                        "text":  "CrossAttnPool",
+                                        "x":  1351
+                                    },
+                                    {
+                                        "y":  176,
+                                        "height":  19,
+                                        "width":  80,
+                                        "text":  "(healthy,",
+                                        "x":  1487
+                                    },
+                                    {
+                                        "y":  176,
+                                        "height":  18,
+                                        "width":  80,
+                                        "text":  "n=1534)",
+                                        "x":  1576
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + AttentiveProbe (glaucoma, n=1466)",
+                      "words":  [
+                                    {
+                                        "y":  206,
+                                        "height":  14,
+                                        "width":  21,
+                                        "text":  "FT",
+                                        "x":  1302
+                                    },
+                                    {
+                                        "y":  208,
+                                        "height":  12,
+                                        "width":  12,
+                                        "text":  "+",
+                                        "x":  1330
+                                    },
+                                    {
+                                        "y":  205,
+                                        "height":  15,
+                                        "width":  138,
+                                        "text":  "AttentiveProbe",
+                                        "x":  1350
+                                    },
+                                    {
+                                        "y":  205,
+                                        "height":  19,
+                                        "width":  102,
+                                        "text":  "(glaucoma,",
+                                        "x":  1542
+                                    },
+                                    {
+                                        "y":  205,
+                                        "height":  18,
+                                        "width":  80,
+                                        "text":  "n=1466)",
+                                        "x":  1653
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + AttentiveProbe (healthy, n=1534)",
+                      "words":  [
+                                    {
+                                        "y":  234,
+                                        "height":  14,
+                                        "width":  20,
+                                        "text":  "FT",
+                                        "x":  1302
+                                    },
+                                    {
+                                        "y":  236,
+                                        "height":  12,
+                                        "width":  12,
+                                        "text":  "+",
+                                        "x":  1330
+                                    },
+                                    {
+                                        "y":  233,
+                                        "height":  15,
+                                        "width":  138,
+                                        "text":  "AttentiveProbe",
+                                        "x":  1350
+                                    },
+                                    {
+                                        "y":  233,
+                                        "height":  19,
+                                        "width":  81,
+                                        "text":  "(healthy,",
+                                        "x":  1542
+                                    },
+                                    {
+                                        "y":  233,
+                                        "height":  18,
+                                        "width":  79,
+                                        "text":  "n=1534)",
+                                        "x":  1632
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  738,
+                                        "height":  16,
+                                        "width":  23,
+                                        "text":  "50",
+                                        "x":  512
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "75",
+                      "words":  [
+                                    {
+                                        "y":  738,
+                                        "height":  16,
+                                        "width":  23,
+                                        "text":  "75",
+                                        "x":  718
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "100",
+                      "words":  [
+                                    {
+                                        "y":  738,
+                                        "height":  16,
+                                        "width":  36,
+                                        "text":  "100",
+                                        "x":  918
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "125",
+                      "words":  [
+                                    {
+                                        "y":  738,
+                                        "height":  16,
+                                        "width":  35,
+                                        "text":  "125",
+                                        "x":  1124
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "150",
+                      "words":  [
+                                    {
+                                        "y":  738,
+                                        "height":  16,
+                                        "width":  36,
+                                        "text":  "150",
+                                        "x":  1330
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "175",
+                      "words":  [
+                                    {
+                                        "y":  738,
+                                        "height":  16,
+                                        "width":  35,
+                                        "text":  "175",
+                                        "x":  1535
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "199",
+                      "words":  [
+                                    {
+                                        "y":  738,
+                                        "height":  16,
+                                        "width":  36,
+                                        "text":  "199",
+                                        "x":  1733
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Window-center slice position along 200-slice volume axis",
+                      "words":  [
+                                    {
+                                        "y":  766,
+                                        "height":  18,
+                                        "width":  172,
+                                        "text":  "Window-center",
+                                        "x":  605
+                                    },
+                                    {
+                                        "y":  766,
+                                        "height":  18,
+                                        "width":  50,
+                                        "text":  "slice",
+                                        "x":  784
+                                    },
+                                    {
+                                        "y":  766,
+                                        "height":  23,
+                                        "width":  87,
+                                        "text":  "position",
+                                        "x":  844
+                                    },
+                                    {
+                                        "y":  766,
+                                        "height":  23,
+                                        "width":  60,
+                                        "text":  "along",
+                                        "x":  941
+                                    },
+                                    {
+                                        "y":  766,
+                                        "height":  18,
+                                        "width":  101,
+                                        "text":  "200-slice",
+                                        "x":  1011
+                                    },
+                                    {
+                                        "y":  766,
+                                        "height":  18,
+                                        "width":  83,
+                                        "text":  "volume",
+                                        "x":  1121
+                                    },
+                                    {
+                                        "y":  766,
+                                        "height":  18,
+                                        "width":  44,
+                                        "text":  "axis",
+                                        "x":  1213
+                                    }
+                                ]
+                  }
+              ],
+    "height":  804
+}

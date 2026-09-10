@@ -116,10 +116,19 @@ def main():
     if a.list or not a.arm:
         print("Arms defined (epochs are those the paper cites):\n")
         for k, v in sorted(ARMS.items()):
-            d = os.path.join(RUNS, v["run"])
+            if "explicit" in v:
+                sources = [os.path.join(RUNS, rel) for rel, _ in v["explicit"]]
+                location = "explicit checkpoint paths"
+                missing = any(not os.path.isfile(p) for p in sources)
+                missing_note = "   [SOURCE CHECKPOINT MISSING]" if missing else ""
+            else:
+                location = v["run"]
+                missing_note = (
+                    "" if os.path.isdir(os.path.join(RUNS, location))
+                    else "   [RUN DIR MISSING]"
+                )
             print("  %-11s %-24s -> %-22s %s%s"
-                  % (k, v["run"], v["hub"], ",".join(v["epochs"]),
-                     "" if os.path.isdir(d) else "   [RUN DIR MISSING]"))
+                  % (k, location, v["hub"], ",".join(v["epochs"]), missing_note))
         return 0
 
     spec = ARMS[a.arm]

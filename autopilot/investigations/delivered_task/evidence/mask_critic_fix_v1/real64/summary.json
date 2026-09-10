@@ -1,0 +1,632 @@
+{
+  "baseline": "de145d7",
+  "baseline_measurement_sha256": "3fd445f6c26763b4cc50eff2d11636613ff8881ffe54dfe07bb9b2bb48890f3e",
+  "historical_scope": {
+    "volumes": 24,
+    "slices": 600,
+    "split": "Training",
+    "selection_seed": 42
+  },
+  "replay_count": 64,
+  "controls": {
+    "wrong_target_count": "detected",
+    "out_of_bounds": "detected",
+    "context_target_overlap": "detected"
+  },
+  "workers": 1,
+  "historical_default_controls": [
+    {
+      "arm": "random",
+      "seed": 0,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "random",
+      "seed": 7,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "random",
+      "seed": 42,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "oracle",
+      "seed": 0,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "oracle",
+      "seed": 7,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "oracle",
+      "seed": 42,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "envelope",
+      "seed": 0,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "envelope",
+      "seed": 7,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "envelope",
+      "seed": 42,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "anatomy",
+      "seed": 0,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "anatomy",
+      "seed": 7,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "anatomy",
+      "seed": 42,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "cover_legacy",
+      "seed": 0,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "cover_legacy",
+      "seed": 7,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    },
+    {
+      "arm": "cover_legacy",
+      "seed": 42,
+      "tensors_bitwise_equal": true,
+      "baseline_mask_dependencies_isolated": true
+    }
+  ],
+  "native_slice_cache_checks": [
+    {
+      "ordinal": 0,
+      "max_absolute_byte_error": 0
+    },
+    {
+      "ordinal": 25,
+      "max_absolute_byte_error": 0
+    }
+  ],
+  "pairing": "Exact per-image crop hashes and injected sizes; placement RNG draws are NOT paired across policies.",
+  "crop_seed_rule": "91009 + ordinal * 997; new fixed crops, not reconstructed historical crops",
+  "metrics": {
+    "cover_legacy_bs64": {
+      "n": 64,
+      "intended_loss_slots": {
+        "mean": 172.0,
+        "quantiles": {
+          "min": 172.0,
+          "p05": 172.0,
+          "p50": 172.0,
+          "p95": 172.0,
+          "max": 172.0
+        }
+      },
+      "delivered_loss_slots": {
+        "mean": 160.0,
+        "quantiles": {
+          "min": 160.0,
+          "p05": 160.0,
+          "p50": 160.0,
+          "p95": 160.0,
+          "max": 160.0
+        }
+      },
+      "unique_target_union": {
+        "mean": 120.921875,
+        "quantiles": {
+          "min": 98.0,
+          "p05": 102.3,
+          "p50": 120.0,
+          "p95": 150.0,
+          "max": 154.0
+        }
+      },
+      "duplicate_loss_slots": {
+        "mean": 39.078125,
+        "quantiles": {
+          "min": 6.0,
+          "p05": 10.0,
+          "p50": 40.0,
+          "p95": 57.69999999999999,
+          "max": 62.0
+        }
+      },
+      "intended_target_tissue_unique": {
+        "mean": 54.453125,
+        "quantiles": {
+          "min": 29.0,
+          "p05": 38.3,
+          "p50": 52.0,
+          "p95": 74.39999999999998,
+          "max": 83.0
+        }
+      },
+      "delivered_target_tissue_unique": {
+        "mean": 51.484375,
+        "quantiles": {
+          "min": 29.0,
+          "p05": 38.0,
+          "p50": 50.5,
+          "p95": 68.0,
+          "max": 75.0
+        }
+      },
+      "target_tissue_slots": {
+        "mean": 72.03125,
+        "quantiles": {
+          "min": 29.0,
+          "p05": 42.0,
+          "p50": 76.0,
+          "p95": 97.85,
+          "max": 112.0
+        }
+      },
+      "target_background_slots": {
+        "mean": 87.96875,
+        "quantiles": {
+          "min": 48.0,
+          "p05": 62.15,
+          "p50": 84.0,
+          "p95": 118.0,
+          "max": 131.0
+        }
+      },
+      "context_tokens": {
+        "mean": 92.0,
+        "quantiles": {
+          "min": 92.0,
+          "p05": 92.0,
+          "p50": 92.0,
+          "p95": 92.0,
+          "max": 92.0
+        }
+      },
+      "context_tissue": {
+        "mean": 12.984375,
+        "quantiles": {
+          "min": 1.0,
+          "p05": 4.0,
+          "p50": 14.0,
+          "p95": 19.0,
+          "max": 25.0
+        }
+      },
+      "context_tissue_before_collation": {
+        "mean": 15.796875,
+        "quantiles": {
+          "min": 8.0,
+          "p05": 11.0,
+          "p50": 16.0,
+          "p95": 22.849999999999994,
+          "max": 26.0
+        }
+      },
+      "complement_tissue": {
+        "mean": 18.765625,
+        "quantiles": {
+          "min": 8.0,
+          "p05": 11.0,
+          "p50": 18.0,
+          "p95": 27.849999999999994,
+          "max": 34.0
+        }
+      },
+      "random_loss_slots": {
+        "mean": 35.0,
+        "quantiles": {
+          "min": 0.0,
+          "p05": 0.0,
+          "p50": 40.0,
+          "p95": 80.0,
+          "max": 80.0
+        }
+      },
+      "random_tissue_slots": {
+        "mean": 9.0,
+        "quantiles": {
+          "min": 0.0,
+          "p05": 0.0,
+          "p50": 5.5,
+          "p95": 22.849999999999994,
+          "max": 39.0
+        }
+      },
+      "random_background_slots": {
+        "mean": 26.0,
+        "quantiles": {
+          "min": 0.0,
+          "p05": 0.0,
+          "p50": 24.5,
+          "p95": 67.0,
+          "max": 80.0
+        }
+      },
+      "zero_tissue_context": 0,
+      "context_floor_deficit": 21,
+      "collation_removed_tissue": 21,
+      "target_truncation_removed_tissue": 46,
+      "no_random_slots": 15,
+      "guide_invalid": 0,
+      "source_blocks": {
+        "cover": 200,
+        "random_legal": 56
+      },
+      "floor_status": {
+        "historical_no_final_guard": 64
+      }
+    },
+    "cover_v2_bs64": {
+      "n": 64,
+      "intended_loss_slots": {
+        "mean": 160.0,
+        "quantiles": {
+          "min": 160.0,
+          "p05": 160.0,
+          "p50": 160.0,
+          "p95": 160.0,
+          "max": 160.0
+        }
+      },
+      "delivered_loss_slots": {
+        "mean": 160.0,
+        "quantiles": {
+          "min": 160.0,
+          "p05": 160.0,
+          "p50": 160.0,
+          "p95": 160.0,
+          "max": 160.0
+        }
+      },
+      "unique_target_union": {
+        "mean": 119.140625,
+        "quantiles": {
+          "min": 92.0,
+          "p05": 94.15,
+          "p50": 118.5,
+          "p95": 151.85,
+          "max": 154.0
+        }
+      },
+      "duplicate_loss_slots": {
+        "mean": 40.859375,
+        "quantiles": {
+          "min": 6.0,
+          "p05": 8.15,
+          "p50": 41.5,
+          "p95": 65.85,
+          "max": 68.0
+        }
+      },
+      "intended_target_tissue_unique": {
+        "mean": 54.40625,
+        "quantiles": {
+          "min": 29.0,
+          "p05": 38.15,
+          "p50": 52.5,
+          "p95": 76.09999999999997,
+          "max": 83.0
+        }
+      },
+      "delivered_target_tissue_unique": {
+        "mean": 54.40625,
+        "quantiles": {
+          "min": 29.0,
+          "p05": 38.15,
+          "p50": 52.5,
+          "p95": 76.09999999999997,
+          "max": 83.0
+        }
+      },
+      "target_tissue_slots": {
+        "mean": 76.609375,
+        "quantiles": {
+          "min": 29.0,
+          "p05": 48.0,
+          "p50": 76.5,
+          "p95": 102.85,
+          "max": 110.0
+        }
+      },
+      "target_background_slots": {
+        "mean": 83.390625,
+        "quantiles": {
+          "min": 50.0,
+          "p05": 57.15,
+          "p50": 83.5,
+          "p95": 112.0,
+          "max": 131.0
+        }
+      },
+      "context_tokens": {
+        "mean": 102.0,
+        "quantiles": {
+          "min": 102.0,
+          "p05": 102.0,
+          "p50": 102.0,
+          "p95": 102.0,
+          "max": 102.0
+        }
+      },
+      "context_tissue": {
+        "mean": 14.046875,
+        "quantiles": {
+          "min": 2.0,
+          "p05": 8.0,
+          "p50": 14.0,
+          "p95": 22.849999999999994,
+          "max": 24.0
+        }
+      },
+      "context_tissue_before_collation": {
+        "mean": 15.84375,
+        "quantiles": {
+          "min": 8.0,
+          "p05": 11.0,
+          "p50": 15.0,
+          "p95": 22.849999999999994,
+          "max": 24.0
+        }
+      },
+      "complement_tissue": {
+        "mean": 15.84375,
+        "quantiles": {
+          "min": 8.0,
+          "p05": 11.0,
+          "p50": 15.0,
+          "p95": 22.849999999999994,
+          "max": 24.0
+        }
+      },
+      "random_loss_slots": {
+        "mean": 26.25,
+        "quantiles": {
+          "min": 0.0,
+          "p05": 0.0,
+          "p50": 40.0,
+          "p95": 80.0,
+          "max": 80.0
+        }
+      },
+      "random_tissue_slots": {
+        "mean": 6.828125,
+        "quantiles": {
+          "min": 0.0,
+          "p05": 0.0,
+          "p50": 0.0,
+          "p95": 24.849999999999994,
+          "max": 29.0
+        }
+      },
+      "random_background_slots": {
+        "mean": 19.421875,
+        "quantiles": {
+          "min": 0.0,
+          "p05": 0.0,
+          "p50": 15.5,
+          "p95": 67.0,
+          "max": 80.0
+        }
+      },
+      "zero_tissue_context": 0,
+      "context_floor_deficit": 18,
+      "collation_removed_tissue": 21,
+      "target_truncation_removed_tissue": 0,
+      "no_random_slots": 28,
+      "guide_invalid": 0,
+      "source_blocks": {
+        "cover": 214,
+        "random_legal": 42
+      },
+      "floor_status": {
+        "satisfied": 46,
+        "unsatisfied_context_policy": 18
+      }
+    },
+    "cover_v2_guard_bs64": {
+      "n": 64,
+      "intended_loss_slots": {
+        "mean": 160.0,
+        "quantiles": {
+          "min": 160.0,
+          "p05": 160.0,
+          "p50": 160.0,
+          "p95": 160.0,
+          "max": 160.0
+        }
+      },
+      "delivered_loss_slots": {
+        "mean": 160.0,
+        "quantiles": {
+          "min": 160.0,
+          "p05": 160.0,
+          "p50": 160.0,
+          "p95": 160.0,
+          "max": 160.0
+        }
+      },
+      "unique_target_union": {
+        "mean": 119.140625,
+        "quantiles": {
+          "min": 92.0,
+          "p05": 94.15,
+          "p50": 118.5,
+          "p95": 151.85,
+          "max": 154.0
+        }
+      },
+      "duplicate_loss_slots": {
+        "mean": 40.859375,
+        "quantiles": {
+          "min": 6.0,
+          "p05": 8.15,
+          "p50": 41.5,
+          "p95": 65.85,
+          "max": 68.0
+        }
+      },
+      "intended_target_tissue_unique": {
+        "mean": 54.40625,
+        "quantiles": {
+          "min": 29.0,
+          "p05": 38.15,
+          "p50": 52.5,
+          "p95": 76.09999999999997,
+          "max": 83.0
+        }
+      },
+      "delivered_target_tissue_unique": {
+        "mean": 54.40625,
+        "quantiles": {
+          "min": 29.0,
+          "p05": 38.15,
+          "p50": 52.5,
+          "p95": 76.09999999999997,
+          "max": 83.0
+        }
+      },
+      "target_tissue_slots": {
+        "mean": 76.609375,
+        "quantiles": {
+          "min": 29.0,
+          "p05": 48.0,
+          "p50": 76.5,
+          "p95": 102.85,
+          "max": 110.0
+        }
+      },
+      "target_background_slots": {
+        "mean": 83.390625,
+        "quantiles": {
+          "min": 50.0,
+          "p05": 57.15,
+          "p50": 83.5,
+          "p95": 112.0,
+          "max": 131.0
+        }
+      },
+      "context_tokens": {
+        "mean": 102.0,
+        "quantiles": {
+          "min": 102.0,
+          "p05": 102.0,
+          "p50": 102.0,
+          "p95": 102.0,
+          "max": 102.0
+        }
+      },
+      "context_tissue": {
+        "mean": 15.59375,
+        "quantiles": {
+          "min": 8.0,
+          "p05": 11.0,
+          "p50": 15.0,
+          "p95": 22.849999999999994,
+          "max": 24.0
+        }
+      },
+      "context_tissue_before_collation": {
+        "mean": 15.84375,
+        "quantiles": {
+          "min": 8.0,
+          "p05": 11.0,
+          "p50": 15.0,
+          "p95": 22.849999999999994,
+          "max": 24.0
+        }
+      },
+      "complement_tissue": {
+        "mean": 15.84375,
+        "quantiles": {
+          "min": 8.0,
+          "p05": 11.0,
+          "p50": 15.0,
+          "p95": 22.849999999999994,
+          "max": 24.0
+        }
+      },
+      "random_loss_slots": {
+        "mean": 26.25,
+        "quantiles": {
+          "min": 0.0,
+          "p05": 0.0,
+          "p50": 40.0,
+          "p95": 80.0,
+          "max": 80.0
+        }
+      },
+      "random_tissue_slots": {
+        "mean": 6.828125,
+        "quantiles": {
+          "min": 0.0,
+          "p05": 0.0,
+          "p50": 0.0,
+          "p95": 24.849999999999994,
+          "max": 29.0
+        }
+      },
+      "random_background_slots": {
+        "mean": 19.421875,
+        "quantiles": {
+          "min": 0.0,
+          "p05": 0.0,
+          "p50": 15.5,
+          "p95": 67.0,
+          "max": 80.0
+        }
+      },
+      "zero_tissue_context": 0,
+      "context_floor_deficit": 0,
+      "collation_removed_tissue": 12,
+      "target_truncation_removed_tissue": 0,
+      "no_random_slots": 28,
+      "guide_invalid": 0,
+      "source_blocks": {
+        "cover": 214,
+        "random_legal": 42
+      },
+      "floor_status": {
+        "satisfied": 64
+      }
+    }
+  },
+  "code_sha256": {
+    "src\\masks\\cover.py": "8decf18ba0048cb7de33b127d35262e8bd8258c73f0565fee533f48606b82fab",
+    "src\\masks\\curriculum.py": "6a0564e87170f36e241b07d597345680a837fa35cff524d6aaa6ae5e2ad23b66",
+    "src\\masks\\multiblock.py": "d8985698cba486625bbc5fa0e5cc34dc468ff0cc1346eae6f9e5db409cc9fa98",
+    "scripts\\delivered_mask_audit.py": "e6a4d1ae8fe5ea311c4cbaf6b9ae4680f0b7063d9e800d2052d950a9c54c7baf"
+  },
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "torch": "2.7.1+cu128",
+  "verified_exact_guard_pairs": 64,
+  "git_head": "5a4764823c7c399fcef635e7895f27b6a5b0989b"
+}

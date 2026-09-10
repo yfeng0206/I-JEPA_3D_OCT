@@ -1,0 +1,75 @@
+{
+  "status": "Isolated Word parity PASS; numeric coverage BLOCKED",
+  "main_sha256": "33926d717c530bbb42ba84977d5654f18df322f29d9c107fd0fb15488e17eb00",
+  "work": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-replacements-cd5a455ee6424cde8e29995e354cf49d",
+  "word": {
+    "path": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-replacements-cd5a455ee6424cde8e29995e354cf49d\\main_submission.docx",
+    "sha256": "fd5cde70e7c15f70e7d8eb4dbe7c5cf55439ee9eae3ebb013c23ad7f45fbd19e",
+    "receipt": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-replacements-cd5a455ee6424cde8e29995e354cf49d\\main_submission.docx.provenance.json",
+    "ALL_PASS": true,
+    "counts": {
+      "references": 128,
+      "table_captions": 17,
+      "figure_captions": 11,
+      "tables": 17,
+      "data_tables": 17,
+      "media": 11,
+      "bibliography": 45
+    }
+  },
+  "pdf": {
+    "total_pages": 34,
+    "references_start_page": 9,
+    "references_heading_y": 629.18359375,
+    "main_content_pages": 9,
+    "identifying_terms_found": [],
+    "identifying_metadata": {},
+    "references_headings": [
+      [
+        9,
+        629.18359375
+      ]
+    ]
+  },
+  "citations": {
+    "ALL_PASS": true,
+    "matched": 45,
+    "count": 45
+  },
+  "numeric": {
+    "ALL_PASS": false,
+    "counts": {
+      "verified": 759,
+      "unused": 243,
+      "nonnumeric_definition": 1,
+      "explicit_no_result": 3,
+      "structural": 811,
+      "unresolved": 379,
+      "programmatically_verified_plotted_values": 7,
+      "reviewed_source_illustration": 1
+    },
+    "errors": [],
+    "blockers_by_kind": {
+      "literal": 377,
+      "figure": 2
+    },
+    "figure_blockers": [
+      {
+        "id": "figures/fig_policy_family_token_maps.png",
+        "status": "unresolved",
+        "action": "Independent plotted-value validator or explicit historical-illustration review required; identity is not numeric proof."
+      },
+      {
+        "id": "figures/fig_purity_auc_ep50_fp32.png",
+        "status": "unresolved",
+        "action": "Independent plotted-value validator or explicit historical-illustration review required; identity is not numeric proof."
+      }
+    ],
+    "report": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\final-word-replacements-cd5a455ee6424cde8e29995e354cf49d\\numeric_coverage.json"
+  },
+  "live_input_drift": [],
+  "review_source_unchanged": true,
+  "production_word_before_sha256": "7610d2c8137a17990381ee79843c9b9d44c73d6156f47ece3ba4fd94eff3a9ee",
+  "production_word_now_sha256": "7610d2c8137a17990381ee79843c9b9d44c73d6156f47ece3ba4fd94eff3a9ee",
+  "published": false
+}

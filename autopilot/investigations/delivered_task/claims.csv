@@ -1,0 +1,10 @@
+claim_id,statement,evidence,status,scope
+C01,Historical CENTROID and ENVELOPE have positive matched AUC differences from RANDOM,autopilot/reports/fresh_audit_2026-09-04/prediction_snapshot.json,retained,Single continuations on repeatedly inspected split; no new training claim
+C02,CENTROID and ENVELOPE are statistically equivalent,autopilot/reports/fresh_audit_2026-09-04/science.md,rejected,No equivalence margin or test; manuscript now describes unresolved ep50/75 differences
+C03,More tissue coverage alone determines representation quality,autopilot/reports/fresh_audit_2026-09-04/code.md,rejected,Delivered context and target budgets differ; mechanism unresolved
+C04,Every subgroup point estimate rises,autopilot/reports/fresh_audit_2026-09-04/science_findings.json,corrected,Divorced-group exception retained without claiming significant harm
+C05,The extra six-leg replication is running,autopilot/reports/fresh_audit_2026-09-04/repository_state.md,corrected,Paused partial first leg is not a completed replication result
+C06,Background targets can be nontrivial but their downstream causal role is established,autopilot/reports/fresh_audit_2026-09-04/science.md,corrected,Main text now distinguishes random ep100 prediction and separate ep50 regional probe
+C07,The corrected masking algorithm improves downstream AUC,,not_measured,No sustained pretraining authorized; diagnostics cannot establish this claim
+C08,The intended visible tissue reaches the final encoder context,mask_report.md,violated_historically,Final context differs from target complement; versioned guard is a separate guide-aware intervention
+C09,Random fill supplies background targets throughout the historical campaign,mask_report.md;training_report.md,qualified,Conditional fill is not a quota and random rectangles are not background-only; guided rectangles also carry background loss

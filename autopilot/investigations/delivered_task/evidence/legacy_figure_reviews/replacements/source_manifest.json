@@ -1,0 +1,251 @@
+{
+  "version": 1,
+  "generator": {
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\generate_replacements.py",
+    "sha256": "bd6b7a2b4e7470cee7feb36fc62255bd8f420552ba6e90bd3395a1a0eeb4cef0"
+  },
+  "independent_validator": {
+    "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\verify_replacements.py",
+    "sha256": "570c44aa85dfb7b6943fdad21896a769ea6a0016cd1049de8c97b619266abc8c"
+  },
+  "public_numeric_sources": {
+    "geometry42": {
+      "root": "repo",
+      "path": "results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed42.json",
+      "sha256": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7"
+    },
+    "p1b_full_inventory.json": {
+      "root": "stats",
+      "path": "p1b_full_inventory.json",
+      "sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6"
+    }
+  },
+  "scatter": {
+    "series": [
+      {
+        "arm": "random",
+        "geometry_arm": "random",
+        "display": "Random",
+        "x": 31.466034477712412,
+        "y": 0.8641212996544002,
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/random/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/34/auc"
+        },
+        "inventory_row": 34,
+        "epoch": 50,
+        "precision": "fp32"
+      },
+      {
+        "arm": "oracle",
+        "geometry_arm": "oracle",
+        "display": "Centroid",
+        "x": 40.008725298518314,
+        "y": 0.8740152718463352,
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/oracle/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/29/auc"
+        },
+        "inventory_row": 29,
+        "epoch": 50,
+        "precision": "fp32"
+      },
+      {
+        "arm": "envelope",
+        "geometry_arm": "envelope",
+        "display": "Envelope",
+        "x": 43.30093279923807,
+        "y": 0.8760634352582928,
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/envelope/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/23/auc"
+        },
+        "inventory_row": 23,
+        "epoch": 50,
+        "precision": "fp32"
+      },
+      {
+        "arm": "anatomy-v2",
+        "geometry_arm": "anatomy",
+        "display": "ANATOMY-v2",
+        "x": 97.0935374668334,
+        "y": 0.8653855047304304,
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/anatomy/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/9/auc"
+        },
+        "inventory_row": 9,
+        "epoch": 50,
+        "precision": "fp32"
+      },
+      {
+        "arm": "cover-f021",
+        "geometry_arm": "cover",
+        "display": "COVER",
+        "x": 44.18566087795465,
+        "y": 0.864281381901101,
+        "x_expression": {
+          "source": "geometry42",
+          "pointer": "/cover/hidden_pct_on_anat"
+        },
+        "y_expression": {
+          "source": "p1b_full_inventory.json",
+          "pointer": "/records/17/auc"
+        },
+        "inventory_row": 17,
+        "epoch": 50,
+        "precision": "fp32"
+      }
+    ],
+    "auc_selection": "primary frozen_probe epoch=50 precision=fp32",
+    "no_fitted_or_reference_lines": true,
+    "no_uncertainty_claim": true
+  },
+  "token_maps": {
+    "private_fixture_sha256": "269f1c143af8e91daa179796fb0bfbd40583d91fafebbc0dbd45cba9c6c4692e",
+    "private_fixture_redistributed": false,
+    "split": "Training",
+    "anonymous_ordinal": 0,
+    "frozen_batch_key": "bs2",
+    "selection": "first of the already predeclared two audited views; no redraw or search",
+    "crop_tensor_sha256": "cbc46cc1f26014cea8917263a7c8b84fa52e8d49b2ea2fdbcb08888a25dd0168",
+    "guide_sha256": "a7a934575139eef54e00b9c9feece302b642d06297ae0df4f26b9c00db9202a4",
+    "tissue_definition": "occupancy channel 0 >= 0.25; tissue proxy, not clinical ground truth",
+    "raw_oct_pixels_rendered": false,
+    "per_case_identifiers_exported": false,
+    "policies": [
+      {
+        "arm": "random",
+        "fixture_policy_key": "random",
+        "anonymous_ordinal": 0,
+        "fixture_target_pointer": "/batches/bs2/policies/random/masks_pred",
+        "fixture_context_pointer": "/batches/bs2/policies/random/masks_enc/0/0",
+        "tissue_pointer": "/batches/bs2/tissue_labels/0",
+        "target_union_int64_sha256": "134d499d0d2f48b482c8e78f3a1fb3dd48ca5531aaa85fe941fbbbac755ffd08",
+        "context_int64_sha256": "7bcb34efc4e6aa6d6b8d5a7f1456368d8dc65d5a153abf59119c61bfb213f800",
+        "tissue_bool_sha256": "1cc680c7307b342520f02901465b70218843e5d0f96d838fd90c4c7eff637689",
+        "audit_source": {
+          "root": "repo",
+          "path": "autopilot\\investigations\\delivered_task\\evidence\\mask_final64_v2\\random_bs2.jsonl",
+          "sha256": "ab3bab4168f319c73226c77f620dc0d4e9bbc9a79cde7a3a0dd401eaa13dc6f2"
+        },
+        "audit_row_ordinal": 0
+      },
+      {
+        "arm": "oracle",
+        "fixture_policy_key": "oracle",
+        "anonymous_ordinal": 0,
+        "fixture_target_pointer": "/batches/bs2/policies/oracle/masks_pred",
+        "fixture_context_pointer": "/batches/bs2/policies/oracle/masks_enc/0/0",
+        "tissue_pointer": "/batches/bs2/tissue_labels/0",
+        "target_union_int64_sha256": "ef803b040195b82f603b21cf84dcab0f23db0d679c9a9b46a25f21080bfe8c7b",
+        "context_int64_sha256": "51cbcb09b9aeea4058d102efbb6cf395d1d2b4e12eed8764fd242dfc17a5150f",
+        "tissue_bool_sha256": "1cc680c7307b342520f02901465b70218843e5d0f96d838fd90c4c7eff637689",
+        "audit_source": {
+          "root": "repo",
+          "path": "autopilot\\investigations\\delivered_task\\evidence\\mask_final64_v2\\oracle_bs2.jsonl",
+          "sha256": "aca0b8a63a92d7c4c29f0eac130902f49bbda6184a6a8d8724866ca9fe0054e0"
+        },
+        "audit_row_ordinal": 0
+      },
+      {
+        "arm": "envelope",
+        "fixture_policy_key": "envelope",
+        "anonymous_ordinal": 0,
+        "fixture_target_pointer": "/batches/bs2/policies/envelope/masks_pred",
+        "fixture_context_pointer": "/batches/bs2/policies/envelope/masks_enc/0/0",
+        "tissue_pointer": "/batches/bs2/tissue_labels/0",
+        "target_union_int64_sha256": "4ad3f7e0a8f641dfe7e9208ac0c825cac9bb81b1b1684396c17f3621ca67733a",
+        "context_int64_sha256": "754ab488d028eddb048ed53a845703c9d2e7cdffdf2f026cb300b6681e9569df",
+        "tissue_bool_sha256": "1cc680c7307b342520f02901465b70218843e5d0f96d838fd90c4c7eff637689",
+        "audit_source": {
+          "root": "repo",
+          "path": "autopilot\\investigations\\delivered_task\\evidence\\mask_final64_v2\\envelope_bs2.jsonl",
+          "sha256": "a175ef6f71d3c9aae5582fc1faa6a70c2da4003c98349584acb74a0bb82ac6b1"
+        },
+        "audit_row_ordinal": 0
+      },
+      {
+        "arm": "anatomy-v2",
+        "fixture_policy_key": "anatomy",
+        "anonymous_ordinal": 0,
+        "fixture_target_pointer": "/batches/bs2/policies/anatomy/masks_pred",
+        "fixture_context_pointer": "/batches/bs2/policies/anatomy/masks_enc/0/0",
+        "tissue_pointer": "/batches/bs2/tissue_labels/0",
+        "target_union_int64_sha256": "7662d704bdabc3e132d849149a31f02d743339a27746ffc304851d88ae19b05b",
+        "context_int64_sha256": "62b2f5484a78bbbaf501cbc6c62d712ccfabff849d9a9a80bf177d90f93972ab",
+        "tissue_bool_sha256": "1cc680c7307b342520f02901465b70218843e5d0f96d838fd90c4c7eff637689",
+        "audit_source": {
+          "root": "repo",
+          "path": "autopilot\\investigations\\delivered_task\\evidence\\mask_final64_v2\\anatomy_bs2.jsonl",
+          "sha256": "55479254833f6120d1caa23b9725ca6ca42276a7e95c5d7cac012740bea57cf4"
+        },
+        "audit_row_ordinal": 0
+      },
+      {
+        "arm": "cover-f021",
+        "fixture_policy_key": "cover_legacy",
+        "anonymous_ordinal": 0,
+        "fixture_target_pointer": "/batches/bs2/policies/cover_legacy/masks_pred",
+        "fixture_context_pointer": "/batches/bs2/policies/cover_legacy/masks_enc/0/0",
+        "tissue_pointer": "/batches/bs2/tissue_labels/0",
+        "target_union_int64_sha256": "d3840b3b008f53871e257236e3e9c15eb45f843529690cfc6991b948a32a1bed",
+        "context_int64_sha256": "5612a0c809dc1682c4157585c039096d0288c620ab4524f2b6c99e49b0d8e989",
+        "tissue_bool_sha256": "1cc680c7307b342520f02901465b70218843e5d0f96d838fd90c4c7eff637689",
+        "audit_source": {
+          "root": "repo",
+          "path": "autopilot\\investigations\\delivered_task\\evidence\\mask_final64_v2\\cover_legacy_bs2.jsonl",
+          "sha256": "7fa43ba2547ee4f01505b1f6c148ca8c88e0625f0436fc54854e9675156ce45f"
+        },
+        "audit_row_ordinal": 0
+      }
+    ]
+  },
+  "outputs": {
+    "fig_purity_auc_ep50_fp32": {
+      "png": {
+        "path": "fig_purity_auc_ep50_fp32.png",
+        "sha256": "e9635409b46a295e1dd4da8398a08d1c3ba7014438dcb1039f8ef7485028e6c4"
+      },
+      "pdf": {
+        "path": "fig_purity_auc_ep50_fp32.pdf",
+        "sha256": "75aabad698e213ab4873a93a995d3987bdcdadacb00a02a80439ea3bf69135b3"
+      },
+      "svg": {
+        "path": "fig_purity_auc_ep50_fp32.svg",
+        "sha256": "3878182eae9b1f58d8493921e970f70d810fc72df7a8369500a848cf68c57137"
+      }
+    },
+    "fig_policy_family_token_maps": {
+      "png": {
+        "path": "fig_policy_family_token_maps.png",
+        "sha256": "876d8dbdc8d60bacec3a69906a8df239e824e3afa2ba99fb609c4deb5ed22512"
+      },
+      "pdf": {
+        "path": "fig_policy_family_token_maps.pdf",
+        "sha256": "0bdeb58eb8af7296b57d375cc17ccc938f8a602379895e37515d5879b8aa4aea"
+      },
+      "svg": {
+        "path": "fig_policy_family_token_maps.svg",
+        "sha256": "96521a8bc7b2fbbfd67132e1d432ea8410ebfd6b4ce94426161422cb777a3adb"
+      }
+    }
+  },
+  "limits": "Verification checks source-to-artist/pixel correspondence. The mask panel is one illustrative engineering example; neither replacement is causal or retraining evidence."
+}

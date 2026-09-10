@@ -1,0 +1,32 @@
+{
+  "cover_legacy": {
+    "full_batch_images": 576,
+    "valid": 573,
+    "target_tissue_truncation_losses": 300,
+    "zero_tissue_context": 55,
+    "valid_floor_misses": 358,
+    "mean_context_tissue": 10.12673611111111,
+    "mean_scored_mass": 0.7850782221211599,
+    "mean_delivered_mass": 0.745704824283693
+  },
+  "cover_v2": {
+    "full_batch_images": 576,
+    "valid": 573,
+    "target_tissue_truncation_losses": 0,
+    "zero_tissue_context": 38,
+    "valid_floor_misses": 320,
+    "mean_context_tissue": 11.237847222222221,
+    "mean_scored_mass": 0.7856049254667237,
+    "mean_delivered_mass": 0.7856049256799109
+  },
+  "cover_v2_guard": {
+    "full_batch_images": 576,
+    "valid": 573,
+    "target_tissue_truncation_losses": 0,
+    "zero_tissue_context": 1,
+    "valid_floor_misses": 0,
+    "mean_context_tissue": 15.119791666666666,
+    "mean_scored_mass": 0.7856049254667237,
+    "mean_delivered_mass": 0.7856049256799109
+  }
+}

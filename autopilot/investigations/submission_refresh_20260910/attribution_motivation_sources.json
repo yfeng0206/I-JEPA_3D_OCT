@@ -1,0 +1,22 @@
+{
+  "scope": "Historical motivation, not restoration of quantitative attribution evidence",
+  "main_branch_document_git_blob": "5fcc74225cf9544ecb146bae24595321e7dbe856",
+  "source_hashes": {
+    "docs\\experiments\\interpretability.md": "8e97b3d566666f1e7e6558bdd31bdf6ea27d92e057a4bf31186cf1aca6f2c537",
+    "docs\\experiments\\finetune\\llrd.md": "5fffa428dedfad1108f92b6670e8b38e74ed561110504fb34cba47dec54f0143",
+    "scripts\\interpretability.py": "bbdd6320f055b95347ce073f44bb73485fe76d03e604f220e27b3b67ed518ed9"
+  },
+  "regime": "Uniform-masking pretrained encoders followed by supervised fine-tuning for glaucoma; not frozen primary MeanPool evaluation",
+  "method": "Feature interventions: zero slice vectors; omit one encoded patch from the mean using (total-patch)/(P-1); compare classifier logits",
+  "selection": "Correctly classified cases and slices chosen using attribution magnitude; not a representative cohort estimate",
+  "allowed_use": "Explain how selected exploratory maps motivated anatomical target selection",
+  "not_claimed": [
+    "clinical landmark validation",
+    "spatial consistency across population",
+    "causal benefit from guided pretraining",
+    "independently reproduced heatmap numerics",
+    "findings on the untouched pretrained encoder"
+  ],
+  "image_restored_to_submission": false,
+  "new_attribution_run": false
+}

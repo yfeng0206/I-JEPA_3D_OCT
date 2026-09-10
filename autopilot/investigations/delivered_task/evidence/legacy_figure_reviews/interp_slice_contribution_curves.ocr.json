@@ -1,0 +1,852 @@
+{
+    "image_sha256":  "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6",
+    "width":  1785,
+    "language":  "en-US",
+    "limitations":  "OCR is fallible; extracted text is not numeric validation or proof of image provenance.",
+    "method":  "Windows.Media.Ocr, local CPU, no desktop display",
+    "lines":  [
+                  {
+                      "text":  "Slice-level occlusion attribution — 3 fine-tune probes",
+                      "words":  [
+                                    {
+                                        "y":  15,
+                                        "height":  19,
+                                        "width":  125,
+                                        "text":  "Slice-level",
+                                        "x":  607
+                                    },
+                                    {
+                                        "y":  15,
+                                        "height":  19,
+                                        "width":  114,
+                                        "text":  "occlusion",
+                                        "x":  743
+                                    },
+                                    {
+                                        "y":  15,
+                                        "height":  19,
+                                        "width":  128,
+                                        "text":  "attribution",
+                                        "x":  868
+                                    },
+                                    {
+                                        "y":  26,
+                                        "height":  2,
+                                        "width":  23,
+                                        "text":  "—",
+                                        "x":  1007
+                                    },
+                                    {
+                                        "y":  16,
+                                        "height":  18,
+                                        "width":  12,
+                                        "text":  "3",
+                                        "x":  1041
+                                    },
+                                    {
+                                        "y":  15,
+                                        "height":  19,
+                                        "width":  112,
+                                        "text":  "fine-tune",
+                                        "x":  1063
+                                    },
+                                    {
+                                        "y":  15,
+                                        "height":  24,
+                                        "width":  83,
+                                        "text":  "probes",
+                                        "x":  1186
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "(how much does each slice push the logit toward its class?)",
+                      "words":  [
+                                    {
+                                        "y":  43,
+                                        "height":  23,
+                                        "width":  58,
+                                        "text":  "(how",
+                                        "x":  567
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  19,
+                                        "width":  66,
+                                        "text":  "much",
+                                        "x":  636
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  19,
+                                        "width":  58,
+                                        "text":  "does",
+                                        "x":  713
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  19,
+                                        "width":  57,
+                                        "text":  "each",
+                                        "x":  781
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  19,
+                                        "width":  54,
+                                        "text":  "slice",
+                                        "x":  849
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  24,
+                                        "width":  57,
+                                        "text":  "push",
+                                        "x":  914
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  19,
+                                        "width":  40,
+                                        "text":  "the",
+                                        "x":  981
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  24,
+                                        "width":  53,
+                                        "text":  "logit",
+                                        "x":  1032
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  19,
+                                        "width":  85,
+                                        "text":  "toward",
+                                        "x":  1093
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  19,
+                                        "width":  26,
+                                        "text":  "its",
+                                        "x":  1190
+                                    },
+                                    {
+                                        "y":  43,
+                                        "height":  23,
+                                        "width":  83,
+                                        "text":  "class?)",
+                                        "x":  1226
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Subset index fed into the model (0..63, 64 linspace-sampled slices)",
+                      "words":  [
+                                    {
+                                        "y":  74,
+                                        "height":  16,
+                                        "width":  70,
+                                        "text":  "Subset",
+                                        "x":  587
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  16,
+                                        "width":  54,
+                                        "text":  "index",
+                                        "x":  666
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  16,
+                                        "width":  32,
+                                        "text":  "fed",
+                                        "x":  728
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  16,
+                                        "width":  37,
+                                        "text":  "into",
+                                        "x":  770
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  16,
+                                        "width":  33,
+                                        "text":  "the",
+                                        "x":  815
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  16,
+                                        "width":  61,
+                                        "text":  "model",
+                                        "x":  857
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  19,
+                                        "width":  65,
+                                        "text":  "(0..63,",
+                                        "x":  928
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  16,
+                                        "width":  24,
+                                        "text":  "64",
+                                        "x":  1003
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  20,
+                                        "width":  180,
+                                        "text":  "linspace-sampled",
+                                        "x":  1036
+                                    },
+                                    {
+                                        "y":  74,
+                                        "height":  19,
+                                        "width":  63,
+                                        "text":  "slices)",
+                                        "x":  1225
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "10",
+                      "words":  [
+                                    {
+                                        "y":  100,
+                                        "height":  14,
+                                        "width":  21,
+                                        "text":  "10",
+                                        "x":  373
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.04",
+                      "words":  [
+                                    {
+                                        "y":  139,
+                                        "height":  16,
+                                        "width":  44,
+                                        "text":  "0.04",
+                                        "x":  65
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.02",
+                      "words":  [
+                                    {
+                                        "y":  217,
+                                        "height":  16,
+                                        "width":  43,
+                                        "text":  "0.02",
+                                        "x":  65
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "0.00",
+                      "words":  [
+                                    {
+                                        "y":  295,
+                                        "height":  16,
+                                        "width":  43,
+                                        "text":  "0.00",
+                                        "x":  65
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.02",
+                      "words":  [
+                                    {
+                                        "y":  372,
+                                        "height":  16,
+                                        "width":  59,
+                                        "text":  "-0.02",
+                                        "x":  49
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.04",
+                      "words":  [
+                                    {
+                                        "y":  450,
+                                        "height":  16,
+                                        "width":  60,
+                                        "text":  "-0.04",
+                                        "x":  49
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.06",
+                      "words":  [
+                                    {
+                                        "y":  528,
+                                        "height":  16,
+                                        "width":  60,
+                                        "text":  "-0.06",
+                                        "x":  49
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.08",
+                      "words":  [
+                                    {
+                                        "y":  606,
+                                        "height":  16,
+                                        "width":  60,
+                                        "text":  "-0.08",
+                                        "x":  49
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "-0.10",
+                      "words":  [
+                                    {
+                                        "y":  684,
+                                        "height":  16,
+                                        "width":  60,
+                                        "text":  "-0.10",
+                                        "x":  49
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "25",
+                      "words":  [
+                                    {
+                                        "y":  737,
+                                        "height":  16,
+                                        "width":  23,
+                                        "text":  "25",
+                                        "x":  317
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "20",
+                      "words":  [
+                                    {
+                                        "y":  100,
+                                        "height":  14,
+                                        "width":  21,
+                                        "text":  "20",
+                                        "x":  631
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  100,
+                                        "height":  14,
+                                        "width":  21,
+                                        "text":  "50",
+                                        "x":  1405
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + MeanPool (glaucoma, n=1466)",
+                      "words":  [
+                                    {
+                                        "y":  148,
+                                        "height":  13,
+                                        "width":  19,
+                                        "text":  "FT",
+                                        "x":  1353
+                                    },
+                                    {
+                                        "y":  150,
+                                        "height":  11,
+                                        "width":  11,
+                                        "text":  "+",
+                                        "x":  1378
+                                    },
+                                    {
+                                        "y":  147,
+                                        "height":  14,
+                                        "width":  77,
+                                        "text":  "MeanPool",
+                                        "x":  1397
+                                    },
+                                    {
+                                        "y":  147,
+                                        "height":  18,
+                                        "width":  91,
+                                        "text":  "(glaucoma,",
+                                        "x":  1482
+                                    },
+                                    {
+                                        "y":  147,
+                                        "height":  16,
+                                        "width":  71,
+                                        "text":  "n=1466)",
+                                        "x":  1580
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + MeanPool (healthy, n=1534)",
+                      "words":  [
+                                    {
+                                        "y":  175,
+                                        "height":  13,
+                                        "width":  19,
+                                        "text":  "FT",
+                                        "x":  1353
+                                    },
+                                    {
+                                        "y":  177,
+                                        "height":  11,
+                                        "width":  11,
+                                        "text":  "+",
+                                        "x":  1378
+                                    },
+                                    {
+                                        "y":  174,
+                                        "height":  14,
+                                        "width":  77,
+                                        "text":  "MeanPool",
+                                        "x":  1397
+                                    },
+                                    {
+                                        "y":  174,
+                                        "height":  18,
+                                        "width":  72,
+                                        "text":  "(healthy,",
+                                        "x":  1482
+                                    },
+                                    {
+                                        "y":  174,
+                                        "height":  16,
+                                        "width":  70,
+                                        "text":  "n=1534)",
+                                        "x":  1567
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + CrossAttnPool (glaucoma, n=1466)",
+                      "words":  [
+                                    {
+                                        "y":  201,
+                                        "height":  13,
+                                        "width":  19,
+                                        "text":  "FT",
+                                        "x":  1353
+                                    },
+                                    {
+                                        "y":  203,
+                                        "height":  11,
+                                        "width":  11,
+                                        "text":  "+",
+                                        "x":  1378
+                                    },
+                                    {
+                                        "y":  200,
+                                        "height":  14,
+                                        "width":  113,
+                                        "text":  "CrossAttnPool",
+                                        "x":  1396
+                                    },
+                                    {
+                                        "y":  200,
+                                        "height":  18,
+                                        "width":  91,
+                                        "text":  "(glaucoma,",
+                                        "x":  1517
+                                    },
+                                    {
+                                        "y":  200,
+                                        "height":  16,
+                                        "width":  71,
+                                        "text":  "n=1466)",
+                                        "x":  1615
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + CrossAttnPool (healthy, n=1534)",
+                      "words":  [
+                                    {
+                                        "y":  227,
+                                        "height":  13,
+                                        "width":  19,
+                                        "text":  "FT",
+                                        "x":  1353
+                                    },
+                                    {
+                                        "y":  229,
+                                        "height":  11,
+                                        "width":  11,
+                                        "text":  "+",
+                                        "x":  1378
+                                    },
+                                    {
+                                        "y":  226,
+                                        "height":  14,
+                                        "width":  113,
+                                        "text":  "CrossAttnPool",
+                                        "x":  1396
+                                    },
+                                    {
+                                        "y":  226,
+                                        "height":  18,
+                                        "width":  72,
+                                        "text":  "(healthy,",
+                                        "x":  1517
+                                    },
+                                    {
+                                        "y":  226,
+                                        "height":  16,
+                                        "width":  70,
+                                        "text":  "n=1534)",
+                                        "x":  1602
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT+ AttentiveProbe d=l (glaucoma, n=1466)",
+                      "words":  [
+                                    {
+                                        "y":  254,
+                                        "height":  13,
+                                        "width":  36,
+                                        "text":  "FT+",
+                                        "x":  1353
+                                    },
+                                    {
+                                        "y":  253,
+                                        "height":  14,
+                                        "width":  123,
+                                        "text":  "AttentiveProbe",
+                                        "x":  1396
+                                    },
+                                    {
+                                        "y":  253,
+                                        "height":  14,
+                                        "width":  33,
+                                        "text":  "d=l",
+                                        "x":  1525
+                                    },
+                                    {
+                                        "y":  253,
+                                        "height":  18,
+                                        "width":  91,
+                                        "text":  "(glaucoma,",
+                                        "x":  1566
+                                    },
+                                    {
+                                        "y":  253,
+                                        "height":  16,
+                                        "width":  71,
+                                        "text":  "n=1466)",
+                                        "x":  1664
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "FT + AttentiveProbe d=l (healthy, n=1534)",
+                      "words":  [
+                                    {
+                                        "y":  280,
+                                        "height":  13,
+                                        "width":  19,
+                                        "text":  "FT",
+                                        "x":  1353
+                                    },
+                                    {
+                                        "y":  282,
+                                        "height":  11,
+                                        "width":  11,
+                                        "text":  "+",
+                                        "x":  1378
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  14,
+                                        "width":  123,
+                                        "text":  "AttentiveProbe",
+                                        "x":  1396
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  14,
+                                        "width":  33,
+                                        "text":  "d=l",
+                                        "x":  1525
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  18,
+                                        "width":  72,
+                                        "text":  "(healthy,",
+                                        "x":  1566
+                                    },
+                                    {
+                                        "y":  279,
+                                        "height":  16,
+                                        "width":  72,
+                                        "text":  "n=1534)",
+                                        "x":  1650
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "63",
+                      "words":  [
+                                    {
+                                        "y":  100,
+                                        "height":  14,
+                                        "width":  20,
+                                        "text":  "63",
+                                        "x":  1740
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "50",
+                      "words":  [
+                                    {
+                                        "y":  737,
+                                        "height":  16,
+                                        "width":  23,
+                                        "text":  "50",
+                                        "x":  522
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "75",
+                      "words":  [
+                                    {
+                                        "y":  737,
+                                        "height":  16,
+                                        "width":  23,
+                                        "text":  "75",
+                                        "x":  726
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "30",
+                      "words":  [
+                                    {
+                                        "y":  100,
+                                        "height":  14,
+                                        "width":  21,
+                                        "text":  "30",
+                                        "x":  889
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "100",
+                      "words":  [
+                                    {
+                                        "y":  737,
+                                        "height":  16,
+                                        "width":  36,
+                                        "text":  "100",
+                                        "x":  924
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "40",
+                      "words":  [
+                                    {
+                                        "y":  100,
+                                        "height":  14,
+                                        "width":  21,
+                                        "text":  "40",
+                                        "x":  1147
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "125",
+                      "words":  [
+                                    {
+                                        "y":  737,
+                                        "height":  16,
+                                        "width":  35,
+                                        "text":  "125",
+                                        "x":  1129
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "150",
+                      "words":  [
+                                    {
+                                        "y":  737,
+                                        "height":  16,
+                                        "width":  36,
+                                        "text":  "150",
+                                        "x":  1333
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "199,",
+                      "words":  [
+                                    {
+                                        "y":  766,
+                                        "height":  20,
+                                        "width":  47,
+                                        "text":  "199,",
+                                        "x":  1320
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "175",
+                      "words":  [
+                                    {
+                                        "y":  737,
+                                        "height":  16,
+                                        "width":  35,
+                                        "text":  "175",
+                                        "x":  1537
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "64) sample)",
+                      "words":  [
+                                    {
+                                        "y":  765,
+                                        "height":  21,
+                                        "width":  35,
+                                        "text":  "64)",
+                                        "x":  1378
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  23,
+                                        "width":  90,
+                                        "text":  "sample)",
+                                        "x":  1422
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "199",
+                      "words":  [
+                                    {
+                                        "y":  737,
+                                        "height":  16,
+                                        "width":  36,
+                                        "text":  "199",
+                                        "x":  1733
+                                    }
+                                ]
+                  },
+                  {
+                      "text":  "Slice position along original 200-slice volume axis (each subset point = linspace(0,",
+                      "words":  [
+                                    {
+                                        "y":  765,
+                                        "height":  18,
+                                        "width":  52,
+                                        "text":  "Slice",
+                                        "x":  363
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  23,
+                                        "width":  87,
+                                        "text":  "position",
+                                        "x":  425
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  23,
+                                        "width":  60,
+                                        "text":  "along",
+                                        "x":  522
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  23,
+                                        "width":  83,
+                                        "text":  "original",
+                                        "x":  592
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  18,
+                                        "width":  101,
+                                        "text":  "200-slice",
+                                        "x":  685
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  18,
+                                        "width":  84,
+                                        "text":  "volume",
+                                        "x":  794
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  18,
+                                        "width":  44,
+                                        "text":  "axis",
+                                        "x":  887
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  21,
+                                        "width":  61,
+                                        "text":  "(each",
+                                        "x":  941
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  18,
+                                        "width":  75,
+                                        "text":  "subset",
+                                        "x":  1011
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  23,
+                                        "width":  56,
+                                        "text":  "point",
+                                        "x":  1096
+                                    },
+                                    {
+                                        "y":  772,
+                                        "height":  7,
+                                        "width":  15,
+                                        "text":  "=",
+                                        "x":  1161
+                                    },
+                                    {
+                                        "y":  765,
+                                        "height":  23,
+                                        "width":  121,
+                                        "text":  "linspace(0,",
+                                        "x":  1188
+                                    }
+                                ]
+                  }
+              ],
+    "height":  803
+}

@@ -1,0 +1,77 @@
+# FUTURE EXPERIMENT, NOT A HISTORICAL RUN CONFIG. No training results exist.
+# Exact prefix-shaped target scoring retains the historical rectangle-arm
+# loss budget. The final context guard is an ADDITIONAL guide-aware policy:
+# it may replace background context tokens with non-target tissue from outside
+# the sampled context rectangle. Do not call this target-location-only.
+# The final guard protects occupancy cells: max(ceil(.21*N_tissue), min(4,N_tissue)).
+# Invalid guides and infeasible targets/budgets are explicitly NOT certified.
+# Guarding is independent of the target ramp, including r_t=0; this config
+# therefore does not reproduce the historical warm-up context policy.
+data:
+  batch_size: 64
+  crop_size: 256
+  crop_scale: [0.3, 1.0]
+  num_workers: 6
+  val_num_workers: 2
+  pin_mem: true
+  data_dir: D:\jepa_phase0\fairvision-glaucoma\data
+  slice_cache_dir: C:\jepa_data\slice_cache
+  num_slices: 100
+  color_jitter_strength: 0.0
+  use_color_distortion: false
+  use_gaussian_blur: false
+  use_horizontal_flip: false
+  prefetch_factor: 2
+mask:
+  patch_size: 16
+  num_enc_masks: 1
+  num_pred_masks: 4
+  enc_mask_scale: [0.85, 1.0]
+  pred_mask_scale: [0.15, 0.2]
+  aspect_ratio: [0.75, 1.5]
+  allow_overlap: false
+  min_keep: 10
+  # No pred_target_k: K = minimum drawn rectangle area, not K=16.
+  curriculum:
+    enabled: true
+    mode: mirage_cover
+    T_warm: 25
+    T_total: 30
+    r_max: 1.0
+    ramp_shape: linear
+    mirage_guide_dir: C:\jepa_data\mirage_soft_guides\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8_npy
+    mirage_dilate_patches: 0
+    mirage_occupancy_threshold: 0.25
+    anatomy_tau: 0.1
+    cover_leave_frac: 0.21
+    cover_min_visible_frac: 0.21
+    cover_min_visible_cells: 4
+    cover_fill: random_legal
+    cover_algorithm: delivered_v2
+    cover_context_guard: true
+    enc_truncate: prefix
+meta:
+  model_name: vit_base
+  pred_depth: 6
+  pred_emb_dim: 384
+  use_bfloat16: false
+  amp_target: false
+  load_checkpoint: true
+  read_checkpoint: D:\jepa_phase0\fairvision-glaucoma\checkpoint-ep25\jepa_patch-random_posfix-ep25.pth.tar
+  seed: 0
+optimization:
+  epochs: 100
+  lr: 0.00025
+  start_lr: 0.0001
+  final_lr: 1.0e-06
+  warmup: 5
+  weight_decay: 0.04
+  final_weight_decay: 0.4
+  ema: [0.996, 1.0]
+  ipe_scale: 1.0
+  accum_steps: 8
+  save_every: 5
+  patience: 9999
+logging:
+  folder: D:\jepa_phase0\runs\cover_delivered_v2
+  write_tag: jepa_patch_cover_delivered_v2

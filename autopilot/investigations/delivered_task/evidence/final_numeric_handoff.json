@@ -1,0 +1,23 @@
+{
+  "numeric_ALL_PASS": true,
+  "actual_source_sha256": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
+  "parent_message_source_sha256": "5ec7b4b4be077e3e1a46f08e01ff896c3c11eec02ea4304ee81ead9530b5bca1",
+  "source_identifier_matches_parent_message": true,
+  "parent_review_sha256": "2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6",
+  "complete_review_candidate": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\numeric_reviews.json",
+  "complete_review_sha256": "2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6",
+  "parent_base_macros_figures_sources_preserved": true,
+  "current_parent_file_modified": false,
+  "verification_report_sha256": "4efc2d303e28208598467ab908d2dd9972d65d46b5c31b999c94849c4edb2056",
+  "remaining_numeric_items": [],
+  "publication_action": "Numeric candidate is final and passing for the coordinator-approved source. Release owner may perform the one final isolated Word/build; parent alone controls production promotion/publication.",
+  "repository_policy_inputs": {
+    ".gitignore": "f72407d0def169d5fc3f8b1bc4def3414ed1654ca71a92e8a9a36da90fe85b0b"
+  },
+  "local_only_source_policy_receipt_sha256": "357396601cb4d2ba0908a7a5a5462cb3ca18aff2afc3541879930137ac0be965",
+  "review_file": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\numeric_reviews.json",
+  "review_sha256": "2d1985e01d7be99510e1181d77171d18b38ed53cec9c5a3420fffa834eac3db6",
+  "passing_report": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\delivered_task\\evidence\\default_parent_numeric_verification.json",
+  "passing_report_sha256": "d8fd9942252814261683218fb7c1ba5b20041fc037c67f93ff802c8a9990e3b5",
+  "selected_review_mode": "DEFAULT parent numeric_reviews.json; no intermediate candidate required"
+}

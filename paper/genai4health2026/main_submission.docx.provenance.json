@@ -1,0 +1,254 @@
+{
+  "docx_sha256": "9125fcdfab9104bbcb8981d7f1b1b532a6c3e46d3c3d31eea7905ac13b19189d",
+  "inputs": {
+    "auto/auto_numbers.tex": "d6f2c6201dd19c363ba51e1c006490eb7211af53615a45f2f62d4ef6bb80cbc2",
+    "auto/delivered_numbers.tex": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5",
+    "auto/fig_trajectories_ci.png": "09d8d84339ea9173ae3534726ed0cdca1290eb5d205e74997e330b02a7e147e7",
+    "auto/table_fp32.tex": "83c52c34e75872b1b4aa6f8d0a49aaefdc20e8011900a7579ec5c24206136317",
+    "compact_precision.tex": "6a57d177d34eef1997dbcab097ec911a50019b1aa7dad1a337a8b2193b66856e",
+    "compact_protocol.tex": "da7deb2e15016eb545661e224c10b58923e7deb360d3f6f6f9ee8482320d5419",
+    "figures/fig_archived_occlusion_examples.png": "9792883349d0c3b173f41be67e3ab9cbc3a7c621c3d51934fe341ee724fae391",
+    "figures/fig_oct_jepa_comparison_final.png": "3f7f55008ccf8334ee8ab86aec1d3f1604b684b5862a58c3afbefd1d143cc27f",
+    "figures/fig_oct_target_selection.png": "950549859f6ac051184c3b2c7485e90fba35a35b17c3aabc0912934745183208",
+    "main_submission.tex": "729c0417d623695720e28c4229243f88c48dd21f82925a6ac18ae1abc0f9a735",
+    "neurips_2026.sty": "c5287da23f9bd6b76c74f70360d977b4ea63c880297cadbe1d805f8a49d7bf86",
+    "references.bib": "68652851129f78d765fdebab533a46d431d2a2ed0dd58b0e77be28fdb66e90e0"
+  },
+  "aux_sha256": "0505ad509bd4fe9ea8f75c535b4b3e6995c38078c9fca8a1d29187fcd00ba901",
+  "aux_path": "C:\\Users\\Gary\\Desktop\\jepa\\_release_work\\release-7b1681d3ad144fd881728bb49c53cfd7\\stage\\main.aux",
+  "references": [
+    {
+      "bookmark": "jeparef0000",
+      "key": "app:interp",
+      "number": "D",
+      "command": "\\ref{app:interp}"
+    },
+    {
+      "bookmark": "jeparef0001",
+      "key": "fig:target_selection",
+      "number": "1",
+      "command": "\\ref{fig:target_selection}"
+    },
+    {
+      "bookmark": "jeparef0002",
+      "key": "fig:policies",
+      "number": "2",
+      "command": "\\ref{fig:policies}"
+    },
+    {
+      "bookmark": "jeparef0003",
+      "key": "app:covbug",
+      "number": "B",
+      "command": "\\ref{app:covbug}"
+    },
+    {
+      "bookmark": "jeparef0004",
+      "key": "fig:target_selection",
+      "number": "1",
+      "command": "\\ref{fig:target_selection}"
+    },
+    {
+      "bookmark": "jeparef0005",
+      "key": "app:repro",
+      "number": "A",
+      "command": "\\ref{app:repro}"
+    },
+    {
+      "bookmark": "jeparef0006",
+      "key": "app:excluded",
+      "number": "A",
+      "command": "\\ref{app:excluded}"
+    },
+    {
+      "bookmark": "jeparef0007",
+      "key": "tab:main",
+      "number": "1",
+      "command": "\\ref{tab:main}"
+    },
+    {
+      "bookmark": "jeparef0008",
+      "key": "app:fp32",
+      "number": "F",
+      "command": "\\ref{app:fp32}"
+    },
+    {
+      "bookmark": "jeparef0009",
+      "key": "sec:setup",
+      "number": "4",
+      "command": "\\ref{sec:setup}"
+    },
+    {
+      "bookmark": "jeparef0010",
+      "key": "app:fp32",
+      "number": "F",
+      "command": "\\ref{app:fp32}"
+    },
+    {
+      "bookmark": "jeparef0011",
+      "key": "fig:traj",
+      "number": "3",
+      "command": "\\ref{fig:traj}"
+    },
+    {
+      "bookmark": "jeparef0012",
+      "key": "app:contrasts",
+      "number": "E",
+      "command": "\\ref{app:contrasts}"
+    },
+    {
+      "bookmark": "jeparef0013",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0014",
+      "key": "sec:setup",
+      "number": "4",
+      "command": "\\ref{sec:setup}"
+    },
+    {
+      "bookmark": "jeparef0015",
+      "key": "fig:traj",
+      "number": "3",
+      "command": "\\ref{fig:traj}"
+    },
+    {
+      "bookmark": "jeparef0016",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0017",
+      "key": "app:covbug",
+      "number": "B",
+      "command": "\\ref{app:covbug}"
+    },
+    {
+      "bookmark": "jeparef0018",
+      "key": "tab:delivered",
+      "number": "3",
+      "command": "\\ref{tab:delivered}"
+    },
+    {
+      "bookmark": "jeparef0019",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0020",
+      "key": "app:repro",
+      "number": "A",
+      "command": "\\ref{app:repro}"
+    },
+    {
+      "bookmark": "jeparef0021",
+      "key": "app:geomprov",
+      "number": "A",
+      "command": "\\ref{app:geomprov}"
+    },
+    {
+      "bookmark": "jeparef0022",
+      "key": "app:delivered_audit",
+      "number": "C",
+      "command": "\\ref{app:delivered_audit}"
+    },
+    {
+      "bookmark": "jeparef0023",
+      "key": "app:ethics",
+      "number": "A",
+      "command": "\\ref{app:ethics}"
+    },
+    {
+      "bookmark": "jeparef0024",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0025",
+      "key": "tab:delivered",
+      "number": "3",
+      "command": "\\ref{tab:delivered}"
+    },
+    {
+      "bookmark": "jeparef0026",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0027",
+      "key": "tab:geom",
+      "number": "2",
+      "command": "\\ref{tab:geom}"
+    },
+    {
+      "bookmark": "jeparef0028",
+      "key": "app:delivered_audit",
+      "number": "C",
+      "command": "\\ref{app:delivered_audit}"
+    },
+    {
+      "bookmark": "jeparef0029",
+      "key": "tab:delivered_repair",
+      "number": "4",
+      "command": "\\ref{tab:delivered_repair}"
+    },
+    {
+      "bookmark": "jeparef0030",
+      "key": "fig:archived_occlusion",
+      "number": "4",
+      "command": "\\ref{fig:archived_occlusion}"
+    },
+    {
+      "bookmark": "jeparef0031",
+      "key": "eq:occlusion_delta",
+      "number": "5",
+      "command": "\\ref{eq:occlusion_delta}"
+    },
+    {
+      "bookmark": "jeparef0032",
+      "key": "sec:limits",
+      "number": "6",
+      "command": "\\ref{sec:limits}"
+    }
+  ],
+  "generated_images": {},
+  "check": {
+    "ALL_PASS": true,
+    "errors": [],
+    "docx_sha256": "9125fcdfab9104bbcb8981d7f1b1b532a6c3e46d3c3d31eea7905ac13b19189d",
+    "input_hashes": {
+      "auto/auto_numbers.tex": "d6f2c6201dd19c363ba51e1c006490eb7211af53615a45f2f62d4ef6bb80cbc2",
+      "auto/delivered_numbers.tex": "c070be1a2a4097b60e2dbe83bb951814ffd341b99e5c5b87f5ca50f1eafc5cc5",
+      "auto/fig_trajectories_ci.png": "09d8d84339ea9173ae3534726ed0cdca1290eb5d205e74997e330b02a7e147e7",
+      "auto/table_fp32.tex": "83c52c34e75872b1b4aa6f8d0a49aaefdc20e8011900a7579ec5c24206136317",
+      "compact_precision.tex": "6a57d177d34eef1997dbcab097ec911a50019b1aa7dad1a337a8b2193b66856e",
+      "compact_protocol.tex": "da7deb2e15016eb545661e224c10b58923e7deb360d3f6f6f9ee8482320d5419",
+      "figures/fig_archived_occlusion_examples.png": "9792883349d0c3b173f41be67e3ab9cbc3a7c621c3d51934fe341ee724fae391",
+      "figures/fig_oct_jepa_comparison_final.png": "3f7f55008ccf8334ee8ab86aec1d3f1604b684b5862a58c3afbefd1d143cc27f",
+      "figures/fig_oct_target_selection.png": "950549859f6ac051184c3b2c7485e90fba35a35b17c3aabc0912934745183208",
+      "main.tex": "729c0417d623695720e28c4229243f88c48dd21f82925a6ac18ae1abc0f9a735",
+      "neurips_2026.sty": "c5287da23f9bd6b76c74f70360d977b4ea63c880297cadbe1d805f8a49d7bf86",
+      "references.bib": "68652851129f78d765fdebab533a46d431d2a2ed0dd58b0e77be28fdb66e90e0"
+    },
+    "aux_sha256": "0505ad509bd4fe9ea8f75c535b4b3e6995c38078c9fca8a1d29187fcd00ba901",
+    "counts": {
+      "references": 33,
+      "table_captions": 6,
+      "figure_captions": 4,
+      "tables": 6,
+      "data_tables": 6,
+      "media": 4,
+      "bibliography": 35
+    },
+    "limits": [
+      "Conversion completeness does not establish scientific validity.",
+      "Data tables require exact ordered row/cell numeric sequences and spans; only empty spacer rows and drawing-only layout tables are ignored.",
+      "Numeric normalization equates grouping commas, TeX grouping, optional unary plus and minus glyphs, not changed values or precision."
+    ]
+  }
+}

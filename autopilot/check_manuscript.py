@@ -20,10 +20,15 @@ caught during this run:
 
 Exit code is non-zero if any hard check fails, so refresh_all can gate on it.
 """
+import argparse
 import json
 import os
 import re
 import sys
+try:
+    from . import release_assets as assets
+except ImportError:
+    import release_assets as assets
 
 PAPER = r"C:\Users\Gary\Desktop\jepa\paper\genai4health2026"
 AUTO = os.path.join(PAPER, "auto")
@@ -47,32 +52,47 @@ BANNED = [
 LEAKED_ARM_KEYS = ["intensity", "oracle"]
 
 
-def main():
-    tex = open(os.path.join(PAPER, "main_submission.tex"), encoding="utf-8").read()
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--paper-dir", default=PAPER)
+    ap.add_argument("--stats-dir", default=STATS)
+    args = ap.parse_args(argv)
+    paper, stats = args.paper_dir, args.stats_dir
+    auto_dir = os.path.join(paper, "auto")
+    try:
+        tex, source_files = assets.source_tree(paper)
+    except (OSError, ValueError) as exc:
+        print("RESULT: FAIL:", exc)
+        return 1
     # Strip TeX comments, but NOT escaped percents: "43.7\%" is a literal
     # percent sign, not a comment. A naive %[^\n]* deleted the rest of any line
     # containing a percentage, which blinded every check below to the
     # percent-dense geometry table and could hide an undefined macro there.
     body = re.sub(r"(?<!\\)%[^\n]*", "", tex)
-    auto = open(os.path.join(AUTO, "auto_numbers.tex"), encoding="utf-8").read()
+    auto = open(os.path.join(auto_dir, "auto_numbers.tex"), encoding="utf-8").read()
 
     fails, warns = [], []
 
     # ---- 1 & 2: macros
-    defined = re.findall(r"\\newcommand\{\\(\w+)\}", auto)
+    defined = [name for name, _, _, _ in assets.macros(body)]
     dupes = sorted({m for m in defined if defined.count(m) > 1})
     defset = set(defined) | set(re.findall(r"\\newcommand\{\\(\w+)\}", body))
-    used = set(re.findall(r"\\([A-Z][A-Za-z]{3,})\b", body))
-    known_tex = {"LaTeX", "TeX", "Delta", "Nboot", "Ntest", "Npos", "Nneg"}
+    used = set(re.findall(r"\\([A-Z][A-Za-z]{3,})\b", assets.without_definitions(body)))
+    known_tex = {"LaTeX", "TeX", "Delta"}
     undefined = sorted(u for u in used
                        if u not in defset and u not in known_tex
                        and (u.startswith(("AUC", "D", "Sub", "Sev", "Race", "PD",
                                           "Sens", "Spec", "Brier", "ECE", "FT",
-                                          "CI", "Nprobes", "Nbranches", "Prev"))))
+                                          "CI", "Nprobes", "Nbranches", "Prev",
+                                          "Nboot", "Ntest", "Npos", "Nneg"))))
     if dupes:
         fails.append("duplicate macro definitions: %s" % dupes)
     if undefined:
         fails.append("macros used but never defined: %s" % undefined)
+    if not defined:
+        fails.append("no macro definitions found; expected coverage is empty")
+    if re.search(r"\\ph\b", assets.expanded_body(body)):
+        fails.append("reachable placeholder (including nested input/table macros)")
 
     unused = sorted(set(defined) - used)
     if unused:
@@ -97,7 +117,7 @@ def main():
         warns.append("hand-typed numeric literals before Discussion: %s" % lits)
 
     # ---- 4: citations
-    bib = open(os.path.join(PAPER, "references.bib"), encoding="utf-8").read()
+    bib = open(os.path.join(paper, "references.bib"), encoding="utf-8").read()
     keys = set(re.findall(r"@\w+\s*\{\s*([^,]+),", bib))
     cited = set()
     for m in re.finditer(r"\\cite[a-zA-Z]*\*?(?:\[[^\]]*\])*\{([^}]+)\}", body):
@@ -105,6 +125,8 @@ def main():
             if k.strip():
                 cited.add(k.strip())
     missing = sorted(cited - keys)
+    if not cited:
+        fails.append("no citations found; expected coverage is empty")
     if missing:
         fails.append("cited but absent from references.bib: %s" % missing)
 
@@ -116,8 +138,8 @@ def main():
         fails.append("refs with no matching label: %s" % dangling)
 
     # ---- 6: probe counts must match the artifacts
-    stp = os.path.join(STATS, "p1c_stats.json")
-    trp = os.path.join(STATS, "p7b_gap_trend.json")
+    stp = os.path.join(stats, "p1c_stats.json")
+    trp = os.path.join(stats, "p7b_gap_trend.json")
     if os.path.exists(stp) and os.path.exists(trp):
         st = json.load(open(stp))
         tr = json.load(open(trp))
@@ -143,10 +165,10 @@ def main():
     # ---- 9: leaked raw arm keys in any generated table
     # The .tex body legitimately says "intensity centroid" in prose, so only the
     # generated tables are scanned, and only for the \textsc{...} display form.
-    for fn in sorted(os.listdir(AUTO)):
+    for fn in sorted(os.listdir(auto_dir)):
         if not fn.startswith("table_") or not fn.endswith(".tex"):
             continue
-        txt = open(os.path.join(AUTO, fn), encoding="utf-8").read()
+        txt = open(os.path.join(auto_dir, fn), encoding="utf-8").read()
         for key in LEAKED_ARM_KEYS:
             if ("\\textsc{%s}" % key) in txt.lower():
                 fails.append("auto/%s renders the raw arm key '%s' instead of "

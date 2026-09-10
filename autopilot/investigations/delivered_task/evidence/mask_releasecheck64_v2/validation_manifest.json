@@ -1,0 +1,27 @@
+{
+  "baseline": "de145d7",
+  "hash_algorithm": "sha256",
+  "files": {
+    "configs\\patch_cover_delivered_v2.yaml": "4a0c7e96dd15fb1b699a732367eccdcb863d29452b50ed5caabbb184eceaafd8",
+    "configs\\patch_cover_f021_ep25.yaml": "4119c33f35a5c2ba3bc7ff240a7e4172de6f8d2d31187967b3f89e771ff1463a",
+    "src\\masks\\cover.py": "8decf18ba0048cb7de33b127d35262e8bd8258c73f0565fee533f48606b82fab",
+    "src\\masks\\curriculum.py": "32f21273913a65f9a12ff528dbc28b325d9ada58d4df0ea5a226c0e14ff0d36d",
+    "src\\masks\\multiblock.py": "3fa5d19ad4b594299c0b03eb2058db73b1956bacf0706894a6276f798f2467de",
+    "src\\masks\\anatomy.py": "2ab33b86b9d9830acf4efe0eb2d3414b4d353b5fba0864badd1572a193abb4a7",
+    "src\\masks\\utils.py": "5d92f57981a72e9c0abc5be18c56a5255ff5c8c3b82c0a13b8e027e82f4bbb7a",
+    "src\\datasets\\oct_slices.py": "6397ed9f634473b77683b4fd9c8b5824fae8f6a54ad844ad76a0d320d367f9de",
+    "src\\datasets\\oct_slices_guided.py": "231145343f6fbfed3462481430a18a824670afc8fbd59c1b10217e7d5e17eaf2",
+    "src\\transforms.py": "fabc7e08b67ef2f9f6d6e96602413f2ab997a584b9b4b9d2735790064d408c80",
+    "src\\guides\\mirage_envelope.py": "e46d5a0c75b0b613c1adb638b877351c3a213b502705a6c082a1e051c07bc7e0",
+    "scripts\\delivered_mask_audit.py": "deba34e6d576bb445ef2d1b87e8d929cca397423d94f1ddd0cccad456387d2fb",
+    "tests\\test_delivered_masks.py": "ceb2cfe866eb1715ac46489803ed376b2764f3930a12639f80f51847eac2473e"
+  },
+  "focused_pytest": {
+    "passed": 106,
+    "reported_seconds": 12.12
+  },
+  "historical_default_controls": 15,
+  "source_matches_last_real_worker_replay": true,
+  "gpu_use": false,
+  "real_pixels_exported": false
+}

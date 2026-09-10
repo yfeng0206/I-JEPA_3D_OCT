@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JEPA numeric evidence and explicit review receipts",
+  "type": "object",
+  "required": ["version"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {"const": 1},
+    "scope": {"type": "string"},
+    "sources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["root", "path", "sha256"],
+        "properties": {
+          "root": {"enum": ["repo", "paper", "stats"]},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"$ref": "#/$defs/sha256"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "macros": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["expression"],
+        "properties": {"expression": {"$ref": "#/$defs/expression"}},
+        "additionalProperties": false
+      }
+    },
+    "literals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "context_sha256", "token_index", "value"],
+        "properties": {
+          "file": {"type": "string"},
+          "context_sha256": {"$ref": "#/$defs/sha256"},
+          "token_index": {"type": "integer", "minimum": 0},
+          "value": {"type": "string"},
+          "expression": {"$ref": "#/$defs/expression"},
+          "component": {"type": "integer", "minimum": 0},
+          "assertion": {
+            "type": "object",
+            "required": ["expression", "relation", "bound"],
+            "properties": {
+              "expression": {"$ref": "#/$defs/expression"},
+              "relation": {"enum": ["lt", "le", "gt", "ge"]},
+              "bound": {"type": "string"},
+              "component": {"type": "integer", "minimum": 0}
+            },
+            "additionalProperties": false
+          },
+          "review": {
+            "type": "object",
+            "required": ["kind", "reviewer", "rationale", "evidence"],
+            "properties": {
+              "kind": {"enum": ["protocol", "formula", "citation"]},
+              "reviewer": {"type": "string", "minLength": 1},
+              "rationale": {"type": "string", "minLength": 1},
+              "immutable_locator": {"type": "string", "minLength": 1},
+              "locator": {"type": "string", "minLength": 1},
+              "evidence": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": ["source"],
+                  "properties": {
+                    "source": {"type": "string"},
+                    "pointer": {"type": "string"},
+                    "excerpt": {"type": "string", "minLength": 1},
+                    "sha256": {"$ref": "#/$defs/sha256"}
+                  },
+                  "oneOf": [{"required": ["pointer"]}, {"required": ["excerpt"]}]
+                }
+              }
+            },
+            "allOf": [{
+              "if": {"properties": {"kind": {"const": "citation"}}},
+              "then": {"required": ["immutable_locator", "locator"]}
+            }]
+          }
+        },
+        "oneOf": [{"required": ["expression"]}, {"required": ["review"]}, {"required": ["assertion"]}],
+        "additionalProperties": false
+      }
+    },
+    "figures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256", "caption_sha256", "inputs", "validation"],
+        "properties": {
+          "path": {"type": "string"},
+          "sha256": {"$ref": "#/$defs/sha256"},
+          "caption_sha256": {"$ref": "#/$defs/sha256"},
+          "inputs": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["source", "pointer", "sha256"],
+              "properties": {
+                "source": {"type": "string"},
+                "pointer": {"type": "string"},
+                "sha256": {"$ref": "#/$defs/sha256"}
+              }
+            }
+          },
+          "validation": {
+            "type": "object",
+            "required": ["method"],
+            "properties": {
+              "method": {"enum": ["reviewed_historical_illustration", "reviewed_source_illustration", "svg_coordinates", "svg_bars"]},
+              "reviewer": {"type": "string", "minLength": 1},
+              "limitations": {"type": "string", "minLength": 1},
+              "quantitative_scope": {"const": "illustrative_only"},
+              "series": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/svgSeries"}},
+              "labels": {"type": "object", "additionalProperties": {"$ref": "#/$defs/expression"}},
+              "decorations": {"type": "array", "items": {"$ref": "#/$defs/svgDecoration"}}
+            },
+            "allOf": [{
+              "if": {"properties": {"method": {"enum": ["reviewed_historical_illustration", "reviewed_source_illustration"]}}},
+              "then": {"required": ["reviewer", "limitations", "quantitative_scope"]}
+            }, {
+              "if": {"properties": {"method": {"enum": ["svg_coordinates", "svg_bars"]}}},
+              "then": {"required": ["series"]}
+            }]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "svgSeries": {
+      "type": "object",
+      "required": ["element_id", "x_scale", "x_offset", "y_scale", "y_offset"],
+      "properties": {
+        "element_id": {"type": "string"},
+        "x_scale": {"type": "number"},
+        "x_offset": {"type": "number"},
+        "y_scale": {"type": "number"},
+        "y_offset": {"type": "number"},
+        "x": {"$ref": "#/$defs/expression"},
+        "y": {"$ref": "#/$defs/expression"},
+        "value": {"$ref": "#/$defs/expression"},
+        "orientation": {"enum": ["horizontal", "vertical"]},
+        "baseline": {"const": 0},
+        "category_interval": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "category_label": {"type": "string"},
+        "axis_id": {"type": "string"}
+      },
+      "oneOf": [
+        {"required": ["x", "y"]},
+        {"required": ["value", "orientation", "category_interval", "category_label", "axis_id"]}
+      ]
+    },
+    "svgDecoration": {
+      "type": "object",
+      "required": ["element_id", "sha256", "kind", "reviewer", "rationale"],
+      "properties": {
+        "element_id": {"type": "string"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "kind": {"enum": ["background", "axis_frame", "axis_layout", "legend", "annotation", "reviewed_illustration"]},
+        "reviewer": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1},
+        "dimension": {"enum": ["x", "y"]},
+        "scale": {"type": "number"},
+        "offset": {"type": "number"},
+        "limitations": {"type": "string"},
+        "quantitative_scope": {"const": "illustrative_only"}
+      }
+    },
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "expression": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": ["source", "pointer"],
+          "properties": {"source": {"type": "string"}, "pointer": {"type": "string"}}
+        },
+        {
+          "required": ["op", "args"],
+          "properties": {
+            "op": {"enum": ["format", "subtract", "add", "multiply", "divide", "min", "max", "length", "mean", "stdev", "abs", "array", "percent", "pvalue", "tex_scientific", "yesno", "severity_label"]},
+            "args": {"type": "array", "items": {"$ref": "#/$defs/expression"}},
+            "digits": {"type": "integer", "minimum": 1, "maximum": 8},
+            "format": {"type": "string"}
+          }
+        }
+      ]
+    }
+  }
+}

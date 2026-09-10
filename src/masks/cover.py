@@ -20,7 +20,14 @@ COVER was intended to keep the envelope's target geometry and supervision volume
 while pushing the hidden fraction of anatomy higher, which is the variable we
 actually want to test.
 
-WARNING - THIS INTENT IS NOT REALISED.  See autopilot/COVER_AUDIT.md.
+Historical default (``delivered_k=None``): this intent is not realised.
+The opt-in ``delivered_k`` path scores and returns the exact prefix-shaped
+targets; ``curriculum.cover_algorithm=delivered_v2`` supplies the common K.
+Neither placement mode alone guarantees tissue in the FINAL encoder context:
+the separately labeled ``cover_context_guard`` checks/repairs that after
+collation, or reports invalid/infeasible status.
+
+Historical failure:
 The collator truncates every predictor target to the shortest target in the
 microbatch (curriculum.py, the ``global_min_pred`` branch), and it does so AFTER
 this module has chosen placement.  The greedy optimisation below is therefore
@@ -37,7 +44,7 @@ not cite this arm as an over-coverage condition.  Note also that realised
 coverage is logged BEFORE truncation, so the training logs report the intent
 (~78.5%) rather than what the model received.
 
-Fixing it requires scoring coverage against the prefix-truncated shapes that
+The opt-in fix scores coverage against the prefix-truncated shapes that
 will actually reach the model, and re-logging coverage after collation.  Setting
 ``pred_target_k`` on this arm is not a fix: it would cut the rectangle arms from
 ~158 loss slots to 64 and change what they measure.
@@ -142,6 +149,7 @@ def build_targets(
     transition: bool = True,
     fill: Optional[str] = None,
     occupancy: Optional[np.ndarray] = None,
+    delivered_k: Optional[int] = None,
     rng=None,
 ) -> Tuple[List[np.ndarray], Dict[str, float]]:
     """Greedily place ``len(block_sizes)`` rectangles to hide the anatomy.
@@ -181,6 +189,10 @@ def build_targets(
             vitreous where they carry no signal.
         rng: ``random.Random``-like source.  Defaults to the ``random`` module
             so COVER shares the global seeding of the rest of the sampler.
+        delivered_k: Opt-in delivered-v2 geometry. Score and return exactly
+            the row-major prefix of each candidate rectangle that collation
+            will deliver. Candidate top-left bounds still use the full drawn
+            rectangle; ``None`` preserves the historical full-rectangle policy.
 
     Returns:
         ``(masks, info)`` — ``masks`` is a list of ``(H, W)`` bool arrays, one
@@ -199,6 +211,12 @@ def build_targets(
 
     score, support = anatomy_support(class_scores, tau)
     height, width = score.shape
+    if delivered_k is not None:
+        delivered_k = int(delivered_k)
+        if delivered_k < 1 or any(
+            delivered_k > min(h, height) * min(w, width) for h, w in block_sizes
+        ):
+            raise ValueError("delivered_k must fit every drawn rectangle")
     n_anat = int(support.sum())
     total_mass = float(score[support].sum()) if n_anat else 0.0
 
@@ -212,6 +230,7 @@ def build_targets(
         "n_transition": 0,
         "n_random": 0,
         "n_unguided": 0,
+        "n_boundary_fallback": 0,
         "floor_blocked": 0,
         # Per-slot provenance, so callers can visualise and audit which blocks
         # did coverage work and which were just uniform JEPA blocks.
@@ -274,6 +293,28 @@ def build_targets(
         left = rng.randrange(0, max(1, width - block_w + 1))
         return top, left
 
+    def _rect(top: int, left: int, block_h: int, block_w: int) -> np.ndarray:
+        mask = np.zeros((height, width), dtype=bool)
+        mask[top:top + block_h, left:left + block_w] = True
+        if delivered_k is not None:
+            indices = np.flatnonzero(mask)
+            mask.ravel()[indices[delivered_k:]] = False
+        return mask
+
+    def _sums(grid: np.ndarray, block_h: int, block_w: int) -> np.ndarray:
+        if delivered_k is None:
+            return _window_sums(_integral(grid), block_h, block_w)
+        rows, tail = divmod(delivered_k, block_w)
+        n_top, n_left = height - block_h + 1, width - block_w + 1
+        sums = np.zeros((n_top, n_left), dtype=np.float64)
+        if rows:
+            sums += _window_sums(_integral(grid), rows, block_w)[:n_top, :n_left]
+        if tail:
+            sums += _window_sums(_integral(grid), 1, tail)[
+                rows:rows + n_top, :n_left
+            ]
+        return sums
+
     def _finish(masks: List[np.ndarray], floor_cells: int) -> Tuple[List[np.ndarray], Dict]:
         union = np.logical_or.reduce(masks)
         hidden = float(score[support & union].sum())
@@ -317,8 +358,7 @@ def build_targets(
         for block_h, block_w in block_sizes:
             block_h, block_w = min(block_h, height), min(block_w, width)
             top, left = _uniform_loc(block_h, block_w)
-            mask = np.zeros((height, width), dtype=bool)
-            mask[top:top + block_h, left:left + block_w] = True
+            mask = _rect(top, left, block_h, block_w)
             masks.append(mask)
             info["n_random"] += 1
             info["slot_kind"][len(masks) - 1] = "fallback"
@@ -346,11 +386,6 @@ def build_targets(
         covered[mask] = True
         masks[slot] = mask
 
-    def _rect(top: int, left: int, block_h: int, block_w: int) -> np.ndarray:
-        mask = np.zeros((height, width), dtype=bool)
-        mask[top:top + block_h, left:left + block_w] = True
-        return mask
-
     # Blocks the ramp left unguided are placed uniformly by the caller.  They
     # are folded in FIRST so the floors are evaluated against the true final
     # union rather than the guided subset alone.
@@ -362,6 +397,9 @@ def build_targets(
             if mask is None:
                 top, left = _uniform_loc(block_h, block_w)
                 mask = _rect(top, left, block_h, block_w)
+            elif delivered_k is not None:
+                mask = np.asarray(mask, dtype=bool).copy()
+                mask.ravel()[np.flatnonzero(mask)[delivered_k:]] = False
             _place(slot, np.asarray(mask, dtype=bool))
             info["n_unguided"] += 1
             info["slot_kind"][slot] = "unguided"
@@ -379,18 +417,18 @@ def build_targets(
         both evaluated against the CUMULATIVE union rather than this block
         alone.
         """
-        gains = _window_sums(_integral(remaining), block_h, block_w)
+        gains = _sums(remaining, block_h, block_w)
         if gains is None:
             return None, None
         legal = gains <= float(remaining.sum() - floor_mass) + 1e-9
         uncovered = (support & ~covered).astype(np.float64)
-        newly = _window_sums(_integral(uncovered), block_h, block_w)
+        newly = _sums(uncovered, block_h, block_w)
         visible_after = float(uncovered.sum()) - newly
         legal = legal & (visible_after >= floor_cells - 1e-9)
         if occ is not None and n_occ > 0:
             # Same floor, evaluated on the occupancy mask the audits use.
             occ_unc = (occ & ~covered).astype(np.float64)
-            occ_newly = _window_sums(_integral(occ_unc), block_h, block_w)
+            occ_newly = _sums(occ_unc, block_h, block_w)
             occ_after = float(occ_unc.sum()) - occ_newly
             legal = legal & (occ_after >= occ_floor_cells - 1e-9)
         return gains, legal
@@ -465,8 +503,8 @@ def build_targets(
             info["slot_kind"][slot] = "random"
             continue
 
-        n_tissue = _window_sums(_integral(support.astype(np.float64)), block_h, block_w)
-        n_background = float(block_h * block_w) - n_tissue
+        n_tissue = _sums(support.astype(np.float64), block_h, block_w)
+        n_background = float(delivered_k or block_h * block_w) - n_tissue
         balance = np.minimum(n_tissue, n_background)
         scored = np.where(legal, balance, -np.inf)
         if float(scored.max()) > 0.0:
@@ -489,8 +527,10 @@ def build_targets(
                 # fallback rather than being passed off as guided.
                 top, left = _choose(-gains)
                 info["floor_violation"] = True
-            info["n_random"] += 1
-            info["slot_kind"][slot] = "random"
+            # Random tie-breaking among guide-selected least-tissue windows
+            # does not make this an unguided uniform fill.
+            info["n_boundary_fallback"] += 1
+            info["slot_kind"][slot] = "boundary_fallback"
         _commit(slot, top, left, block_h, block_w)
 
     return _finish([m for m in masks], floor_cells)

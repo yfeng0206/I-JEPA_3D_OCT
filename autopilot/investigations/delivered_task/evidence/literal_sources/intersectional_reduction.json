@@ -1,0 +1,104 @@
+{
+  "producer": "autopilot\\p15_literal_snapshots.py",
+  "producer_sha256": "cc65295c24223b7e8f3386337deff25ebfabac08d897586e057f29d100ec9fdf",
+  "inputs_sha256": {
+    "D:\\jepa_phase0\\reports\\subgroup\\intersectional_auc.json": "c02252f417430faac797bd8c794609cee262be87cd88008796d0ca0d199c15eb",
+    "D:\\jepa_phase0\\reports\\subgroup\\subgroup_auc.json": "89dd2f4b5c92330c6d194461b4fd9d03630233a209b4f1f9e9ff3daf7bbab89d"
+  },
+  "operations": [
+    "Select status == OK from the intersectional artifact; use exactly those keys in the marginal artifact.",
+    "Per-arm gaps = max(group AUC)-min(group AUC); arithmetic mean across retained keys.",
+    "Order counts and matched-epoch cell deltas use named race/gender cells, never nearest values."
+  ],
+  "retained_keys": [
+    "frozen_meanpool_anatomy_ep30",
+    "frozen_meanpool_bridge_ep35",
+    "frozen_meanpool_bridge_ep40",
+    "frozen_meanpool_bridge_ep50",
+    "frozen_meanpool_cover_f021_ep27",
+    "frozen_meanpool_cover_f021_ep30",
+    "frozen_meanpool_cover_f021_ep34",
+    "frozen_meanpool_envelope_ep30",
+    "frozen_meanpool_fork_ep25",
+    "frozen_meanpool_mirage_ep100",
+    "frozen_meanpool_mirage_ep50",
+    "frozen_meanpool_mirage_ep75",
+    "sweep_oracle_ep100",
+    "sweep_oracle_ep50",
+    "sweep_oracle_ep75",
+    "sweep_random_ep100",
+    "sweep_random_ep50",
+    "sweep_random_ep75"
+  ],
+  "counts": {
+    "all_records": 22,
+    "retained_records": 18,
+    "worst_black_female": 18,
+    "best_asian_male": 18,
+    "female_below_male": 54,
+    "black_below_white": 36,
+    "intersection_exceeds_race": 18
+  },
+  "mean_gaps": {
+    "intersection": 0.10457330372569623,
+    "race": 0.06530851833712593,
+    "gender": 0.034018657645222834
+  },
+  "understatement_percent": 60.12199692830796,
+  "additive_gap": 0.09932717598234878,
+  "additive_ratio": 1.052816640475913,
+  "oracle_race_gap": 0.07174289074726659,
+  "oracle_intersection_gap": 0.11000766671168094,
+  "oracle_black_female_auc": 0.8308525483420826,
+  "oracle_black_margin_minus_female": 0.01632261876715657,
+  "deltas": {
+    "oracle_minus_random_ep50": {
+      "asian x female": -0.002031419284940439,
+      "asian x male": 0.012585532746823058,
+      "black x female": 0.00548209183334436,
+      "black x male": 0.0067769043101112425,
+      "white x female": 0.01384943976024866,
+      "white x male": 0.006557825995365474
+    },
+    "envelope_minus_random_ep50": {
+      "asian x female": 0.015980498374864593,
+      "asian x male": 0.01050830889540566,
+      "black x female": 0.00943584291315036,
+      "black x male": 0.026701002981837973,
+      "white x female": 0.011069487621049756,
+      "white x male": 0.00980198019801981
+    },
+    "oracle_minus_random_ep75": {
+      "asian x female": 0.0041982665222101145,
+      "asian x male": 0.02101661779081143,
+      "black x female": 0.011994152435377714,
+      "black x male": 0.006641366223908984,
+      "white x female": 0.01260595352582028,
+      "white x male": 0.01165156941226042
+    },
+    "envelope_minus_random_ep75": {
+      "asian x female": -0.014761646803900352,
+      "asian x male": -0.0030547409579667617,
+      "black x female": -0.002458635125257458,
+      "black x male": 0.002778530767145626,
+      "white x female": 0.011727014514794298,
+      "white x male": 0.012591110174847264
+    },
+    "oracle_minus_random_ep100": {
+      "asian x female": 0.014355362946912198,
+      "asian x male": 0.016373411534701954,
+      "black x female": 0.011362881254568413,
+      "black x male": 0.022838167525074504,
+      "white x female": 0.012140764430926154,
+      "white x male": 0.009871497788076722
+    },
+    "envelope_minus_random_ep100": {
+      "asian x female": 0.0001354279523293478,
+      "asian x male": -0.010019550342130978,
+      "black x female": -0.004020200677785968,
+      "black x male": 0.02175386283545666,
+      "white x female": 0.00871670431418159,
+      "white x male": 0.009452285654097392
+    }
+  }
+}

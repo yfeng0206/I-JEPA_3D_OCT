@@ -1,0 +1,1302 @@
+{
+  "generated_utc": "2026-09-05T01:13:01.259538+00:00",
+  "review_scope": "Seven fixed legacy assets; no manuscript, production, figure, GPU, or network changes.",
+  "classification_rule": "Image dimensions and OCR transcripts are metadata/observations, not empirical source truth. Lines, scatter points, AUCs, correlations, accuracies, predictions, and attributions remain quantitative.",
+  "sources": {
+    "legacy_table2_geometry_seed42": {
+      "root": "repo",
+      "path": "results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed42.json",
+      "sha256": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7"
+    },
+    "legacy_auc_inventory": {
+      "root": "stats",
+      "path": "p1b_full_inventory.json",
+      "sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6"
+    },
+    "legacy_precision_pdf": {
+      "root": "paper",
+      "path": "figures\\fig_precision_paradox.pdf",
+      "sha256": "7c0369268bda2590fca6da1e12bc944a426d0d171812c428fdfd91f75543f70a"
+    },
+    "legacy_fig_masking_policies_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\fig_masking_policies.ocr.json",
+      "sha256": "409ca618056eabd10e23e665adcd8774dc5e19fe2896740000edeb330786353f"
+    },
+    "legacy_fig_precision_paradox_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\fig_precision_paradox.ocr.json",
+      "sha256": "af387ebc9d4d70bb9cbbc11ade4821198cf9314d0ba2a6baf9f0ea02188461bc"
+    },
+    "legacy_interp_04_window_occlusion_W7_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_04_window_occlusion_W7.ocr.json",
+      "sha256": "8b7557b504c2c2640cdb50ad6630f677d15d642a5e23959cc247cf20e6484bc1"
+    },
+    "legacy_summary_interp_04_window_occlusion_W7": {
+      "root": "repo",
+      "path": "results\\summary\\04_window_occlusion_W7.png",
+      "sha256": "84f240a96461acb3f2e0280f0aa943146e3b98bc06b9cdf921ee76a9716277dc"
+    },
+    "legacy_interp_14_odos_mirror_test_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_14_odos_mirror_test.ocr.json",
+      "sha256": "3687e8cea5c9b33eb68846f28a67ee3ea2a2721bb643ef2afbd7413ed84ab6a8"
+    },
+    "legacy_summary_interp_14_odos_mirror_test": {
+      "root": "repo",
+      "path": "results\\summary\\14_odos_mirror_test.png",
+      "sha256": "4bbbb9456e911aa5d590234bffa7048b2177d2da6a4169dd138bde4d8c3098b8"
+    },
+    "legacy_interp_heatmap_grid_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_heatmap_grid.ocr.json",
+      "sha256": "c67daee64af43d80da227bdfa6af68bbd25e708a54e0e629daa1d7acaf9baa39"
+    },
+    "legacy_summary_interp_heatmap_grid": {
+      "root": "repo",
+      "path": "results\\summary\\heatmap_grid.png",
+      "sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb"
+    },
+    "legacy_interp_slice_contribution_by_outcome_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_slice_contribution_by_outcome.ocr.json",
+      "sha256": "22b1dd4cb6acb37bec474d663cf4b8b2de2251e30da61116cccb203ac3f26b64"
+    },
+    "legacy_summary_interp_slice_contribution_by_outcome": {
+      "root": "repo",
+      "path": "results\\summary\\slice_contribution_by_outcome.png",
+      "sha256": "4ed73e379131a5cda85efb3a42205b88781e5bece0b2c25974640eb10357d8b1"
+    },
+    "legacy_interp_slice_contribution_curves_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_slice_contribution_curves.ocr.json",
+      "sha256": "d8022c8eab09abb71bdfe5c52c39aa000e188d3f46843aba08ddc777860c9562"
+    },
+    "legacy_summary_interp_slice_contribution_curves": {
+      "root": "repo",
+      "path": "results\\summary\\slice_contribution_curves.png",
+      "sha256": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6"
+    },
+    "legacy_summary_heatmap_grid_BC": {
+      "root": "repo",
+      "path": "results\\summary\\heatmap_grid_BC.png",
+      "sha256": "7dc88ae88c6449cecad1fe2b94bb07dfcb01c5936a5dd02ba40d88962cb9cd30"
+    },
+    "legacy_heatmap_grid_BC_ocr": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\heatmap_grid_BC.ocr.json",
+      "sha256": "3398e5d8c4870371b0c207ab4052d93ea0c327d940e1a1dfa06efb8d4eb87bd5"
+    },
+    "legacy_producer_interpretability": {
+      "root": "repo",
+      "path": "scripts\\interpretability.py",
+      "sha256": "bbdd6320f055b95347ce073f44bb73485fe76d03e604f220e27b3b67ed518ed9"
+    },
+    "legacy_producer_assemble_heatmap_grid": {
+      "root": "repo",
+      "path": "scripts\\assemble_heatmap_grid.py",
+      "sha256": "2cd3d678e2dc5b5190e997256d926faf098382f04efa14d3a36e2d7a3a05780d"
+    },
+    "legacy_producer_heatmap_BC_comparison": {
+      "root": "repo",
+      "path": "scripts\\heatmap_BC_comparison.py",
+      "sha256": "b3f93ace5b24baca72590c424496a407ed59d17381478bc6c906a4d096e1da84"
+    },
+    "legacy_producer_odos_mirror_test": {
+      "root": "repo",
+      "path": "scripts\\odos_mirror_test.py",
+      "sha256": "0b14b18bbdbb06c155fd57db69aaecdac7ea86f0062c555275dd4d3dacdeb1a6"
+    },
+    "legacy_producer_deeper_interpretability_analysis": {
+      "root": "repo",
+      "path": "scripts\\deeper_interpretability_analysis.py",
+      "sha256": "ffb1ebefb9ba7420b27beae5f3e03a49aad73666468e0ee2d8f00c79f730f1cc"
+    },
+    "legacy_interpretability_history": {
+      "root": "repo",
+      "path": "docs\\experiments\\interpretability.md",
+      "sha256": "8e97b3d566666f1e7e6558bdd31bdf6ea27d92e057a4bf31186cf1aca6f2c537"
+    },
+    "legacy_inspection_helper": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\audit_legacy_figures.py",
+      "sha256": "0b12125c95d917e39b5d339fec2d4756edac17a7efc232a131e231ff98b4ea4e"
+    },
+    "legacy_review_decisions": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\review_decisions.json",
+      "sha256": "4a588d8eb8a3e11d55aa9c5bf2b8b407cfb475614a238a4b9cdcfbe5d713ed40"
+    }
+  },
+  "assets": [
+    {
+      "path": "figures\\fig_masking_policies.png",
+      "sha256": "7493287e756cfc7f2739bfed1bc28ad1abfcefb775137f8af5159df04afb4fe1",
+      "caption": "All six masking implementations (columns) on five B-scans (rows) spanning one\nvolume, drawn with the production samplers. Leftmost column is the unmasked\nB-scan. Each predictor target block has its own colour; the green contour is\nthe anatomy reference. The random, \\ArmBest{}, envelope and cover arms place\naxis-aligned rectangles; the anatomy arms grow cell-wise targets that follow the\nretinal band and therefore change shape from slice to slice. Column headings\ncarry each arm's own probe epoch, which differs between arms, so the AUCs\nprinted there are not a matched-epoch comparison and only\nTable~\\ref{tab:main} should be read that way. Panel headings use the artefact\nname \\texttt{oracle} for \\ArmBest{}.",
+      "caption_sha256": "2ba357ef87ae5ee3a68c5a452b0680355439f2d45958b1a60e77cd1e404952cc",
+      "metadata": {
+        "width": 2666,
+        "height": 1972,
+        "mode": "RGBA",
+        "dpi": [
+          110.00739999999999,
+          110.00739999999999
+        ],
+        "software": "Matplotlib version3.11.0, https://matplotlib.org/"
+      },
+      "ocr_source": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\fig_masking_policies.ocr.json",
+        "sha256": "409ca618056eabd10e23e665adcd8774dc5e19fe2896740000edeb330786353f"
+      },
+      "ocr_text": [
+        "5 slices (volume idx 2652) - one colour per predictor block, production samplers",
+        "B-scan + anatomy",
+        "random",
+        "AUC 0.8746 (eplOO)",
+        "All masking arms on the SAME",
+        "oracle",
+        "AUC 0.8855 (ep100)",
+        "pred block O",
+        "anatomy-v2",
+        "AUC 0.8683 (ep40)",
+        "cover-f021",
+        "AUC 0.8643 (ep50)",
+        "pred block 1",
+        "envelope",
+        "AUC 0.8807 (ep100)",
+        "pred block 2",
+        "pred block 3",
+        "anatomy-vl",
+        "AUC 0.8583 (ep30)",
+        "anatomy boundary"
+      ],
+      "reviewer": "GitHub Copilot legacy-figure evidence review, 2026-09-04",
+      "decision": "blocked_no_figure_receipt",
+      "mathematically_verified": false,
+      "status": "blocked_mixed_image_and_empirical_annotations",
+      "classification": "Selected mask illustrations plus six empirical AUC annotations; epochs and image-selection indices are metadata.",
+      "source_keys": [
+        "legacy_fig_masking_policies_ocr",
+        "legacy_auc_inventory"
+      ],
+      "rationale": "Actual OCR reads six AUC/epoch headings. All six displayed four-decimal AUCs agree with the retained original-precision inventory rows, but this does not verify the colored target masks, sampler provenance, selected volume, or seed. The whole asset is not nonquantitative.",
+      "limitations": "No historical mask coordinates, seed/selection receipt, or exact producer was recovered. OCR is fallible. AUC source agreement is an annotation check, not mathematical verification of the image grid. Unequal epochs cannot establish a policy comparison.",
+      "unresolved_scientific_claim": "Whether the displayed historical target masks were actually produced by the stated production samplers and faithfully instantiate the named policies.",
+      "minimal_action": "Prefer removing this redundant appendix grid and referring to the already independently reviewed delivered-mask figure. Alternatively retain only the existing mask-image panels without AUC annotations, explicitly label them selected historical illustrations with unrecovered draw provenance, and review the new exact asset/caption. Do not replace these fine-grained examples with invented masks or call the current whole asset illustrative-only.",
+      "inputs": [
+        {
+          "source": "legacy_fig_masking_policies_ocr",
+          "pointer": "",
+          "sha256": "409ca618056eabd10e23e665adcd8774dc5e19fe2896740000edeb330786353f"
+        },
+        {
+          "source": "legacy_auc_inventory",
+          "pointer": "",
+          "sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6"
+        }
+      ]
+    },
+    {
+      "path": "figures\\fig_precision_paradox.png",
+      "sha256": "b39d5e46fb59cb13f00c14cebef14949e554b37436012476c5dc7805ccb91658",
+      "caption": "Downstream AUC at matched epoch 50 against mask purity, the fraction of\nmasked patches lying on retinal tissue. The policy whose masks are $97\\%$\non-tissue does not separate from the null, while policies at $40$--$43\\%$ purity\ngain the most. The ordering does not support the intuition that more accurate\nanatomical masking yields better representations. The AUC axis is truncated and\nno interval is drawn, and the dashed line is\na least-squares fit through the arms shown; with four to five arms this is\ndescriptive, not inferential. The point labelled \\texttt{oracle} is\n\\ArmBest{}.",
+      "caption_sha256": "2decfd5da6b0a9b0334bb786ee7b1d228d92d31b05f6a01e68316f92b285bcca",
+      "metadata": {
+        "width": 1482,
+        "height": 1046,
+        "mode": "RGBA",
+        "dpi": [
+          199.9996,
+          199.9996
+        ],
+        "software": "Matplotlib version3.11.0, https://matplotlib.org/"
+      },
+      "ocr_source": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\fig_precision_paradox.ocr.json",
+        "sha256": "af387ebc9d4d70bb9cbbc11ade4821198cf9314d0ba2a6baf9f0ea02188461bc"
+      },
+      "ocr_text": [
+        "The precision paradox: masking anatomy more accurately does not help",
+        "epoch 50, geometry from 600 slices",
+        "u",
+        "o",
+        "c",
+        "o",
+        "0.876",
+        "0.874",
+        "0.872",
+        "0.870",
+        "0.868",
+        "0.866",
+        "0.864",
+        "random",
+        "0.8641",
+        "O",
+        "30",
+        "O",
+        "oracle",
+        "0.8740",
+        "O",
+        "cover-fO.21",
+        "0.8643",
+        "O",
+        "ana",
+        "o.",
+        "40",
+        "50",
+        "60",
+        "70",
+        "80",
+        "90",
+        "-ycæcl n II",
+        "100",
+        "mask purity: % of masked",
+        "patches lying on retinal tissue"
+      ],
+      "reviewer": "GitHub Copilot legacy-figure evidence review, 2026-09-04",
+      "decision": "blocked_no_figure_receipt",
+      "mathematically_verified": false,
+      "status": "blocked_stale_quantitative_geometry",
+      "classification": "Quantitative AUC-versus-purity scatter with fitted and null-reference lines; not an illustration.",
+      "source_keys": [
+        "legacy_precision_pdf",
+        "legacy_fig_precision_paradox_ocr",
+        "legacy_table2_geometry_seed42",
+        "legacy_auc_inventory",
+        "legacy_inspection_helper"
+      ],
+      "rationale": "PDF vector tick labels and coordinates independently recover five data points; PNG spines and colored-marker centers agree with the PDF geometry. All five purity values fail the current Table2 geometry source even after one-decimal rounding tolerance. AUC coordinates agree with historical inventory values rounded to six decimals.",
+      "limitations": "The historical AUC points mix fp16 rectangle-arm probes with fp32 shaped/coverage probes. The vector extraction verifies retained summary-to-mark agreement, not generation of raw masks or validity of the interpretation. Full raster numeric-label reading is not certified: some labels overlap.",
+      "unresolved_scientific_claim": "The title's general statement that masking anatomy more accurately does not help, and any significance/non-separation claim inferred from a point plot with no intervals.",
+      "minimal_action": "Parent may regenerate from the exact Table2 seed42 hidden_pct_on_anat fields and explicitly chosen matched-epoch, matched-precision AUC inventory rows. Use a descriptive title, exactly five arms, defined target-union purity, and clear no-retraining/no-causal-ranking limits. Otherwise remove the scatter and point readers to the verified geometry and performance tables.",
+      "inputs": [
+        {
+          "source": "legacy_precision_pdf",
+          "pointer": "/sha256",
+          "sha256": "7c0369268bda2590fca6da1e12bc944a426d0d171812c428fdfd91f75543f70a"
+        },
+        {
+          "source": "legacy_fig_precision_paradox_ocr",
+          "pointer": "",
+          "sha256": "af387ebc9d4d70bb9cbbc11ade4821198cf9314d0ba2a6baf9f0ea02188461bc"
+        },
+        {
+          "source": "legacy_table2_geometry_seed42",
+          "pointer": "",
+          "sha256": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7"
+        },
+        {
+          "source": "legacy_auc_inventory",
+          "pointer": "",
+          "sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6"
+        },
+        {
+          "source": "legacy_inspection_helper",
+          "pointer": "",
+          "sha256": "0b12125c95d917e39b5d339fec2d4756edac17a7efc232a131e231ff98b4ea4e"
+        }
+      ]
+    },
+    {
+      "path": "figures\\interp_04_window_occlusion_W7.png",
+      "sha256": "84f240a96461acb3f2e0280f0aa943146e3b98bc06b9cdf921ee76a9716277dc",
+      "caption": "Window occlusion ($W{=}7$) amplifies the same signal roughly sevenfold\nand suppresses single-volume noise. For mean-pooled models, single-slice\nocclusion systematically under-estimates attributed signal; the windowed variant\nrecovers more signal. As in Figure~\\ref{fig:interp-slice}, each probe\ncontributes a glaucoma mean (solid) and a healthy mean (dashed) with no interval\ndrawn, and the curve stops where a full window no longer fits.",
+      "caption_sha256": "fcb0492c46d845c9b388e6892aa240ed6f84d5ce96bedd212d6d5a80c14538ae",
+      "metadata": {
+        "width": 1785,
+        "height": 804,
+        "mode": "RGBA",
+        "dpi": [
+          150.01239999999999,
+          150.01239999999999
+        ],
+        "software": "Matplotlib version3.10.8, https://matplotlib.org/"
+      },
+      "ocr_source": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_04_window_occlusion_W7.ocr.json",
+        "sha256": "8b7557b504c2c2640cdb50ad6630f677d15d642a5e23959cc247cf20e6484bc1"
+      },
+      "ocr_text": [
+        "Window occlusion (W=7 consecutive slices)",
+        "Amplifies single-slice signal 7x while smoothing noise",
+        "0.2",
+        "0.1",
+        "0.0",
+        "-0.1",
+        "-0.2",
+        "-0.3",
+        "25",
+        "FT + MeanPool (glaucoma, n=1466)",
+        "FT + MeanPool (healthy, n-1534)",
+        "FT + CrossAttnPool (glaucoma, n=1466)",
+        "FT CrossAttnPool (healthy, n=1534)",
+        "FT + AttentiveProbe (glaucoma, n=1466)",
+        "FT + AttentiveProbe (healthy, n=1534)",
+        "50",
+        "75",
+        "100",
+        "125",
+        "150",
+        "175",
+        "199",
+        "Window-center slice position along 200-slice volume axis"
+      ],
+      "reviewer": "GitHub Copilot legacy-figure evidence review, 2026-09-04",
+      "decision": "blocked_no_figure_receipt",
+      "mathematically_verified": false,
+      "status": "blocked_unretained_empirical_attribution",
+      "classification": "Six quantitative class-mean attribution curves, sample counts, and an empirical sevenfold-amplification title.",
+      "source_keys": [
+        "legacy_interp_04_window_occlusion_W7_ocr",
+        "legacy_summary_interp_04_window_occlusion_W7",
+        "legacy_interpretability_history",
+        "legacy_producer_deeper_interpretability_analysis"
+      ],
+      "rationale": "The actual image title says it amplifies single-slice signal 7x while smoothing noise. The asset equals the retained summary PNG, but no window_contrib arrays or independently extracted vector series were recovered. Window size seven is protocol; sevenfold gain is an empirical claim, not the same kind of number.",
+      "limitations": "Historical documentation asserts the same conclusion but is not independent numeric evidence. Even disclosure that arrays are unavailable does not verify displayed curves, means, counts, amplification, or noise reduction.",
+      "unresolved_scientific_claim": "Sevenfold amplification, systematic underestimation by single-slice occlusion, and improved signal/noise or completeness.",
+      "minimal_action": "Remove this figure and its empirical comparison unless original window/slice summary arrays can be retained and independently checked. A non-results method description may state that zeroing a contiguous window is a different perturbation; do not claim a recovered gain or smoothing effect.",
+      "inputs": [
+        {
+          "source": "legacy_interp_04_window_occlusion_W7_ocr",
+          "pointer": "",
+          "sha256": "8b7557b504c2c2640cdb50ad6630f677d15d642a5e23959cc247cf20e6484bc1"
+        },
+        {
+          "source": "legacy_summary_interp_04_window_occlusion_W7",
+          "pointer": "/sha256",
+          "sha256": "84f240a96461acb3f2e0280f0aa943146e3b98bc06b9cdf921ee76a9716277dc"
+        },
+        {
+          "source": "legacy_interpretability_history",
+          "pointer": "",
+          "sha256": "8e97b3d566666f1e7e6558bdd31bdf6ea27d92e057a4bf31186cf1aca6f2c537"
+        },
+        {
+          "source": "legacy_producer_deeper_interpretability_analysis",
+          "pointer": "",
+          "sha256": "ffb1ebefb9ba7420b27beae5f3e03a49aad73666468e0ee2d8f00c79f730f1cc"
+        }
+      ],
+      "identical_to_retained_summary_png": true
+    },
+    {
+      "path": "figures\\interp_14_odos_mirror_test.png",
+      "sha256": "4bbbb9456e911aa5d590234bffa7048b2177d2da6a4169dd138bde4d8c3098b8",
+      "caption": "The two-peak structure is consistent with an orientation mixture;\nOD/OS labels are unavailable for confirmation. Clustering\nper-volume attribution curves into two groups returns near-perfect mirror images\nof one another for the two well-structured probes, which is what laterality\nflipping would produce, rather than\nbilateral anatomy; the \\textsc{d1} row does not show that structure. Glaucoma\nvolumes only, cluster $n$ in each legend, no interval drawn, and the $y$ range\ndiffers by row.",
+      "caption_sha256": "a2c430580ae7ce6b33ae11ee3a198f69adac1e31fde085f1ec67f4d5cb627e00",
+      "metadata": {
+        "width": 1806,
+        "height": 1280,
+        "mode": "RGBA",
+        "dpi": [
+          129.9972,
+          129.9972
+        ],
+        "software": "Matplotlib version3.10.8, https://matplotlib.org/"
+      },
+      "ocr_source": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_14_odos_mirror_test.ocr.json",
+        "sha256": "3687e8cea5c9b33eb68846f28a67ee3ea2a2721bb643ef2afbd7413ed84ab6a8"
+      },
+      "ocr_text": [
+        "OD/OS mixing hypothesis: clustering on per-volume slice-contribution curves (glaucoma class only)",
+        "If mixing were real, cluster means would be mirror-images -4 right column should show two curves on top of each other.",
+        "meanpool — raw cluster means corr(c1,c2) —",
+        "u",
+        "E",
+        "0.04",
+        "0.02",
+        "0.00",
+        "-0.02",
+        "0.020",
+        "0.015",
+        "0.010",
+        "0.005",
+        "0.000",
+        "-0.005",
+        "-0.010",
+        "0.04",
+        "0.02",
+        "0.00",
+        "-0.02",
+        "-0.04",
+        "- -0.124",
+        "175",
+        "- -0.478",
+        "175",
+        "meanpool — mirror test corr(c1,flip(c2)) —",
+        "cluster 1 (n=843)",
+        "cluster 2 (n=623)",
+        "25",
+        "50",
+        "75",
+        "100",
+        "125",
+        "150",
+        "slice native position (1199)",
+        "crossattn — raw cluster means",
+        "cluster 1 (n",
+        "cluster 2 (n",
+        "corr(c1,c2) —",
+        "25",
+        "cluster 1 (n",
+        "cluster 2 (n",
+        "25",
+        "50",
+        "75",
+        "100",
+        "-820)",
+        "-646)",
+        "125",
+        "150",
+        "slice native position (1199)",
+        "dl — raw cluster means corr(c1,c2) =",
+        "+0.228",
+        "=807)",
+        "-659)",
+        "50",
+        "200",
+        "u",
+        "E",
+        "200",
+        "200",
+        "0.04",
+        "0.02",
+        "0.00",
+        "-0.02",
+        "0.020",
+        "0.015",
+        "0.010",
+        "0.005",
+        "0.000",
+        "-0.005",
+        "-0.010",
+        "0.04",
+        "0.02",
+        "0.00",
+        "-0.02",
+        "-0.04",
+        "cluster 1",
+        "cluster 2 FLIPPED along slice axis",
+        "25",
+        "50",
+        "75",
+        "100",
+        "125",
+        "— +0.971",
+        "150",
+        "175",
+        "slice native position (1199)",
+        "crossattn — mirror test corr(c1,flip(c2)) = +0.988",
+        "cluster 1",
+        "cluster 2 FLIPPED along slice axis",
+        "25",
+        "50",
+        "75",
+        "100",
+        "125",
+        "slice native position (1199)",
+        "dl — mirror test corr(c1,flip(c2)) =",
+        "cluster 1",
+        "cluster 2 FLIPPED along slice axis",
+        "75",
+        "100",
+        "125",
+        "150",
+        "175",
+        "25",
+        "50",
+        "75",
+        "100",
+        "125",
+        "150",
+        "+0.237",
+        "150",
+        "175",
+        "175",
+        "200",
+        "200",
+        "200",
+        "slice native position (1199)",
+        "slice native position (1199)"
+      ],
+      "reviewer": "GitHub Copilot legacy-figure evidence review, 2026-09-04",
+      "decision": "blocked_no_figure_receipt",
+      "mathematically_verified": false,
+      "status": "blocked_unretained_empirical_attribution",
+      "classification": "Six quantitative cluster-mean line panels with correlations and cluster sample counts.",
+      "source_keys": [
+        "legacy_interp_14_odos_mirror_test_ocr",
+        "legacy_summary_interp_14_odos_mirror_test",
+        "legacy_producer_odos_mirror_test",
+        "legacy_interpretability_history"
+      ],
+      "rationale": "Actual labels include mirrored correlations +0.971, +0.988 and +0.237, with distinct raw correlations and cluster sizes. The retained code describes L2 normalization, k-means with two clusters, and reversal of cluster-mean curves; arrays needed to validate those results are absent.",
+      "limitations": "No ground-truth eye-laterality labels exist in the described evidence. Mirror similarity cannot establish actual OD/OS storage reversal; clustering and flipping are model-derived, not external validation. A historical PNG/code match cannot reproduce correlations.",
+      "unresolved_scientific_claim": "Near-perfect mirror structure of two probes, the population-mixture explanation, and identification of that mixture as OD/OS.",
+      "minimal_action": "Remove empirical OD/OS and mirror-clustering findings without retained attribution summaries. It is defensible to keep only a methodological caution that averaging over unknown orientations can obscure interpretation, without claiming the phenomenon was demonstrated in these data.",
+      "inputs": [
+        {
+          "source": "legacy_interp_14_odos_mirror_test_ocr",
+          "pointer": "",
+          "sha256": "3687e8cea5c9b33eb68846f28a67ee3ea2a2721bb643ef2afbd7413ed84ab6a8"
+        },
+        {
+          "source": "legacy_summary_interp_14_odos_mirror_test",
+          "pointer": "/sha256",
+          "sha256": "4bbbb9456e911aa5d590234bffa7048b2177d2da6a4169dd138bde4d8c3098b8"
+        },
+        {
+          "source": "legacy_producer_odos_mirror_test",
+          "pointer": "",
+          "sha256": "0b14b18bbdbb06c155fd57db69aaecdac7ea86f0062c555275dd4d3dacdeb1a6"
+        },
+        {
+          "source": "legacy_interpretability_history",
+          "pointer": "",
+          "sha256": "8e97b3d566666f1e7e6558bdd31bdf6ea27d92e057a4bf31186cf1aca6f2c537"
+        }
+      ],
+      "identical_to_retained_summary_png": true
+    },
+    {
+      "path": "figures\\interp_heatmap_grid.png",
+      "sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb",
+      "caption": "Per-patch occlusion heat maps on individual B-scans, drawn on a shared\nscale with the slice mean subtracted so that maps are comparable across volumes.\nAttribution is broadly distributed\nrather than concentrated in a few patches. Agreement is stronger at slice than\npatch level. These are hand-picked illustrative volumes rather than a sample,\nthe overlay is the patch grid rendered with smoothing and so carries no detail\nfiner than a patch, and no colour bar is drawn, so the maps show sign and\nspatial pattern but no readable magnitude.",
+      "caption_sha256": "4ac7e7fe54cc5465778c7ac67d4ecfd84410a80bbd0ef33311b2a352101dd20d",
+      "metadata": {
+        "width": 731,
+        "height": 2513,
+        "mode": "RGBA",
+        "dpi": [
+          119.9896,
+          119.9896
+        ],
+        "software": "Matplotlib version3.10.8, https://matplotlib.org/"
+      },
+      "ocr_source": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_heatmap_grid.ocr.json",
+        "sha256": "c67daee64af43d80da227bdfa6af68bbd25e708a54e0e629daa1d7acaf9baa39"
+      },
+      "ocr_text": [
+        "Occlusion attribution — representative B-scans across the 3 fine-tune probes",
+        "Left pane of each row: original B-scan. Right pane: per-patch Alogit overlay.",
+        "[meanpool] vol 0661 slice 40 (axial —126/199)",
+        "label=glaucoma pred=0.98 slice contribution=+O.109 (pushes toward glaucoma)",
+        "RNFL thinning visible",
+        "Slice 40",
+        "Patch contrib (Alogit)",
+        "label—I predzO_98",
+        "[meanpool] vol 0388 slice 7 (axial —22/199)",
+        "label=healthy pred=0.18 slice contribution—-0.075 (pushes toward healthy)",
+        "Smooth healthy retina",
+        "Slice 7",
+        "Patch contrib Wogit)",
+        "label—O pred=C18 075",
+        "[crossattn] vol 1592 slice 54 (axial —170/199)",
+        "label=glaucoma pred=0.94 slice contribution=+O.170 (pushes toward glaucoma)",
+        "Localized pathology",
+        "Slice 54",
+        "[crossattn] vol 1991 slice 6 (axial —18/199)",
+        "label=healthy pred=0.19 slice contribution—-0.055 (pushes toward healthy)",
+        "Patch contrib Wogit)",
+        "label—I predzO_94",
+        "Patch contrib Wogit)",
+        "label—O pred=O.Ig 055",
+        "Peripheral normal",
+        "Slice 6",
+        "Idi] vol 0100 slice 45 (axial -142/199)",
+        "label=glaucoma pred=0.94 slice contribution=+O.188 (pushes toward glaucoma)",
+        "Disc rim a-scan",
+        "Slice 45",
+        "Patch contrib Wogit)",
+        "label—I predzO_94",
+        "[dll vol 2469 slice 49 (axial -154/199)",
+        "label=healthy pred=0.07 slice contribution—-0.432 (pushes toward healthy)",
+        "Strong healthy suppressor",
+        "Patch contrib (Alogit)",
+        "Slice 49",
+        "label—O pred=O.07"
+      ],
+      "reviewer": "GitHub Copilot legacy-figure evidence review, 2026-09-04",
+      "decision": "blocked_no_figure_receipt",
+      "mathematically_verified": false,
+      "status": "blocked_caption_transform_mismatch_and_empirical_annotations",
+      "classification": "Selected historical B-scan overlays with empirical probabilities and signed slice contributions, plus unverified clinical/descriptive diagnoses.",
+      "source_keys": [
+        "legacy_interp_heatmap_grid_ocr",
+        "legacy_summary_interp_heatmap_grid",
+        "legacy_summary_heatmap_grid_BC",
+        "legacy_heatmap_grid_BC_ocr",
+        "legacy_producer_assemble_heatmap_grid",
+        "legacy_producer_interpretability",
+        "legacy_producer_heatmap_BC_comparison",
+        "legacy_interpretability_history"
+      ],
+      "rationale": "The released file is byte-identical to results/summary/heatmap_grid.png, not heatmap_grid_BC.png. Its six row labels match the assembler, including probabilities, signed slice contributions, and 'RNFL thinning visible'/'Localized pathology'. The corresponding producer scales each overlay by its own max absolute delta with interpolation; the separately retained B+C figure is the shared-scale/mean-subtracted alternative. The current caption misidentifies that transformation.",
+      "limitations": "The exact historical execution and per-patch arrays are unretained. Code correspondence and identity establish a documented variant discrepancy, not an independent rerun. No colorbar means no readable magnitude; normalization cannot be recovered uniquely from blended RGB pixels. Clinical labels have not been independently reviewed.",
+      "unresolved_scientific_claim": "Shared normalization and mean subtraction in this specific figure; broadly distributed attribution or stronger slice-than-patch agreement inferred from selected images; printed patient-level model predictions/contributions and clinical interpretations.",
+      "minimal_action": "Prefer omitting this grid and any main-text claim resting on it. Conditional illustration-only retention requires removing unsupported quantitative/clinical headings and describing selected historical, interpolated, per-image-normalized overlays without cross-case magnitude, disease-localization, coverage, policy-mechanism, or representativeness claims. Review the resulting exact asset and corrected caption anew; this is not approval of the current asset.",
+      "inputs": [
+        {
+          "source": "legacy_interp_heatmap_grid_ocr",
+          "pointer": "",
+          "sha256": "c67daee64af43d80da227bdfa6af68bbd25e708a54e0e629daa1d7acaf9baa39"
+        },
+        {
+          "source": "legacy_summary_interp_heatmap_grid",
+          "pointer": "/sha256",
+          "sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb"
+        },
+        {
+          "source": "legacy_summary_heatmap_grid_BC",
+          "pointer": "/sha256",
+          "sha256": "7dc88ae88c6449cecad1fe2b94bb07dfcb01c5936a5dd02ba40d88962cb9cd30"
+        },
+        {
+          "source": "legacy_heatmap_grid_BC_ocr",
+          "pointer": "",
+          "sha256": "3398e5d8c4870371b0c207ab4052d93ea0c327d940e1a1dfa06efb8d4eb87bd5"
+        },
+        {
+          "source": "legacy_producer_assemble_heatmap_grid",
+          "pointer": "",
+          "sha256": "2cd3d678e2dc5b5190e997256d926faf098382f04efa14d3a36e2d7a3a05780d"
+        },
+        {
+          "source": "legacy_producer_interpretability",
+          "pointer": "",
+          "sha256": "bbdd6320f055b95347ce073f44bb73485fe76d03e604f220e27b3b67ed518ed9"
+        },
+        {
+          "source": "legacy_producer_heatmap_BC_comparison",
+          "pointer": "",
+          "sha256": "b3f93ace5b24baca72590c424496a407ed59d17381478bc6c906a4d096e1da84"
+        },
+        {
+          "source": "legacy_interpretability_history",
+          "pointer": "",
+          "sha256": "8e97b3d566666f1e7e6558bdd31bdf6ea27d92e057a4bf31186cf1aca6f2c537"
+        }
+      ],
+      "identical_to_retained_summary_png": true
+    },
+    {
+      "path": "figures\\interp_slice_contribution_by_outcome.png",
+      "sha256": "4ed73e379131a5cda85efb3a42205b88781e5bece0b2c25974640eb10357d8b1",
+      "caption": "Attribution stratified by TP / FN / TN / FP. Errors reproduce the\ncorrect pattern at lower amplitude rather than selecting different anatomy.\nCurves are per-outcome means with the $n$ in each legend; panels share a\n$y$ range and no interval is drawn.",
+      "caption_sha256": "998443fea62efc8625785867cda75c2bec22611dba4a22e26fd1b6e2a446c8bf",
+      "metadata": {
+        "width": 2785,
+        "height": 760,
+        "mode": "RGBA",
+        "dpi": [
+          140.0048,
+          140.0048
+        ],
+        "software": "Matplotlib version3.10.8, https://matplotlib.org/"
+      },
+      "ocr_source": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_slice_contribution_by_outcome.ocr.json",
+        "sha256": "22b1dd4cb6acb37bec474d663cf4b8b2de2251e30da61116cccb203ac3f26b64"
+      },
+      "ocr_text": [
+        "FT + AttentiveProbe d=l (acc 81.",
+        "correct glaucoma",
+        "MISSED glaucoma",
+        "correct healthy",
+        "0.050",
+        "0.025",
+        "0.000",
+        "-0.025",
+        "-0.050",
+        "-0.075",
+        "-0.100",
+        "50",
+        "FT + MeanPooI (acc 79.7%)",
+        "100",
+        "Attribution stratified by prediction outcome — TP vs FN, TN vs FP",
+        "(do correct predictions look at different slices than wrong ones?)",
+        "FT + CrossAttnPooI (acc 80.0%)",
+        "correct glaucoma",
+        "- FN (261) — MISSED glaucoma",
+        "correct healthy",
+        "TP (1212) —",
+        "- FN (254) —",
+        "TN (1179) —",
+        "_ FP (355) — false alarm",
+        "150",
+        "TP (1205) —",
+        "TN (1195) —",
+        "_ (339) —",
+        "false alarm",
+        "150",
+        "correct glaucoma",
+        "- FN (380) — MISSED glaucoma",
+        "correct healthy",
+        "false alarm",
+        "199",
+        "50",
+        "100",
+        "199",
+        "50",
+        "100",
+        "00/0)",
+        "TP (1086) —",
+        "TN (1345) —",
+        "(189) —",
+        "150",
+        "199",
+        "Slice position (0..199, original volume axis)",
+        "Slice position (0..199, original volume axis)",
+        "Slice position (0..199, original volume axis)"
+      ],
+      "reviewer": "GitHub Copilot legacy-figure evidence review, 2026-09-04",
+      "decision": "blocked_no_figure_receipt",
+      "mathematically_verified": false,
+      "status": "blocked_unretained_empirical_attribution",
+      "classification": "Twelve outcome-mean attribution curves across three panels, with empirical accuracies and outcome counts.",
+      "source_keys": [
+        "legacy_interp_slice_contribution_by_outcome_ocr",
+        "legacy_summary_interp_slice_contribution_by_outcome",
+        "legacy_interpretability_history",
+        "legacy_producer_deeper_interpretability_analysis"
+      ],
+      "rationale": "Actual figure headings include accuracy percentages; legends include TP/FN/TN/FP counts. The image is not a qualitative anatomy illustration. No matching attribution/probability arrays or retained mean-series tables are available for curve or stratification validation.",
+      "limitations": "Outcome labels/counts in the PNG or prose do not validate the plotted means. No uncertainty is shown. Descriptive mean-shape similarity cannot establish the anatomical cause of errors.",
+      "unresolved_scientific_claim": "Errors preserve the correct anatomical pattern at lower amplitude, confidence-invariant attribution, and error-rate association with attribution amplitude.",
+      "minimal_action": "Remove this result and its empirical error-pattern interpretation unless the original stratified summary arrays and threshold definition can be validated. Do not substitute frozen-policy probe data for these fine-tuned models.",
+      "inputs": [
+        {
+          "source": "legacy_interp_slice_contribution_by_outcome_ocr",
+          "pointer": "",
+          "sha256": "22b1dd4cb6acb37bec474d663cf4b8b2de2251e30da61116cccb203ac3f26b64"
+        },
+        {
+          "source": "legacy_summary_interp_slice_contribution_by_outcome",
+          "pointer": "/sha256",
+          "sha256": "4ed73e379131a5cda85efb3a42205b88781e5bece0b2c25974640eb10357d8b1"
+        },
+        {
+          "source": "legacy_interpretability_history",
+          "pointer": "",
+          "sha256": "8e97b3d566666f1e7e6558bdd31bdf6ea27d92e057a4bf31186cf1aca6f2c537"
+        },
+        {
+          "source": "legacy_producer_deeper_interpretability_analysis",
+          "pointer": "",
+          "sha256": "ffb1ebefb9ba7420b27beae5f3e03a49aad73666468e0ee2d8f00c79f730f1cc"
+        }
+      ],
+      "identical_to_retained_summary_png": true
+    },
+    {
+      "path": "figures\\interp_slice_contribution_curves.png",
+      "sha256": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6",
+      "caption": "Single-slice occlusion attribution against native slice position, for\nall three fine-tuned probes. Each probe contributes two curves, a mean over the\nglaucoma volumes (solid) and a mean over the healthy volumes (dashed), with\neach $n$ in the legend and no interval drawn.\nDespite spanning zero to 7.14M probe parameters they converge on the same\nstructure. The $y$-axis is\n\\emph{signed} $\\Delta$logit: peaks are slices whose removal lowers the logit,\nthe central dip is slices whose removal raises it, and only slices near zero are\ngenuinely unused.",
+      "caption_sha256": "b313b84738969f2193b4f13a9f5c40cb65c86c6bf7ba1663bd1a75b77b96a913",
+      "metadata": {
+        "width": 1785,
+        "height": 803,
+        "mode": "RGBA",
+        "dpi": [
+          150.01239999999999,
+          150.01239999999999
+        ],
+        "software": "Matplotlib version3.10.8, https://matplotlib.org/"
+      },
+      "ocr_source": {
+        "root": "repo",
+        "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\interp_slice_contribution_curves.ocr.json",
+        "sha256": "d8022c8eab09abb71bdfe5c52c39aa000e188d3f46843aba08ddc777860c9562"
+      },
+      "ocr_text": [
+        "Slice-level occlusion attribution — 3 fine-tune probes",
+        "(how much does each slice push the logit toward its class?)",
+        "Subset index fed into the model (0..63, 64 linspace-sampled slices)",
+        "10",
+        "0.04",
+        "0.02",
+        "0.00",
+        "-0.02",
+        "-0.04",
+        "-0.06",
+        "-0.08",
+        "-0.10",
+        "25",
+        "20",
+        "50",
+        "FT + MeanPool (glaucoma, n=1466)",
+        "FT + MeanPool (healthy, n=1534)",
+        "FT + CrossAttnPool (glaucoma, n=1466)",
+        "FT + CrossAttnPool (healthy, n=1534)",
+        "FT+ AttentiveProbe d=l (glaucoma, n=1466)",
+        "FT + AttentiveProbe d=l (healthy, n=1534)",
+        "63",
+        "50",
+        "75",
+        "30",
+        "100",
+        "40",
+        "125",
+        "150",
+        "199,",
+        "175",
+        "64) sample)",
+        "199",
+        "Slice position along original 200-slice volume axis (each subset point = linspace(0,"
+      ],
+      "reviewer": "GitHub Copilot legacy-figure evidence review, 2026-09-04",
+      "decision": "blocked_no_figure_receipt",
+      "mathematically_verified": false,
+      "status": "blocked_unretained_empirical_attribution",
+      "classification": "Six class-mean signed attribution curves with sample counts and a native-position/subset-index axis mapping.",
+      "source_keys": [
+        "legacy_interp_slice_contribution_curves_ocr",
+        "legacy_summary_interp_slice_contribution_curves",
+        "legacy_interpretability_history",
+        "legacy_producer_interpretability"
+      ],
+      "rationale": "Actual labels give three fine-tuned probes, glaucoma n=1466 and healthy n=1534, and a 64-slice subset relabeling of a 200-position native axis. No retained per-volume or mean-series arrays support independent verification of the visible curve values.",
+      "limitations": "Near-zero signed population means can arise from cancellation, not genuinely unused slices. A shared curve envelope is not causal anatomy evidence or validation of frozen-policy AUC rankings. The 7.14M manuscript versus 7.17M documentation counts are configuration-dependent and are not resolved or overwritten here.",
+      "unresolved_scientific_claim": "Cross-probe convergence of attribution structure, diffuse middle-volume use, and the assertion that near-zero means imply unused slices.",
+      "minimal_action": "Remove the quantitative result without recoverable series. A methods-only description can define signed delta-logit as baseline minus occluded logit and warn that a near-zero class mean does not prove nonuse. Do not relabel these empirical curves illustrative-only.",
+      "inputs": [
+        {
+          "source": "legacy_interp_slice_contribution_curves_ocr",
+          "pointer": "",
+          "sha256": "d8022c8eab09abb71bdfe5c52c39aa000e188d3f46843aba08ddc777860c9562"
+        },
+        {
+          "source": "legacy_summary_interp_slice_contribution_curves",
+          "pointer": "/sha256",
+          "sha256": "fe46ec191661625fa2d0d222a72fab8df4216aa456c4d84f38ff6f34879dc9d6"
+        },
+        {
+          "source": "legacy_interpretability_history",
+          "pointer": "",
+          "sha256": "8e97b3d566666f1e7e6558bdd31bdf6ea27d92e057a4bf31186cf1aca6f2c537"
+        },
+        {
+          "source": "legacy_producer_interpretability",
+          "pointer": "",
+          "sha256": "bbdd6320f055b95347ce073f44bb73485fe76d03e604f220e27b3b67ed518ed9"
+        }
+      ],
+      "identical_to_retained_summary_png": true
+    }
+  ],
+  "precision": {
+    "status": "mismatch_not_releasable",
+    "method": "PDF vector marker/tick extraction plus independent PNG color-component/spine concordance",
+    "pdf_sha256": "7c0369268bda2590fca6da1e12bc944a426d0d171812c428fdfd91f75543f70a",
+    "png_sha256": "b39d5e46fb59cb13f00c14cebef14949e554b37436012476c5dc7805ccb91658",
+    "geometry_source": {
+      "root": "repo",
+      "path": "results\\masking\\table2_geometry\\mask_geometry_600slices_bs1_coverf021_seed42.json",
+      "sha256": "109dfa14a9b7b0d122301087fb314c030df41ef5748e9c385e1d83055a88abf7"
+    },
+    "auc_source": {
+      "root": "stats",
+      "path": "p1b_full_inventory.json",
+      "sha256": "c75d7b544090cc1b0b75b1d0bcaf0f43ff3e48e3025f1ede13f78653a66506f6"
+    },
+    "pdf_page_size_points": [
+      0.0,
+      0.0,
+      532.6583251953125,
+      376.5142822265625
+    ],
+    "embedded_pdf_images": 0,
+    "pdf_axis_bounds": [
+      57.81132888793945,
+      37.93634033203125,
+      515.371337890625,
+      337.31231689453125
+    ],
+    "x_axis_mapping": {
+      "scale": 5.719500060308546,
+      "offset": -85.17617434547051,
+      "max_residual_pdf_points": 1.2897309829895676e-05,
+      "tick_values": [
+        30.0,
+        40.0,
+        50.0,
+        60.0,
+        70.0,
+        80.0,
+        90.0,
+        100.0
+      ],
+      "tick_positions": [
+        86.40882873535156,
+        143.60382080078125,
+        200.798828125,
+        257.99383544921875,
+        315.1888427734375,
+        372.3838195800781,
+        429.5788269042969,
+        486.7738342285156
+      ]
+    },
+    "y_axis_mapping": {
+      "scale": -22742.541449410663,
+      "offset": 19975.466158730724,
+      "max_residual_pdf_points": 1.0899129847530276e-05,
+      "tick_values": [
+        0.864,
+        0.866,
+        0.868,
+        0.87,
+        0.872,
+        0.874,
+        0.876
+      ],
+      "tick_positions": [
+        325.91033935546875,
+        280.4252624511719,
+        234.940185546875,
+        189.45510864257812,
+        143.9700164794922,
+        98.48492431640625,
+        52.999847412109375
+      ]
+    },
+    "points": [
+      {
+        "arm": "random",
+        "fill": [
+          0.49800869822502136,
+          0.49808499217033386,
+          0.49797818064689636
+        ],
+        "center_pdf": [
+          95.56002807617188,
+          323.70433044433594
+        ],
+        "observed_purity_percent": 31.600000090198854,
+        "observed_auc": 0.8640969995372101,
+        "source_purity_percent": 31.466034477712412,
+        "source_auc": 0.8640970649809413,
+        "purity_difference_percentage_points": 0.1339656124864419,
+        "purity_matches_rounding_to_1_decimal": false,
+        "auc_matches_rounding_to_6_decimals": true,
+        "geometry_pointer": "/random/hidden_pct_on_anat",
+        "inventory_pointer": "/records/33/auc",
+        "source_precision": "fp16",
+        "source_tag": "meanpool_sweep_random"
+      },
+      {
+        "arm": "oracle",
+        "fill": [
+          0.1725490242242813,
+          0.6274510025978088,
+          0.1725490242242813
+        ],
+        "center_pdf": [
+          149.89527893066406,
+          97.80267333984375
+        ],
+        "observed_purity_percent": 41.10000013942711,
+        "observed_auc": 0.8740299992244701,
+        "source_purity_percent": 40.008725298518314,
+        "source_auc": 0.8740299460522829,
+        "purity_difference_percentage_points": 1.0912748409087953,
+        "purity_matches_rounding_to_1_decimal": false,
+        "auc_matches_rounding_to_6_decimals": true,
+        "geometry_pointer": "/oracle/hidden_pct_on_anat",
+        "inventory_pointer": "/records/28/auc",
+        "source_precision": "fp16",
+        "source_tag": "meanpool_sweep_oracle"
+      },
+      {
+        "arm": "envelope",
+        "fill": [
+          0.26274511218070984,
+          0.38823530077934265,
+          0.8470588326454163
+        ],
+        "center_pdf": [
+          163.62207794189453,
+          51.544342041015625
+        ],
+        "observed_purity_percent": 43.49999994124369,
+        "observed_auc": 0.8760639993120033,
+        "source_purity_percent": 43.30093279923807,
+        "source_auc": 0.8760641022676539,
+        "purity_difference_percentage_points": 0.19906714200562448,
+        "purity_matches_rounding_to_1_decimal": false,
+        "auc_matches_rounding_to_6_decimals": true,
+        "geometry_pointer": "/envelope/hidden_pct_on_anat",
+        "inventory_pointer": "/records/22/auc",
+        "source_precision": "fp16",
+        "source_tag": "meanpool_sweep_mirage"
+      },
+      {
+        "arm": "cover-f0.21",
+        "fill": [
+          0.9019607901573181,
+          0.09803921729326248,
+          0.29411765933036804
+        ],
+        "center_pdf": [
+          173.91717529296875,
+          319.51971435546875
+        ],
+        "observed_purity_percent": 45.29999945912442,
+        "observed_auc": 0.8642809990298868,
+        "source_purity_percent": 44.18566087795465,
+        "source_auc": 0.864281381901101,
+        "purity_difference_percentage_points": 1.1143385811697684,
+        "purity_matches_rounding_to_1_decimal": false,
+        "auc_matches_rounding_to_6_decimals": true,
+        "geometry_pointer": "/cover/hidden_pct_on_anat",
+        "inventory_pointer": "/records/17/auc",
+        "source_precision": "fp32",
+        "source_tag": "frozen_meanpool_cover_f021_ep50"
+      },
+      {
+        "arm": "anatomy-v2",
+        "fill": [
+          1.0,
+          0.49803921580314636,
+          0.054901961237192154
+        ],
+        "center_pdf": [
+          471.3311767578125,
+          294.3891906738281
+        ],
+        "observed_purity_percent": 97.29999916693095,
+        "observed_auc": 0.8653859997061543,
+        "source_purity_percent": 97.0935374668334,
+        "source_auc": 0.8653855047304304,
+        "purity_difference_percentage_points": 0.20646170009754883,
+        "purity_matches_rounding_to_1_decimal": false,
+        "auc_matches_rounding_to_6_decimals": true,
+        "geometry_pointer": "/anatomy/hidden_pct_on_anat",
+        "inventory_pointer": "/records/9/auc",
+        "source_precision": "fp32",
+        "source_tag": "frozen_meanpool_bridge_ep50"
+      }
+    ],
+    "png_geometry": {
+      "axes_spines_px": [
+        162.5,
+        104.5,
+        1433.5,
+        935.5
+      ],
+      "markers": [
+        {
+          "arm": "random",
+          "rgb": [
+            127,
+            127,
+            127
+          ],
+          "center_px": [
+            268.0,
+            899.0
+          ],
+          "expected_from_pdf_px": [
+            267.3574956819747,
+            897.7273073813205
+          ],
+          "max_abs_error_px": 1.2726926186794572,
+          "concordant_within_1_5_px": true,
+          "fill_pixel_count": 1693
+        },
+        {
+          "arm": "oracle",
+          "rgb": [
+            44,
+            160,
+            44
+          ],
+          "center_px": [
+            419.0,
+            271.0
+          ],
+          "expected_from_pdf_px": [
+            418.28874508592827,
+            270.6754002466067
+          ],
+          "max_abs_error_px": 0.7112549140717306,
+          "concordant_within_1_5_px": true,
+          "fill_pixel_count": 1693
+        },
+        {
+          "arm": "envelope",
+          "rgb": [
+            67,
+            99,
+            216
+          ],
+          "center_px": [
+            457.0,
+            143.0
+          ],
+          "expected_from_pdf_px": [
+            456.41874158912253,
+            142.27273497362677
+          ],
+          "max_abs_error_px": 0.7272650263732316,
+          "concordant_within_1_5_px": true,
+          "fill_pixel_count": 1693
+        },
+        {
+          "arm": "cover-f0.21",
+          "rgb": [
+            230,
+            25,
+            75
+          ],
+          "center_px": [
+            485.0,
+            887.0
+          ],
+          "expected_from_pdf_px": [
+            485.01623366832763,
+            886.1117595682425
+          ],
+          "max_abs_error_px": 0.888240431757481,
+          "concordant_within_1_5_px": true,
+          "fill_pixel_count": 1693
+        },
+        {
+          "arm": "anatomy-v2",
+          "rgb": [
+            255,
+            127,
+            14
+          ],
+          "center_px": [
+            1312.0,
+            817.0
+          ],
+          "expected_from_pdf_px": [
+            1311.1662214824894,
+            816.35510968861
+          ],
+          "max_abs_error_px": 0.8337785175106092,
+          "concordant_within_1_5_px": true,
+          "fill_pixel_count": 1570
+        }
+      ],
+      "all_marker_centers_concordant": true,
+      "scope": "Independent PNG colored-marker/spine geometry only; not full raster text verification."
+    },
+    "source_rounding_policy": "Purity tolerance 0.050001 percentage points (one decimal); AUC tolerance 0.000000501 (six decimals).",
+    "pdf_text": "30\n40\n50\n60\n70\n80\n90\n100\nmask purity: % of masked patches lying on retinal tissue\n0.864\n0.866\n0.868\n0.870\n0.872\n0.874\n0.876\nfrozen-probe test AUC @ epoch 50\nrandom\n0.8641\noracle\n0.8740\nenvelope\n0.8761\ncover-f0.21\n0.8643\nanatomy-v2\n0.8654\nunguided null\nThe precision paradox: masking anatomy more accurately does not help\nmatched epoch 50, geometry from 600 slices\n",
+    "regression": {
+      "slope_from_extracted_points": -5.4447320312353616e-05,
+      "intercept_from_extracted_points": 0.871589792648211,
+      "max_abs_pdf_line_residual_auc": 6.92809254410065e-10
+    },
+    "null_reference_auc": 0.8640969988662742,
+    "limitations": "Checks original figure against retained summary artifacts, not a rerun of masks or prediction analysis. The historical AUCs mix fp16 and fp32 and the purity coordinates are stale. No whole-raster label verification or scientific-mechanism certification."
+  },
+  "mask_grid_auc_annotation_checks": [
+    {
+      "arm": "random",
+      "epoch": 100,
+      "precision": "fp16",
+      "ocr_arm_text": "random",
+      "ocr_annotation_text": "AUC 0.8746 (eplOO)",
+      "observed_auc_label": "0.8746",
+      "source_auc": 0.8745808957846787,
+      "expected_auc_label": "0.8746",
+      "label_matches": true,
+      "source_pointer": "/records/37/auc",
+      "scope": "OCR-based annotation comparison only; not a mask-pixel or provenance check.",
+      "ocr_normalization": "Only documented l/I-to-1 and O-to-0 epoch confusions; anatomy-vl denotes anatomy-v1."
+    },
+    {
+      "arm": "oracle",
+      "epoch": 100,
+      "precision": "fp16",
+      "ocr_arm_text": "oracle",
+      "ocr_annotation_text": "AUC 0.8855 (ep100)",
+      "observed_auc_label": "0.8855",
+      "source_auc": 0.88548516482246,
+      "expected_auc_label": "0.8855",
+      "label_matches": true,
+      "source_pointer": "/records/31/auc",
+      "scope": "OCR-based annotation comparison only; not a mask-pixel or provenance check.",
+      "ocr_normalization": "Only documented l/I-to-1 and O-to-0 epoch confusions; anatomy-vl denotes anatomy-v1."
+    },
+    {
+      "arm": "envelope",
+      "epoch": 100,
+      "precision": "fp16",
+      "ocr_arm_text": "envelope",
+      "ocr_annotation_text": "AUC 0.8807 (ep100)",
+      "observed_auc_label": "0.8807",
+      "source_auc": 0.8807433952733048,
+      "expected_auc_label": "0.8807",
+      "label_matches": true,
+      "source_pointer": "/records/26/auc",
+      "scope": "OCR-based annotation comparison only; not a mask-pixel or provenance check.",
+      "ocr_normalization": "Only documented l/I-to-1 and O-to-0 epoch confusions; anatomy-vl denotes anatomy-v1."
+    },
+    {
+      "arm": "anatomy-v1",
+      "epoch": 30,
+      "precision": "fp32",
+      "ocr_arm_text": "anatomy-vl",
+      "ocr_annotation_text": "AUC 0.8583 (ep30)",
+      "observed_auc_label": "0.8583",
+      "source_auc": 0.8582742955936471,
+      "expected_auc_label": "0.8583",
+      "label_matches": true,
+      "source_pointer": "/records/6/auc",
+      "scope": "OCR-based annotation comparison only; not a mask-pixel or provenance check.",
+      "ocr_normalization": "Only documented l/I-to-1 and O-to-0 epoch confusions; anatomy-vl denotes anatomy-v1."
+    },
+    {
+      "arm": "anatomy-v2",
+      "epoch": 40,
+      "precision": "fp32",
+      "ocr_arm_text": "anatomy-v2",
+      "ocr_annotation_text": "AUC 0.8683 (ep40)",
+      "observed_auc_label": "0.8683",
+      "source_auc": 0.8682514216192854,
+      "expected_auc_label": "0.8683",
+      "label_matches": true,
+      "source_pointer": "/records/8/auc",
+      "scope": "OCR-based annotation comparison only; not a mask-pixel or provenance check.",
+      "ocr_normalization": "Only documented l/I-to-1 and O-to-0 epoch confusions; anatomy-vl denotes anatomy-v1."
+    },
+    {
+      "arm": "cover-f021",
+      "epoch": 50,
+      "precision": "fp32",
+      "ocr_arm_text": "cover-f021",
+      "ocr_annotation_text": "AUC 0.8643 (ep50)",
+      "observed_auc_label": "0.8643",
+      "source_auc": 0.864281381901101,
+      "expected_auc_label": "0.8643",
+      "label_matches": true,
+      "source_pointer": "/records/17/auc",
+      "scope": "OCR-based annotation comparison only; not a mask-pixel or provenance check.",
+      "ocr_normalization": "Only documented l/I-to-1 and O-to-0 epoch confusions; anatomy-vl denotes anatomy-v1."
+    }
+  ],
+  "bounded_input_search": {
+    "searched": [
+      "repository archive subtree for named attribution arrays/images",
+      "repository PDF companions",
+      "documented results and results_presentation locations"
+    ],
+    "found_interpretability_vector_companions_or_arrays": false,
+    "not_searched": "No broad search of D: or user profile; no blob downloads or case exports."
+  }
+}

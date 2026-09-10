@@ -1,0 +1,45 @@
+{
+  "test_result": {
+    "passed": 114,
+    "reported_seconds": 12.28
+  },
+  "test_sha256": "0fbbd9c9876f507882064a117c214c425bd23f1f135fa239f336963782baef7d",
+  "production_source_unchanged_since_last_worker_run": true,
+  "full_ramp_controls": [
+    {
+      "fixture": "thin",
+      "r_t": 1.0,
+      "ramp_guided_flags": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "sources": [
+        "cover",
+        "cover",
+        "cover",
+        "random_legal"
+      ],
+      "random_legal_blocks": 1
+    },
+    {
+      "fixture": "thick",
+      "r_t": 1.0,
+      "ramp_guided_flags": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "sources": [
+        "cover",
+        "cover",
+        "cover",
+        "cover"
+      ],
+      "random_legal_blocks": 0
+    }
+  ],
+  "literature_boundary": "r_max1 is not SemMAE whole-part alpha1; literature motivates but does not prove mechanism"
+}

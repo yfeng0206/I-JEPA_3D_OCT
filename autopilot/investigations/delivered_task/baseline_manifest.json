@@ -1,0 +1,13 @@
+{
+  "baseline_commit": "de145d7005f57e871bc0181bf58b271775d1d25d",
+  "working_branch": "fix/jepa-delivered-task-audit",
+  "overleaf_comparison": "Authenticated dry-run: all 59 managed files identical before edits",
+  "snapshot": "session files\\delivered_task\\baseline_de145d7",
+  "files": {
+    ".overleaf_sync.json": "e14b195e2b61fcef03d2235ae6cc295afb5ff07f3dfcb861f1fa4de970a7c562",
+    "main_submission.docx": "7610d2c8137a17990381ee79843c9b9d44c73d6156f47ece3ba4fd94eff3a9ee",
+    "main_submission.pdf": "5e7f72df571be429c164552f1723980e9471e9c4fd15ed996406390b2a314f8a",
+    "main_submission.tex": "09365d58b2a2843b1f44de5b082992c499a7757c09607a03239469f6bb1b22bf",
+    "OCT_JEPA_GenAI4Health2026_FINAL.zip": "d33f6b2813150718d71b589b1564d2b6daa7ce7e80cf97cd8c1392d2810aa523"
+  }
+}

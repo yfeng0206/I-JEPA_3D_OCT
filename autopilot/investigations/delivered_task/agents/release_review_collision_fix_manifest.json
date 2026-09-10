@@ -1,0 +1,54 @@
+{
+  "created_utc": "2026-09-05T02:01:49.902596+00:00",
+  "scope": "New review-input/output collision fix and freshly executed current combined release tests",
+  "fix": "Resolved numeric review input joins the protected source set for ZIP/PDF/DOCX/DOCX-receipt/release-manifest destinations",
+  "source_hashes": {
+    ".gitignore": "e36438ea0116597b1372b89e311a7cdb67b1d7c2587149e906e83d01a2948506",
+    "autopilot/release_assets.py": "74176dbcd84634af35b5352e78f7ad1da2c680d3b1166f1905818cc0082dcbb3",
+    "autopilot/release_assets.json": "67bf2b5602f649c19135f1b4ca525677325ffe87e3b31a08fcf062345ffa0aaa",
+    "autopilot/refresh_all.py": "f6770c0bba155ba3d69724dd86691b5961639f35293e2d4d8586f6b99fda8e70",
+    "autopilot/p13_build_zip.py": "74a5259ba3c2ee65a8bde38091f13fa4e0f6e4a5a7ab11da6a6a26232bc97988",
+    "autopilot/check_manuscript.py": "91274820e428ea43952d037857a1951ebfe18928b19ac5fd20eca0fc619c0d66",
+    "autopilot/make_docx.py": "d4291d1eb225dd724c783eb9e0559178014d4cd8aa759d1a78a291f20ae652a5",
+    "autopilot/check_docx.py": "8c3cb577d07520a46973c9b8d9550f24441047f9eefe39adb5500c16533f725d",
+    "autopilot/verify_citations.py": "e84d3791ac57696cc57a2b6a8570ae99b6dbe5498159aaa4a090b32043bf0fa8",
+    "autopilot/verify_punctuation_only.py": "77fc9a6b9b73d60f89f34420fb231affdb9c0dbe1b61187d5a3cabac1ad1bab1",
+    "scripts/sync_overleaf.py": "6806382f7d64ac0c600257549bd6735b63c47ef465e35373d70fff2b0ada14c0",
+    "tests/test_release_safety.py": "3eb39e479ae314eb59bcfe243cdd535686e454599ae02efa7a156a6fa51d3abb",
+    "tests/test_release_evidence.py": "23eed103a8e211e66d0bb53fce1f52353814093c75c11680f239060e204878c5",
+    "tests/test_release_word_strict.py": "1c7a75d2e096924be4cfd1dda4cf649c027b344c23fa65bbf6eedaefacd776fd",
+    "tests/test_release_sync.py": "82c9169f1138bf15682770ffc5e6f7bdc1913901d69113ab891016afcc9aa644"
+  },
+  "test_report": "autopilot\\investigations\\delivered_task\\agents\\release_review_collision_tests.xml",
+  "test_report_sha256": "04e5196bc195bc67cdc3b3a16ae42354ea8b4942b83e06ed667dca725636b564",
+  "test_result": {
+    "tests": "83",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "17.768",
+    "timestamp": "2026-09-04T19:00:38.567709-07:00"
+  },
+  "command": "D:\\jepa_phase0\\.venv\\Scripts\\python.exe -m pytest tests\\test_release_safety.py tests\\test_release_evidence.py tests\\test_release_word_strict.py tests\\test_release_sync.py -q --basetemp .\\_release_tests\\review_collision_combined --junitxml autopilot\\investigations\\delivered_task\\agents\\release_review_collision_tests.xml",
+  "regressions": {
+    "review_modes": [
+      "explicit",
+      "default"
+    ],
+    "destinations": [
+      "zip",
+      "pdf",
+      "docx",
+      "docx_receipt",
+      "release_manifest"
+    ],
+    "cases": 10,
+    "before_fix": "zip-explicit reached validation and failed the new guard regression",
+    "after_fix": "all ten cases reject before validation and preserve review/source/artifact/sync-state bytes"
+  },
+  "limits": [
+    "Default DOCX-receipt case emulates a resolved file-link alias because the canonical default basename cannot textually equal the derived receipt suffix.",
+    "No p15 edits, authentication, production regeneration/promotion, commit or push.",
+    "Prior release_critic_fix_manifest.json is historical and was not modified or restamped."
+  ]
+}

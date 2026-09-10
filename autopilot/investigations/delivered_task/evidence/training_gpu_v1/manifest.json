@@ -1,0 +1,73 @@
+{
+  "pid": 3324,
+  "config": {
+    "baseline": "de145d7",
+    "checkpoint": "D:\\jepa_phase0\\fairvision-glaucoma\\checkpoint-ep25\\jepa_patch-random_posfix-ep25.pth.tar",
+    "checkpoint_sha256": "e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b",
+    "data_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\data\\Training",
+    "slice_cache": "D:\\jepa_phase0\\fairvision-glaucoma\\slice_cache\\Training",
+    "num_slices": 100,
+    "slice_indices": [
+      50,
+      150
+    ],
+    "seed": 20260904,
+    "model": {
+      "model_name": "vit_base",
+      "crop_size": 256,
+      "patch_size": 16,
+      "pred_depth": 6,
+      "pred_emb_dim": 384
+    },
+    "batches": [
+      1,
+      2
+    ],
+    "policies": [
+      "uniform",
+      "intensity_foreground"
+    ],
+    "precisions": [
+      "fp32",
+      "amp"
+    ],
+    "max_batches": 8,
+    "max_updates": 8,
+    "optimizer": {
+      "lr": 0.0001,
+      "weight_decay": 0.04
+    },
+    "ema": 0.996,
+    "output_dir": "autopilot\\investigations\\delivered_task\\evidence\\training_gpu_v1",
+    "private_dir": ".audit\\delivered_task_training",
+    "lease": "autopilot\\investigations\\delivered_task\\gpu_lease.json"
+  },
+  "config_sha256": "85e74452a4f686cb3f5e757ac88674dc94a7cb54782fb351be4e68d7a2ee4d02",
+  "checkpoint_sha256": "e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b",
+  "code_sha256": {
+    "C:\\Users\\Gary\\Desktop\\jepa\\scripts\\training_layer_diagnostic.py": "a675fa0d62b882dc8b10228b60d5ca9b3b846acb63a1549795260b167abce1e0",
+    "src\\train_patch.py": "aac9735434c962727174272c069679109f1f740f786adf4a812203ae8cdd7335",
+    "src\\helper.py": "2a8042b4b20f363384af0edf54f05233ff7b50e3af00cdd3010fdafc3e952dbd",
+    "src\\models\\vision_transformer.py": "ab0de995167c62ecb817c0be6b01a43b90c9749d1484474f349a6b4c6f973bf0",
+    "src\\masks\\curriculum.py": "8991e8542d62e5c5f672627f2455a5e053ec4301206399a6737fef8eace58f18",
+    "src\\masks\\multiblock.py": "3fa5d19ad4b594299c0b03eb2058db73b1956bacf0706894a6276f798f2467de"
+  },
+  "torch": "2.7.1+cu128",
+  "cuda": "12.8",
+  "gpu_preflight": "1904, [Insufficient Permissions]\n6196, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\CrossDeviceResume.exe\n9180, C:\\Windows\\explorer.exe\n10608, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\SearchHost.exe\n10616, C:\\Windows\\SystemApps\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\StartMenuExperienceHost.exe\n12232, C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.53\\msedgewebview2.exe\n12708, C:\\Windows\\SystemApps\\ShellExperienceHost_cw5n1h2txyewy\\ShellExperienceHost.exe\n14436, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\TextInputHost.exe\n1200, C:\\Program Files\\WindowsApps\\Microsoft.ZuneVideo_10.26061.10051.0_x64__8wekyb3d8bbwe\\Video.UI.exe\n19520, C:\\Program Files\\WindowsApps\\Microsoft.Edge.GameAssist_1.0.4019.0_x64__8wekyb3d8bbwe\\EdgeGameAssist.exe\n16760, C:\\Program Files\\WindowsApps\\SpotifyAB.SpotifyMusic_1.298.301.0_x64__zpdnekdrzrea0\\SpotifyXboxGamebarWebView.exe\n19652, C:\\Windows\\SystemApps\\Microsoft.LockApp_cw5n1h2txyewy\\LockApp.exe\n1468, C:\\Program Files\\WindowsApps\\Microsoft.YourPhone_1.26071.164.0_x64__8wekyb3d8bbwe\\PhoneExperienceHost.exe\n11020, C:\\Program Files\\WindowsApps\\Microsoft.WindowsTerminal_1.24.11911.0_x64__8wekyb3d8bbwe\\WindowsTerminal.exe\n3076, C:\\Windows\\System32\\ShellHost.exe\n1044, C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.53\\msedgewebview2.exe\n7176, C:\\Windows\\System32\\ApplicationFrameHost.exe\n4692, C:\\Windows\\ImmersiveControlPanel\\SystemSettings.exe\n6456, C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\n",
+  "purpose": "bounded production layer/loss/EMA diagnostic; no training campaign",
+  "bounds": {
+    "max_updates": 8,
+    "max_batches": 8,
+    "max_images_per_batch": 2,
+    "max_forward_calls_per_batch": 7,
+    "max_backward_calls_per_batch": 1
+  },
+  "stop_conditions": [
+    "first nonfinite",
+    "contract failure",
+    "resource conflict",
+    "configured cap"
+  ],
+  "amp_scaler_initial_scale": 128.0
+}

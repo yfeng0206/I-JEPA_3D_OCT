@@ -1,0 +1,24 @@
+baseline: de145d7
+checkpoint: D:\jepa_phase0\fairvision-glaucoma\checkpoint-ep25\jepa_patch-random_posfix-ep25.pth.tar
+checkpoint_sha256: e5ad5b0c2aadfa15449409786afbfa39d8b5405b699be8f02f2e540195e97e7b
+seed: 20260904
+fixtures_required: true
+matched_guided_fixture: true
+fixtures_sha256: 269f1c143af8e91daa179796fb0bfbd40583d91fafebbc0dbd45cba9c6c4692e
+fixture_policies: [cover_legacy, cover_v2, cover_v2_guard]
+fixture_selection: first_two_predeclared_Training_observations_from_existing_600_scope_bs2
+tissue_definition: guide_channel_0_occupancy_ge_0.25_proxy_not_clinical_truth
+model:
+  model_name: vit_base
+  crop_size: 256
+  patch_size: 16
+  pred_depth: 6
+  pred_emb_dim: 384
+precisions: [fp32]
+max_batches: 3
+max_updates: 3
+optimizer: {lr: 0.0001, weight_decay: 0.04}
+ema: 0.996
+output_dir: autopilot\investigations\delivered_task\evidence\training_gpu_guided_v1
+private_dir: .audit\delivered_task_training\guided_loss
+lease: autopilot\investigations\delivered_task\gpu_lease.json

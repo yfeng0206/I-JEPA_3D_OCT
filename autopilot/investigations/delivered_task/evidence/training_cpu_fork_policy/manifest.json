@@ -1,0 +1,27 @@
+{
+  "baseline": "de145d7",
+  "interpreter": "D:\\jepa_phase0\\.venv\\Scripts\\python.exe",
+  "suites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "73",
+      "time": "16.401",
+      "timestamp": "2026-09-04T16:51:37.322352-07:00",
+      "hostname": "DESKTOP-CJETT24"
+    }
+  ],
+  "source_sha256": {
+    "src\\train_patch.py": "aa19998729d062887b2480ac3e86a8d7bb9499516e202185cc96ec46c9e77a34",
+    "src\\helper.py": "c0f063ef236bfca598cee79e4f19c16bd0188061c2085c15036a64b8be61b9ca",
+    "src\\eval_downstream.py": "cad331b703a116985f2ce81e8abf02b12c300044a3825e22d4d6ab73c47b55ed",
+    "src\\utils\\schedulers.py": "73a6c24de751be786b1482085a1bdb10e9f89a65b117526b02c4523c92d8282a",
+    "tests\\test_training_contracts.py": "7f490da58e4caadee1d6b54b9256ac64666c3ff5bf017ef0ed89804a56f8f639",
+    "tests\\test_eval_identity.py": "37fc434e713357be3c12eb778c346240c5dd0c7fd6de06244777acd8272fad19",
+    "scripts\\training_layer_diagnostic.py": "3c2c9b278bd7845713b0c08876fbb30410ad8596aaca8b88d8c3f20d6ce4c9ca"
+  },
+  "regression": "exact new-format mismatch rejects; explicit fork restores all models/AdamW/scaler, reconstructs state and runs changed curriculum/horizon CPU loop",
+  "gpu_updates": 0
+}

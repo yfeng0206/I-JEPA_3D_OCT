@@ -2,9 +2,39 @@
 
 Self-supervised pretraining using [I-JEPA](https://github.com/facebookresearch/ijepa) (Assran et al., CVPR 2023) on [Harvard FairVision](https://github.com/Harvard-Ophthalmology-AI-Lab/FairVision) OCT data, evaluated via frozen probe + fine-tune on binary glaucoma classification.
 
-## Headline result — anatomy-guided masking
+## Current workshop study
 
-Best downstream glaucoma classifier: **0.8947 Test AUC** (FairVision, 3000-volume held-out) — fine-tuned MeanPool on an encoder pretrained with anatomy-guided ("oracle") masking, which biases I-JEPA's prediction targets onto the retinal band. Beats random-masking I-JEPA (0.8878) at every probe and regime.
+The canonical paper is `paper\genai4health2026\main_submission.tex`; the older
+`main.tex` in that directory is not the current submission source. The active
+investigation is recorded in `autopilot\investigations\delivered_task\BOARD.md`,
+with the baseline audit in `VERSION_BOARD.md`.
+
+The reviewed engineering/workshop release is documented in
+`autopilot\investigations\delivered_task\RESULTS.md`. It is on the separate
+`fix/jepa-delivered-task-audit` branch; the corrected COVER configurations remain
+untrained and have no new AUC result. The final source ZIP and editable Word
+copy are version-matched, rather than inferred current from a timestamp.
+
+The current paper compares **frozen MeanPool probes** after different masking
+policies. CENTROID (historically named `oracle`) reaches **0.8855** test AUC;
+the **0.8947** value below is from a different, fine-tuned evaluation regime.
+The encoder operates on **2D B-scans**, followed by pooling across a volume.
+There is one completed pretraining continuation per policy and the same test
+split was repeatedly inspected. The results describe those runs, not an
+established ranking over independent retrainings.
+
+Tissue-directed rectangle placement improves the observed AUC. More precise
+anatomy-shaped or coverage-based implementations do not consistently improve it,
+but target area, retained context, guide provenance and collation differ.
+Historical COVER masks have a documented post-placement truncation defect.
+Corrected-code diagnostics must not be reported as corrected-model AUC results.
+
+## Historical fine-tuning and frozen-probe results
+
+Highest recorded downstream point estimate: **0.8947 Test AUC** (FairVision,
+3000-volume test split), fine-tuned MeanPool on the CENTROID encoder. The table
+below gives regime-matched comparisons; not every difference is statistically
+resolved, and none is a replicated policy-level comparison.
 
 ![Best downstream Test AUC: anatomy-guided masking (ours) 0.8947 vs random-masking I-JEPA 0.8878](results/summary/oracle_headline.png)
 
@@ -32,7 +62,10 @@ Random-init I-JEPA ViT-B/16, 100 epochs SSL on 600K OCT slices. Full 2×3 matrix
 | Frozen probe | MeanPool + Linear | 2.3K | 0.8746 |
 | Frozen probe | AttentiveProbe d=1 + Linear | 7.17M | 0.8706 |
 
-**Key finding:** Under fine-tune, probe architecture is irrelevant (all within 0.001 AUC, p>0.6 pairwise). MeanPool (0 probe params) is Pareto-optimal. Full analysis: [`docs/experiments/frozen/ablation_analysis.md`](docs/experiments/frozen/ablation_analysis.md).
+The fine-tuned probe point estimates are close, with no resolved pairwise
+difference in the recorded comparison; this does not establish equivalence.
+MeanPool uses no trainable pooling parameters. Full historical analysis:
+[`docs/experiments/frozen/ablation_analysis.md`](docs/experiments/frozen/ablation_analysis.md).
 
 ## Method
 
@@ -68,7 +101,7 @@ Each `.pth.tar` is a full training state (`encoder`, `target_encoder`, `predicto
 - Phase 2 (done): Probe architecture ablations — full 2×3 matrix (3 probes × frozen/fine-tune)
 - Phase 3 (done): Interpretability — occlusion attribution, patch aggregate, bootstrap CI
 - Masking strategy (Rung 1, done): anatomy-guided "oracle" masking beats random — frozen +0.010 (p<0.0005), fine-tune +0.008
-- Phase 4 (in progress): Foundation-model baselines on same Test split (DINOv3, OCTCube)
+- Phase 4 (deferred): Foundation-model baselines on the same Test split (DINOv3, OCTCube); no such job is started by the current investigation.
 - Phase 5 (planned): 3D-aware SSL extension (multi-view / axial)
 
 Details and backlog: [`docs/research_log.md`](docs/research_log.md).

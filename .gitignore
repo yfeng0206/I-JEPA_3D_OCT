@@ -26,6 +26,12 @@ results/phase0_local_examples/
 .vs/
 .vscode/
 _tmp_*
+_release_work/
+_release_tests/
+.release-recovery-*/
+# Public papers are acquired locally for citation review, not redistributed.
+autopilot/investigations/delivered_task/evidence/literal_sources/public/*.pdf
+autopilot/investigations/delivered_task/evidence/literal_sources/public/fairvision_readme.txt
 MASKING_PLAN.md
 
 # Node OOM crash dumps
@@ -52,4 +58,3 @@ paper/dist/archive/
 # is unaffected.
 paper/**/*.zip
 .pytest_cache/
-

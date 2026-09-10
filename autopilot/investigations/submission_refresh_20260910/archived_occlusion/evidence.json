@@ -1,0 +1,308 @@
+{
+  "generator": "generate_archived_occlusion.py",
+  "generator_sha256": "779f2c14d45aec49453ec009dd71bf6b1d88dd117860bfe474bb026b52a06a85",
+  "source_path": "results\\summary\\heatmap_grid.png",
+  "source_sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb",
+  "source_git_blob": "ad7374313235bbb05239bd84005b62c7c37d4e08",
+  "source_original_preserved": true,
+  "authorization": "User explicitly requested reuse of their archived composite; this is not a new FairVision license/deidentification determination.",
+  "review_path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\REVIEW.md",
+  "review_lines": [
+    184,
+    230
+  ],
+  "review_sha256": "3c83752a07346d0f13f8098ed7334f7ff1800d29095366061cc217a10cd5460f",
+  "conditional_scope": "Newly cropped historical illustration only; not a receipt for original empirical/clinical headings.",
+  "source_code": [
+    {
+      "path": "scripts\\assemble_heatmap_grid.py",
+      "sha256": "2cd3d678e2dc5b5190e997256d926faf098382f04efa14d3a36e2d7a3a05780d",
+      "claim": "Fixed six-row mapping: meanpool first pair, crossattn second pair, d1 third pair."
+    },
+    {
+      "path": "scripts\\interpretability.py",
+      "lines": [
+        286,
+        375
+      ],
+      "sha256": "bbdd6320f055b95347ce073f44bb73485fe76d03e604f220e27b3b67ed518ed9",
+      "claim": "Documented P-1 patch-mean omission; baseline-minus-alt logit; per-image symmetric scale; linear zoom; RdBu_r; alpha blend."
+    }
+  ],
+  "mapping": [
+    {
+      "column": "MeanPool",
+      "example": "A",
+      "archived_row_one_based": 1,
+      "panel": "original",
+      "source_crop_xyxy": [
+        63,
+        190,
+        351,
+        478
+      ],
+      "destination_xyxy": [
+        38,
+        150,
+        326,
+        438
+      ],
+      "pixel_sha256": "c2a78d82e82e817c2942867b22f3211c05b53f897d08b74056f83ba306777e9b"
+    },
+    {
+      "column": "MeanPool",
+      "example": "A",
+      "archived_row_one_based": 1,
+      "panel": "overlay",
+      "source_crop_xyxy": [
+        382,
+        190,
+        670,
+        478
+      ],
+      "destination_xyxy": [
+        338,
+        150,
+        626,
+        438
+      ],
+      "pixel_sha256": "f451b403358ffa9a5de2c486b0e20e1eb840fbbb6ec891236684426dde5a2410"
+    },
+    {
+      "column": "MeanPool",
+      "example": "B",
+      "archived_row_one_based": 2,
+      "panel": "original",
+      "source_crop_xyxy": [
+        63,
+        594,
+        351,
+        882
+      ],
+      "destination_xyxy": [
+        38,
+        520,
+        326,
+        808
+      ],
+      "pixel_sha256": "b7d203e15c46f22f5274ada2981bc0b8fdb6208d2965b2ee176b25ae1405ca29"
+    },
+    {
+      "column": "MeanPool",
+      "example": "B",
+      "archived_row_one_based": 2,
+      "panel": "overlay",
+      "source_crop_xyxy": [
+        382,
+        594,
+        670,
+        882
+      ],
+      "destination_xyxy": [
+        338,
+        520,
+        626,
+        808
+      ],
+      "pixel_sha256": "485703a41e8ca2e25556af17f102c30d4adfee69668460d36b653531a93816e9"
+    },
+    {
+      "column": "CrossAttn",
+      "example": "A",
+      "archived_row_one_based": 3,
+      "panel": "original",
+      "source_crop_xyxy": [
+        63,
+        997,
+        351,
+        1285
+      ],
+      "destination_xyxy": [
+        666,
+        150,
+        954,
+        438
+      ],
+      "pixel_sha256": "482ce9f920011dd0f1e0d3bfd1358e5e0dd170003b3f74edfb521b9f48c69fb6"
+    },
+    {
+      "column": "CrossAttn",
+      "example": "A",
+      "archived_row_one_based": 3,
+      "panel": "overlay",
+      "source_crop_xyxy": [
+        382,
+        997,
+        670,
+        1285
+      ],
+      "destination_xyxy": [
+        966,
+        150,
+        1254,
+        438
+      ],
+      "pixel_sha256": "17e01246cc822a1663c2a0817003b944fc5faf0fc0651c02db3a6914d4243a7d"
+    },
+    {
+      "column": "CrossAttn",
+      "example": "B",
+      "archived_row_one_based": 4,
+      "panel": "original",
+      "source_crop_xyxy": [
+        63,
+        1400,
+        351,
+        1688
+      ],
+      "destination_xyxy": [
+        666,
+        520,
+        954,
+        808
+      ],
+      "pixel_sha256": "131c11056359f9a73160e85882a9f34edfaebe45f350ff0c79bd61a321f1729d"
+    },
+    {
+      "column": "CrossAttn",
+      "example": "B",
+      "archived_row_one_based": 4,
+      "panel": "overlay",
+      "source_crop_xyxy": [
+        382,
+        1400,
+        670,
+        1688
+      ],
+      "destination_xyxy": [
+        966,
+        520,
+        1254,
+        808
+      ],
+      "pixel_sha256": "9b9acfba578feba80588fa28d1707da6cff9f34e37d893af23e488fb0d505a25"
+    },
+    {
+      "column": "Attentive",
+      "example": "A",
+      "archived_row_one_based": 5,
+      "panel": "original",
+      "source_crop_xyxy": [
+        63,
+        1804,
+        351,
+        2092
+      ],
+      "destination_xyxy": [
+        1294,
+        150,
+        1582,
+        438
+      ],
+      "pixel_sha256": "aa97cfec4d5cc081fec1efa60b5be3201025f10fa13a7f0a39150cae9a75f560"
+    },
+    {
+      "column": "Attentive",
+      "example": "A",
+      "archived_row_one_based": 5,
+      "panel": "overlay",
+      "source_crop_xyxy": [
+        382,
+        1804,
+        670,
+        2092
+      ],
+      "destination_xyxy": [
+        1594,
+        150,
+        1882,
+        438
+      ],
+      "pixel_sha256": "9460d1dac945243db469d12205458088dc490a96d4a52ce038fa15287a3f4973"
+    },
+    {
+      "column": "Attentive",
+      "example": "B",
+      "archived_row_one_based": 6,
+      "panel": "original",
+      "source_crop_xyxy": [
+        63,
+        2207,
+        351,
+        2495
+      ],
+      "destination_xyxy": [
+        1294,
+        520,
+        1582,
+        808
+      ],
+      "pixel_sha256": "dc713d1519fe164e13e8de1dd2b6f8875fa97ec01e82fe28059895be4ef13160"
+    },
+    {
+      "column": "Attentive",
+      "example": "B",
+      "archived_row_one_based": 6,
+      "panel": "overlay",
+      "source_crop_xyxy": [
+        382,
+        2207,
+        670,
+        2495
+      ],
+      "destination_xyxy": [
+        1594,
+        520,
+        1882,
+        808
+      ],
+      "pixel_sha256": "64a718aba9723e09211a064e208104413ab6071a747742eed323540b22058524"
+    }
+  ],
+  "rows_are_not_matched_subjects_across_models": true,
+  "removed_outside_panels": [
+    "representativeness heading",
+    "volume and slice identifiers",
+    "diagnostic labels",
+    "prediction probabilities",
+    "signed slice contributions",
+    "unreviewed clinical interpretations"
+  ],
+  "transformations": [
+    "Exact integer pixel crops of all twelve image panels",
+    "Native-resolution paste into new two-row three-column layout",
+    "New neutral external headings; no panel resizing, colour or contrast changes"
+  ],
+  "caption": "Selected historical per-patch occlusion overlays from fine-tuned classifiers, shown only as examples of the archived visualization. All six archived pairs are retained; A and B are selection labels, not diagnoses or matched subjects across columns. The original and overlay panels are copied without pixel alteration. The documented producer omits one patch from a patch mean, using the remaining P-1 patches, and displays baseline-minus-alternative logit differences with per-image symmetric scaling, linear interpolation, RdBu_r and alpha blending. Red and blue indicate positive and negative differences under that convention, not comparable cross-image magnitudes. Original attribution arrays and exact historical-run provenance are unavailable; sub-patch detail, disease localization, population-level attribution and masking-policy mechanisms must not be inferred.",
+  "alt_text": "Two rows, Selected example A and B, and three columns, MeanPool, CrossAttn and Attentive. Each cell pairs an unchanged archived grayscale OCT panel with its unchanged red-blue overlay. These are six independently selected historical illustrations, not matched subjects, diagnosis labels or quantitative comparisons.",
+  "limits": "No recovery of raw attribution arrays or rerun; RGB cannot establish historical executable provenance or numerical accuracy.",
+  "figure_inches": [
+    6.4,
+    3.2
+  ],
+  "png_pixels": [
+    1920,
+    960
+  ],
+  "panel_pixels": [
+    288,
+    288
+  ],
+  "validation": {
+    "source_blob_matches": true,
+    "all_six_pairs_retained": true,
+    "twelve_exported_panels_pixel_identical": true,
+    "no_panel_resampling": true,
+    "source_unchanged": true
+  },
+  "outputs": {
+    "png": {
+      "file": "fig_archived_occlusion_examples.png",
+      "sha256": "9792883349d0c3b173f41be67e3ab9cbc3a7c621c3d51934fe341ee724fae391"
+    },
+    "pdf": {
+      "file": "fig_archived_occlusion_examples.pdf",
+      "sha256": "26b1ba594372adc96efd1d25247f1e6409c48fd0ed059b314a799f4eac8c7f60"
+    }
+  }
+}

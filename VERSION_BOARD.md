@@ -1,5 +1,21 @@
 # OCT JEPA version and readiness board
 
+> **September 10 submission revision:** the question-led manuscript, real
+> openly licensed OCT masking illustration, JEPA formulation and shorter main
+> analysis are released as `OCT_JEPA_GenAI4Health2026_20260910_v8` in Downloads.
+> The latest revision includes the side-by-side OCT framework diagram and
+> a number-free abstract explaining the OCT and self-supervised-learning motivation.
+> The final revision also includes selected archived occlusion examples with
+> a delta-logit definition, joint target/context notation and explicit tissue-proxy labels.
+> The PDF has 8 main-content pages (15 total); secondary research threads are
+> omitted from the compact submission but preserved in the project record.
+> PDF/ZIP passed all 13 release gates, with internal Word generation.
+> Overleaf was updated with the 13 managed source/attachment files.
+> Historical AUCs remain unchanged. See
+> `PAPER_STATE.md` and
+> `autopilot\investigations\submission_refresh_20260910\release_handoff_v8.json`.
+> No OpenReview submission or merge to `main` was performed by this workflow.
+
 > **Completion update:** the engineering and workshop track below has now been
 > implemented on `fix/jepa-delivered-task-audit`, with reviewed source release
 > `6f4d62e`. The final PDF/ZIP/Word passed their release gates and the 23 managed

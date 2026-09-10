@@ -3,6 +3,122 @@
   "baseline": "de145d7",
   "limits": "Hashes protect identity, not numerical correctness or claim support. Only currently referenced assets are required. Retired input hashes preserve historical identity without retaining them in the current required set.",
   "producers": {
+    "figures/fig_archived_occlusion_examples.png": {
+      "script": "autopilot/investigations/submission_refresh_20260910/archived_occlusion/generate_archived_occlusion.py",
+      "script_sha256_at_export": "779f2c14d45aec49453ec009dd71bf6b1d88dd117860bfe474bb026b52a06a85",
+      "inputs": ["results/summary/heatmap_grid.png", "scripts/assemble_heatmap_grid.py", "scripts/interpretability.py"],
+      "evidence_manifest": "autopilot/investigations/submission_refresh_20260910/archived_occlusion/evidence.json",
+      "evidence_manifest_sha256": "fa94e7aa59e22c2632900d623c20a57ce3f4264b35813520361d346a087d29a9",
+      "expected_output_sha256": "9792883349d0c3b173f41be67e3ab9cbc3a7c621c3d51934fe341ee724fae391",
+      "refresh_policy": "new historical-illustration review required for any changed panel, output or caption",
+      "evidence_scope": "All six archived original/overlay pairs, twelve panel crops preserved pixel-for-pixel. Quantitative and clinical headings removed outside panels. Historical fine-tuned-model visualization only; no numeric, localization or population validation.",
+      "authorization_scope": "User-requested reuse of archived composite; no new licence or de-identification determination.",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_archived_occlusion_examples.pdf": "26b1ba594372adc96efd1d25247f1e6409c48fd0ed059b314a799f4eac8c7f60"
+      }
+    },
+    "figures/fig_oct_jepa_comparison_final.png": {
+      "script": "autopilot/investigations/submission_refresh_20260910/comparison_final/generate_comparison_final.py",
+      "script_sha256_at_export": "0ac3b4507ce3e158e3851e55cf7a0cdfcdefce94cd89630522955e9b010497e3",
+      "inputs": [
+        "autopilot/investigations/submission_refresh_20260910/figure/evidence.json",
+        "autopilot/investigations/submission_refresh_20260910/comparison/evidence.json",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_figure1_original.png"
+      ],
+      "evidence_manifest": "autopilot/investigations/submission_refresh_20260910/comparison_final/evidence.json",
+      "evidence_manifest_sha256": "7adbed0c197857514095b9a8f5d779889203de9e8dc36e59ff7513b68dbff019",
+      "expected_output_sha256": "3f7f55008ccf8334ee8ab86aec1d3f1604b684b5862a58c3afbefd1d143cc27f",
+      "refresh_policy": "write-once source-reviewed illustration; changed output or caption requires renewed review",
+      "evidence_scope": "Same licensed OCTDL crop and exact saved RANDOM/CENTROID masks. Symmetric I-JEPA pathways with independent positional queries, full-image EMA teachers, stopped-gradient targets and parallel prediction. No new sampling, ranking, sequential predictor or performance values.",
+      "license": "CC BY 4.0",
+      "license_source": "https://arxiv.org/abs/2312.08255v3",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "clinical_image_source": "Previously reviewed public OCTDL figure crop; no private FairVision image",
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_oct_jepa_comparison_final.pdf": "4bd73f54eef54753ab8c5929ffdc8aa1b6bc3822dcfdb436ef5bb55156ceba8c",
+        "figures/fig_oct_jepa_comparison_final.svg": "966061744ddf99d23205191a3e2fe6e949f79cfe1791ffb6e4d8e420b727a28f"
+      }
+    },
+    "figures/fig_oct_jepa_comparison.png": {
+      "script": "autopilot/investigations/submission_refresh_20260910/comparison/generate_comparison.py",
+      "script_sha256_at_export": "5f472980d9b596763fb1b88e099244a95fadc5e3fe94ac85f7799f937abb9fe3",
+      "inputs": [
+        "autopilot/investigations/submission_refresh_20260910/figure/evidence.json",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_figure1_original.png",
+        "autopilot/investigations/submission_refresh_20260910/framework/evidence.json"
+      ],
+      "evidence_manifest": "autopilot/investigations/submission_refresh_20260910/comparison/evidence.json",
+      "evidence_manifest_sha256": "9848dd68c5e7e5f507366cdea81be13eeee88df03b18d4069e1298201a45d017",
+      "expected_output_sha256": "b26469542db083c33524f4d5114436693bd910e5167cb7d51e7fce7f110ec92b",
+      "refresh_policy": "write-once source-reviewed comparison; changed outputs or caption require renewed review",
+      "evidence_scope": "Symmetric uniform/CENTROID I-JEPA schematic using the same licensed external OCTDL crop and exact previously reviewed RANDOM/CENTROID context and target lists. No modified target selection, relevance ranking, sequential prediction or performance claim.",
+      "license": "CC BY 4.0",
+      "license_source": "https://arxiv.org/abs/2312.08255v3",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "clinical_image_source": "Previously reviewed public OCTDL figure crop; no private FairVision image",
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_oct_jepa_comparison.pdf": "bec76d0da5df7c0e81467c86159166e585e566c5d66c4c5254166a65bc60a0ca",
+        "figures/fig_oct_jepa_comparison.svg": "1afa6666d4c0d91d219f42fed627ba6be5d2b794aae553096eb2b62aa149418a"
+      }
+    },
+    "figures/fig_oct_jepa_framework.png": {
+      "script": "autopilot/investigations/submission_refresh_20260910/framework/generate_framework.py",
+      "script_sha256_at_export": "f30c786e26f8315dd463b5fab29dbac417f0982f206bb91b1daca28e7633c5f5",
+      "inputs": [
+        "autopilot/investigations/submission_refresh_20260910/figure/evidence.json",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_figure1_original.png",
+        "src/train_patch.py",
+        "src/models/vision_transformer.py",
+        "src/helper.py"
+      ],
+      "evidence_manifest": "autopilot/investigations/submission_refresh_20260910/framework/evidence.json",
+      "evidence_manifest_sha256": "122de539d5ea8eb9c295f49b9946d3456e2bc810aaab6ecd9845cbd65b937a7b",
+      "expected_output_sha256": "970ac0a1d68f6e4c94e3b3648b4e92b577cd70d2eb03ef4fea0d0a15ec1c5041",
+      "refresh_policy": "pinned source-reviewed architecture illustration; changed outputs or caption require renewed review",
+      "evidence_scope": "Production I-JEPA teacher/context/predictor/EMA path illustrated with the same licensed external OCTDL crop and exact CENTROID masks as Figure 1. Gray pixels visualize omitted tokens, not model input inpainting; embedding bars are schematic, not measured features.",
+      "license": "CC BY 4.0",
+      "license_source": "https://arxiv.org/abs/2312.08255v3",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "clinical_image_source": "Previously reviewed public OCTDL figure crop; no private FairVision image",
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_oct_jepa_framework.pdf": "29cd57c593cb003da5f37e8393aad55044c6a1a1f8bc3e1216852b805a56d157",
+        "figures/fig_oct_jepa_framework.svg": "3de3eccc34e160924356efba746825c7f7ff66eb4f4977dc2a42207655a9a993"
+      }
+    },
+    "figures/fig_oct_target_selection.png": {
+      "script": "autopilot/investigations/submission_refresh_20260910/figure/generate_external_target_selection.py",
+      "script_sha256_at_export": "561eeb9d3909a5b4eea5cbb7d42bc9b2d49d70afe42f4dcbe508d88ca10bcb04",
+      "inputs": [
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_figure1_original.png",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_primary_license.html",
+        "src/masks/multiblock.py",
+        "src/masks/curriculum.py"
+      ],
+      "evidence_manifest": "autopilot/investigations/submission_refresh_20260910/figure/evidence.json",
+      "evidence_manifest_sha256": "08fcb74889fd42be83062e929d542bb54485d5532729f7c80c003e740c2af2b5",
+      "expected_output_sha256": "950549859f6ac051184c3b2c7485e90fba35a35b17c3aabc0912934745183208",
+      "refresh_policy": "pinned source-reviewed external illustration; changed outputs or caption require renewed review",
+      "evidence_scope": "Attributed CC BY 4.0 OCTDL Figure 1 crop, not FairVision. RANDOM and intensity-CENTROID masks use the production samplers, a shared input and matched block sizes. One illustrative replay; no historical-batch reconstruction, cohort statistic or performance claim.",
+      "license": "CC BY 4.0",
+      "license_source": "https://arxiv.org/abs/2312.08255v3",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "clinical_image_source": "Publicly published external OCTDL figure crop; no private FairVision image",
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_oct_target_selection.pdf": "8da00a07214876d242dd07a53c303732bdbcbcb8ee18f009a7cbc7fc2b65bd30",
+        "figures/fig_oct_target_selection.svg": "41de814ecfd98117ff2f9b81ef92996ef5d9ccf2802111113a2028d001c3720b"
+      }
+    },
     "auto/fig_trajectories_ci.png": {"script": "autopilot/p8_make_assets.py", "inputs": ["p1c_stats.json"]},
     "auto/fig_fairness.png": {"script": "autopilot/p8_make_assets.py", "inputs": ["p7_fairness.json", "p7_gap_correlation.json"]},
     "auto/fig_roc.png": {"script": "autopilot/p8_make_assets.py", "inputs": ["p1b_full_inventory.json", "per-case prediction files"]},

@@ -1,0 +1,81 @@
+\section{Additional experimental details}
+\label{app:repro}
+
+\paragraph{Pretraining and linear evaluation.}
+The input crop is $256\times256$, with patch size 16 and a ViT-Base encoder.
+The predictor has depth 6 and hidden dimension 384.
+Pretraining uses AdamW with peak learning rate $0.00025$, a five-epoch
+warmup, final learning rate $0.000001$, weight decay scheduled from $0.04$
+to $0.4$, and EMA coefficient from $0.996$ to $1.0$.
+The effective batch size is 512, formed from batches of 64 with gradient
+accumulation. Rectangle target scales are $0.15$--$0.20$ of image area,
+aspect ratios $0.75$--$1.5$, and context scales $0.85$--$1.0$.
+Random resized crops use area scale $0.3$--$1.0$.
+The guidance probability increases over the epoch-25 to epoch-30
+continuation window; fixed-length anatomy targets use $K=16$ throughout.
+The frozen linear head uses AdamW, learning rate $0.0004$, weight decay
+$0.05$, batch size 256, seed 42, and a 50-epoch budget with validation-AUC
+selection and patience 15.
+
+\paragraph{Guide sources.}
+\textsc{envelope} uses the MIRAGE-derived repaired hard retinal envelope.
+The anatomy-shaped and coverage strategies use precomputed soft guides from
+MIRAGE with frozen residual adapters. The anatomy-v1 guide uses a
+decoder-feature adapter; anatomy-v2 and \textsc{cover} use an encoder-feature
+adapter. These guide products are not independently controlled in the
+cross-strategy comparison. \ArmBest{} uses image intensity rather than a
+segmentation model.
+The adapters optimize feature-similarity objectives on FairVision-derived
+image caches, not a glaucoma classification loss, and are frozen during
+I-JEPA training. The retained provenance does not independently establish
+subject-level non-overlap for all data used to train the guidance models.
+
+\paragraph{Included and excluded continuations.}
+\label{app:excluded}
+The early anatomy-v1 configuration resumes an \textsc{envelope} epoch-27
+checkpoint; its producing launch record is incomplete.
+Anatomy-v2 results use the continuation with full-precision target-encoder
+outputs. Probes from its earlier mixed-target-precision continuation are
+excluded, as are earlier uniform controls that used different target
+precision and context selection. The main table retains the comparable
+policy endpoints, including the adverse \textsc{cover} trajectory.
+
+\paragraph{Mask measurement.}
+\label{app:geomprov}
+Table~\ref{tab:geom} uses the seed-42 measurement on 600 training slices
+from 24 volumes, with 25 slices per volume.
+The samplers are evaluated one image at a time on a $16\times16$ patch
+grid, using guide occupancy at threshold $0.25$.
+The ``context kept'' column is the per-image context; batching can shorten
+it further. Table~\ref{tab:delivered} records that difference.
+
+\begin{table}[h]
+\centering
+\caption{Visible context as a fraction of the patch grid, same 600 slices and
+same seed, measured per image and as delivered to the encoder at the production
+batch size of 64. The per-image column reproduces
+Table~\ref{tab:geom}'s ``context kept'' to within $0.4$ points.}
+\label{tab:delivered}
+\small
+\begin{tabular}{lcc}
+\toprule
+policy & per image & delivered at batch 64 \\
+\midrule
+\textsc{random}     & 41.9\% & 24.7\% \\
+\ArmBest{}          & 45.5\% & 32.9\% \\
+\textsc{envelope}   & 40.6\% & 30.7\% \\
+\textsc{cover}      & 43.2\% & 30.1\% \\
+\textsc{anatomy-v2} & 67.7\% & 63.5\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Data use and ethics.}
+\label{app:ethics}
+This is secondary research on the public, de-identified FairVision release
+under its CC BY-NC-ND 4.0 data licence. No new participants were recruited
+or identifying fields added. A separate institutional ethics or exemption
+determination is not recorded for this project. The models are not clinically
+validated or intended for patient care. The illustrative OCT image in the
+main paper comes from the separately attributed CC BY 4.0 OCTDL publication,
+not from the FairVision evaluation cohort.

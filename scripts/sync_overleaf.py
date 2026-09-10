@@ -13,6 +13,8 @@ Overleaf exposes every project as a git remote, so the whole step can be one
 command. A successful release manifest selects the exact validated source tree
 and separately checked Word attachment. Text is LF-normalized for git; unused
 local figures are not implicitly uploaded. Remote-only files are preserved.
+Files named by the release manifest or prior sync state are also inspected,
+including root-level TeX inputs outside the historical file-name map.
 
 THE DATA-LOSS BUG THIS VERSION CLOSES
 -------------------------------------
@@ -392,15 +394,16 @@ def remote_to_local(rel, paper):
     return os.path.join(paper, rel.replace("/", os.sep))
 
 
-def scan_remote(clone):
+def scan_remote(clone, extra_paths=()):
     """SHA-256 of every managed file in the checkout, keyed by Overleaf path."""
+    extra_paths = set(extra_paths)
     out = {}
     for dirpath, dirs, files in os.walk(clone):
         dirs[:] = [d for d in dirs if d != ".git"]
         for fn in files:
             full = os.path.join(dirpath, fn)
             rel = os.path.relpath(full, clone).replace("\\", "/")
-            if managed_remote(rel):
+            if managed_remote(rel) or rel in extra_paths:
                 out[rel] = content_hash(full, rel)
     return out
 
@@ -776,7 +779,8 @@ def main(argv=None):
             say("\n--check: authentication verified, nothing pushed")
             return 0
 
-        rhashes = scan_remote(clone)
+        tracked_paths = {rel for _, rel in items} | set(state.get("files", {}))
+        rhashes = scan_remote(clone, extra_paths=tracked_paths)
         say("  overleaf has %d managed files" % len(rhashes))
 
         if a.pull:

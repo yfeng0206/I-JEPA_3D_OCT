@@ -4,6 +4,8 @@ The renderer is NOT the numerical oracle: artist coordinates and annotations
 are compared with independently selected source fields first. Its PNG is then
 rendered in memory and required to equal the delivered PNG byte for byte.
 No hash-only receipt or asserted producer-success flag can discharge a figure.
+Known P8 bundle outputs absent from the manuscript are discarded, not certified;
+unexpected outputs and missing or mismatched referenced figures still fail.
 """
 import contextlib
 import hashlib
@@ -403,8 +405,9 @@ def verify_local_plots(paper, evidence, bindings, items):
     """Registered safe producers only; all output bytes remain in memory."""
     selected = {i["path"]: i for i in items if i["path"] in {
         "figures/fig_geometry_panel.png", "figures/fig_specificity_ladder.png", "figures/figS5_mask_statistics.png"}}
-    p8_selected = {i["path"]: i for i in items if i["path"] in {
-        "auto/fig_labeleff.png", "auto/fig_trajectories_ci.png", "auto/fig_fairness.png", "auto/fig_roc.png"}}
+    p8_outputs = {
+        "auto/fig_labeleff.png", "auto/fig_trajectories_ci.png", "auto/fig_fairness.png", "auto/fig_roc.png"}
+    p8_selected = {i["path"]: i for i in items if i["path"] in p8_outputs}
     replacements = {i["path"]: i for i in items if i["path"] == "figures/fig_purity_auc_ep50_fp32.png"}
     if not selected and not p8_selected and not replacements:
         return {}
@@ -424,8 +427,12 @@ def verify_local_plots(paper, evidence, bindings, items):
 
         def capture_p8(fig, destination, *args, **kwargs):
             rel = "auto/" + Path(destination).name
-            if rel not in p8_selected:
+            if rel not in p8_outputs:
                 raise ValueError("unregistered P8 output figure: " + rel)
+            if rel not in p8_selected:
+                # P8 emits its complete bundle; absent manuscript figures are
+                # neither published nor claimed as independently verified.
+                return
             try:
                 records = p8_artists(fig, Path(destination).name, evidence)
                 stream = io.BytesIO()

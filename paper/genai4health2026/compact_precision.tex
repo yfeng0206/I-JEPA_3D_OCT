@@ -1,0 +1,17 @@
+\section{Probe precision control}
+\label{app:fp32}
+
+We repeated the recorded mixed-precision probes with autocast disabled in
+feature extraction, head fitting and evaluation. Each comparison uses the
+same frozen encoder. The recorded changes are smaller than the principal
+policy differences.
+
+\begin{table}[h]
+\centering
+\caption{Full fp32 re-probe against the original fp16 result, same frozen
+encoder in each row. The eight DeLong $p$-values are unadjusted diagnostics, not
+a family-wise test. The largest difference is $2\times10^{-4}$.}
+\label{tab:fp32}
+\small
+\input{auto/table_fp32}
+\end{table}

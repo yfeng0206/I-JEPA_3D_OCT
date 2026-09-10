@@ -2,22 +2,47 @@
 
 ## Current reviewed release
 
-Source release: `6f4d62e`, branch `fix/jepa-delivered-task-audit`.
-`main` is not merged. The approved engineering investigation, bounded GPU
-diagnostics, source review and workshop revision are complete; no corrected
-policy was pretrained. See
-`autopilot\investigations\delivered_task\RESULTS.md`.
+Submission revision: **2026-09-10**, on branch `fix/jepa-delivered-task-audit`.
+Title: **Where to Predict in Retinal OCT? Anatomy-Guided Target Selection for
+I-JEPA**. The narrative now introduces JEPA before the masking strategies,
+adds a JEPA formulation and an openly licensed real-OCT illustration, distinguishes
+the study from US-JEPA and DSeq-JEPA, and omits separate secondary research threads.
+Historical AUCs are unchanged; the subsequent probe-budget diagnostics are not
+substituted for the reported results. No corrected policy was pretrained.
 
-The delivered PDF has nine body pages (34 total). The current Word copy is
-`main_editable.docx` in Overleaf. The exact source/Word manifest was synchronized
-and independently rechecked; remote-only historical files remain preserved.
+The final PDF has **eight main-content pages (15 total)**. The requested PDF,
+source ZIP and release manifest are in Downloads with stem
+`OCT_JEPA_GenAI4Health2026_20260910_v8`. This compact revision includes the symmetric
+uniform-versus-guided OCT framework diagram and a number-free abstract led by
+OCT annotation constraints and self-supervised learning.
+The extended low-label, subgroup/calibration, fine-tuning, background and
+replication-plan sections are omitted from this workshop submission; their
+research records and previous long manuscript remain preserved.
+The original attribution work now motivates retinal targeting in the introduction.
+Selected archived heatmap panels are included with the feature-occlusion
+delta-logit definition; numerical and clinical headings are omitted, and their
+use remains illustrative rather than a validated localization result.
+The final notation models targets and context jointly, defines strategy-specific
+guidance and explicitly identifies the tissue statistics as a predicted proxy.
+The diagram retains the correct EMA teacher, context encoder, predictor,
+positional queries and latent loss. All 13 release gates passed. The current
+Word copy is `main_editable.docx` in Overleaf, with editable display
+equations. Word is generated internally but is no longer a requested deliverable.
+The 13 managed source/attachment files were synchronized to Overleaf;
+remote-only historical files remain preserved.
 Use the validated Downloads ZIP, not a whole-project export, for anonymous
 source submission. The old loose `_files` mirror is historical.
+No OpenReview submission or merge to `main` was performed by this workflow.
+
+Release evidence:
+`autopilot\investigations\submission_refresh_20260910\release_handoff_v8.json`.
+The previous `6f4d62e` release and engineering investigation are documented in
+`autopilot\investigations\delivered_task\RESULTS.md`.
 
 Release commands from the repository root:
 
     $env:MPLBACKEND = 'Agg'
-    D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p13_build_zip.py --citation-record autopilot\investigations\delivered_task\evidence\citation_authorities.json
+    D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p13_build_zip.py --out C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_20260910_v8.zip --stats-dir D:\jepa_phase0\autopilot_out\p1_stats --citation-record autopilot\investigations\submission_refresh_20260910\citation_authorities.json --review-file paper\genai4health2026\numeric_reviews.json
 
 The publisher uses `paper\genai4health2026\numeric_reviews.json`, retained local
 statistics and source-review evidence. Full third-party PDFs are not committed;
@@ -28,7 +53,7 @@ The Word conflict guard must not be bypassed if collaborators have edited it.
 For authorized sync, load credentials from Windows user scope in the same
 process without printing them, then use the newly generated release manifest:
 
-    D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py --release-manifest C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_FINAL.release.json
+    D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py --release-manifest C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_20260910_v8.release.json
 
 No force sync, automatic main merge, sustained pretraining or actual OpenReview
 submission is implied by these commands.

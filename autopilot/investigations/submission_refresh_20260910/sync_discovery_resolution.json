@@ -1,0 +1,7 @@
+{
+  "issue": "Manifest-listed root TeX inputs were omitted by the legacy remote discovery filter, producing false deleted-file conflicts.",
+  "resolution": "Remote scan now includes explicit release items and previously tracked paths; actual remote edits and deletions remain conflicts.",
+  "remote_verification": "Fresh Overleaf clone:12/12 final managed files identical; no remote changes during corrective verification.",
+  "tests": "tests\\test_release_sync.py:15 passed",
+  "source_sha256": "2edf43da8c533f276188567d32a56d5d2816a3b6b14666f8d561bda63d2188ee"
+}

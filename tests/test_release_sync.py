@@ -19,6 +19,61 @@ def test_remote_manual_edit_and_delete_remain_conflicts(tmp_path):
     assert sync.classify(items, {"main.tex": "unknown"}, {"files": {}})[0]["status"] == sync.CONFLICT_UNKNOWN
 
 
+@pytest.mark.parametrize("remote_text, expected", [
+    ("baseline", sync.IN_SYNC),
+    ("collaborator edit", sync.CONFLICT_EDITED),
+    (None, sync.CONFLICT_DELETED),
+])
+def test_manifest_root_input_scan_preserves_conflict_detection(tmp_path, remote_text, expected):
+    local = tmp_path / "local.tex"
+    local.write_text("baseline")
+    clone = tmp_path / "clone"
+    clone.mkdir()
+    rel = "compact_protocol.tex"
+    if remote_text is not None:
+        (clone / rel).write_text(remote_text)
+    (clone / "unrelated.tex").write_text("not managed")
+    baseline = sync.content_hash(local, rel)
+    state = {"files": {rel: {"local_sha256": baseline, "remote_sha256": baseline}}}
+    hashes = sync.scan_remote(clone, extra_paths=[rel])
+    assert "unrelated.tex" not in hashes
+    assert sync.classify([(str(local), rel)], hashes, state)[0]["status"] == expected
+
+
+def test_manifest_dry_run_discovers_additional_root_inputs(tmp_path, monkeypatch):
+    paper = tmp_path / "paper"
+    paper.mkdir()
+    local = paper / "compact_protocol.tex"
+    local.write_text("validated supplement")
+    rel = local.name
+    baseline = sync.content_hash(local, rel)
+    state = {"version": 1, "files": {
+        rel: {"local_sha256": baseline, "remote_sha256": baseline},
+    }}
+    work = tmp_path / "work"
+    work.mkdir()
+    monkeypatch.setenv("OVERLEAF_TOKEN", "SYNTHETIC_SCAN_TEST_ONLY")
+    monkeypatch.setattr(sync, "_SECRETS", [])
+    monkeypatch.setattr(sync.assets, "unique_work", lambda *a, **k: work)
+    monkeypatch.setattr(sync, "validate", lambda *a: ([(str(local), rel)], {"ALL_PASS": True}))
+    monkeypatch.setattr(sync, "load_state", lambda *a: (state, True))
+
+    def fake_run(command, **kwargs):
+        if "clone" in command:
+            clone = Path(command[-1])
+            clone.mkdir()
+            (clone / rel).write_text("validated supplement")
+        output = "tip\n" if "rev-parse" in command else "master\n" if "symbolic-ref" in command else ""
+        return SimpleNamespace(returncode=0, stdout=output, stderr="")
+
+    monkeypatch.setattr(sync, "run", fake_run)
+    assert sync.main([
+        "--dry-run", "--project-id", "syntheticproject",
+        "--paper-dir", str(paper), "--state", str(tmp_path / "state.json"),
+        "--release-manifest", str(tmp_path / "manifest.json"),
+    ]) == 0
+
+
 def test_remote_tip_must_be_fresh(monkeypatch):
     calls = []
 

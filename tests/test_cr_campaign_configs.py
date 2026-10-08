@@ -16,7 +16,7 @@ def generated():
 def test_generation_has_no_errors_and_matches_disk(generated):
     report, texts = generated
     assert report["errors"] == []
-    assert len(report["configs"]) == 7
+    assert len(report["configs"]) == sum(len(mk.ARM_SEEDS[a]) for a in mk.ALL_ARMS) == 10
     for path, text in texts.items():
         assert path.exists(), path
         assert path.read_text(encoding="utf-8") == text, "stale generated file %s" % path
@@ -150,3 +150,23 @@ def test_archived_inputs_are_untouched_copies():
     mk.build_config("envelope", 1234, archived)
     assert archived == before
     assert archived["meta"]["read_checkpoint"].endswith("resume-ep27.pth.tar")
+
+
+
+def test_seed_9012_amendment_configs_and_campaign_order():
+    # Pre-registration amendment 1 (40d48f1 section 8): R3/C3/E3 at seed 9012, after E2.
+    from scripts import cr_campaign as camp_mod
+    camp = camp_mod.load_campaign(mk.OUT_DIR / "campaign.json")
+    seq = camp["sequence"]
+    assert seq[seq.index("E2:probe") + 1:] == ["R3:train", "R3:probe", "C3:train", "C3:probe",
+                                               "E3:train", "E3:probe"]
+    for rid, arm in (("R3", "random"), ("C3", "centroid"), ("E3", "envelope")):
+        r = camp_mod.run_spec(camp, rid)
+        assert (r["arm"], r["seed"], r["enabled"]) == (arm, 9012, True)
+        cfg9 = yaml.safe_load((mk.REPO / r["config"]).read_text(encoding="utf-8"))
+        mk.validate_run_config(cfg9, arm, 9012)
+        cfg1 = yaml.safe_load(mk.config_path(arm, 1234).read_text(encoding="utf-8"))
+        d = mk.diff_flat(cfg1, cfg9)
+        assert sorted(set(d["changed"]) | set(d["added"]) | set(d["removed"])) == [
+            "logging.folder", "logging.write_tag", "meta.seed"]
+    assert 9012 not in mk.ARM_SEEDS["random_cb"]

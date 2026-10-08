@@ -917,3 +917,21 @@ def test_set_commit_runs_cb_pins_only_cb_and_refuses_started(env):
     with pytest.raises(SystemExit, match="started run CB"):
         camp_mod.main(["--campaign", str(env.camp_path), "--set-commit", env.commit, "--runs", "CB"])
     assert [r for r in json.loads(env.camp_path.read_text())["runs"] if r["id"] == "CB"][0]["git_commit"] == new
+
+
+
+def test_set_commit_comma_list_pins_only_listed_and_requires_configs(env):
+    git(env.repo, "commit", "--allow-empty", "-q", "-m", "next")
+    new = git(env.repo, "rev-parse", "HEAD")
+    before = {r["id"]: r["git_commit"] for r in json.loads(env.camp_path.read_text())["runs"]}
+    assert camp_mod.main(["--campaign", str(env.camp_path), "--set-commit", new, "--runs", "C1,CB"]) == 0
+    got = {r["id"]: r["git_commit"] for r in json.loads(env.camp_path.read_text())["runs"]}
+    assert got["C1"] == got["CB"] == new and got["R1"] == before["R1"]
+    # a run whose config is not in the target commit (e.g. new seed-9012 YAMLs vs 0317cc1) is refused
+    c = json.loads(env.camp_path.read_text())
+    c["runs"].append({"id": "R3", "arm": "random", "seed": 9012, "git_commit": None, "enabled": True,
+                      "config": "configs/cr_seed_v1/cr_seed_v1_random_s9012.yaml", "stop_epoch": 50})
+    env.camp_path.write_text(json.dumps(c))
+    with pytest.raises(SystemExit, match="does not contain"):
+        camp_mod.main(["--campaign", str(env.camp_path), "--set-commit", new, "--runs", "R3"])
+    assert [r for r in json.loads(env.camp_path.read_text())["runs"] if r["id"] == "R3"][0]["git_commit"] is None

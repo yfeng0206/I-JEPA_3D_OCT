@@ -42,7 +42,8 @@ REPO = Path(__file__).resolve().parents[1]
 CAMPAIGN = "cr_seed_v1"
 OUT_DIR = REPO / "configs" / CAMPAIGN
 
-SEEDS = (1234, 5678)
+# 9012: third seed index, run after E2 (PREREGISTRATION_cr_seed_v1.md section 8, amendment 1, 40d48f1).
+SEEDS = (1234, 5678, 9012)
 ARMS = ("random", "centroid", "envelope")
 # E9 RANDOM-CB: the CENTROID config with only mask.curriculum.mode/matching changed;
 # pre-registered at seed 1234 only (PREREGISTRATION_cr_seed_v1.md section 1).
@@ -417,14 +418,17 @@ def flatten_decl(decl: dict) -> dict:
 def cross_checks(cfgs: dict) -> dict:
     res = {"seed_pairs": {}, "arm_pairs": {}, "frozen_keys": {}, "errors": []}
     for arm in ARMS:
-        a, b = cfgs.get((arm, SEEDS[0])), cfgs.get((arm, SEEDS[1]))
-        if a is None or b is None:
-            continue
-        d = diff_flat(a, b)
-        keys = sorted(set(d["changed"]) | set(d["added"]) | set(d["removed"]))
-        res["seed_pairs"][arm] = keys
-        if set(keys) != {"meta.seed", "logging.folder", "logging.write_tag"}:
-            res["errors"].append("%s seeds differ in %s" % (arm, keys))
+        for other in SEEDS[1:]:
+            a, b = cfgs.get((arm, SEEDS[0])), cfgs.get((arm, other))
+            if a is None or b is None:
+                continue
+            d = diff_flat(a, b)
+            keys = sorted(set(d["changed"]) | set(d["added"]) | set(d["removed"]))
+            # the first pair keeps its historical key (config_diffs.json readers)
+            name = arm if other == SEEDS[1] else "%s_s%d_vs_s%d" % (arm, SEEDS[0], other)
+            res["seed_pairs"][name] = keys
+            if set(keys) != {"meta.seed", "logging.folder", "logging.write_tag"}:
+                res["errors"].append("%s seeds %d/%d differ in %s" % (arm, SEEDS[0], other, keys))
     for seed in SEEDS:
         present = [arm for arm in ALL_ARMS if (arm, seed) in cfgs]
         for i, x in enumerate(present):
@@ -507,8 +511,14 @@ def generate(write: bool = True) -> tuple[dict, dict]:
     if write and not report["errors"]:
         OUT_DIR.mkdir(parents=True, exist_ok=True)
         for p, t in texts.items():
-            with open(p, "w", encoding="utf-8", newline="\n") as fh:
+            if p.exists() and p.read_bytes() == t.encode("utf-8"):
+                continue  # unchanged files are left untouched
+            tmp = Path(str(p) + ".tmp")
+            with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
                 fh.write(t)
+                fh.flush()
+                os.fsync(fh.fileno())
+            os.replace(tmp, p)
     return report, texts
 
 

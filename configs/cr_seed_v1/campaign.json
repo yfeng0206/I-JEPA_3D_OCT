@@ -217,6 +217,45 @@
       "probe": {
         "enabled": true
       }
+    },
+    {
+      "id": "R3",
+      "arm": "random",
+      "seed": 9012,
+      "config": "configs/cr_seed_v1/cr_seed_v1_random_s9012.yaml",
+      "stop_epoch": 50,
+      "git_commit": null,
+      "enabled": true,
+      "probe": {
+        "enabled": true
+      },
+      "note": "third seed index (pre-registration amendment 1, 40d48f1 section 8); runs after E2"
+    },
+    {
+      "id": "C3",
+      "arm": "centroid",
+      "seed": 9012,
+      "config": "configs/cr_seed_v1/cr_seed_v1_centroid_s9012.yaml",
+      "stop_epoch": 50,
+      "git_commit": null,
+      "enabled": true,
+      "probe": {
+        "enabled": true
+      },
+      "note": "third seed index (pre-registration amendment 1, 40d48f1 section 8); runs after E2"
+    },
+    {
+      "id": "E3",
+      "arm": "envelope",
+      "seed": 9012,
+      "config": "configs/cr_seed_v1/cr_seed_v1_envelope_s9012.yaml",
+      "stop_epoch": 50,
+      "git_commit": null,
+      "enabled": true,
+      "probe": {
+        "enabled": true
+      },
+      "note": "third seed index (pre-registration amendment 1, 40d48f1 section 8); runs after E2"
     }
   ],
   "anchors": {
@@ -310,7 +349,13 @@
     "CB:train",
     "CB:probe",
     "E2:train",
-    "E2:probe"
+    "E2:probe",
+    "R3:train",
+    "R3:probe",
+    "C3:train",
+    "C3:probe",
+    "E3:train",
+    "E3:probe"
   ],
   "g2": {
     "enabled": true,

@@ -1,0 +1,13 @@
+% Exact-size print PDF: scales the design master (poster.pdf, A0-wide canvas
+% with the same aspect ratio) to the physical size chosen in poster_size.tex.
+% Build poster.tex first; build.ps1 runs both in order.
+\documentclass{article}
+\input{poster_size}
+\input{poster_setup}
+\providecommand{\PosterDesignPDF}{poster.pdf}
+\usepackage[paperwidth=\PosterPhysWidth, paperheight=\PosterPhysHeight, margin=0pt]{geometry}
+\usepackage{pdfpages}
+\typeout{POSTER-PRINT: \PosterSize\space = \PosterSizeLabel\space from \PosterDesignPDF}
+\begin{document}
+\includepdf[pages=1, width=\paperwidth, height=\paperheight, keepaspectratio=false]{\PosterDesignPDF}
+\end{document}

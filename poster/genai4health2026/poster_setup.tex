@@ -1,0 +1,36 @@
+% Maps \PosterSize (poster_size.tex) to the physical print size and to the
+% design canvas used by poster.tex. Shared by poster.tex and poster_print.tex.
+%
+% Design canvas: the reference layout is 841 mm (A0 width) by 1261.5 mm, i.e.
+% the 2:3 aspect of the 24 x 36 in NeurIPS workshop format, and all font sizes
+% in poster.tex are A0-equivalent on that canvas. Taller formats keep the
+% 841 mm width and gain height; shorter formats (A0, A1, 36 x 48 in) keep the
+% 1261.5 mm height and gain width, so every supported size holds the same
+% content. poster_print.tex scales the canvas to the exact physical size.
+\makeatletter
+\newcommand{\Poster@set}[3]{%
+  \def\PosterPhysWidth{#1}\def\PosterPhysHeight{#2}\def\PosterSizeLabel{#3}}
+\@namedef{Poster@size@neurips-ws}{\Poster@set{24in}{36in}{24 x 36 in portrait (NeurIPS workshop guidance)}}
+\@namedef{Poster@size@a0}{\Poster@set{841mm}{1189mm}{ISO A0 portrait}}
+\@namedef{Poster@size@a1}{\Poster@set{594mm}{841mm}{ISO A1 portrait}}
+\@namedef{Poster@size@us-36x48}{\Poster@set{36in}{48in}{36 x 48 in portrait}}
+\@ifundefined{Poster@size@\PosterSize}{%
+  \errmessage{Unknown \string\PosterSize\space '\PosterSize'; use neurips-ws, a0, a1 or us-36x48}%
+  \@nameuse{Poster@size@neurips-ws}%
+}{\@nameuse{Poster@size@\PosterSize}}
+\newlength{\PosterDesignWidth}
+\newlength{\PosterDesignHeight}
+\newlength{\PosterBodyAzeroEq}
+% e-TeX scaling (a*b/c) keeps the intermediate product in 64 bits.
+\setlength{\PosterDesignWidth}{841mm}
+\setlength{\PosterDesignHeight}{\dimexpr 841mm * \number\dimexpr\PosterPhysHeight\relax
+  / \number\dimexpr\PosterPhysWidth\relax\relax}
+\ifdim\PosterDesignHeight<1261.5mm
+  \setlength{\PosterDesignHeight}{1261.5mm}
+  \setlength{\PosterDesignWidth}{\dimexpr 1261.5mm * \number\dimexpr\PosterPhysWidth\relax
+    / \number\dimexpr\PosterPhysHeight\relax\relax}
+\fi
+% Block body text is 29.86 pt on the canvas; its size if printed at A0 width:
+\setlength{\PosterBodyAzeroEq}{\dimexpr 29.86pt * \number\dimexpr841mm\relax
+  / \number\PosterDesignWidth\relax}
+\makeatother

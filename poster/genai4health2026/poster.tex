@@ -1,0 +1,467 @@
+% GenAI4Health @ NeurIPS 2026 poster (draft).
+% "Where to Predict in Retinal OCT? Anatomy-Guided Target Selection for I-JEPA"
+%
+% Build: see README.md (build.ps1 compiles this file with Tectonic, then
+% poster_print.tex, then writes a PNG preview and a build report).
+% This file is the DESIGN MASTER. Its canvas is set by poster_setup.tex from
+% the single size parameter in poster_size.tex; font sizes are A0-equivalent
+% (block body 29.9 pt, tables and notes 24.9 pt on the 841 mm reference width).
+%
+% Every number is a macro from the paper's generated files
+% (../../paper/genai4health2026/auto/*.tex); do not type result numbers here.
+\documentclass[25pt, a0paper, portrait, margin=0mm, innermargin=14mm,
+  colspace=14mm, subcolspace=10mm, blockverticalspace=10mm]{tikzposter}
+
+\input{poster_size}
+\input{poster_setup}
+\geometry{paperwidth=\PosterDesignWidth, paperheight=\PosterDesignHeight, margin=0mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+
+% Fonts: Fira Sans text and Fira Math (OpenType, both in the Tectonic bundle).
+\usepackage{amsmath}
+\usepackage[sfdefault,lining,tabular]{FiraSans}
+\usepackage{unicode-math}
+\setmathfont{FiraMath-Regular.otf}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{qrcode}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Paper sources: figures and generated number macros are read in place.
+\graphicspath{{../../paper/genai4health2026/figures/}}
+\input{../../paper/genai4health2026/auto/auto_numbers}
+\input{../../paper/genai4health2026/auto/cr_numbers}
+% Replication, matched-budget control and pooling results are generated after
+% the Oct 22 results freeze. Until that file exists the panels show placeholders.
+\IfFileExists{../../paper/genai4health2026/auto/cr_results.tex}{%
+  \input{../../paper/genai4health2026/auto/cr_results}%
+  \typeout{POSTER: cr_results.tex found and loaded}}{%
+  \typeout{POSTER: cr_results.tex not found; result panels show placeholders}}
+
+% ---------------------------------------------------------------------------
+% Colour-blind-safe palette (Okabe & Ito). Text on coloured fills is white on
+% dark blue/navy/grey (contrast >= 5:1) or black on light tints.
+\definecolor{OIBlue}{HTML}{0072B2}
+\definecolor{OIOrange}{HTML}{E69F00}
+\definecolor{OISky}{HTML}{56B4E9}
+\definecolor{OIVermillion}{HTML}{D55E00}
+\definecolor{PosterNavy}{HTML}{0B2D4F}
+\definecolor{PosterGrey}{HTML}{F2F4F7}
+\definecolor{KeyFill}{HTML}{E3F0F9}
+\definecolor{PendingFill}{HTML}{FBE3D3}
+\definecolor{PendingTitle}{HTML}{4D4D4D}
+
+\definecolorstyle{PosterCB}{}{%
+  \colorlet{backgroundcolor}{PosterGrey}
+  \colorlet{framecolor}{OIBlue}
+  \colorlet{titlefgcolor}{white}
+  \colorlet{titlebgcolor}{PosterNavy}
+  \colorlet{blocktitlebgcolor}{OIBlue}
+  \colorlet{blocktitlefgcolor}{white}
+  \colorlet{blockbodybgcolor}{white}
+  \colorlet{blockbodyfgcolor}{black}
+  \colorlet{innerblocktitlebgcolor}{OISky}
+  \colorlet{innerblocktitlefgcolor}{black}
+  \colorlet{innerblockbodybgcolor}{white}
+  \colorlet{innerblockbodyfgcolor}{black}
+  \colorlet{notefgcolor}{black}
+  \colorlet{notebgcolor}{KeyFill}
+  \colorlet{notefrcolor}{OIBlue}
+}
+\defineblockstyle{PosterCB}{
+  titlewidthscale=1, bodywidthscale=1, titleleft,
+  titleoffsetx=0pt, titleoffsety=0pt, bodyoffsetx=0pt, bodyoffsety=0pt,
+  bodyverticalshift=0pt, roundedcorners=10, linewidth=2.5mm,
+  titleinnersep=7mm, bodyinnersep=9mm
+}{
+  \begin{scope}[line width=\blocklinewidth, rounded corners=\blockroundedcorners]
+    \ifBlockHasTitle
+      \draw[color=blocktitlebgcolor, fill=blocktitlebgcolor]
+        (blockbody.south west) rectangle (blocktitle.north east);
+      \draw[color=blocktitlebgcolor, fill=blockbodybgcolor]
+        (blockbody.south west) rectangle (blockbody.north east);
+    \else
+      \draw[color=blocktitlebgcolor, fill=blockbodybgcolor]
+        (blockbody.south west) rectangle (blockbody.north east);
+    \fi
+  \end{scope}
+}
+\usetheme{Default}
+\usecolorstyle{PosterCB}
+\usebackgroundstyle{Default}
+\usetitlestyle[innersep=12mm, titletoblockverticalspace=12mm]{Filled}
+\useblockstyle{PosterCB}
+\tikzposterlatexaffectionproofoff
+% tikzposter's titletextscale key assigns to a macro and typesets "1=1" in
+% nullfont; store the value instead.
+\makeatletter
+\define@key{title}{titletextscale}{\def\TP@titletextscale{#1}}
+\makeatother
+
+% ---------------------------------------------------------------------------
+% Strategy names as printed in the figures (the paper sets them in small caps;
+% capitals read better at poster distance).
+\newcommand{\Arm}[1]{\MakeUppercase{#1}}
+\newcommand{\ArmBest}{\Arm{centroid}}
+
+% CAMERA-READY INPUT REQUIRED (authors). Same placeholder approach as the
+% paper: replace \CRAuthorsPending by the OpenReview author line and
+% \CRAffilPending by the affiliations (in \PosterAuthors and
+% \PosterAffiliations below), then delete both macros.
+\newcommand{\CRAuthorsPending}{\colorbox{PendingFill}{\color{black}\bfseries
+  AUTHORS PENDING: names from OpenReview}\typeout{POSTER-PLACEHOLDER: authors}}
+\newcommand{\CRAffilPending}{\colorbox{PendingFill}{\color{black}
+  affiliations and e-mail addresses pending}\typeout{POSTER-PLACEHOLDER: affiliations}}
+\newcommand{\PosterAuthors}{\CRAuthorsPending}
+\newcommand{\PosterAffiliations}{\CRAffilPending}
+
+% Paper/code link for the QR code. Leave empty for the placeholder; set it to
+% the final OpenReview or repository URL (no '#' or '%') to draw a real code.
+\providecommand*{\PosterURL}{}
+
+% Result placeholders (registered replication; README.md lists what to fill).
+\newcommand{\CRCell}{\colorbox{PendingFill}{\color{black}\strut\,TBD\,}%
+  \typeout{POSTER-PLACEHOLDER: result cell}}
+\newcommand{\PosterPendingBanner}[1]{%
+  \noindent\fcolorbox{OIVermillion}{PendingFill}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{%
+    \raggedright\color{black}\textbf{RESULTS PENDING}\enspace#1}}%
+  \typeout{POSTER-PLACEHOLDER: pending banner}}
+
+% Highlight box for key statements.
+\newcommand{\KeyBox}[1]{%
+  {\setlength{\fboxsep}{6mm}\setlength{\fboxrule}{1.2mm}%
+  \noindent\fcolorbox{OIBlue}{KeyFill}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\raggedright#1}}}}
+
+% Compact bullet list.
+\newenvironment{plist}{\begin{itemize}\setlength{\itemsep}{0.2em}%
+  \setlength{\parskip}{0pt}\setlength{\topsep}{0.1em}}{\end{itemize}}
+
+% Figures keep their reference-layout height on wider canvases.
+\newcommand{\PosterFigure}[3]{% #1 max width (fraction of \linewidth), #2 max height, #3 file
+  \includegraphics[width=#1\linewidth, height=#2, keepaspectratio]{#3}}
+
+% Fit check: reports the spare space, or warns if the lowest block runs past
+% the bottom margin (tikzposter itself never warns about this).
+\makeatletter
+\newdimen\Poster@bottom
+\newdimen\Poster@limit
+\newcommand{\PosterCheckFit}[1]{%
+  \global\Poster@bottom=\TP@blocktop
+  \global\advance\Poster@bottom by \TP@blockverticalspace
+  \global\Poster@limit=-0.5\textheight
+  \global\advance\Poster@limit by \TP@innermargin
+  \ifdim\Poster@bottom<\Poster@limit
+    \global\advance\Poster@limit by -\Poster@bottom
+    \PackageWarningNoLine{poster}{OVERFLOW (#1): content runs \the\Poster@limit\space below the bottom margin}%
+  \else
+    \global\advance\Poster@bottom by -\Poster@limit
+    \typeout{POSTER-FIT (#1): \the\Poster@bottom\space spare above the bottom margin}%
+  \fi}
+\makeatother
+
+\typeout{POSTER-SIZE: \PosterSize\space = \PosterSizeLabel; design canvas
+  \the\PosterDesignWidth\space x \the\PosterDesignHeight; body text
+  \the\PosterBodyAzeroEq\space A0-equivalent}
+
+% ---------------------------------------------------------------------------
+% tikzposter wraps \title in a \scalebox (no line breaks), so the custom title
+% below typesets \PosterTitle directly.
+\newcommand{\PosterTitle}{Where to Predict in Retinal OCT?\\
+  Anatomy-Guided Target Selection for I-JEPA}
+\title{Where to Predict in Retinal OCT? Anatomy-Guided Target Selection for I-JEPA}
+
+\makeatletter
+\settitle{%
+  \begin{minipage}[c]{0.81\linewidth}
+    \raggedright\color{titlefgcolor}
+    {\fontsize{84}{100}\selectfont\bfseries \PosterTitle\par}
+    \vspace{0.5em}
+    {\LARGE \PosterAuthors\par}
+    \vspace{0.25em}
+    {\Large \PosterAffiliations\par}
+    \vspace{0.35em}
+    {\Large GenAI for Health Workshop @ NeurIPS 2026, Sydney}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.15\linewidth}
+    \centering
+    \ifx\PosterURL\empty
+      \fcolorbox{OIVermillion}{white}{\parbox[c][0.82\linewidth][c]{0.82\linewidth}{%
+        \centering\color{black}\bfseries QR CODE\\PENDING\\[0.4em]
+        \mdseries\normalsize paper / code link}}%
+      \typeout{POSTER-PLACEHOLDER: QR code}%
+    \else
+      \colorbox{white}{\qrcode[height=0.82\linewidth]{\PosterURL}}%
+    \fi\\[0.3em]
+    {\color{titlefgcolor}\normalsize paper \& code}
+  \end{minipage}%
+}
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+\begin{columns}
+% ============================ LEFT COLUMN ============================
+\column{0.5}
+
+\block{Why target selection matters in OCT}{
+  \raggedright
+  \begin{plist}
+    \item In retinal OCT the layered retina fills only a band of each B-scan;
+      much of the rest is near-uniform background.
+    \item I-JEPA learns by predicting the \emph{latent features} of hidden
+      target blocks from visible context, but places targets uniformly.
+  \end{plist}
+  \vspace{0.3em}
+  \KeyBox{\textbf{Question.} Does steering I-JEPA targets toward retinal tissue
+    give a better frozen encoder for glaucoma detection, with the same
+    architecture and latent loss?}
+}
+
+\block{Same I-JEPA, different targets}{
+  \centering
+  \PosterFigure{1}{216mm}{fig_oct_jepa_comparison_final_cr.pdf}\par
+  \vspace{0.3em}
+  \raggedright
+  Only the sampler of context $C$ and targets $T$ changes:
+  $(C,T)\sim\Pi_s(\,\cdot\mid A_s(x))$ with the guide $A_s(x)$ of strategy
+  $s$. Encoder, EMA teacher, predictor and Smooth-L1 loss are shared.
+}
+
+\block{Five target-selection strategies}{
+  \centering
+  \PosterFigure{0.88}{236mm}{fig_oct_all_strategies.pdf}\par
+  \vspace{0.4em}
+  {\normalsize
+  \renewcommand{\arraystretch}{1.1}
+  \begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+    \toprule
+    strategy & guide $A_s(x)$ $\rightarrow$ target rule \\
+    \midrule
+    \Arm{random}     & none $\rightarrow$ uniform rectangles (stock I-JEPA) \\
+    \Arm{envelope}   & hard MIRAGE retina envelope $\rightarrow$ rectangles sampled on it \\
+    \ArmBest{}       & intensity-centroid band, no segmenter $\rightarrow$ rectangles weighted by overlap \\
+    \Arm{anatomy-v2} & soft MIRAGE retinal scores $\rightarrow$ tissue-shaped components \\
+    \Arm{cover}      & soft MIRAGE retinal scores $\rightarrow$ greedy coverage rectangles \\
+    \bottomrule
+  \end{tabularx}\par}
+}
+
+% ============================ RIGHT COLUMN ============================
+\column{0.5}
+
+\block{Original runs: tissue-directed rectangles help}{
+  \raggedright
+  {\normalsize FairVision glaucoma OCT; frozen EMA encoder, mean-pooled
+  features, linear probe; test $N=\Ntest$ volumes (\Npos{} glaucoma).
+  All continuations start from one epoch-25 uniform I-JEPA checkpoint.\par}
+  \vspace{0.4em}
+  {\centering\normalsize
+  \renewcommand{\mathbf}[1]{#1}%
+  \renewcommand{\arraystretch}{1.1}
+  \setlength{\tabcolsep}{0.42em}
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    & \multicolumn{2}{c}{epoch 50} & \multicolumn{2}{c}{epoch 75} & \multicolumn{2}{c}{epoch 100} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+    strategy & AUC & $\Delta$ & AUC & $\Delta$ & AUC & $\Delta$ \\
+    \midrule
+    \Arm{random}   & \AUCRandomEpFifty & --- & \AUCRandomEpSeventyFive & --- & \AUCRandomEpHundred & --- \\
+    \Arm{envelope} & \AUCEnvelopeEpFifty & $\DEnvelopeRandomEpFifty$ & \AUCEnvelopeEpSeventyFive & $\DEnvelopeRandomEpSeventyFive$ & \AUCEnvelopeEpHundred & $\DEnvelopeRandomEpHundred$ \\
+    \ArmBest{}     & \AUCOracleEpFifty & $\DOracleRandomEpFifty$ & \AUCOracleEpSeventyFive & $\DOracleRandomEpSeventyFive$ & \textbf{\AUCOracleEpHundred} & $\DOracleRandomEpHundred$ \\
+    \midrule
+    \Arm{anatomy-v2} & \TAUCAnatomyTwoEpFifty & \TAnatomyTwoRandomEpFifty & \TAUCAnatomyTwoEpSeventyFive & \TAnatomyTwoRandomEpSeventyFive & \TAUCAnatomyTwoEpHundred & \TAnatomyTwoRandomEpHundred \\
+    \Arm{cover}      & \TAUCCoverEpFifty & \TCoverRandomEpFifty & \TAUCCoverEpSeventyFive & \TCoverRandomEpSeventyFive & \TAUCCoverEpHundred & \TCoverRandomEpHundred \\
+    \bottomrule
+  \end{tabular}\par}
+  \vspace{0.2em}
+  {\normalsize $\Delta$: AUC minus \Arm{random} at the same epoch. Upper rows
+  fp16 probes; lower rows fp32 probes against an fp32 \Arm{random}.
+  \Arm{anatomy-v2} stopped at epoch 75. One pretraining continuation per
+  strategy: intervals reflect test-case sampling (\Nboot{} paired bootstrap
+  resamples), not retraining.\par}
+  \vspace{0.4em}
+  \KeyBox{%
+    \textbf{\ArmBest{}, no segmenter:} $\DOracleRandomEpHundred$ AUC at
+    epoch 100 (95\% CI $\DOracleRandomEpHundredCI$).\par
+    \textbf{\Arm{envelope}:} $\DEnvelopeRandomEpFifty$ at epoch 50
+    (95\% CI $\DEnvelopeRandomEpFiftyCI$).\par
+    \textbf{More anatomy did not add gains:} \Arm{anatomy-v2} minus
+    \Arm{envelope} $\DAnatomyTwoEnvelopeEpFifty$ at epoch 50
+    (95\% CI $\DAnatomyTwoEnvelopeEpFiftyCI$); \Arm{cover} $\DCoverPeakToHundred$
+    from its epoch-\CoverPeakEpoch{} peak to epoch 100.}
+}
+
+\block{Which masks actually reach the model?}{
+  \raggedright
+  {\normalsize Sampler replay in each trained configuration:
+  \CRAuditViews{} training views, batch \CRAuditBatch, \CRAuditSeedCount{}
+  sampler seeds. Tissue is a MIRAGE-derived proxy, not ground truth.\par}
+  \vspace{0.4em}
+  {\centering\normalsize
+  \renewcommand{\arraystretch}{1.1}
+  \setlength{\tabcolsep}{0.38em}
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    & tissue & target & unique & loss & context & AUC \\
+    strategy & hidden & purity & targets & slots & (\% grid) & ep.\ 50 \\
+    \midrule
+    \Arm{random}     & \CRHidRandom\%     & \CRPurRandom\%     & \CRUniqRandom     & \CRSlotsRandom     & $\CRCtxRandom\pm\CRCtxSDRandom$         & \AUCRandomEpFifty \\
+    \ArmBest{}       & \CRHidCentroid\%   & \CRPurCentroid\%   & \CRUniqCentroid   & \CRSlotsCentroid   & $\CRCtxCentroid\pm\CRCtxSDCentroid$     & \AUCOracleEpFifty \\
+    \Arm{envelope}   & \CRHidEnvelope\%   & \CRPurEnvelope\%   & \CRUniqEnvelope   & \CRSlotsEnvelope   & $\CRCtxEnvelope\pm\CRCtxSDEnvelope$     & \AUCEnvelopeEpFifty \\
+    \Arm{cover}      & \CRHidCover\%      & \CRPurCover\%      & \CRUniqCover      & \CRSlotsCover      & $\CRCtxCover\pm\CRCtxSDCover$           & \AUCCoverEpFifty \\
+    \Arm{anatomy-v2} & \CRHidAnatomyTwo\% & \CRPurAnatomyTwo\% & \CRUniqAnatomyTwo & \CRSlotsAnatomyTwo & $\CRCtxAnatomyTwo\pm\CRCtxSDAnatomyTwo$ & \AUCAnatomyTwoEpFifty \\
+    \bottomrule
+  \end{tabular}\par}
+  \vspace{0.3em}
+  \begin{plist}
+    \item Guided rectangles also leave more context visible than
+      \Arm{random}: \ArmBest{} $+\CRCtxGapCentroid$ points (95\% CI
+      \CRCtxGapCentroidCI), \Arm{envelope} $+\CRCtxGapEnvelope$
+      (\CRCtxGapEnvelopeCI).
+    \item \Arm{anatomy-v2} has the purest targets (\CRPurAnatomyTwo\%) but
+      \CRSlotsAnatomyTwo{} loss slots versus \CRSlotsRandom.
+  \end{plist}
+  \vspace{0.2em}
+  \KeyBox{Target location, target size and visible context are coupled.}
+}
+
+\block{How reliable are the guides?}{
+  \raggedright
+  \begin{minipage}[c]{0.40\linewidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[
+        xbar, bar width=9mm, width=0.52\linewidth, height=62mm,
+        scale only axis,
+        xmin=0, enlarge x limits={upper, value=0.5},
+        symbolic y coords={Normal,Glaucoma,High signal,Low signal},
+        ytick={Normal,Glaucoma,High signal,Low signal},
+        y dir=reverse, enlarge y limits=0.15,
+        axis x line*=bottom, axis y line*=left, xtick=\empty,
+        tick label style={font=\normalsize}, label style={font=\normalsize},
+        nodes near coords={\pgfmathprintnumber[fixed,precision=1]{\pgfplotspointmeta}\%},
+        nodes near coords align={horizontal},
+        every node near coord/.append style={font=\normalsize, black},
+        xlabel={gross disagreement},
+      ]
+        \addplot[bar shift=0pt, draw=OIBlue, fill=OIBlue]
+          coordinates {(\CRFOneNormal,Normal) (\CRFOneGlaucoma,Glaucoma)};
+        \addplot[bar shift=0pt, draw=OIOrange, fill=OIOrange]
+          coordinates {(\CRFOneHighSNR,High signal) (\CRFOneLowSNR,Low signal)};
+      \end{axis}
+    \end{tikzpicture}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.58\linewidth}
+    \raggedright
+    \textbf{\ArmBest{} band vs MIRAGE envelope:} gross disagreement in
+    \CRFOne\% of B-scans (95\% CI \CRFOneCI; all training volumes
+    \CRFOneCensus\%).\par\vspace{0.3em}
+    \textbf{Envelope plausibility flags:} \CREnvAnyFlag\% (\CREnvAnyFlagCI).\par\vspace{0.3em}
+    \textbf{MIRAGE guide:} GOALS foreground Dice \CRMirageDice{}, in-domain only.
+  \end{minipage}\par
+  \vspace{0.3em}
+  {\normalsize Agreement between two automatic guides, not anatomical
+  accuracy (FairVision has no layer labels). Bars: unweighted rates in a
+  stratified sample of \CRGuideVolumes{} volumes (\CRGuideBscans{} B-scans);
+  high/low signal: top/bottom tertile of a signal-to-noise proxy.\par}
+}
+
+\block{Takeaways}{
+  \raggedright
+  \begin{plist}
+    \item Tissue-directed targets improved frozen glaucoma probes in the
+      original runs, even with a segmentation-free intensity centroid.
+    \item More anatomical specificity (tissue shapes, coverage) added no
+      further gain.
+    \item Target placement, target size and visible context move together;
+      matched-budget comparisons come next.
+  \end{plist}
+}
+
+\end{columns}
+
+\PosterCheckFit{after main columns}
+
+% ===================== PENDING RESULTS (full width) =====================
+{\colorlet{blocktitlebgcolor}{PendingTitle}
+\block{Registered replication: results pending (filled after the Oct~22 results freeze)}{
+  \raggedright
+  \begin{minipage}[t]{0.37\linewidth}
+    \textbf{Repeated continuations}\par
+    {\normalsize New seeds from the same epoch-25 checkpoint, stopped at
+    epoch 50.\par}
+    \vspace{0.3em}
+    {\normalsize
+    \setlength{\tabcolsep}{0.35em}
+    \begin{tabular}{@{}lcccc@{}}
+      \toprule
+      strategy & original & new seeds & mean & $\Delta$ \\
+      \midrule
+      \Arm{random}   & \CRCell & \CRCell & \CRCell & --- \\
+      \Arm{envelope} & \CRCell & \CRCell & \CRCell & \CRCell \\
+      \ArmBest{}     & \CRCell & \CRCell & \CRCell & \CRCell \\
+      \bottomrule
+    \end{tabular}\par}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.33\linewidth}
+    \raggedright
+    \textbf{Matched-budget control}\par
+    {\normalsize \Arm{random-cb}: uniform placement with \ArmBest{}'s
+    per-image target and context budgets.\par}
+    \vspace{0.3em}
+    {\normalsize
+    \setlength{\tabcolsep}{0.35em}
+    \begin{tabular}{@{}lc@{}}
+      \toprule
+      contrast & $\Delta$ AUC \\
+      \midrule
+      \ArmBest{} $-$ \Arm{random-cb} (placement) & \CRCell \\
+      \Arm{random-cb} $-$ \Arm{random} (budget) & \CRCell \\
+      \bottomrule
+    \end{tabular}\par}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.25\linewidth}
+    \raggedright
+    \textbf{Pooling}\par
+    {\normalsize Maxima within and across B-scans in place of means;
+    $\Delta$ vs \Arm{random}.\par}
+    \vspace{0.3em}
+    {\normalsize
+    \setlength{\tabcolsep}{0.35em}
+    \begin{tabular}{@{}lcc@{}}
+      \toprule
+      pooling & \Arm{envelope} & \ArmBest{} \\
+      \midrule
+      max within B-scan & \CRCell & \CRCell \\
+      max across B-scans & \CRCell & \CRCell \\
+      \bottomrule
+    \end{tabular}\par}
+  \end{minipage}\par
+  \vspace{0.4em}
+  \PosterPendingBanner{{\normalsize Fill from
+  \texttt{paper/genai4health2026/auto/cr\_results.tex}; see
+  \texttt{poster/genai4health2026/README.md}.}}
+}}
+
+% ===================== CREDITS (full width, no title) =====================
+\block{}{
+  \raggedright\normalsize
+  I-JEPA: Assran et al., CVPR 2023. MIRAGE: Morano et al., npj Digit.\ Med.\ 2025.
+  FairVision: Luo et al., 2024. OCT example in both figures: Kulyabin et al.,
+  OCTDL, Fig.~1 (arXiv:2312.08255v3), adapted (cropped, overlays added) under
+  CC BY 4.0 (\texttt{creativecommons.org/licenses/by/4.0}); illustration only.
+  No FairVision images are shown.
+}
+
+\PosterCheckFit{end of poster}
+
+\end{document}

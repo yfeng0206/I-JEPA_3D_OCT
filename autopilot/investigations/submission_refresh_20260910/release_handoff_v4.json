@@ -1,0 +1,36 @@
+{
+  "ALL_PASS": true,
+  "main_content_pages": 8,
+  "total_pages": 33,
+  "checks": {
+    "immutable_figure_inputs": true,
+    "no_placeholders": true,
+    "all_graphics_present": true,
+    "manuscript": true,
+    "numeric_evidence": true,
+    "numeric_review_input": true,
+    "citation_metadata": true,
+    "compiles_standalone": true,
+    "page_limit": true,
+    "anonymous": true,
+    "no_undefined_refs": true,
+    "docx_generated": true,
+    "docx_complete": true
+  },
+  "artifacts": {
+    "zip": {
+      "path": "C:\\Users\\Gary\\Downloads\\OCT_JEPA_GenAI4Health2026_20260910_v4.zip",
+      "sha256": "ffc3dfd147435d49aad41b5ad5b0944a21e58d8ea9901256d74b12428b7c9157"
+    },
+    "pdf": {
+      "path": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\main_submission.pdf",
+      "sha256": "d340873d3a9bfab12293c79e6fc1788164d7007a6ed3bf74e99fb4ee383740c7"
+    },
+    "docx": {
+      "path": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\main_submission.docx",
+      "sha256": "e8c069b875534662d530502dd53edc773638df249d41304e9484fa4f808c321f"
+    }
+  },
+  "manifest": "C:\\Users\\Gary\\Downloads\\OCT_JEPA_GenAI4Health2026_20260910_v4.release.json",
+  "manifest_sha256": "c65252c51d1e3d7f7903e346da4080f537508414d16cf939af4ef4d90cffc772"
+}

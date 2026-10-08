@@ -1,0 +1,419 @@
+{
+  "status": "bounded_investigation_complete",
+  "complete_historical_auc_cause_established": false,
+  "strongest_new_finding": "The original frozen-probe horizon and annealing schedule amplify COVER's late Validation decline. The encoder features were unchanged while the same head/AdamW recipe with a longer horizon substantially reduced that decline.",
+  "controlled_horizon_diagnostic": {
+    "split": "Validation, not Test",
+    "training_n": 6000,
+    "validation_n": 1000,
+    "seed": 42,
+    "held_fixed": [
+      "precomputed features",
+      "LayerNorm-linear head",
+      "initial parameter state",
+      "paired training-order streams",
+      "AdamW",
+      "peak LR 0.0004",
+      "weight decay 0.05",
+      "batch size 256",
+      "warmup five epochs",
+      "Validation-AUC patience 15"
+    ],
+    "changed": "Configured head horizon 50 to 200, with correspondingly stretched cosine schedule",
+    "endpoints": {
+      "cover50": {
+        "legacy_original_selected_validation_auc": 0.8440365136726177,
+        "previous_logistic_validation_auc": 0.8570708222779825,
+        "paired50_selected_validation_auc": 0.8430860536499665,
+        "paired200_selected_validation_auc": 0.8525326257908827,
+        "paired200_minus50_validation_auc": 0.009446572140916265,
+        "paired200_minus_previous_logistic_validation_auc": -0.004538196487099744,
+        "paired50_minus_legacy_original_validation_auc": -0.0009504600226512006,
+        "paired50_selected_training_auc": 0.8683943946666838,
+        "paired200_selected_training_auc": 0.8860804047651273,
+        "paired50_selected_training_bce": 0.4492659947872162,
+        "paired200_selected_training_bce": 0.4127231534322103,
+        "paired50_selected_validation_bce": 0.4831477746963501,
+        "paired200_selected_validation_bce": 0.4658869535923004,
+        "actual_epochs50": 50,
+        "actual_epochs200": 200,
+        "selected_epoch50": 44,
+        "selected_epoch200": 189,
+        "stopping200": "configured_horizon"
+      },
+      "cover100": {
+        "legacy_original_selected_validation_auc": 0.8356004306084145,
+        "previous_logistic_validation_auc": 0.8556661424129279,
+        "paired50_selected_validation_auc": 0.8365168741670969,
+        "paired200_selected_validation_auc": 0.850767771601455,
+        "paired200_minus50_validation_auc": 0.014250897434358145,
+        "paired200_minus_previous_logistic_validation_auc": -0.00489837081147293,
+        "paired50_minus_legacy_original_validation_auc": 0.0009164435586823672,
+        "paired50_selected_training_auc": 0.8667686860847197,
+        "paired200_selected_training_auc": 0.8890990615184764,
+        "paired50_selected_training_bce": 0.4587961558500926,
+        "paired200_selected_training_bce": 0.41242343640327456,
+        "paired50_selected_validation_bce": 0.4955497043132782,
+        "paired200_selected_validation_bce": 0.47007682728767397,
+        "actual_epochs50": 50,
+        "actual_epochs200": 196,
+        "selected_epoch50": 46,
+        "selected_epoch200": 181,
+        "stopping200": "validation_auc_patience15"
+      },
+      "envelope100": {
+        "legacy_original_selected_validation_auc": 0.8598961897558419,
+        "previous_logistic_validation_auc": 0.8638981266933197,
+        "paired50_selected_validation_auc": 0.8589797461971596,
+        "paired200_selected_validation_auc": 0.8650246719412196,
+        "paired200_minus50_validation_auc": 0.006044925744060015,
+        "paired200_minus_previous_logistic_validation_auc": 0.0011265452478999016,
+        "paired50_minus_legacy_original_validation_auc": -0.0009164435586823672,
+        "paired50_selected_training_auc": 0.8859561843262275,
+        "paired200_selected_training_auc": 0.9008191542801169,
+        "paired50_selected_training_bce": 0.41483120767275494,
+        "paired200_selected_training_bce": 0.38628847972551983,
+        "paired50_selected_validation_bce": 0.45117024827003477,
+        "paired200_selected_validation_bce": 0.4406716604232788,
+        "actual_epochs50": 50,
+        "actual_epochs200": 148,
+        "selected_epoch50": 45,
+        "selected_epoch200": 133,
+        "stopping200": "validation_auc_patience15"
+      }
+    },
+    "short_horizon_cover100_minus50": -0.006569179482869614,
+    "long_horizon_cover100_minus50": -0.0017648541894277336,
+    "descriptive_decline_reduction_fraction": 0.7313432835820779,
+    "limits": [
+      "Six deterministic fits are descriptive, not independent replications or a significance test.",
+      "Long horizon and stretched cosine schedule change together; they are not separately identified.",
+      "The legacy run's exact initial head/default RNG stream is unavailable.",
+      "CPU fp32 implementation is not a bitwise reproduction of historical GPU training.",
+      "Validation early stopping and repeated reuse do not yield a new unbiased primary estimate.",
+      "No causal attribution to optimizer versus regularization separately; previous logistic probe changed both.",
+      "The effect is horizon plus stretched schedule, not a test of continuing an already annealed 50-epoch head.",
+      "Early stopping is respected: COVER100 stopped196 and ENVELOPE100 stopped148; neither is a completed200-epoch fit.",
+      "No optimization-stationarity test was performed; reaching the horizon or Validation patience is not proof of convergence.",
+      "Only three checkpoints and one controlled seed were examined; no population, significance, or Test-set claims.",
+      "The previous logistic and new AdamW results are distinct protocols, not a causal decomposition or a tuned model competition."
+    ]
+  },
+  "alternate_linear_probe": {
+    "protocol": "Predeclared non-affine feature LayerNorm plus LogisticRegression C1, lbfgs, max_iter1000",
+    "summary": [
+      {
+        "run": "frozen_meanpool_cover_f021_ep50",
+        "arm": "cover",
+        "encoder_epoch": 50,
+        "head_epochs": 50,
+        "selected_head_epoch": 49,
+        "original_online_train_auc_last": 0.870106,
+        "original_fixed_head_train_auc": 0.8695846644585751,
+        "original_val_auc": 0.8440365136726177,
+        "original_last_val_auc": 0.844037,
+        "original_val_gain_25_to_50": 0.002825999999999995,
+        "alternate_train_auc": 0.9225996568757903,
+        "alternate_val_auc": 0.8570708222779825,
+        "alternate_val_gain": 0.013034308605364808,
+        "alternate_converged": true,
+        "alternate_iterations": 635,
+        "raw_train_covariance_effective_rank": 33.71570076231289,
+        "layernorm_train_covariance_effective_rank": 35.692377728077524,
+        "raw_train_top1_variance_fraction": 0.2270292907454308,
+        "raw_train_centered_variance_fraction": 0.3249051487810208,
+        "saved_val_prob_max_abs_rescore_error": 2.682209014892578e-07
+      },
+      {
+        "run": "frozen_meanpool_cover_f021_ep100",
+        "arm": "cover",
+        "encoder_epoch": 100,
+        "head_epochs": 50,
+        "selected_head_epoch": 50,
+        "original_online_train_auc_last": 0.867394,
+        "original_fixed_head_train_auc": 0.8665442107437,
+        "original_val_auc": 0.8356004306084145,
+        "original_last_val_auc": 0.8356,
+        "original_val_gain_25_to_50": 0.005102000000000051,
+        "alternate_train_auc": 0.926533841617717,
+        "alternate_val_auc": 0.8556661424129279,
+        "alternate_val_gain": 0.020065711804513442,
+        "alternate_converged": true,
+        "alternate_iterations": 730,
+        "raw_train_covariance_effective_rank": 40.718342922594715,
+        "layernorm_train_covariance_effective_rank": 40.88168414042401,
+        "raw_train_top1_variance_fraction": 0.18507466244815166,
+        "raw_train_centered_variance_fraction": 0.3070315159468142,
+        "saved_val_prob_max_abs_rescore_error": 2.384185791015625e-07
+      },
+      {
+        "run": "frozen_meanpool_envelope_fp32_ep50",
+        "arm": "envelope",
+        "encoder_epoch": 50,
+        "head_epochs": 50,
+        "selected_head_epoch": 48,
+        "original_online_train_auc_last": 0.876391,
+        "original_fixed_head_train_auc": 0.8758141470954603,
+        "original_val_auc": 0.859403951512532,
+        "original_last_val_auc": 0.859396,
+        "original_val_gain_25_to_50": 0.0020490000000000785,
+        "alternate_train_auc": 0.9262522604616799,
+        "alternate_val_auc": 0.8610447456568979,
+        "alternate_val_gain": 0.001640794144365909,
+        "alternate_converged": true,
+        "alternate_iterations": 643,
+        "raw_train_covariance_effective_rank": 34.24525592812185,
+        "layernorm_train_covariance_effective_rank": 36.683343429288634,
+        "raw_train_top1_variance_fraction": 0.23004619783252003,
+        "raw_train_centered_variance_fraction": 0.2951873944350583,
+        "saved_val_prob_max_abs_rescore_error": 2.384185791015625e-07
+      },
+      {
+        "run": "frozen_meanpool_envelope_fp32_ep100",
+        "arm": "envelope",
+        "encoder_epoch": 100,
+        "head_epochs": 50,
+        "selected_head_epoch": 48,
+        "original_online_train_auc_last": 0.887222,
+        "original_fixed_head_train_auc": 0.8869242029568467,
+        "original_val_auc": 0.8598961897558419,
+        "original_last_val_auc": 0.859892,
+        "original_val_gain_25_to_50": 0.0010679999999999579,
+        "alternate_train_auc": 0.9320647650003964,
+        "alternate_val_auc": 0.8638981266933197,
+        "alternate_val_gain": 0.004001936937477746,
+        "alternate_converged": true,
+        "alternate_iterations": 579,
+        "raw_train_covariance_effective_rank": 49.50019462946011,
+        "layernorm_train_covariance_effective_rank": 51.43861349098909,
+        "raw_train_top1_variance_fraction": 0.19968293182294397,
+        "raw_train_centered_variance_fraction": 0.33956938681371135,
+        "saved_val_prob_max_abs_rescore_error": 3.5762786865234375e-07
+      },
+      {
+        "run": "frozen_meanpool_bridge_ep40",
+        "arm": "bridge",
+        "encoder_epoch": 40,
+        "head_epochs": 50,
+        "selected_head_epoch": 41,
+        "original_online_train_auc_last": 0.870414,
+        "original_fixed_head_train_auc": 0.8698302695071962,
+        "original_val_auc": 0.8485266869164676,
+        "original_last_val_auc": 0.848451,
+        "original_val_gain_25_to_50": 0.00243799999999994,
+        "alternate_train_auc": 0.9217837165354086,
+        "alternate_val_auc": 0.8558982547553016,
+        "alternate_val_gain": 0.00737156783883397,
+        "alternate_converged": true,
+        "alternate_iterations": 556,
+        "raw_train_covariance_effective_rank": 41.60509301111108,
+        "layernorm_train_covariance_effective_rank": 42.698512436660145,
+        "raw_train_top1_variance_fraction": 0.1265256836392981,
+        "raw_train_centered_variance_fraction": 0.3985758622579011,
+        "saved_val_prob_max_abs_rescore_error": 2.086162567138672e-07
+      },
+      {
+        "run": "frozen_meanpool_bridge_ep50",
+        "arm": "bridge",
+        "encoder_epoch": 50,
+        "head_epochs": 50,
+        "selected_head_epoch": 45,
+        "original_online_train_auc_last": 0.867693,
+        "original_fixed_head_train_auc": 0.8675390863447707,
+        "original_val_auc": 0.8464176661504168,
+        "original_last_val_auc": 0.846346,
+        "original_val_gain_25_to_50": 0.003978000000000037,
+        "alternate_train_auc": 0.9254347631954746,
+        "alternate_val_auc": 0.8488628496192158,
+        "alternate_val_gain": 0.0024451834687989615,
+        "alternate_converged": true,
+        "alternate_iterations": 538,
+        "raw_train_covariance_effective_rank": 47.90713161533399,
+        "layernorm_train_covariance_effective_rank": 48.13421558829964,
+        "raw_train_top1_variance_fraction": 0.11816897417535042,
+        "raw_train_centered_variance_fraction": 0.5219685870356978,
+        "saved_val_prob_max_abs_rescore_error": 2.086162567138672e-07
+      },
+      {
+        "run": "frozen_meanpool_blob_fp32_ep75",
+        "arm": "blob",
+        "encoder_epoch": 75,
+        "head_epochs": 50,
+        "selected_head_epoch": 45,
+        "original_online_train_auc_last": 0.862041,
+        "original_fixed_head_train_auc": 0.8614681877238846,
+        "original_val_auc": 0.8428439364652492,
+        "original_last_val_auc": 0.8428,
+        "original_val_gain_25_to_50": 0.003282000000000007,
+        "alternate_train_auc": 0.924816608039142,
+        "alternate_val_auc": 0.8410870861496965,
+        "alternate_val_gain": -0.001756850315552727,
+        "alternate_converged": true,
+        "alternate_iterations": 517,
+        "raw_train_covariance_effective_rank": 48.21511310638105,
+        "layernorm_train_covariance_effective_rank": 48.64540595690596,
+        "raw_train_top1_variance_fraction": 0.11217926208686792,
+        "raw_train_centered_variance_fraction": 0.5129800541984204,
+        "saved_val_prob_max_abs_rescore_error": 2.384185791015625e-07
+      }
+    ],
+    "conclusion": "COVER's Validation decline and its deficit to ENVELOPE are substantially sensitive to downstream fitting protocol, not consistent with reading the original AUC trajectory as a direct measure of stored representation quality. The seven-cache diagnostic does not establish a general head-only explanation: BRIDGE's decline persists and grows, BLOB does not improve, and ENVELOPE remains above COVER under the alternate probe.",
+    "limits": [
+      "Old cache keys hash only the first 1MiB of serialized encoder checkpoints, not all weights.",
+      "Current full hashes fingerprint artifacts now; they do not retroactively establish historical provenance.",
+      "Legacy caches lack verified case identities and dataset ordering; equal labels do not imply case pairing.",
+      "Bridge runs have no local eval.log; config, prefix key, head/result agreement and prediction reproduction are corroboration, not proof.",
+      "Changing optimizer, regularization and learned LayerNorm affine jointly cannot isolate training horizon causally.",
+      "Original online shuffled/drop-last Training AUC is not directly a fixed-head all-Training estimate.",
+      "Repeatedly observed Validation data is a diagnostic endpoint, not an unbiased new primary result.",
+      "Covariance effective rank describes feature variation, not representation quality or clinical validity.",
+      "No Test cache or Test prediction file was accessed; no OCT image was loaded or encoded.",
+      "No significance tests, confidence intervals, independent-replication claims, or primary-result replacements.",
+      "The increased Training AUC can include overfitting; BLOB's small Validation decrease illustrates this."
+    ]
+  },
+  "confirmed_setup_differences": [
+    {
+      "finding": "Guide product changed along with the masking method",
+      "old": "Historical ENVELOPE repaired hard-envelope cache",
+      "new": "ANATOMY-v1 cfg7 soft guide; ANATOMY-v2/COVER encoder-tap adapted soft guide",
+      "old_new_guide_pooled_iou_on576_views": 0.6538004750593824,
+      "additional_lineage": "Both retained new guide adapters were taught by the ENVELOPE epoch100 checkpoint.",
+      "limits": "Neither guide is clinical ground truth; a changed guide is not itself proof of worse guidance."
+    },
+    {
+      "finding": "ANATOMY changes target/context budgets even at guidance probability zero",
+      "first64_view_ramp_zero": {
+        "random": {
+          "internal_epoch": 25,
+          "mean_target_slots": 160.0,
+          "mean_context_tokens": 93.0,
+          "mean_tissue_target_slots": 55.90625,
+          "mean_context_tissue": 25.734375
+        },
+        "oracle": {
+          "internal_epoch": 25,
+          "mean_target_slots": 160.0,
+          "mean_context_tokens": 93.0,
+          "mean_tissue_target_slots": 55.90625,
+          "mean_context_tissue": 25.734375
+        },
+        "envelope": {
+          "internal_epoch": 25,
+          "mean_target_slots": 160.0,
+          "mean_context_tokens": 93.0,
+          "mean_tissue_target_slots": 55.90625,
+          "mean_context_tissue": 25.734375
+        },
+        "anatomy": {
+          "internal_epoch": 25,
+          "mean_target_slots": 64.0,
+          "mean_context_tokens": 192.0,
+          "mean_tissue_target_slots": 24.734375,
+          "mean_context_tissue": 49.890625
+        },
+        "cover_legacy": {
+          "internal_epoch": 25,
+          "mean_target_slots": 160.0,
+          "mean_context_tokens": 93.0,
+          "mean_tissue_target_slots": 55.90625,
+          "mean_context_tissue": 25.734375
+        }
+      },
+      "limits": "The configured K16 target path is not an ignored ramp or a COVER-specific failure."
+    },
+    {
+      "finding": "Default head RNG depends on cache-iterator work before head construction",
+      "witness": {
+        "scope": "Minimal source-pattern witness using the real LinearHead and DataLoader iterator, not an end-to-end historical fit",
+        "cached_features_differ": false,
+        "warm_cold_initial_parameter_max_difference": 0.06970900297164917,
+        "with_local_reseed_parameter_max_difference": 0.0,
+        "script_sha256": "f5966994e8e9412a62084256dfd4c456871359146c76b6ee11c2e8e9d60f6299",
+        "production_code_changed": false,
+        "limits": [
+          "Frozen encoder construction also consumes RNG; held common and omitted in this minimal witness.",
+          "Does not identify the historical initial states or quantify an AUC effect.",
+          "Production fix should isolate head initialization and training-loader RNG; this script changes neither."
+        ]
+      },
+      "limits": "Reproduced source-pattern coupling, not a quantified explanation of the historical AUC ordering."
+    }
+  ],
+  "rejected_or_weakened_explanations": [
+    {
+      "hypothesis": "A new broken transformer implementation explains the weak families",
+      "evidence": {
+        "fp32": {
+          "encoder_max_abs_difference": 0.0,
+          "predictor_max_abs_difference": 0.0
+        },
+        "amp": {
+          "encoder_max_abs_difference": 0.0,
+          "predictor_max_abs_difference": 0.0
+        }
+      },
+      "limits": "Exact parity in the tested July31/current-source and fixed-ancestor mask cases, not every historical checkout."
+    },
+    {
+      "hypothesis": "The weak models stopped updating or only output an image-independent template",
+      "evidence": "Late AdamW counters progress; twelve actual backwards have finite nonzero gradients; wrong-image context materially increases loss across the eleven checkpoints.",
+      "limits": "Does not establish retention of glaucoma-specific signal or rule out all representation degradation."
+    },
+    {
+      "hypothesis": "COVER is effectively static even with ordinary size variation",
+      "tissue_membership_variation_percent": {
+        "envelope": {
+          "fixed_sizes": 57.00622775800712,
+          "varied_sizes": 68.2161921708185
+        },
+        "anatomy": {
+          "fixed_sizes": 0.0,
+          "varied_sizes": 0.0
+        },
+        "cover_legacy": {
+          "fixed_sizes": 3.6254448398576513,
+          "varied_sizes": 61.72153024911032
+        }
+      },
+      "limits": "Fixed crops only. Restoring size variation makes COVER much less static; crop diversity remains unmeasured here."
+    },
+    {
+      "hypothesis": "ANATOMY-v2 and COVER have one demonstrated common collapse",
+      "evidence": "ANATOMY has poor random-mask prediction transfer and a persistent alternate-probe decline; COVER retains ordinary-mask prediction ability and shows much greater readout-budget sensitivity.",
+      "limits": "Distinct observations do not prove completely different causes."
+    }
+  ],
+  "literature": {
+    "verified_studies": [
+      "US-JEPA: A Joint Embedding Predictive Architecture for Ultrasound",
+      "What to Hide from Your Students: Attention-Guided Masked Image Modeling",
+      "Causal-JEPA: Learning World Models through Object-Level Latent Masking",
+      "A-JEPA: Joint-Embedding Predictive Architecture Can Listen"
+    ],
+    "interpretation": "There is genuine positive importance-guided latent-prediction evidence. Neither those studies nor the local percentages establish that COVER must dominate.",
+    "source": "literature.json"
+  },
+  "actions_not_taken": [
+    "No sustained pretraining, encoder optimizer step, or new pretraining checkpoint",
+    "No new Test-set evaluation or Test-based parameter selection",
+    "No modification of historical checkpoints, feature caches, predictions or trained heads",
+    "No manuscript, Overleaf, production training-code or main-branch change"
+  ],
+  "recommended_order": [
+    "Make future probe initialization and training-loader RNG independent of cache history.",
+    "Fix a common sufficiently trained probe protocol using Training/Validation, across all compared arms; do not assume200 epochs proves convergence.",
+    "Separate guide-product, target-budget and delivered-context interventions in any subsequent masking comparison.",
+    "Do not infer a complete pretraining mechanism or launch a long retraining campaign from these diagnostics alone."
+  ],
+  "evidence": {
+    "C:\\Users\\Gary\\.copilot\\session-state\\66ccb9a5-db78-4934-afd2-9f61b6d9c57b\\files\\frozen_cache_diagnosis_20260910\\findings.json": "d989baacca28a0c14e54b5a2bb71db7c81edc0ab13058c5ccc1070d1af86a70c",
+    "C:\\Users\\Gary\\.copilot\\session-state\\66ccb9a5-db78-4934-afd2-9f61b6d9c57b\\files\\frozen_cache_diagnosis_20260910\\horizon_followup\\findings.json": "1611adad65a5ba5a716bb03800a0b4c8b186d37e26d5dffd14587afae1dd1436",
+    "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\masking_family_20260910\\checkpoint_diagnostics.json": "6b69affa2a5598093efc5f805c3e3e539f9895061531e9d0b969f037509527ae",
+    "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\masking_family_20260910\\guide_product_comparison.json": "14af253e9bfac375fa91399d3c148a228b63a1efa831ee8b6e9029c94cc47be0",
+    "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\masking_family_20260910\\placement_diversity_and_ramp_v2.json": "2d66da391871c95197127aa83ca93648b2313f93bb60feb77093c10a3158710c",
+    "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\masking_family_20260910\\probe_rng_witness.json": "b91e27d84f07584228e79ad5d5e950b5b0e0d2b1448632fc05123e973a641028",
+    "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\masking_family_20260910\\literature.json": "bde45b2d73465f1500a69c7e668f54a76841c0cb3ed013078785d771dcdcb06a"
+  },
+  "adjudication_script_sha256": "cb6f2d0d4062943cfcd2bfaab9f5920c748431f5c077753987f2cfc76786db0c"
+}

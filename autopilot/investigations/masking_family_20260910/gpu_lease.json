@@ -1,0 +1,22 @@
+{
+  "pid": 14580,
+  "status": "completed",
+  "optimizer_updates": 0,
+  "max_checkpoints": 11,
+  "max_images": 24,
+  "max_backward_calls": 12,
+  "purpose": "Fixed-input historical checkpoint sensitivity/feature and actual ANATOMY mask-to-loss diagnosis",
+  "fixture_sha256": "1b8a23249237d8d585a3ec2624d4743c4c455464da645b49a1e1642f205da32e",
+  "script_sha256": "b9f2e52ec99df0d7f9056ee7b27d982bbc7539e0a7b2f891531e7a962cae0bac",
+  "torch_version": "2.7.1+cu128",
+  "cuda": "12.8",
+  "gpu_preflight": "1904, [Insufficient Permissions]\n6196, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\CrossDeviceResume.exe\n9180, C:\\Windows\\explorer.exe\n10608, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\SearchHost.exe\n10616, C:\\Windows\\SystemApps\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\StartMenuExperienceHost.exe\n12232, C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.53\\msedgewebview2.exe\n12708, C:\\Windows\\SystemApps\\ShellExperienceHost_cw5n1h2txyewy\\ShellExperienceHost.exe\n14436, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\TextInputHost.exe\n1200, C:\\Program Files\\WindowsApps\\Microsoft.ZuneVideo_10.26061.10051.0_x64__8wekyb3d8bbwe\\Video.UI.exe\n19520, C:\\Program Files\\WindowsApps\\Microsoft.Edge.GameAssist_1.0.4019.0_x64__8wekyb3d8bbwe\\EdgeGameAssist.exe\n16760, C:\\Program Files\\WindowsApps\\SpotifyAB.SpotifyMusic_1.298.301.0_x64__zpdnekdrzrea0\\SpotifyXboxGamebarWebView.exe\n19652, C:\\Windows\\SystemApps\\Microsoft.LockApp_cw5n1h2txyewy\\LockApp.exe\n11020, C:\\Program Files\\WindowsApps\\Microsoft.WindowsTerminal_1.24.11911.0_x64__8wekyb3d8bbwe\\WindowsTerminal.exe\n1044, C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.53\\msedgewebview2.exe\n1732, C:\\Program Files\\WindowsApps\\Microsoft.YourPhone_1.26071.164.0_x64__8wekyb3d8bbwe\\PhoneExperienceHost.exe\n21596, C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\n18948, C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\n3124, C:\\Windows\\System32\\ShellHost.exe\n7480, C:\\Program Files\\WindowsApps\\Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb3d8bbwe\\Notepad\\Notepad.exe\n11336, C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\n",
+  "code_sha256": {
+    "src\\models\\vision_transformer.py": "ab0de995167c62ecb817c0be6b01a43b90c9749d1484474f349a6b4c6f973bf0",
+    "src\\train_patch.py": "aa19998729d062887b2480ac3e86a8d7bb9499516e202185cc96ec46c9e77a34",
+    "src\\masks\\curriculum.py": "6a0564e87170f36e241b07d597345680a837fa35cff524d6aaa6ae5e2ad23b66",
+    "src\\datasets\\oct_slices_guided.py": "231145343f6fbfed3462481430a18a824670afc8fbd59c1b10217e7d5e17eaf2"
+  },
+  "elapsed_seconds": 95.394961800077,
+  "backward_calls": 12
+}

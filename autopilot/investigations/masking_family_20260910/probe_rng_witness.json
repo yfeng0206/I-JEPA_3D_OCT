@@ -1,0 +1,13 @@
+{
+  "scope": "Minimal source-pattern witness using the real LinearHead and DataLoader iterator, not an end-to-end historical fit",
+  "cached_features_differ": false,
+  "warm_cold_initial_parameter_max_difference": 0.06970900297164917,
+  "with_local_reseed_parameter_max_difference": 0.0,
+  "script_sha256": "f5966994e8e9412a62084256dfd4c456871359146c76b6ee11c2e8e9d60f6299",
+  "production_code_changed": false,
+  "limits": [
+    "Frozen encoder construction also consumes RNG; held common and omitted in this minimal witness.",
+    "Does not identify the historical initial states or quantify an AUC effect.",
+    "Production fix should isolate head initialization and training-loader RNG; this script changes neither."
+  ]
+}

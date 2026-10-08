@@ -1,0 +1,39 @@
+{
+  "ALL_PASS": true,
+  "main_content_pages": 8,
+  "total_pages": 15,
+  "checks": {
+    "immutable_figure_inputs": true,
+    "no_placeholders": true,
+    "all_graphics_present": true,
+    "manuscript": true,
+    "numeric_evidence": true,
+    "numeric_review_input": true,
+    "citation_metadata": true,
+    "compiles_standalone": true,
+    "page_limit": true,
+    "anonymous": true,
+    "no_undefined_refs": true,
+    "docx_generated": true,
+    "docx_complete": true
+  },
+  "change_from_v8": "Introduction second sentence only: workshop-fit wording linking self-supervised pretraining to medical imaging foundation models.",
+  "artifacts": {
+    "zip": {
+      "path": "C:\\Users\\Gary\\Downloads\\OCT_JEPA_GenAI4Health2026_20260910_v9.zip",
+      "sha256": "e143ef32468d96d1b3d1460679dff97b9c9f1f08d78de731a03ceea7b303aaf0"
+    },
+    "pdf": {
+      "path": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\main_submission.pdf",
+      "sha256": "993c76ac2e01084c840da5d80f9cceeb1c416b4ad2a417da9cb7af54017219db"
+    },
+    "docx": {
+      "path": "C:\\Users\\Gary\\Desktop\\jepa\\paper\\genai4health2026\\main_submission.docx",
+      "sha256": "a6b986c19aa02ff59ee8d1553022e496be910cce236f9b66ab6c2522b527587a"
+    }
+  },
+  "manifest": "C:\\Users\\Gary\\Downloads\\OCT_JEPA_GenAI4Health2026_20260910_v9.release.json",
+  "manifest_sha256": "fb9d2a09bd47832543eed954fabdb8e27b7f45923a13e56a7e251f7b712da8c5",
+  "overleaf_synced": false,
+  "openreview_submitted_by_assistant": false
+}

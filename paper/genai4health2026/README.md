@@ -8,8 +8,12 @@ titled **Where to Predict in Retinal OCT? Anatomy-Guided Target Selection for
 I-JEPA**. It presents an empirical investigation, not a new validated model
 or a completed causal explanation.
 
+**Accepted** to the workshop. The latest release is v9 (v8 plus one Introduction
+sentence); `main_submission.pdf` here is the validated v9 PDF. Camera-ready and
+poster work continue on branch `poster-ready`.
+
 Final PDF and validated source ZIP are in Downloads with stem
-`OCT_JEPA_GenAI4Health2026_20260910_v8`. This compact version includes an annotated
+`OCT_JEPA_GenAI4Health2026_20260910_v9` (v8 remains alongside). This compact version includes an annotated
 side-by-side OCT framework figure, a number-free abstract and the original
 attribution motivation. Separate low-label, subgroup, fine-tuning and broad
 background analyses are retained in the research record, not this submission.

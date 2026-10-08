@@ -374,10 +374,79 @@
         "optimization.warmup"
       ],
       "undeclared": []
+    },
+    "cr_seed_v1_random_cb_s1234": {
+      "arm": "random_cb",
+      "seed": 1234,
+      "file": "configs/cr_seed_v1/cr_seed_v1_random_cb_s1234.yaml",
+      "sha256": "6391e685f48017a41ae9769dd66a668134aa48a4689c613f296c8b5631ec1b30",
+      "archived": "results/pretraining/pretrain_oracle_anatomical/config.yaml",
+      "archived_sha256": "a61164b21491516b474a6d4ec6d357b85c37d8df19627514daf5f899ebd491a8",
+      "changed": {
+        "data.data_dir": [
+          "/tmp/fairvision_data/data",
+          "D:\\jepa_phase0\\fairvision-glaucoma\\data"
+        ],
+        "mask.curriculum.mode": [
+          "anatomical_prior",
+          "centroid_budget_random"
+        ],
+        "meta.read_checkpoint": [
+          "/tmp/ijepa_checkpoints/jepa_patch-r1-ep25.pth.tar",
+          "D:\\jepa_phase0\\fairvision-glaucoma\\checkpoint-ep25\\jepa_patch-random_posfix-ep25.pth.tar"
+        ],
+        "optimization.accum_steps": [
+          2,
+          8
+        ],
+        "logging.folder": [
+          "/tmp/ijepa_outputs/patch_vit_base_ps16_ep100_bs32_lr0.00025_20260602_093108",
+          "D:\\jepa_phase0\\runs\\cr_seed_v1_random_cb_s1234"
+        ],
+        "logging.write_tag": [
+          "jepa_patch_oracle",
+          "jepa_patch_cr_seed_v1_random_cb_s1234"
+        ]
+      },
+      "added": {
+        "data.val_num_workers": 2,
+        "data.prefetch_factor": 2,
+        "data.slice_cache_dir": "C:\\jepa_data\\slice_cache",
+        "mask.curriculum.enc_truncate": "prefix",
+        "mask.curriculum.matching": "strict",
+        "meta.amp_target": false,
+        "meta.seed": 1234,
+        "meta.resume_policy": "fork",
+        "meta.fork_start_epoch": 25,
+        "optimization.save_every": 5
+      },
+      "removed": {},
+      "removal_reasons": {},
+      "declared_but_equal_to_archived": [
+        "data.batch_size",
+        "data.num_workers",
+        "data.pin_mem",
+        "mask.curriculum.oracle_lateral_frac",
+        "meta.load_checkpoint",
+        "meta.use_bfloat16",
+        "optimization.ema",
+        "optimization.epochs",
+        "optimization.ipe_scale",
+        "optimization.lr",
+        "optimization.patience",
+        "optimization.warmup"
+      ],
+      "undeclared": []
     }
   },
   "crosscheck": {
     "centroid": {
+      "other": "configs/patch_oracle_anatomical.yaml",
+      "differs_in": [
+        "logging.folder"
+      ]
+    },
+    "random_cb": {
       "other": "configs/patch_oracle_anatomical.yaml",
       "differs_in": [
         "logging.folder"
@@ -438,9 +507,50 @@
       "mask.curriculum.r_max",
       "mask.curriculum.ramp_shape"
     ],
+    "random_vs_random_cb_s1234": [
+      "logging.folder",
+      "logging.write_tag",
+      "mask.curriculum.T_total",
+      "mask.curriculum.T_warm",
+      "mask.curriculum.enabled",
+      "mask.curriculum.enc_truncate",
+      "mask.curriculum.matching",
+      "mask.curriculum.mode",
+      "mask.curriculum.oracle_lateral_frac",
+      "mask.curriculum.oracle_min_band_rows",
+      "mask.curriculum.oracle_region_frac",
+      "mask.curriculum.oracle_row_offset",
+      "mask.curriculum.r_max",
+      "mask.curriculum.ramp_shape"
+    ],
     "centroid_vs_envelope_s1234": [
       "logging.folder",
       "logging.write_tag",
+      "mask.curriculum.mirage_dilate_patches",
+      "mask.curriculum.mirage_guide_dir",
+      "mask.curriculum.mirage_max_attempts",
+      "mask.curriculum.mirage_min_block_fill",
+      "mask.curriculum.mirage_min_retina_visible",
+      "mask.curriculum.mirage_occupancy_threshold",
+      "mask.curriculum.mirage_overlap_fallback",
+      "mask.curriculum.mirage_overlap_tolerance",
+      "mask.curriculum.mirage_spread",
+      "mask.curriculum.mode",
+      "mask.curriculum.oracle_lateral_frac",
+      "mask.curriculum.oracle_min_band_rows",
+      "mask.curriculum.oracle_region_frac",
+      "mask.curriculum.oracle_row_offset"
+    ],
+    "centroid_vs_random_cb_s1234": [
+      "logging.folder",
+      "logging.write_tag",
+      "mask.curriculum.matching",
+      "mask.curriculum.mode"
+    ],
+    "envelope_vs_random_cb_s1234": [
+      "logging.folder",
+      "logging.write_tag",
+      "mask.curriculum.matching",
       "mask.curriculum.mirage_dilate_patches",
       "mask.curriculum.mirage_guide_dir",
       "mask.curriculum.mirage_max_attempts",
@@ -510,7 +620,22 @@
       "mask.curriculum.oracle_row_offset"
     ]
   },
-  "placeholders": {
-    "random_cb": "not generated: E9 matched-budget sampler pending"
+  "placeholders": {},
+  "arm_seeds": {
+    "random": [
+      1234,
+      5678
+    ],
+    "centroid": [
+      1234,
+      5678
+    ],
+    "envelope": [
+      1234,
+      5678
+    ],
+    "random_cb": [
+      1234
+    ]
   }
 }

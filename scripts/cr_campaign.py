@@ -78,7 +78,8 @@ EXIT_LOCKED = 3
 EXIT_STOP_NOT_REACHED = 3  # trainer: training ended before --stop-after-epoch
 EXIT_NONFINITE_LOSS = 4    # trainer: non-finite epoch loss, aborted without saving that epoch
 # run_manifest.json / stop file `mask_policy` written by the trainer (i1, 04:00).
-MASK_POLICY = {"random": "uniform_multiblock", "centroid": "anatomical_prior", "envelope": "mirage_envelope"}
+MASK_POLICY = {"random": "uniform_multiblock", "centroid": "anatomical_prior", "envelope": "mirage_envelope",
+               "random_cb": "centroid_budget_random"}  # E9 RANDOM-CB (i7)
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 CREATE_NEW_PROCESS_GROUP = 0x00000200
 CREATE_NO_WINDOW = 0x08000000
@@ -1126,25 +1127,36 @@ class Runner:
             bad("identity checkpoint_sha256 %r != %r" % (sid.get("checkpoint_sha256"), ident))
         if target.get("run_uuid") and sid.get("run_uuid") != target["run_uuid"]:
             bad("identity run_uuid %r != %r" % (sid.get("run_uuid"), target["run_uuid"]))
-        lab = seal.get("test_label_identity") or {}
-        if not isinstance(lab.get("n"), int) or lab["n"] <= 0 or not lab.get("labels_int8_sha256"):
-            bad("test_label_identity incomplete")
+        # Every field below is indexed directly by autopilot/cr_stats.py unseal/final, so all
+        # are mandatory here (V3 re-check P1): an incomplete seal must STOP now, not at the freeze.
+        lab = seal.get("test_label_identity")
+        if not isinstance(lab, dict) or not isinstance(lab.get("n"), int) or isinstance(lab.get("n"), bool) \
+                or lab["n"] <= 0:
+            bad("test_label_identity.n missing or not a positive int")
+        for k in ("labels_int8_sha256", "subject_ids_sha256"):
+            if not is_sha256(lab.get(k)):
+                bad("test_label_identity.%s missing or not a sha256" % k)
         entries = seal.get("files")
         if not isinstance(entries, list) or not entries:
             bad("no sealed prediction files listed")
-        sealed, sealed_paths = {}, {}
+        sealed = {}
         root = Path(out_dir).resolve()
         for e in entries:
+            if not isinstance(e, dict):
+                bad("malformed file entry %r" % (e,))
+            for k in ("variant", "path", "sidecar_path"):
+                if not isinstance(e.get(k), str) or not e[k].strip():
+                    bad("file entry %r lacks a non-empty %s" % (e, k))
+            for k in ("sha256", "sidecar_sha256", "head_checkpoint_sha256"):
+                if not is_sha256(e.get(k)):
+                    bad("file entry %r lacks a valid %s" % (e, k))
             try:
                 key = (str(e["variant"]), int(e["head_seed"]))
-                rels = [(e["path"], e["sha256"])]
-                if e.get("sidecar_path") or e.get("sidecar_sha256"):
-                    rels.append((e["sidecar_path"], e["sidecar_sha256"]))
             except (KeyError, TypeError, ValueError):
-                bad("malformed file entry %r" % (e,))
+                bad("file entry %r lacks an integer head_seed" % (e,))
             if key in sealed:
                 bad("duplicate entry %s" % (key,))
-            for rel, want in rels:
+            for rel, want in ((e["path"], e["sha256"]), (e["sidecar_path"], e["sidecar_sha256"])):
                 p = (Path(out_dir) / rel).resolve()
                 if root not in p.parents:
                     bad("file %s outside the probe directory" % rel)
@@ -1152,24 +1164,45 @@ class Runner:
                     bad("listed file %s missing" % rel)
                 if cc.sha256_file(p) != want:
                     bad("listed file %s hash mismatch" % rel)
-            sealed[key] = e["sha256"]
-            sealed_paths[key] = os.path.normcase(os.path.normpath(e["path"]))
-        recorded_pairs, recorded_paths = {}, {}
-        try:
-            for variant, v in (agg.get("variants") or {}).items():
-                for r in (v or {}).get("per_seed") or []:
-                    recorded_pairs[(str(variant), int(r["head_seed"]))] = r.get("test_predictions_sha256")
-                    recorded_paths[(str(variant), int(r["head_seed"]))] = r.get("test_predictions")
-        except (KeyError, TypeError, ValueError, AttributeError):
-            bad("results.json variants/per_seed malformed")
-        if set(recorded_pairs) != set(sealed):
-            bad("sealed (variant, head_seed) set %s != results.json %s" % (sorted(sealed), sorted(recorded_pairs)))
-        for key, sha in recorded_pairs.items():
-            if sha is not None and sha != sealed[key]:
-                bad("results.json test_predictions_sha256 for %s differs from the seal" % (key,))
-            rp = recorded_paths.get(key)
-            if rp is not None and os.path.normcase(os.path.normpath(rp)) != sealed_paths[key]:
-                bad("results.json test_predictions path for %s differs from the seal" % (key,))
+            head = (Path(out_dir) / e["path"]).resolve().parent / "best_model.pt"
+            if head.exists() and cc.sha256_file(head) != e["head_checkpoint_sha256"]:
+                bad("head checkpoint %s hash mismatch" % head)
+            sealed[key] = (os.path.normcase(os.path.normpath(e["path"])), e["sha256"])
+        recorded = {}
+        variants = agg.get("variants")
+        if not isinstance(variants, dict) or not variants:
+            bad("results.json has no variants")
+        for variant, v in variants.items():
+            per_seed = (v or {}).get("per_seed") if isinstance(v, dict) else None
+            if not isinstance(per_seed, list) or not per_seed:
+                bad("results.json variant %s has no per_seed records" % variant)
+            for r in per_seed:
+                if not isinstance(r, dict):
+                    bad("results.json %s per_seed record malformed" % variant)
+                try:
+                    key = (str(variant), int(r["head_seed"]))
+                except (KeyError, TypeError, ValueError):
+                    bad("results.json %s per_seed record lacks an integer head_seed" % variant)
+                if not isinstance(r.get("test_predictions"), str) or not r["test_predictions"].strip():
+                    bad("results.json %s per_seed lacks test_predictions" % (key,))
+                if not is_sha256(r.get("test_predictions_sha256")):
+                    bad("results.json %s per_seed lacks a valid test_predictions_sha256" % (key,))
+                if key in recorded:
+                    bad("results.json duplicate per_seed record %s" % (key,))
+                recorded[key] = (os.path.normcase(os.path.normpath(r["test_predictions"])),
+                                 r["test_predictions_sha256"])
+        if recorded != sealed:
+            bad("results.json (variant, head_seed, path, sha256) records differ from the seal: results %s, seal %s"
+                % (sorted(recorded.items())[:6], sorted(sealed.items())[:6]))
+        head_seeds = agg.get("head_seeds")
+        if not isinstance(head_seeds, list) or not head_seeds:
+            bad("results.json head_seeds missing")
+        want_seeds = [int(x) for x in str(self.camp["probe"].get("head_seeds", "")).split(",") if x.strip()]
+        if want_seeds and sorted(int(x) for x in head_seeds) != sorted(want_seeds):
+            bad("results.json head_seeds %s != configured %s" % (head_seeds, want_seeds))
+        for variant in {v for v, _ in sealed}:
+            if sorted(s for v, s in sealed if v == variant) != sorted(int(x) for x in head_seeds):
+                bad("variant %s sealed head seeds differ from head_seeds %s" % (variant, head_seeds))
         return {"sha256": seal_sha, "n_files": len(entries), "pairs": len(sealed)}
 
     # -- projection -------------------------------------------------------
@@ -1466,6 +1499,9 @@ class Runner:
         st = cc.read_json(self.state_path) or {"runs": {}}
         targets = []
         all_specs = list(camp["runs"]) + ([camp["anchors"]] if camp.get("anchors") else [])
+        unknown = sorted(set(runs or []) - {sp["id"] for sp in all_specs})
+        if unknown:
+            raise SystemExit("unknown run id(s) %s; nothing changed" % unknown)
         for sp in all_specs:
             if runs and sp["id"] not in runs:
                 continue
@@ -1527,6 +1563,10 @@ def epoch_durations(tr: dict) -> list[float]:
         elif rec.get("attempt") in att and att[rec["attempt"]].get("started_at"):
             out.append(rec["observed_at"] - float(att[rec["attempt"]]["started_at"]))
     return [d for d in out if d > 0]
+
+
+def is_sha256(v) -> bool:
+    return isinstance(v, str) and re.fullmatch(r"[0-9a-f]{64}", v) is not None
 
 
 def json_get(obj, dotted: str):

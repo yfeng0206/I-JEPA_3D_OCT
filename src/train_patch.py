@@ -61,7 +61,10 @@ from src.helper import (
     models_state_digest, read_checkpoint_epoch,
 )
 from src.masks.multiblock import MaskCollator
-from src.masks.curriculum import CurriculumMaskGenerator, MirageMaskCollator
+from src.masks.curriculum import (
+    CurriculumMaskGenerator, MirageMaskCollator, CENTROID_BUDGET_RANDOM_MODE,
+)
+from src.masks.centroid_budget import CentroidBudgetRandomCollator
 from src.masks.utils import apply_masks
 from src.datasets.oct_slices import OCTSliceDataset, SLICE_CACHE_MANIFEST, SLICE_CACHE_ARRAY
 from src.datasets.oct_slices_guided import GuidedOCTSliceDataset
@@ -180,6 +183,43 @@ def format_cover_stats(stats):
     else:
         message += '  delivered_context_floor=not_reported'
     return message
+
+
+def format_cb_stats(stats):
+    """One RANDOM-CB batch: delivered budgets (equal to the CENTROID shadow by
+    construction and re-verified in the worker) and the matcher's effort."""
+    return ('    [CB] matching=%s r_t=%.3f bypass_ramp0=%d K=%d context=%d loss_slots=%d '
+            'unique_targets=%.2f duplicates=%.2f hidden_shadow=%.2f hidden_matched=%.2f '
+            'proposals_mean=%.1f proposals_max=%d exact_fallbacks=%d shadow_ms=%.1f match_ms=%.1f'
+            % (stats['matching'], stats['r_t'], stats['bypass_ramp0'], stats['target_len'],
+               stats['context'], stats['loss_slots'], stats['unique_targets'],
+               stats['duplicates'], stats['hidden_shadow'], stats['hidden_matched'],
+               stats['proposals_mean'], stats['proposals_max'], stats['exact_fallbacks'],
+               stats['shadow_ms'], stats['match_ms']))
+
+
+class CBEpochTally:
+    """Per-epoch RANDOM-CB totals, so no exact-enumeration fallback goes unlogged."""
+
+    def __init__(self):
+        self.batches = self.bypass = self.exact = self.proposals_max = 0
+        self.hidden_abs_diff = 0.0
+        self.match_ms = 0.0
+
+    def add(self, stats):
+        self.batches += 1
+        self.bypass += int(stats['bypass_ramp0'])
+        self.exact += int(stats['exact_fallbacks'])
+        self.proposals_max = max(self.proposals_max, int(stats['proposals_max']))
+        self.hidden_abs_diff += abs(stats['hidden_matched'] - stats['hidden_shadow'])
+        self.match_ms += float(stats['match_ms'])
+
+    def format(self, epoch):
+        n = max(self.batches, 1)
+        return ('  [CB-EPOCH] ep=%d batches=%d bypass_ramp0_batches=%d exact_fallback_images=%d '
+                'proposals_max=%d mean_abs_hidden_diff=%.3f mean_match_ms=%.1f'
+                % (epoch, self.batches, self.bypass, self.exact, self.proposals_max,
+                   self.hidden_abs_diff / n, self.match_ms / n))
 
 
 # ---------------------------------------------------------------------------
@@ -613,6 +653,9 @@ def main(args):
     use_mirage = use_curriculum and curr_cfg.get('mode') in (
         'mirage_envelope', 'mirage_anatomy', 'mirage_cover'
     )
+    # RANDOM-CB (E9): CENTROID shadow + budget-matched uniform masks, built in
+    # the DataLoader workers from the plain image dataset.
+    use_cb = use_curriculum and curr_cfg.get('mode') == CENTROID_BUDGET_RANDOM_MODE
     guide_dir = curr_cfg.get('mirage_guide_dir')
     if use_mirage:
         if not guide_dir:
@@ -714,6 +757,29 @@ def main(args):
             pred_target_k=mask_cfg.get('pred_target_k'),
             curriculum_cfg=curr_cfg,
         )
+    if use_cb:
+        # Same worker-side delivery as MIRAGE (``mirage_collator`` doubles as
+        # the RANDOM-CB worker collator); the shadow CENTROID reads the crops,
+        # so the masks cannot be produced before collation.
+        mirage_collator = CentroidBudgetRandomCollator(
+            input_size=(crop_size, crop_size),
+            patch_size=mask_cfg['patch_size'],
+            enc_mask_scale=tuple(mask_cfg['enc_mask_scale']),
+            pred_mask_scale=tuple(mask_cfg['pred_mask_scale']),
+            aspect_ratio=tuple(mask_cfg['aspect_ratio']),
+            nenc=mask_cfg['num_enc_masks'],
+            npred=mask_cfg['num_pred_masks'],
+            min_keep=mask_cfg['min_keep'],
+            allow_overlap=mask_cfg['allow_overlap'],
+            pred_target_k=mask_cfg.get('pred_target_k'),
+            curriculum_cfg=curr_cfg,
+            rank=rank,
+        )
+        log('  RANDOM-CB: matching=%s shadow=anatomical_prior (lateral=%.2f region=%.2f) '
+            'cb_max_proposals=%d (then exact enumeration, logged)'
+            % (mirage_collator.matching, float(curr_cfg.get('oracle_lateral_frac', 0.8)),
+               float(curr_cfg.get('oracle_region_frac', 0.28)),
+               mirage_collator.max_proposals))
 
     train_sampler = make_train_sampler(train_dataset, world_size, rank, seed)
     train_loader = DataLoader(
@@ -735,7 +801,7 @@ def main(args):
            if data_cfg['num_workers'] > 0 else {}),
         collate_fn=(
             mirage_collator
-            if use_mirage
+            if mirage_collator is not None
             else (CurriculumMaskGenerator.stack_collate
                   if use_curriculum else mask_collator)
         ),
@@ -1170,6 +1236,7 @@ def main(args):
                        cl_min, cl_max, cl_mean, cl_std,
                        fg_ids))
         loss_meter = AverageMeter()
+        cb_tally = CBEpochTally() if use_cb else None
 
         t_epoch_start = time.time()
 
@@ -1181,7 +1248,7 @@ def main(args):
             # stacked image tensor (no masks).  We generate masks inline so
             # that R3b can condition on the teacher's full-grid output.
             if use_curriculum:
-                if use_mirage:
+                if use_mirage or use_cb:
                     # Masks already came from the workers.
                     imgs_cpu, masks_enc, masks_pred, mirage_stats = batch
                     imgs = imgs_cpu.to(device, non_blocking=True)
@@ -1285,7 +1352,7 @@ def main(args):
             # Skipped for mirage_envelope: its masks are produced in the
             # workers and depend on nothing this would update, so the
             # collectives and EMA bookkeeping would be pure overhead.
-            if use_curriculum and not use_mirage and per_token_loss is not None:
+            if use_curriculum and not (use_mirage or use_cb) and per_token_loss is not None:
                 mask_gen.update_after_iter(
                     per_token_loss=per_token_loss,
                     masks_pred_idx=masks_pred,
@@ -1323,6 +1390,15 @@ def main(args):
                                ms['retina_visible'], ms['mean_attempts']))
                         if curr_cfg.get('mode') == 'mirage_cover':
                             log(format_cover_stats(ms))
+                if use_cb and mirage_stats:
+                    log(format_cb_stats(mirage_stats))
+            if cb_tally is not None and mirage_stats:
+                cb_tally.add(mirage_stats)
+                if is_main and mirage_stats['exact_fallbacks']:
+                    log('    [CB] exact-enumeration fallback for %d image(s) at iter %d '
+                        '(counts preserved; cap %d proposals)'
+                        % (mirage_stats['exact_fallbacks'], itr + 1,
+                           mirage_collator.max_proposals))
 
             # CSV log
             if csv_logger is not None:
@@ -1330,6 +1406,9 @@ def main(args):
                     epoch + 1, itr + 1, loss_val, lr_val, wd_val, m,
                     data_ms, fwd_bwd_ms, 0.0, gpu_mem_mb,
                 )
+
+        if is_main and cb_tally is not None:
+            log(cb_tally.format(epoch))
 
         # End-of-epoch diagnostic: prediction quality on one batch
         if is_main and val_loader is not None:

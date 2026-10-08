@@ -128,7 +128,7 @@
     "random": 69.0,
     "centroid": 77.0,
     "envelope": 80.5,
-    "random_cb": 94.0
+    "random_cb": 60.0
   },
   "probe_hours_default": 1.25,
   "anchor_hours_each": 1.0,
@@ -204,7 +204,7 @@
       "probe": {
         "enabled": true
       },
-      "note": "RANDOM-CB matched-budget control (CENTROID s1234 budgets); disabled until E9 is implemented and its config generated"
+      "note": "RANDOM-CB matched-budget control (CENTROID s1234 budgets; mode centroid_budget_random, strict matching, i7). Disabled until V4 verifies i7; pin with --set-commit <sha> --runs CB, then the coordinator sets enabled true. G1 bands/identity are INFO only; G2 has no anchor (NO_ANCHOR)."
     },
     {
       "id": "E2",

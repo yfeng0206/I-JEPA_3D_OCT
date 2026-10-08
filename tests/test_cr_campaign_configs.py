@@ -16,7 +16,7 @@ def generated():
 def test_generation_has_no_errors_and_matches_disk(generated):
     report, texts = generated
     assert report["errors"] == []
-    assert len(report["configs"]) == 6
+    assert len(report["configs"]) == 7
     for path, text in texts.items():
         assert path.exists(), path
         assert path.read_text(encoding="utf-8") == text, "stale generated file %s" % path
@@ -49,8 +49,7 @@ def test_seed_and_arm_pairs(generated):
         assert all(k.startswith("mask.curriculum") or k.startswith("logging.") for k in keys), pair
 
 
-@pytest.mark.parametrize("arm", mk.ARMS)
-@pytest.mark.parametrize("seed", mk.SEEDS)
+@pytest.mark.parametrize("arm,seed", [(a, s) for a in mk.ALL_ARMS for s in mk.ARM_SEEDS[a]])
 def test_generated_invariants(arm, seed):
     cfg = yaml.safe_load(mk.config_path(arm, seed).read_text(encoding="utf-8"))
     mk.validate_run_config(cfg, arm, seed)
@@ -69,8 +68,10 @@ def test_generated_invariants(arm, seed):
     assert cfg["logging"]["write_tag"] == "jepa_patch_cr_seed_v1_%s_s%d" % (arm, seed)
     assert "pred_target_k" not in cfg["mask"]
     cur = cfg["mask"].get("curriculum") or {}
-    if arm == "centroid":
+    if arm in ("centroid", "random_cb"):
         assert cur["oracle_lateral_frac"] == 0.6 and cur["enc_truncate"] == "prefix"
+    if arm == "random_cb":
+        assert cur["mode"] == "centroid_budget_random" and cur["matching"] == "strict"
     if arm == "envelope":
         assert cur["mirage_overlap_fallback"] == "legacy_uniform_v1"
         assert cur["mirage_guide_dir"] == r"D:\jepa_phase0\fairvision-glaucoma\mirage_guides"
@@ -111,9 +112,36 @@ def test_resume_config_is_exact_without_fork_fields():
     assert fork["meta"]["resume_policy"] == "fork"  # input untouched
 
 
-def test_random_cb_is_a_placeholder():
-    with pytest.raises(NotImplementedError):
-        mk.build_config("random_cb", 1234)
+def test_random_cb_is_centroid_with_only_mode_and_matching_changed(generated):
+    report, _ = generated
+    assert report["arm_pair_diffs"]["centroid_vs_random_cb_s1234"] == [
+        "logging.folder", "logging.write_tag", "mask.curriculum.matching", "mask.curriculum.mode"]
+    assert "random_cb" not in report["seed_pair_diffs"]
+    assert report["placeholders"] == {}
+    cfg = yaml.safe_load(mk.config_path("random_cb", 1234).read_text(encoding="utf-8"))
+    centroid = yaml.safe_load(mk.config_path("centroid", 1234).read_text(encoding="utf-8"))
+    assert cfg["meta"] == centroid["meta"] and cfg["optimization"] == centroid["optimization"]
+    assert cfg["data"] == centroid["data"]
+    assert cfg["logging"] == {"folder": r"D:\jepa_phase0\runs\cr_seed_v1_random_cb_s1234",
+                              "write_tag": "jepa_patch_cr_seed_v1_random_cb_s1234"}
+
+
+@pytest.mark.parametrize("key,value", [
+    ("mask.curriculum.matching", "basic"), ("mask.curriculum.mode", "anatomical_prior"),
+    ("mask.curriculum.oracle_lateral_frac", 0.8), ("mask.curriculum.T_total", 100),
+    ("mask.curriculum.enc_truncate", "random"), ("meta.seed", 5678)])
+def test_random_cb_validation_rejects(key, value):
+    cfg = mk.build_config("random_cb", 1234)
+    mk.set_key(cfg, key, value)
+    with pytest.raises(ValueError):
+        mk.validate_run_config(cfg, "random_cb", 1234)
+
+
+def test_random_cb_is_preregistered_at_seed_1234_only():
+    with pytest.raises(ValueError):
+        mk.build_config("random_cb", 5678)
+    resume = mk.make_resume_config(mk.build_config("random_cb", 1234), r"D:\x\last.pth.tar")
+    mk.validate_run_config(resume, "random_cb", 1234, expect_fork=False)
 
 
 def test_archived_inputs_are_untouched_copies():

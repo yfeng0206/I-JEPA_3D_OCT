@@ -155,13 +155,15 @@ for hs in [int(x) for x in (a.head_seeds or "42,43").split(",")]:
     open(pred, "wb").write(b"sealed probs %d" % hs)
     side = pred[:-4] + ".manifest.json"
     open(side, "w").write(json.dumps({"sealed": True, "head_seed": hs}))
+    head = os.path.join(d, "best_model.pt")
+    open(head, "wb").write(b"head %d" % hs)
     rel, srel = os.path.relpath(pred, a.output_dir), os.path.relpath(side, a.output_dir)
     per_seed.append({"head_seed": hs, "best_val_auc": 0.851, "test_predictions": rel,
                      "test_predictions_sha256": fsha(pred)})
     entries.append({"variant": variant, "head_seed": hs, "path": rel, "sha256": fsha(pred),
-                    "sidecar_path": srel, "sidecar_sha256": fsha(side)})
+                    "sidecar_path": srel, "sidecar_sha256": fsha(side), "head_checkpoint_sha256": fsha(head)})
 res = {"schema": "cr_probe_v1", "status": "complete", "sealed": bool(a.seal_test), "best_val_auc": 0.851,
-       "test_auc": None, "identity": ident,
+       "test_auc": None, "identity": ident, "head_seeds": [int(x) for x in (a.head_seeds or "42,43").split(",")],
        "variants": {variant: {"val_auc_mean": 0.851, "per_seed": per_seed}},
        "legacy_cache_integrity": (TOFU if legacy else None) if mode != "legacy_bad" else "unpinned",
        "cache_provenance": {sp: {"primary": {"state": "legacy_verified" if (legacy or mode == "bad_cache_state")
@@ -169,7 +171,8 @@ res = {"schema": "cr_probe_v1", "status": "complete", "sealed": bool(a.seal_test
 if mode == "test_leak":
     res["variants"][variant]["test_auc_mean"] = 0.87
 seal = {"schema": "cr_sealed_v1", "identity": dict(ident), "metrics_computed": False,
-        "test_label_identity": {"split": "Test", "n": 3000, "labels_int8_sha256": "ab" * 32},
+        "test_label_identity": {"split": "Test", "n": 3000, "labels_int8_sha256": "ab" * 32,
+                                "subject_ids_sha256": "cd" * 32},
         "files": entries}
 if mode == "seal_identity":
     seal["identity"]["run_uuid"] = "foreign-run"
@@ -179,6 +182,20 @@ if mode == "seal_missing_file":
     seal["files"].append({"variant": variant, "head_seed": 99, "path": "missing.npz", "sha256": "0" * 64})
 if mode == "seal_unbound":
     res["variants"][variant]["per_seed"][0]["test_predictions_sha256"] = "1" * 64
+if mode == "seal_no_sidecar":  # V3 re-check case 1
+    for e in seal["files"]:
+        os.remove(os.path.join(a.output_dir, e.pop("sidecar_path")))
+        e.pop("sidecar_sha256")
+if mode == "agg_no_sha":  # V3 re-check case 2
+    res["variants"][variant]["per_seed"][0].pop("test_predictions_sha256")
+if mode == "agg_no_path":  # V3 re-check case 3
+    res["variants"][variant]["per_seed"][0].pop("test_predictions")
+if mode == "seal_no_subjects":  # V3 re-check case 4
+    seal["test_label_identity"].pop("subject_ids_sha256")
+if mode == "head_altered":
+    open(os.path.join(a.output_dir, variant, "seed%d" % per_seed[0]["head_seed"], "best_model.pt"), "ab").write(b"x")
+if mode == "missing_head_seed":
+    res["head_seeds"] = res["head_seeds"] + [99]
 seal_path = os.path.join(a.output_dir, "sealed_manifest.json")
 if mode != "no_sealed":
     text = {"seal_empty": "", "seal_invalid": "{"}.get(mode, json.dumps(seal, indent=2))
@@ -231,7 +248,7 @@ def env(tmp_path, monkeypatch):
     ancestor = tmp_path / "ancestor.pth.tar"
     ancestor.write_bytes(b"fake ancestor bytes")
     cfgs = {}
-    for arm, seed in (("random", 1234), ("centroid", 1234)):
+    for arm, seed in (("random", 1234), ("centroid", 1234), ("random_cb", 1234)):
         cfg = mk.build_config(arm, seed)
         cfg["logging"]["folder"] = mk.run_folder(arm, seed, str(run_root))
         cfg["meta"]["read_checkpoint"] = str(ancestor)
@@ -273,7 +290,10 @@ def env(tmp_path, monkeypatch):
                   "config": "configs/cr_seed_v1/cr_seed_v1_random_s1234.yaml", "stop_epoch": 50,
                   "probe": {"enabled": True}},
                  {"id": "C1", "arm": "centroid", "seed": 1234, "git_commit": commit, "enabled": False,
-                  "config": "configs/cr_seed_v1/cr_seed_v1_centroid_s1234.yaml", "stop_epoch": 50}],
+                  "config": "configs/cr_seed_v1/cr_seed_v1_centroid_s1234.yaml", "stop_epoch": 50},
+                 {"id": "CB", "arm": "random_cb", "seed": 1234, "git_commit": None, "enabled": False,
+                  "config": "configs/cr_seed_v1/cr_seed_v1_random_cb_s1234.yaml", "stop_epoch": 50,
+                  "probe": {"enabled": True}}],
         "sequence": ["R1:train", "R1:probe", "C1:train", "C1:probe"],
         "g2": {"enabled": True, "command": ["{python}", "-u", "autopilot/cr_stats.py", "gate", "--run",
                                             "{run_probe_dir}", "--anchor", "{anchor_probe_dir}", "--out", "{out_json}"]},
@@ -484,8 +504,12 @@ def test_hold_writes_alert_and_continues(env):
                                       ("seal_empty", "invalid test seal"), ("seal_invalid", "invalid test seal"),
                                       ("seal_receipt", "invalid test seal"), ("seal_identity", "invalid test seal"),
                                       ("seal_metrics", "metrics_computed"), ("seal_missing_file", "missing"),
-                                      ("seal_altered_file", "hash mismatch"), ("seal_unbound", "differs from the seal"),
+                                      ("seal_altered_file", "hash mismatch"), ("seal_unbound", "differ from the seal"),
                                       ("bad_cache_state", "primary.state"), ("legacy_bad", "legacy_cache_integrity"),
+                                      ("seal_no_sidecar", "sidecar_path"), ("agg_no_sha", "test_predictions_sha256"),
+                                      ("agg_no_path", "lacks test_predictions"),
+                                      ("seal_no_subjects", "subject_ids_sha256"),
+                                      ("head_altered", "head checkpoint"), ("missing_head_seed", "head_seeds"),
                                       ("stale", "predates the launch"), ("no_sealed", "sealed_manifest"),
                                       ("test_leak", "sealed-test violation")])
 def test_probe_failures_stop(env, mode, msg):
@@ -839,3 +863,57 @@ def test_legacy_anchor_wrong_integrity_marker_stops(env):
     _legacy_anchor(env, legacy_cache_integrity="something else")
     assert env.run() == camp_mod.EXIT_STOPPED
     assert "legacy_cache_integrity" in env.state()["stop_reason"]
+
+
+
+# ---------------------------------------------------------------------------
+# RANDOM-CB (E9, i7): mask_policy, INFO-only G1, NO_ANCHOR G2, CB-only commit pinning
+# ---------------------------------------------------------------------------
+
+def test_random_cb_end_to_end_with_fake_probe(env):
+    c = json.loads(env.camp_path.read_text())
+    for r in c["runs"]:
+        if r["id"] == "CB":
+            r.update(enabled=True, git_commit=env.commit)
+    c["sequence"] = ["CB:train", "CB:probe"]
+    env.camp_path.write_text(json.dumps(c))
+    assert env.run() == 0
+    st = env.state()
+    rs = st["runs"]["CB"]
+    assert rs["train"]["status"] == "DONE" and rs["probe"]["status"] == "DONE"
+    cb_dir = Path(mk.run_folder("random_cb", 1234, env.camp["run_root"]))
+    man = json.loads((cb_dir / "run_manifest.json").read_text())
+    assert man["mask_policy"] == "centroid_budget_random" == camp_mod.MASK_POLICY["random_cb"]
+    assert rs["train"]["attempts"][0]["manifest_checked"]["ok"] is True
+    assert rs["train"]["latest_gate"]["status"] == "INFO" and rs["train"]["latest_gate"]["worst"] == "INFO"
+    assert rs["g2"]["status"] == "NO_ANCHOR"
+    argv = rs["probe"]["attempts"][0]["argv"]
+    assert argv[argv.index("--arm") + 1] == "random_cb" and argv[argv.index("--role") + 1] == "new"
+    assert rs["probe"]["result"]["seal"]["pairs"] == 2
+    assert [p.name for p in (cb_dir / "pinned").iterdir()] == ["jepa_patch_cr_seed_v1_random_cb_s1234-ep050.pth.tar"]
+
+
+def test_set_commit_runs_cb_pins_only_cb_and_refuses_started(env):
+    git(env.repo, "commit", "--allow-empty", "-q", "-m", "cb code")
+    new = git(env.repo, "rev-parse", "HEAD")
+    before = {r["id"]: r["git_commit"] for r in json.loads(env.camp_path.read_text())["runs"]}
+    assert camp_mod.main(["--campaign", str(env.camp_path), "--set-commit", new, "--runs", "CB"]) == 0
+    after = json.loads(env.camp_path.read_text())
+    got = {r["id"]: r["git_commit"] for r in after["runs"]}
+    assert got["CB"] == new and all(got[k] == before[k] for k in got if k != "CB")
+    assert [r for r in after["runs"] if r["id"] == "CB"][0]["enabled"] is False
+    with pytest.raises(SystemExit, match="unknown run id"):
+        camp_mod.main(["--campaign", str(env.camp_path), "--set-commit", new, "--runs", "CB,XX"])
+    assert {r["id"]: r["git_commit"] for r in json.loads(env.camp_path.read_text())["runs"]} == got
+    # once CB has started, its commit can no longer be changed
+    c = json.loads(env.camp_path.read_text())
+    for r in c["runs"]:
+        if r["id"] == "CB":
+            r["enabled"] = True
+    c["sequence"] = ["CB:train", "CB:probe"]
+    env.camp_path.write_text(json.dumps(c))
+    env.set_ctl(mode="die_early")
+    assert env.run() == camp_mod.EXIT_STOPPED
+    with pytest.raises(SystemExit, match="started run CB"):
+        camp_mod.main(["--campaign", str(env.camp_path), "--set-commit", env.commit, "--runs", "CB"])
+    assert [r for r in json.loads(env.camp_path.read_text())["runs"] if r["id"] == "CB"][0]["git_commit"] == new

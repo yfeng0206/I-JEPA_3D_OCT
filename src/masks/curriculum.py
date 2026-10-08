@@ -78,6 +78,12 @@ from src.masks.cover import (
 MIRAGE_OVERLAP_FALLBACKS = ("least_overlap_v2", "legacy_uniform_v1")
 DEFAULT_MIRAGE_OVERLAP_FALLBACK = "least_overlap_v2"
 
+# RANDOM-CB (camera-ready E9): uniform placement at CENTROID's delivered
+# budgets.  Its masks come only from ``CentroidBudgetRandomCollator``
+# (src/masks/centroid_budget.py) in the DataLoader workers; a generator in this
+# mode exists for the ramp/epoch bookkeeping and refuses to generate.
+CENTROID_BUDGET_RANDOM_MODE = "centroid_budget_random"
+
 
 def validate_mirage_overlap_fallback(value) -> str:
     """Return ``value`` if it names a known ENVELOPE overlap fallback, else raise."""
@@ -215,6 +221,7 @@ class CurriculumMaskGenerator:
         "mirage_envelope",
         "mirage_anatomy",
         "mirage_cover",
+        CENTROID_BUDGET_RANDOM_MODE,
     )
 
     def __init__(
@@ -1224,6 +1231,13 @@ class CurriculumMaskGenerator:
                 pairs geometry explicitly, unlike reseeding different policies.
         """
         B = int(batch_size)
+        if self.mode == CENTROID_BUDGET_RANDOM_MODE:
+            # Never fall back to stock masks under the RANDOM-CB label.
+            raise RuntimeError(
+                "mode %r masks are produced only by CentroidBudgetRandomCollator "
+                "in the DataLoader workers; generate() must not be called"
+                % CENTROID_BUDGET_RANDOM_MODE
+            )
 
         # Shared block sizes for this batch (matches multiblock).
         if block_sizes is None:

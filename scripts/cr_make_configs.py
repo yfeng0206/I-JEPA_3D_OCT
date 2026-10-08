@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """Generate the cr_seed_v1 continuation configs (PLAN Stage 2/3, A2 section 7.1).
 
-    configs/cr_seed_v1/cr_seed_v1_<arm>_s<seed>.yaml   arms random/centroid/envelope, seeds 1234/5678
+    configs/cr_seed_v1/cr_seed_v1_<arm>_s<seed>.yaml   arms random/centroid/envelope, seeds 1234/5678,
+                                                       plus random_cb (E9 RANDOM-CB) at seed 1234 only
     configs/cr_seed_v1/config_diffs.json               every key that differs from the arm's
                                                        ARCHIVED run config (must be declared)
 
@@ -13,6 +14,8 @@ arm's original run (A1 section 1.1), never from a stale template:
               cross-checked against configs/patch_oracle_anatomical.yaml)
     ENVELOPE  configs/patch_mirage_envelope.yaml, with the shared epoch-25 ancestor
               instead of its resume-ep27 checkpoint
+    RANDOM-CB the CENTROID base; differs from the CENTROID config only in
+              mask.curriculum.mode/matching and logging folder/tag
 
 and changes ONLY the declared keys below.  Anything else that differs aborts
 generation (exit 2).  Seed-5678 configs differ from seed-1234 configs only in
@@ -41,7 +44,18 @@ OUT_DIR = REPO / "configs" / CAMPAIGN
 
 SEEDS = (1234, 5678)
 ARMS = ("random", "centroid", "envelope")
-PLACEHOLDER_ARMS = ("random_cb",)  # E9 matched-budget sampler: config keys not defined yet
+# E9 RANDOM-CB: the CENTROID config with only mask.curriculum.mode/matching changed;
+# pre-registered at seed 1234 only (PREREGISTRATION_cr_seed_v1.md section 1).
+CB_ARM = "random_cb"
+CB_SEEDS = (1234,)
+CB_MODE = "centroid_budget_random"
+# strict = match U, L, D, C and the full hidden union H; single-thread collation of a
+# real 64-image batch measured at 0.12 s mean / 0.37 s max (impl_i7_random_cb.md).
+CB_MATCHING = "strict"
+CB_CURRICULUM_KEYS = {"mask.curriculum.mode", "mask.curriculum.matching"}
+ALL_ARMS = ARMS + (CB_ARM,)
+ARM_SEEDS = {**{arm: SEEDS for arm in ARMS}, CB_ARM: CB_SEEDS}
+PLACEHOLDER_ARMS = ()
 
 # One constant for the training loader workers. Coordinator decision 2026-10-08 03:44 (GPU
 # benchmark, CR_CAMPAIGN_NOTES.md): 4 workers for all runs (RAM/commit-bound box; 0.343 s/iter).
@@ -64,10 +78,12 @@ ARCHIVED = {
     "random": "results/pretraining/pretrain_random_posfix/config.yaml",
     "centroid": "results/pretraining/pretrain_oracle_anatomical/config.yaml",
     "envelope": "configs/patch_mirage_envelope.yaml",
+    "random_cb": "results/pretraining/pretrain_oracle_anatomical/config.yaml",
 }
 # Must be identical to ARCHIVED except for these keys.
 CROSSCHECK = {
     "centroid": ("configs/patch_oracle_anatomical.yaml", {"logging.folder"}),
+    "random_cb": ("configs/patch_oracle_anatomical.yaml", {"logging.folder"}),
 }
 
 # Mask/crop parameters that must be byte-for-byte the archived values.
@@ -139,6 +155,10 @@ ARM_OVERRIDES = {
         "mask.curriculum.mirage_overlap_fallback": ENVELOPE_OVERLAP_FALLBACK,
     },
 }
+ARM_OVERRIDES[CB_ARM] = dict(ARM_OVERRIDES["centroid"], **{
+    "mask.curriculum.mode": CB_MODE,
+    "mask.curriculum.matching": CB_MATCHING,
+})
 # Keys removed from the archived config, with the reason.
 ARM_REMOVALS = {
     # null in the archived RANDOM config and read with default None by the trainer;
@@ -146,6 +166,7 @@ ARM_REMOVALS = {
     "random": {"meta.pretrained_encoder": "null-valued, no effect; keeps arms identical"},
     "centroid": {},
     "envelope": {},
+    "random_cb": {},
 }
 
 
@@ -223,8 +244,10 @@ def declared_keys(arm: str, seed: int) -> dict:
 def build_config(arm: str, seed: int, archived: dict | None = None) -> dict:
     if arm in PLACEHOLDER_ARMS:
         raise NotImplementedError("%s is a placeholder until the E9 sampler config keys exist" % arm)
-    if arm not in ARMS:
+    if arm not in ALL_ARMS:
         raise ValueError("unknown arm %r" % arm)
+    if seed not in ARM_SEEDS[arm]:
+        raise ValueError("%s is pre-registered only for seeds %s, not %r" % (arm, ARM_SEEDS[arm], seed))
     cfg = copy.deepcopy(archived if archived is not None else load_yaml(ARCHIVED[arm]))
     for key in ARM_REMOVALS[arm]:
         if key in flatten(cfg) or _has_key(cfg, key):
@@ -302,6 +325,22 @@ def validate_run_config(cfg: dict, arm: str, seed: int, *, expect_fork: bool = T
         need("mask.curriculum.enc_truncate", "prefix")
         need("mask.curriculum.mirage_guide_dir", MIRAGE_GUIDE_DIR)
         need("mask.curriculum.mirage_overlap_fallback", ENVELOPE_OVERLAP_FALLBACK)
+    elif arm == CB_ARM:
+        # The shadow is production CENTROID: every ramp/oracle knob is pinned.
+        need("mask.curriculum.enabled", True)
+        need("mask.curriculum.mode", CB_MODE)
+        need("mask.curriculum.matching", CB_MATCHING)
+        need("mask.curriculum.enc_truncate", "prefix")
+        need("mask.curriculum.oracle_lateral_frac", 0.6)
+        need("mask.curriculum.oracle_region_frac", 0.28)
+        need("mask.curriculum.oracle_row_offset", 0.0)
+        need("mask.curriculum.oracle_min_band_rows", 3)
+        need("mask.curriculum.T_warm", 25)
+        need("mask.curriculum.T_total", 30)
+        need("mask.curriculum.r_max", 1.0)
+        need("mask.curriculum.ramp_shape", "linear")
+        if seed not in CB_SEEDS:
+            errs.append("random_cb is pre-registered only for seeds %s" % (CB_SEEDS,))
     else:
         errs.append("unknown arm %r" % arm)
     if errs:
@@ -328,6 +367,10 @@ def render_yaml(cfg: dict, arm: str, seed: int) -> str:
         "# stopped after the verified epoch-%d save by `--stop-after-epoch %d`.\n"
         % (run_name(arm, seed), arm, seed, ARCHIVED[arm], CAMPAIGN, ANCESTOR_SHA256,
            STOP_EPOCH, STOP_EPOCH))
+    if arm == CB_ARM:
+        header += ("# RANDOM-CB (E9): identical to %s.yaml except mask.curriculum.mode/matching and\n"
+                   "# logging folder/tag; uniform placement at the CENTROID shadow's exact budgets.\n"
+                   % run_name("centroid", seed))
     body = yaml.dump(cfg, Dumper=_Dumper, sort_keys=False, default_flow_style=False, width=120)
     return header + body
 
@@ -383,11 +426,10 @@ def cross_checks(cfgs: dict) -> dict:
         if set(keys) != {"meta.seed", "logging.folder", "logging.write_tag"}:
             res["errors"].append("%s seeds differ in %s" % (arm, keys))
     for seed in SEEDS:
-        for i, x in enumerate(ARMS):
-            for y in ARMS[i + 1:]:
-                a, b = cfgs.get((x, seed)), cfgs.get((y, seed))
-                if a is None or b is None:
-                    continue
+        present = [arm for arm in ALL_ARMS if (arm, seed) in cfgs]
+        for i, x in enumerate(present):
+            for y in present[i + 1:]:
+                a, b = cfgs[(x, seed)], cfgs[(y, seed)]
                 d = diff_flat(a, b)
                 keys = sorted(set(d["changed"]) | set(d["added"]) | set(d["removed"]))
                 res["arm_pairs"]["%s_vs_%s_s%d" % (x, y, seed)] = keys
@@ -396,6 +438,11 @@ def cross_checks(cfgs: dict) -> dict:
                 if bad:
                     res["errors"].append("%s vs %s (s%d) differ outside mask.curriculum: %s"
                                          % (x, y, seed, bad))
+                if {x, y} == {"centroid", CB_ARM}:
+                    want = CB_CURRICULUM_KEYS | {"logging.folder", "logging.write_tag"}
+                    if set(keys) != want:
+                        res["errors"].append("random_cb vs centroid (s%d) differ in %s, want exactly %s"
+                                             % (seed, keys, sorted(want)))
     return res
 
 
@@ -405,7 +452,7 @@ def generate(write: bool = True) -> tuple[dict, dict]:
               "num_workers": NUM_WORKERS, "configs": {}, "crosscheck": {}, "errors": []}
     texts = {}
     cfgs = {}
-    for arm in ARMS:
+    for arm in ALL_ARMS:
         archived = load_yaml(ARCHIVED[arm])
         if arm in CROSSCHECK:
             other_rel, allowed = CROSSCHECK[arm]
@@ -420,7 +467,7 @@ def generate(write: bool = True) -> tuple[dict, dict]:
                 report["errors"].append("%s archived config lacks frozen key %s" % (arm, key))
         if "pred_target_k" in archived.get("mask", {}):
             report["errors"].append("%s archived config has pred_target_k" % arm)
-        for seed in SEEDS:
+        for seed in ARM_SEEDS[arm]:
             cfg = build_config(arm, seed, archived)
             chk = check_declared(arm, seed, archived, cfg)
             text = render_yaml(cfg, arm, seed)
@@ -454,6 +501,7 @@ def generate(write: bool = True) -> tuple[dict, dict]:
     report["errors"].extend(xc["errors"])
     report["placeholders"] = {a: "not generated: E9 matched-budget sampler pending"
                               for a in PLACEHOLDER_ARMS}
+    report["arm_seeds"] = {arm: list(seeds) for arm, seeds in ARM_SEEDS.items()}
     report_text = json.dumps(report, indent=2, sort_keys=False, default=str) + "\n"
     texts[OUT_DIR / "config_diffs.json"] = report_text
     if write and not report["errors"]:

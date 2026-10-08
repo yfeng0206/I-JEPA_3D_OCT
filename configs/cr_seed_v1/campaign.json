@@ -224,7 +224,7 @@
       "seed": 9012,
       "config": "configs/cr_seed_v1/cr_seed_v1_random_s9012.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
+      "git_commit": "e7d2befcd856a2d6b1cc5605f573afdbe193cfe4",
       "enabled": true,
       "probe": {
         "enabled": true
@@ -237,7 +237,7 @@
       "seed": 9012,
       "config": "configs/cr_seed_v1/cr_seed_v1_centroid_s9012.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
+      "git_commit": "e7d2befcd856a2d6b1cc5605f573afdbe193cfe4",
       "enabled": true,
       "probe": {
         "enabled": true
@@ -250,7 +250,7 @@
       "seed": 9012,
       "config": "configs/cr_seed_v1/cr_seed_v1_envelope_s9012.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
+      "git_commit": "e7d2befcd856a2d6b1cc5605f573afdbe193cfe4",
       "enabled": true,
       "probe": {
         "enabled": true

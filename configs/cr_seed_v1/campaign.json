@@ -199,8 +199,8 @@
       "seed": 1234,
       "config": "configs/cr_seed_v1/cr_seed_v1_random_cb_s1234.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
-      "enabled": false,
+      "git_commit": "7d043cba34b4265c512927ee6628c4d8730ff4da",
+      "enabled": true,
       "probe": {
         "enabled": true
       },

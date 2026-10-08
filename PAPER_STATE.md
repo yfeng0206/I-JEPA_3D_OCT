@@ -1,8 +1,17 @@
 # Paper workflow state
 
+## Status
+
+**Accepted** to the GenAI4Health NeurIPS 2026 workshop. Release v9 (v8 plus one
+Introduction sentence on medical imaging foundation models) is merged to `main`;
+its evidence is `autopilot\investigations\submission_refresh_20260910\release_handoff_v9.json`.
+Overleaf still holds v8. Camera-ready/poster work continues on branch `poster-ready`:
+use the `genai4health_2026` template, restore authors, and address reviewer feedback.
+Camera-ready deadline: October 25, 2026, 11:59 PM AoE.
+
 ## Current reviewed release
 
-Submission revision: **2026-09-10**, on branch `fix/jepa-delivered-task-audit`.
+Submission revision: **2026-09-10**, developed on branch `fix/jepa-delivered-task-audit` (merged to `main`).
 Title: **Where to Predict in Retinal OCT? Anatomy-Guided Target Selection for
 I-JEPA**. The narrative now introduces JEPA before the masking strategies,
 adds a JEPA formulation and an openly licensed real-OCT illustration, distinguishes

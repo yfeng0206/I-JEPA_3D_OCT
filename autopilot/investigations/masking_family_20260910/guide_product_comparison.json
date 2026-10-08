@@ -1,0 +1,5223 @@
+{
+  "scope": "576 fixed Training views, 24 original sampled volumes; no Test or new training",
+  "selection_for_gpu": "One predeclared first view per each of 24 volumes: ordinals 0,25,...575",
+  "guide_comparison": [
+    {
+      "ordinal": 0,
+      "new_tissue": 85,
+      "old_tissue": 110,
+      "intersection": 82,
+      "union": 113,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 1,
+      "new_tissue": 77,
+      "old_tissue": 97,
+      "intersection": 72,
+      "union": 102,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 2,
+      "new_tissue": 57,
+      "old_tissue": 63,
+      "intersection": 50,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 3,
+      "new_tissue": 101,
+      "old_tissue": 108,
+      "intersection": 89,
+      "union": 120,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 4,
+      "new_tissue": 85,
+      "old_tissue": 97,
+      "intersection": 75,
+      "union": 107,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 5,
+      "new_tissue": 107,
+      "old_tissue": 129,
+      "intersection": 100,
+      "union": 136,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 6,
+      "new_tissue": 61,
+      "old_tissue": 75,
+      "intersection": 59,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 7,
+      "new_tissue": 63,
+      "old_tissue": 77,
+      "intersection": 60,
+      "union": 80,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 8,
+      "new_tissue": 100,
+      "old_tissue": 122,
+      "intersection": 91,
+      "union": 131,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 9,
+      "new_tissue": 82,
+      "old_tissue": 92,
+      "intersection": 67,
+      "union": 107,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 10,
+      "new_tissue": 62,
+      "old_tissue": 67,
+      "intersection": 50,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 11,
+      "new_tissue": 67,
+      "old_tissue": 56,
+      "intersection": 42,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 12,
+      "new_tissue": 66,
+      "old_tissue": 54,
+      "intersection": 41,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 13,
+      "new_tissue": 69,
+      "old_tissue": 68,
+      "intersection": 42,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 14,
+      "new_tissue": 78,
+      "old_tissue": 80,
+      "intersection": 59,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 15,
+      "new_tissue": 104,
+      "old_tissue": 109,
+      "intersection": 81,
+      "union": 132,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 16,
+      "new_tissue": 68,
+      "old_tissue": 76,
+      "intersection": 61,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 17,
+      "new_tissue": 69,
+      "old_tissue": 77,
+      "intersection": 62,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 18,
+      "new_tissue": 79,
+      "old_tissue": 99,
+      "intersection": 79,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 19,
+      "new_tissue": 64,
+      "old_tissue": 70,
+      "intersection": 58,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 20,
+      "new_tissue": 88,
+      "old_tissue": 103,
+      "intersection": 80,
+      "union": 111,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 21,
+      "new_tissue": 67,
+      "old_tissue": 77,
+      "intersection": 60,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 22,
+      "new_tissue": 63,
+      "old_tissue": 72,
+      "intersection": 58,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 23,
+      "new_tissue": 85,
+      "old_tissue": 100,
+      "intersection": 80,
+      "union": 105,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 24,
+      "new_tissue": 56,
+      "old_tissue": 71,
+      "intersection": 54,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 25,
+      "new_tissue": 37,
+      "old_tissue": 29,
+      "intersection": 29,
+      "union": 37,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 26,
+      "new_tissue": 49,
+      "old_tissue": 50,
+      "intersection": 37,
+      "union": 62,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 27,
+      "new_tissue": 40,
+      "old_tissue": 36,
+      "intersection": 34,
+      "union": 42,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 28,
+      "new_tissue": 67,
+      "old_tissue": 72,
+      "intersection": 55,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 29,
+      "new_tissue": 79,
+      "old_tissue": 88,
+      "intersection": 69,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 30,
+      "new_tissue": 82,
+      "old_tissue": 96,
+      "intersection": 74,
+      "union": 104,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 31,
+      "new_tissue": 66,
+      "old_tissue": 77,
+      "intersection": 53,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 32,
+      "new_tissue": 63,
+      "old_tissue": 67,
+      "intersection": 48,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 33,
+      "new_tissue": 88,
+      "old_tissue": 86,
+      "intersection": 69,
+      "union": 105,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 34,
+      "new_tissue": 92,
+      "old_tissue": 102,
+      "intersection": 75,
+      "union": 119,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 35,
+      "new_tissue": 65,
+      "old_tissue": 63,
+      "intersection": 41,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 36,
+      "new_tissue": 71,
+      "old_tissue": 74,
+      "intersection": 48,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 37,
+      "new_tissue": 74,
+      "old_tissue": 76,
+      "intersection": 49,
+      "union": 101,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 38,
+      "new_tissue": 88,
+      "old_tissue": 86,
+      "intersection": 56,
+      "union": 118,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 39,
+      "new_tissue": 68,
+      "old_tissue": 62,
+      "intersection": 47,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 40,
+      "new_tissue": 82,
+      "old_tissue": 80,
+      "intersection": 59,
+      "union": 103,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 41,
+      "new_tissue": 91,
+      "old_tissue": 96,
+      "intersection": 62,
+      "union": 125,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 42,
+      "new_tissue": 65,
+      "old_tissue": 58,
+      "intersection": 41,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 43,
+      "new_tissue": 66,
+      "old_tissue": 66,
+      "intersection": 51,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 44,
+      "new_tissue": 64,
+      "old_tissue": 58,
+      "intersection": 47,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 45,
+      "new_tissue": 79,
+      "old_tissue": 71,
+      "intersection": 53,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 46,
+      "new_tissue": 70,
+      "old_tissue": 67,
+      "intersection": 51,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 47,
+      "new_tissue": 74,
+      "old_tissue": 66,
+      "intersection": 48,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 48,
+      "new_tissue": 63,
+      "old_tissue": 70,
+      "intersection": 49,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 49,
+      "new_tissue": 74,
+      "old_tissue": 79,
+      "intersection": 61,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 50,
+      "new_tissue": 51,
+      "old_tissue": 58,
+      "intersection": 50,
+      "union": 59,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 51,
+      "new_tissue": 52,
+      "old_tissue": 63,
+      "intersection": 49,
+      "union": 66,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 52,
+      "new_tissue": 55,
+      "old_tissue": 62,
+      "intersection": 50,
+      "union": 67,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 53,
+      "new_tissue": 52,
+      "old_tissue": 59,
+      "intersection": 46,
+      "union": 65,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 54,
+      "new_tissue": 52,
+      "old_tissue": 68,
+      "intersection": 49,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 55,
+      "new_tissue": 39,
+      "old_tissue": 46,
+      "intersection": 35,
+      "union": 50,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 56,
+      "new_tissue": 54,
+      "old_tissue": 68,
+      "intersection": 52,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 57,
+      "new_tissue": 67,
+      "old_tissue": 82,
+      "intersection": 61,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 58,
+      "new_tissue": 65,
+      "old_tissue": 84,
+      "intersection": 59,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 59,
+      "new_tissue": 59,
+      "old_tissue": 75,
+      "intersection": 51,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 60,
+      "new_tissue": 63,
+      "old_tissue": 72,
+      "intersection": 54,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 61,
+      "new_tissue": 82,
+      "old_tissue": 83,
+      "intersection": 58,
+      "union": 107,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 62,
+      "new_tissue": 72,
+      "old_tissue": 68,
+      "intersection": 50,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 63,
+      "new_tissue": 73,
+      "old_tissue": 77,
+      "intersection": 55,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 64,
+      "new_tissue": 77,
+      "old_tissue": 76,
+      "intersection": 55,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 65,
+      "new_tissue": 102,
+      "old_tissue": 85,
+      "intersection": 65,
+      "union": 122,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 66,
+      "new_tissue": 86,
+      "old_tissue": 79,
+      "intersection": 57,
+      "union": 108,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 67,
+      "new_tissue": 67,
+      "old_tissue": 65,
+      "intersection": 49,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 68,
+      "new_tissue": 67,
+      "old_tissue": 75,
+      "intersection": 60,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 69,
+      "new_tissue": 61,
+      "old_tissue": 65,
+      "intersection": 50,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 70,
+      "new_tissue": 64,
+      "old_tissue": 77,
+      "intersection": 53,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 71,
+      "new_tissue": 52,
+      "old_tissue": 60,
+      "intersection": 47,
+      "union": 65,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 72,
+      "new_tissue": 55,
+      "old_tissue": 71,
+      "intersection": 51,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 73,
+      "new_tissue": 54,
+      "old_tissue": 81,
+      "intersection": 46,
+      "union": 89,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 74,
+      "new_tissue": 54,
+      "old_tissue": 82,
+      "intersection": 51,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 75,
+      "new_tissue": 57,
+      "old_tissue": 63,
+      "intersection": 51,
+      "union": 69,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 76,
+      "new_tissue": 72,
+      "old_tissue": 96,
+      "intersection": 71,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 77,
+      "new_tissue": 69,
+      "old_tissue": 78,
+      "intersection": 58,
+      "union": 89,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 78,
+      "new_tissue": 73,
+      "old_tissue": 85,
+      "intersection": 63,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 79,
+      "new_tissue": 85,
+      "old_tissue": 112,
+      "intersection": 81,
+      "union": 116,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 80,
+      "new_tissue": 59,
+      "old_tissue": 71,
+      "intersection": 54,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 81,
+      "new_tissue": 68,
+      "old_tissue": 90,
+      "intersection": 66,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 82,
+      "new_tissue": 71,
+      "old_tissue": 88,
+      "intersection": 65,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 83,
+      "new_tissue": 80,
+      "old_tissue": 98,
+      "intersection": 74,
+      "union": 104,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 84,
+      "new_tissue": 68,
+      "old_tissue": 67,
+      "intersection": 48,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 85,
+      "new_tissue": 77,
+      "old_tissue": 78,
+      "intersection": 57,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 86,
+      "new_tissue": 70,
+      "old_tissue": 66,
+      "intersection": 50,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 87,
+      "new_tissue": 68,
+      "old_tissue": 62,
+      "intersection": 47,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 88,
+      "new_tissue": 55,
+      "old_tissue": 59,
+      "intersection": 40,
+      "union": 74,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 89,
+      "new_tissue": 64,
+      "old_tissue": 61,
+      "intersection": 46,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 90,
+      "new_tissue": 59,
+      "old_tissue": 56,
+      "intersection": 42,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 91,
+      "new_tissue": 64,
+      "old_tissue": 59,
+      "intersection": 43,
+      "union": 80,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 92,
+      "new_tissue": 70,
+      "old_tissue": 69,
+      "intersection": 55,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 93,
+      "new_tissue": 65,
+      "old_tissue": 74,
+      "intersection": 52,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 94,
+      "new_tissue": 74,
+      "old_tissue": 87,
+      "intersection": 62,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 95,
+      "new_tissue": 75,
+      "old_tissue": 88,
+      "intersection": 65,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 96,
+      "new_tissue": 62,
+      "old_tissue": 69,
+      "intersection": 52,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 97,
+      "new_tissue": 65,
+      "old_tissue": 71,
+      "intersection": 55,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 98,
+      "new_tissue": 53,
+      "old_tissue": 66,
+      "intersection": 45,
+      "union": 74,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 99,
+      "new_tissue": 74,
+      "old_tissue": 82,
+      "intersection": 61,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 100,
+      "new_tissue": 54,
+      "old_tissue": 59,
+      "intersection": 47,
+      "union": 66,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 101,
+      "new_tissue": 79,
+      "old_tissue": 98,
+      "intersection": 64,
+      "union": 113,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 102,
+      "new_tissue": 68,
+      "old_tissue": 74,
+      "intersection": 51,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 103,
+      "new_tissue": 85,
+      "old_tissue": 100,
+      "intersection": 64,
+      "union": 121,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 104,
+      "new_tissue": 51,
+      "old_tissue": 56,
+      "intersection": 41,
+      "union": 66,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 105,
+      "new_tissue": 64,
+      "old_tissue": 69,
+      "intersection": 51,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 106,
+      "new_tissue": 61,
+      "old_tissue": 63,
+      "intersection": 48,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 107,
+      "new_tissue": 62,
+      "old_tissue": 66,
+      "intersection": 50,
+      "union": 78,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 108,
+      "new_tissue": 78,
+      "old_tissue": 78,
+      "intersection": 59,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 109,
+      "new_tissue": 92,
+      "old_tissue": 105,
+      "intersection": 67,
+      "union": 130,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 110,
+      "new_tissue": 59,
+      "old_tissue": 61,
+      "intersection": 43,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 111,
+      "new_tissue": 64,
+      "old_tissue": 60,
+      "intersection": 45,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 112,
+      "new_tissue": 61,
+      "old_tissue": 66,
+      "intersection": 41,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 113,
+      "new_tissue": 66,
+      "old_tissue": 70,
+      "intersection": 45,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 114,
+      "new_tissue": 64,
+      "old_tissue": 64,
+      "intersection": 46,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 115,
+      "new_tissue": 88,
+      "old_tissue": 94,
+      "intersection": 68,
+      "union": 114,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 116,
+      "new_tissue": 76,
+      "old_tissue": 81,
+      "intersection": 58,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 117,
+      "new_tissue": 71,
+      "old_tissue": 68,
+      "intersection": 46,
+      "union": 93,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 118,
+      "new_tissue": 62,
+      "old_tissue": 67,
+      "intersection": 51,
+      "union": 78,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 119,
+      "new_tissue": 62,
+      "old_tissue": 63,
+      "intersection": 48,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 120,
+      "new_tissue": 60,
+      "old_tissue": 64,
+      "intersection": 50,
+      "union": 74,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 121,
+      "new_tissue": 67,
+      "old_tissue": 73,
+      "intersection": 53,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 122,
+      "new_tissue": 78,
+      "old_tissue": 91,
+      "intersection": 72,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 123,
+      "new_tissue": 66,
+      "old_tissue": 65,
+      "intersection": 58,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 124,
+      "new_tissue": 74,
+      "old_tissue": 84,
+      "intersection": 66,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 125,
+      "new_tissue": 57,
+      "old_tissue": 69,
+      "intersection": 56,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 126,
+      "new_tissue": 58,
+      "old_tissue": 70,
+      "intersection": 53,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 127,
+      "new_tissue": 66,
+      "old_tissue": 80,
+      "intersection": 59,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 128,
+      "new_tissue": 77,
+      "old_tissue": 90,
+      "intersection": 64,
+      "union": 103,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 129,
+      "new_tissue": 71,
+      "old_tissue": 91,
+      "intersection": 66,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 130,
+      "new_tissue": 61,
+      "old_tissue": 74,
+      "intersection": 58,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 131,
+      "new_tissue": 69,
+      "old_tissue": 86,
+      "intersection": 60,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 132,
+      "new_tissue": 54,
+      "old_tissue": 67,
+      "intersection": 48,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 133,
+      "new_tissue": 86,
+      "old_tissue": 92,
+      "intersection": 73,
+      "union": 105,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 134,
+      "new_tissue": 67,
+      "old_tissue": 80,
+      "intersection": 53,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 135,
+      "new_tissue": 85,
+      "old_tissue": 75,
+      "intersection": 59,
+      "union": 101,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 136,
+      "new_tissue": 91,
+      "old_tissue": 96,
+      "intersection": 64,
+      "union": 123,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 137,
+      "new_tissue": 70,
+      "old_tissue": 63,
+      "intersection": 43,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 138,
+      "new_tissue": 81,
+      "old_tissue": 72,
+      "intersection": 49,
+      "union": 104,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 139,
+      "new_tissue": 71,
+      "old_tissue": 66,
+      "intersection": 45,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 140,
+      "new_tissue": 79,
+      "old_tissue": 80,
+      "intersection": 60,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 141,
+      "new_tissue": 84,
+      "old_tissue": 95,
+      "intersection": 67,
+      "union": 112,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 142,
+      "new_tissue": 64,
+      "old_tissue": 68,
+      "intersection": 56,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 143,
+      "new_tissue": 68,
+      "old_tissue": 81,
+      "intersection": 64,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 144,
+      "new_tissue": 65,
+      "old_tissue": 84,
+      "intersection": 59,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 145,
+      "new_tissue": 61,
+      "old_tissue": 81,
+      "intersection": 58,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 146,
+      "new_tissue": 60,
+      "old_tissue": 70,
+      "intersection": 55,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 147,
+      "new_tissue": 60,
+      "old_tissue": 69,
+      "intersection": 56,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 148,
+      "new_tissue": 77,
+      "old_tissue": 102,
+      "intersection": 68,
+      "union": 111,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 149,
+      "new_tissue": 65,
+      "old_tissue": 82,
+      "intersection": 62,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 150,
+      "new_tissue": 37,
+      "old_tissue": 51,
+      "intersection": 36,
+      "union": 52,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 151,
+      "new_tissue": 36,
+      "old_tissue": 43,
+      "intersection": 35,
+      "union": 44,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 152,
+      "new_tissue": 46,
+      "old_tissue": 63,
+      "intersection": 45,
+      "union": 64,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 153,
+      "new_tissue": 52,
+      "old_tissue": 68,
+      "intersection": 48,
+      "union": 72,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 154,
+      "new_tissue": 50,
+      "old_tissue": 65,
+      "intersection": 43,
+      "union": 72,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 155,
+      "new_tissue": 52,
+      "old_tissue": 58,
+      "intersection": 45,
+      "union": 65,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 156,
+      "new_tissue": 61,
+      "old_tissue": 66,
+      "intersection": 53,
+      "union": 74,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 157,
+      "new_tissue": 51,
+      "old_tissue": 68,
+      "intersection": 50,
+      "union": 69,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 158,
+      "new_tissue": 56,
+      "old_tissue": 66,
+      "intersection": 54,
+      "union": 68,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 159,
+      "new_tissue": 60,
+      "old_tissue": 64,
+      "intersection": 52,
+      "union": 72,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 160,
+      "new_tissue": 51,
+      "old_tissue": 47,
+      "intersection": 36,
+      "union": 62,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 161,
+      "new_tissue": 50,
+      "old_tissue": 56,
+      "intersection": 41,
+      "union": 65,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 162,
+      "new_tissue": 46,
+      "old_tissue": 45,
+      "intersection": 33,
+      "union": 58,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 163,
+      "new_tissue": 57,
+      "old_tissue": 49,
+      "intersection": 41,
+      "union": 65,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 164,
+      "new_tissue": 63,
+      "old_tissue": 69,
+      "intersection": 49,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 165,
+      "new_tissue": 66,
+      "old_tissue": 66,
+      "intersection": 51,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 166,
+      "new_tissue": 66,
+      "old_tissue": 69,
+      "intersection": 56,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 167,
+      "new_tissue": 82,
+      "old_tissue": 102,
+      "intersection": 76,
+      "union": 108,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 168,
+      "new_tissue": 79,
+      "old_tissue": 92,
+      "intersection": 68,
+      "union": 103,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 169,
+      "new_tissue": 26,
+      "old_tissue": 29,
+      "intersection": 22,
+      "union": 33,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 170,
+      "new_tissue": 62,
+      "old_tissue": 77,
+      "intersection": 58,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 171,
+      "new_tissue": 54,
+      "old_tissue": 68,
+      "intersection": 51,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 172,
+      "new_tissue": 55,
+      "old_tissue": 67,
+      "intersection": 51,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 173,
+      "new_tissue": 55,
+      "old_tissue": 69,
+      "intersection": 53,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 174,
+      "new_tissue": 49,
+      "old_tissue": 60,
+      "intersection": 48,
+      "union": 61,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 175,
+      "new_tissue": 7,
+      "old_tissue": 7,
+      "intersection": 7,
+      "union": 7,
+      "new_guide_valid": false,
+      "old_guide_valid": false
+    },
+    {
+      "ordinal": 176,
+      "new_tissue": 56,
+      "old_tissue": 67,
+      "intersection": 53,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 177,
+      "new_tissue": 54,
+      "old_tissue": 65,
+      "intersection": 51,
+      "union": 68,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 178,
+      "new_tissue": 69,
+      "old_tissue": 91,
+      "intersection": 66,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 179,
+      "new_tissue": 61,
+      "old_tissue": 69,
+      "intersection": 57,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 180,
+      "new_tissue": 74,
+      "old_tissue": 93,
+      "intersection": 70,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 181,
+      "new_tissue": 59,
+      "old_tissue": 73,
+      "intersection": 56,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 182,
+      "new_tissue": 58,
+      "old_tissue": 67,
+      "intersection": 46,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 183,
+      "new_tissue": 70,
+      "old_tissue": 86,
+      "intersection": 65,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 184,
+      "new_tissue": 58,
+      "old_tissue": 69,
+      "intersection": 52,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 185,
+      "new_tissue": 66,
+      "old_tissue": 73,
+      "intersection": 58,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 186,
+      "new_tissue": 54,
+      "old_tissue": 40,
+      "intersection": 24,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 187,
+      "new_tissue": 59,
+      "old_tissue": 61,
+      "intersection": 44,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 188,
+      "new_tissue": 61,
+      "old_tissue": 64,
+      "intersection": 42,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 189,
+      "new_tissue": 97,
+      "old_tissue": 107,
+      "intersection": 69,
+      "union": 135,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 190,
+      "new_tissue": 83,
+      "old_tissue": 97,
+      "intersection": 69,
+      "union": 111,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 191,
+      "new_tissue": 93,
+      "old_tissue": 100,
+      "intersection": 80,
+      "union": 113,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 192,
+      "new_tissue": 57,
+      "old_tissue": 69,
+      "intersection": 55,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 193,
+      "new_tissue": 66,
+      "old_tissue": 84,
+      "intersection": 62,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 194,
+      "new_tissue": 71,
+      "old_tissue": 82,
+      "intersection": 60,
+      "union": 93,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 195,
+      "new_tissue": 55,
+      "old_tissue": 68,
+      "intersection": 51,
+      "union": 72,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 196,
+      "new_tissue": 63,
+      "old_tissue": 71,
+      "intersection": 55,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 197,
+      "new_tissue": 68,
+      "old_tissue": 86,
+      "intersection": 64,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 198,
+      "new_tissue": 65,
+      "old_tissue": 83,
+      "intersection": 61,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 199,
+      "new_tissue": 54,
+      "old_tissue": 68,
+      "intersection": 51,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 200,
+      "new_tissue": 64,
+      "old_tissue": 76,
+      "intersection": 59,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 201,
+      "new_tissue": 70,
+      "old_tissue": 81,
+      "intersection": 65,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 202,
+      "new_tissue": 76,
+      "old_tissue": 96,
+      "intersection": 72,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 203,
+      "new_tissue": 70,
+      "old_tissue": 77,
+      "intersection": 61,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 204,
+      "new_tissue": 67,
+      "old_tissue": 77,
+      "intersection": 60,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 205,
+      "new_tissue": 74,
+      "old_tissue": 85,
+      "intersection": 66,
+      "union": 93,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 206,
+      "new_tissue": 72,
+      "old_tissue": 79,
+      "intersection": 61,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 207,
+      "new_tissue": 69,
+      "old_tissue": 79,
+      "intersection": 62,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 208,
+      "new_tissue": 91,
+      "old_tissue": 101,
+      "intersection": 77,
+      "union": 115,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 209,
+      "new_tissue": 66,
+      "old_tissue": 73,
+      "intersection": 57,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 210,
+      "new_tissue": 75,
+      "old_tissue": 84,
+      "intersection": 60,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 211,
+      "new_tissue": 70,
+      "old_tissue": 81,
+      "intersection": 62,
+      "union": 89,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 212,
+      "new_tissue": 53,
+      "old_tissue": 60,
+      "intersection": 41,
+      "union": 72,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 213,
+      "new_tissue": 41,
+      "old_tissue": 36,
+      "intersection": 26,
+      "union": 51,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 214,
+      "new_tissue": 55,
+      "old_tissue": 78,
+      "intersection": 49,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 215,
+      "new_tissue": 66,
+      "old_tissue": 74,
+      "intersection": 55,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 216,
+      "new_tissue": 100,
+      "old_tissue": 114,
+      "intersection": 93,
+      "union": 121,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 217,
+      "new_tissue": 66,
+      "old_tissue": 79,
+      "intersection": 61,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 218,
+      "new_tissue": 88,
+      "old_tissue": 110,
+      "intersection": 86,
+      "union": 112,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 219,
+      "new_tissue": 58,
+      "old_tissue": 64,
+      "intersection": 54,
+      "union": 68,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 220,
+      "new_tissue": 66,
+      "old_tissue": 80,
+      "intersection": 64,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 221,
+      "new_tissue": 54,
+      "old_tissue": 67,
+      "intersection": 52,
+      "union": 69,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 222,
+      "new_tissue": 5,
+      "old_tissue": 4,
+      "intersection": 4,
+      "union": 5,
+      "new_guide_valid": false,
+      "old_guide_valid": false
+    },
+    {
+      "ordinal": 223,
+      "new_tissue": 66,
+      "old_tissue": 79,
+      "intersection": 64,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 224,
+      "new_tissue": 49,
+      "old_tissue": 60,
+      "intersection": 46,
+      "union": 63,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 225,
+      "new_tissue": 88,
+      "old_tissue": 92,
+      "intersection": 67,
+      "union": 113,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 226,
+      "new_tissue": 57,
+      "old_tissue": 67,
+      "intersection": 48,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 227,
+      "new_tissue": 59,
+      "old_tissue": 67,
+      "intersection": 51,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 228,
+      "new_tissue": 64,
+      "old_tissue": 70,
+      "intersection": 53,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 229,
+      "new_tissue": 83,
+      "old_tissue": 98,
+      "intersection": 74,
+      "union": 107,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 230,
+      "new_tissue": 92,
+      "old_tissue": 108,
+      "intersection": 80,
+      "union": 120,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 231,
+      "new_tissue": 75,
+      "old_tissue": 93,
+      "intersection": 68,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 232,
+      "new_tissue": 69,
+      "old_tissue": 82,
+      "intersection": 61,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 233,
+      "new_tissue": 78,
+      "old_tissue": 81,
+      "intersection": 63,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 234,
+      "new_tissue": 74,
+      "old_tissue": 79,
+      "intersection": 62,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 235,
+      "new_tissue": 73,
+      "old_tissue": 89,
+      "intersection": 62,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 236,
+      "new_tissue": 57,
+      "old_tissue": 73,
+      "intersection": 48,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 237,
+      "new_tissue": 57,
+      "old_tissue": 55,
+      "intersection": 40,
+      "union": 72,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 238,
+      "new_tissue": 65,
+      "old_tissue": 69,
+      "intersection": 46,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 239,
+      "new_tissue": 70,
+      "old_tissue": 78,
+      "intersection": 60,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 240,
+      "new_tissue": 76,
+      "old_tissue": 76,
+      "intersection": 57,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 241,
+      "new_tissue": 71,
+      "old_tissue": 82,
+      "intersection": 61,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 242,
+      "new_tissue": 58,
+      "old_tissue": 66,
+      "intersection": 54,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 243,
+      "new_tissue": 65,
+      "old_tissue": 75,
+      "intersection": 56,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 244,
+      "new_tissue": 67,
+      "old_tissue": 74,
+      "intersection": 58,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 245,
+      "new_tissue": 73,
+      "old_tissue": 85,
+      "intersection": 66,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 246,
+      "new_tissue": 86,
+      "old_tissue": 112,
+      "intersection": 80,
+      "union": 118,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 247,
+      "new_tissue": 61,
+      "old_tissue": 65,
+      "intersection": 50,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 248,
+      "new_tissue": 69,
+      "old_tissue": 77,
+      "intersection": 56,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 249,
+      "new_tissue": 67,
+      "old_tissue": 81,
+      "intersection": 61,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 250,
+      "new_tissue": 69,
+      "old_tissue": 90,
+      "intersection": 68,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 251,
+      "new_tissue": 56,
+      "old_tissue": 68,
+      "intersection": 54,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 252,
+      "new_tissue": 50,
+      "old_tissue": 65,
+      "intersection": 49,
+      "union": 66,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 253,
+      "new_tissue": 56,
+      "old_tissue": 63,
+      "intersection": 52,
+      "union": 67,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 254,
+      "new_tissue": 80,
+      "old_tissue": 101,
+      "intersection": 72,
+      "union": 109,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 255,
+      "new_tissue": 60,
+      "old_tissue": 66,
+      "intersection": 51,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 256,
+      "new_tissue": 85,
+      "old_tissue": 108,
+      "intersection": 78,
+      "union": 115,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 257,
+      "new_tissue": 69,
+      "old_tissue": 75,
+      "intersection": 60,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 258,
+      "new_tissue": 70,
+      "old_tissue": 84,
+      "intersection": 66,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 259,
+      "new_tissue": 76,
+      "old_tissue": 88,
+      "intersection": 65,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 260,
+      "new_tissue": 75,
+      "old_tissue": 91,
+      "intersection": 60,
+      "union": 106,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 261,
+      "new_tissue": 59,
+      "old_tissue": 64,
+      "intersection": 47,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 262,
+      "new_tissue": 62,
+      "old_tissue": 57,
+      "intersection": 43,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 263,
+      "new_tissue": 79,
+      "old_tissue": 79,
+      "intersection": 54,
+      "union": 104,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 264,
+      "new_tissue": 71,
+      "old_tissue": 71,
+      "intersection": 60,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 265,
+      "new_tissue": 81,
+      "old_tissue": 98,
+      "intersection": 73,
+      "union": 106,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 266,
+      "new_tissue": 53,
+      "old_tissue": 65,
+      "intersection": 50,
+      "union": 68,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 267,
+      "new_tissue": 69,
+      "old_tissue": 86,
+      "intersection": 60,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 268,
+      "new_tissue": 87,
+      "old_tissue": 95,
+      "intersection": 71,
+      "union": 111,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 269,
+      "new_tissue": 56,
+      "old_tissue": 62,
+      "intersection": 48,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 270,
+      "new_tissue": 70,
+      "old_tissue": 88,
+      "intersection": 66,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 271,
+      "new_tissue": 69,
+      "old_tissue": 92,
+      "intersection": 67,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 272,
+      "new_tissue": 54,
+      "old_tissue": 56,
+      "intersection": 48,
+      "union": 62,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 273,
+      "new_tissue": 75,
+      "old_tissue": 99,
+      "intersection": 71,
+      "union": 103,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 274,
+      "new_tissue": 50,
+      "old_tissue": 69,
+      "intersection": 48,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 275,
+      "new_tissue": 60,
+      "old_tissue": 67,
+      "intersection": 53,
+      "union": 74,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 276,
+      "new_tissue": 76,
+      "old_tissue": 94,
+      "intersection": 66,
+      "union": 104,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 277,
+      "new_tissue": 76,
+      "old_tissue": 94,
+      "intersection": 68,
+      "union": 102,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 278,
+      "new_tissue": 76,
+      "old_tissue": 102,
+      "intersection": 71,
+      "union": 107,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 279,
+      "new_tissue": 68,
+      "old_tissue": 89,
+      "intersection": 66,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 280,
+      "new_tissue": 92,
+      "old_tissue": 114,
+      "intersection": 78,
+      "union": 128,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 281,
+      "new_tissue": 60,
+      "old_tissue": 68,
+      "intersection": 48,
+      "union": 80,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 282,
+      "new_tissue": 68,
+      "old_tissue": 74,
+      "intersection": 57,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 283,
+      "new_tissue": 64,
+      "old_tissue": 87,
+      "intersection": 61,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 284,
+      "new_tissue": 65,
+      "old_tissue": 94,
+      "intersection": 61,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 285,
+      "new_tissue": 76,
+      "old_tissue": 77,
+      "intersection": 54,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 286,
+      "new_tissue": 70,
+      "old_tissue": 72,
+      "intersection": 53,
+      "union": 89,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 287,
+      "new_tissue": 65,
+      "old_tissue": 55,
+      "intersection": 43,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 288,
+      "new_tissue": 63,
+      "old_tissue": 76,
+      "intersection": 49,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 289,
+      "new_tissue": 65,
+      "old_tissue": 68,
+      "intersection": 48,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 290,
+      "new_tissue": 67,
+      "old_tissue": 67,
+      "intersection": 48,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 291,
+      "new_tissue": 63,
+      "old_tissue": 71,
+      "intersection": 56,
+      "union": 78,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 292,
+      "new_tissue": 72,
+      "old_tissue": 82,
+      "intersection": 59,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 293,
+      "new_tissue": 68,
+      "old_tissue": 82,
+      "intersection": 62,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 294,
+      "new_tissue": 69,
+      "old_tissue": 91,
+      "intersection": 63,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 295,
+      "new_tissue": 63,
+      "old_tissue": 74,
+      "intersection": 58,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 296,
+      "new_tissue": 78,
+      "old_tissue": 95,
+      "intersection": 64,
+      "union": 109,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 297,
+      "new_tissue": 72,
+      "old_tissue": 94,
+      "intersection": 67,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 298,
+      "new_tissue": 56,
+      "old_tissue": 71,
+      "intersection": 54,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 299,
+      "new_tissue": 55,
+      "old_tissue": 67,
+      "intersection": 53,
+      "union": 69,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 300,
+      "new_tissue": 68,
+      "old_tissue": 74,
+      "intersection": 57,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 301,
+      "new_tissue": 67,
+      "old_tissue": 69,
+      "intersection": 52,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 302,
+      "new_tissue": 71,
+      "old_tissue": 78,
+      "intersection": 61,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 303,
+      "new_tissue": 67,
+      "old_tissue": 66,
+      "intersection": 51,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 304,
+      "new_tissue": 64,
+      "old_tissue": 66,
+      "intersection": 51,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 305,
+      "new_tissue": 75,
+      "old_tissue": 81,
+      "intersection": 56,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 306,
+      "new_tissue": 68,
+      "old_tissue": 71,
+      "intersection": 54,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 307,
+      "new_tissue": 77,
+      "old_tissue": 82,
+      "intersection": 65,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 308,
+      "new_tissue": 82,
+      "old_tissue": 92,
+      "intersection": 65,
+      "union": 109,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 309,
+      "new_tissue": 73,
+      "old_tissue": 75,
+      "intersection": 56,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 310,
+      "new_tissue": 67,
+      "old_tissue": 68,
+      "intersection": 52,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 311,
+      "new_tissue": 77,
+      "old_tissue": 73,
+      "intersection": 50,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 312,
+      "new_tissue": 70,
+      "old_tissue": 74,
+      "intersection": 50,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 313,
+      "new_tissue": 69,
+      "old_tissue": 70,
+      "intersection": 45,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 314,
+      "new_tissue": 64,
+      "old_tissue": 60,
+      "intersection": 41,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 315,
+      "new_tissue": 61,
+      "old_tissue": 60,
+      "intersection": 39,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 316,
+      "new_tissue": 73,
+      "old_tissue": 70,
+      "intersection": 47,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 317,
+      "new_tissue": 64,
+      "old_tissue": 67,
+      "intersection": 52,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 318,
+      "new_tissue": 70,
+      "old_tissue": 96,
+      "intersection": 68,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 319,
+      "new_tissue": 57,
+      "old_tissue": 62,
+      "intersection": 45,
+      "union": 74,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 320,
+      "new_tissue": 78,
+      "old_tissue": 83,
+      "intersection": 65,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 321,
+      "new_tissue": 74,
+      "old_tissue": 79,
+      "intersection": 57,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 322,
+      "new_tissue": 59,
+      "old_tissue": 65,
+      "intersection": 47,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 323,
+      "new_tissue": 106,
+      "old_tissue": 116,
+      "intersection": 81,
+      "union": 141,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 324,
+      "new_tissue": 76,
+      "old_tissue": 84,
+      "intersection": 59,
+      "union": 101,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 325,
+      "new_tissue": 69,
+      "old_tissue": 78,
+      "intersection": 59,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 326,
+      "new_tissue": 58,
+      "old_tissue": 64,
+      "intersection": 53,
+      "union": 69,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 327,
+      "new_tissue": 75,
+      "old_tissue": 95,
+      "intersection": 74,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 328,
+      "new_tissue": 73,
+      "old_tissue": 93,
+      "intersection": 66,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 329,
+      "new_tissue": 60,
+      "old_tissue": 80,
+      "intersection": 60,
+      "union": 80,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 330,
+      "new_tissue": 52,
+      "old_tissue": 64,
+      "intersection": 50,
+      "union": 66,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 331,
+      "new_tissue": 55,
+      "old_tissue": 66,
+      "intersection": 52,
+      "union": 69,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 332,
+      "new_tissue": 56,
+      "old_tissue": 72,
+      "intersection": 56,
+      "union": 72,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 333,
+      "new_tissue": 71,
+      "old_tissue": 86,
+      "intersection": 69,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 334,
+      "new_tissue": 90,
+      "old_tissue": 114,
+      "intersection": 88,
+      "union": 116,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 335,
+      "new_tissue": 80,
+      "old_tissue": 88,
+      "intersection": 71,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 336,
+      "new_tissue": 58,
+      "old_tissue": 73,
+      "intersection": 56,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 337,
+      "new_tissue": 50,
+      "old_tissue": 59,
+      "intersection": 45,
+      "union": 64,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 338,
+      "new_tissue": 64,
+      "old_tissue": 75,
+      "intersection": 55,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 339,
+      "new_tissue": 59,
+      "old_tissue": 72,
+      "intersection": 49,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 340,
+      "new_tissue": 56,
+      "old_tissue": 61,
+      "intersection": 49,
+      "union": 68,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 341,
+      "new_tissue": 72,
+      "old_tissue": 81,
+      "intersection": 60,
+      "union": 93,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 342,
+      "new_tissue": 77,
+      "old_tissue": 84,
+      "intersection": 64,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 343,
+      "new_tissue": 71,
+      "old_tissue": 86,
+      "intersection": 63,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 344,
+      "new_tissue": 64,
+      "old_tissue": 74,
+      "intersection": 60,
+      "union": 78,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 345,
+      "new_tissue": 50,
+      "old_tissue": 62,
+      "intersection": 48,
+      "union": 64,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 346,
+      "new_tissue": 56,
+      "old_tissue": 64,
+      "intersection": 50,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 347,
+      "new_tissue": 61,
+      "old_tissue": 73,
+      "intersection": 57,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 348,
+      "new_tissue": 57,
+      "old_tissue": 68,
+      "intersection": 50,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 349,
+      "new_tissue": 57,
+      "old_tissue": 70,
+      "intersection": 54,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 350,
+      "new_tissue": 64,
+      "old_tissue": 71,
+      "intersection": 55,
+      "union": 80,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 351,
+      "new_tissue": 50,
+      "old_tissue": 59,
+      "intersection": 41,
+      "union": 68,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 352,
+      "new_tissue": 74,
+      "old_tissue": 87,
+      "intersection": 69,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 353,
+      "new_tissue": 48,
+      "old_tissue": 54,
+      "intersection": 45,
+      "union": 57,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 354,
+      "new_tissue": 83,
+      "old_tissue": 103,
+      "intersection": 78,
+      "union": 108,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 355,
+      "new_tissue": 84,
+      "old_tissue": 101,
+      "intersection": 78,
+      "union": 107,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 356,
+      "new_tissue": 61,
+      "old_tissue": 73,
+      "intersection": 53,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 357,
+      "new_tissue": 83,
+      "old_tissue": 101,
+      "intersection": 78,
+      "union": 106,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 358,
+      "new_tissue": 115,
+      "old_tissue": 136,
+      "intersection": 104,
+      "union": 147,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 359,
+      "new_tissue": 91,
+      "old_tissue": 110,
+      "intersection": 84,
+      "union": 117,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 360,
+      "new_tissue": 74,
+      "old_tissue": 94,
+      "intersection": 70,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 361,
+      "new_tissue": 71,
+      "old_tissue": 83,
+      "intersection": 65,
+      "union": 89,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 362,
+      "new_tissue": 63,
+      "old_tissue": 72,
+      "intersection": 55,
+      "union": 80,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 363,
+      "new_tissue": 67,
+      "old_tissue": 72,
+      "intersection": 53,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 364,
+      "new_tissue": 63,
+      "old_tissue": 56,
+      "intersection": 38,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 365,
+      "new_tissue": 92,
+      "old_tissue": 118,
+      "intersection": 81,
+      "union": 129,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 366,
+      "new_tissue": 89,
+      "old_tissue": 97,
+      "intersection": 62,
+      "union": 124,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 367,
+      "new_tissue": 73,
+      "old_tissue": 88,
+      "intersection": 67,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 368,
+      "new_tissue": 63,
+      "old_tissue": 73,
+      "intersection": 59,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 369,
+      "new_tissue": 81,
+      "old_tissue": 88,
+      "intersection": 70,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 370,
+      "new_tissue": 109,
+      "old_tissue": 129,
+      "intersection": 99,
+      "union": 139,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 371,
+      "new_tissue": 94,
+      "old_tissue": 112,
+      "intersection": 83,
+      "union": 123,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 372,
+      "new_tissue": 73,
+      "old_tissue": 81,
+      "intersection": 64,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 373,
+      "new_tissue": 75,
+      "old_tissue": 81,
+      "intersection": 65,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 374,
+      "new_tissue": 60,
+      "old_tissue": 68,
+      "intersection": 53,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 375,
+      "new_tissue": 69,
+      "old_tissue": 72,
+      "intersection": 54,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 376,
+      "new_tissue": 67,
+      "old_tissue": 69,
+      "intersection": 53,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 377,
+      "new_tissue": 47,
+      "old_tissue": 42,
+      "intersection": 34,
+      "union": 55,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 378,
+      "new_tissue": 75,
+      "old_tissue": 83,
+      "intersection": 62,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 379,
+      "new_tissue": 70,
+      "old_tissue": 66,
+      "intersection": 57,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 380,
+      "new_tissue": 104,
+      "old_tissue": 108,
+      "intersection": 82,
+      "union": 130,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 381,
+      "new_tissue": 60,
+      "old_tissue": 66,
+      "intersection": 51,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 382,
+      "new_tissue": 80,
+      "old_tissue": 84,
+      "intersection": 65,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 383,
+      "new_tissue": 78,
+      "old_tissue": 88,
+      "intersection": 71,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 384,
+      "new_tissue": 71,
+      "old_tissue": 73,
+      "intersection": 60,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 385,
+      "new_tissue": 69,
+      "old_tissue": 75,
+      "intersection": 49,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 386,
+      "new_tissue": 74,
+      "old_tissue": 76,
+      "intersection": 50,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 387,
+      "new_tissue": 61,
+      "old_tissue": 66,
+      "intersection": 46,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 388,
+      "new_tissue": 61,
+      "old_tissue": 69,
+      "intersection": 48,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 389,
+      "new_tissue": 63,
+      "old_tissue": 59,
+      "intersection": 38,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 390,
+      "new_tissue": 68,
+      "old_tissue": 70,
+      "intersection": 50,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 391,
+      "new_tissue": 68,
+      "old_tissue": 65,
+      "intersection": 53,
+      "union": 80,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 392,
+      "new_tissue": 84,
+      "old_tissue": 98,
+      "intersection": 76,
+      "union": 106,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 393,
+      "new_tissue": 64,
+      "old_tissue": 74,
+      "intersection": 59,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 394,
+      "new_tissue": 77,
+      "old_tissue": 85,
+      "intersection": 71,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 395,
+      "new_tissue": 96,
+      "old_tissue": 116,
+      "intersection": 94,
+      "union": 118,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 396,
+      "new_tissue": 65,
+      "old_tissue": 81,
+      "intersection": 58,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 397,
+      "new_tissue": 62,
+      "old_tissue": 75,
+      "intersection": 61,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 398,
+      "new_tissue": 32,
+      "old_tissue": 27,
+      "intersection": 27,
+      "union": 32,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 399,
+      "new_tissue": 48,
+      "old_tissue": 59,
+      "intersection": 47,
+      "union": 60,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 400,
+      "new_tissue": 53,
+      "old_tissue": 61,
+      "intersection": 46,
+      "union": 68,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 401,
+      "new_tissue": 76,
+      "old_tissue": 91,
+      "intersection": 67,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 402,
+      "new_tissue": 66,
+      "old_tissue": 66,
+      "intersection": 54,
+      "union": 78,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 403,
+      "new_tissue": 65,
+      "old_tissue": 74,
+      "intersection": 57,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 404,
+      "new_tissue": 62,
+      "old_tissue": 56,
+      "intersection": 48,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 405,
+      "new_tissue": 58,
+      "old_tissue": 59,
+      "intersection": 46,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 406,
+      "new_tissue": 29,
+      "old_tissue": 35,
+      "intersection": 24,
+      "union": 40,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 407,
+      "new_tissue": 63,
+      "old_tissue": 61,
+      "intersection": 49,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 408,
+      "new_tissue": 64,
+      "old_tissue": 51,
+      "intersection": 39,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 409,
+      "new_tissue": 95,
+      "old_tissue": 64,
+      "intersection": 48,
+      "union": 111,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 410,
+      "new_tissue": 32,
+      "old_tissue": 33,
+      "intersection": 25,
+      "union": 40,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 411,
+      "new_tissue": 26,
+      "old_tissue": 32,
+      "intersection": 21,
+      "union": 37,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 412,
+      "new_tissue": 40,
+      "old_tissue": 39,
+      "intersection": 28,
+      "union": 51,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 413,
+      "new_tissue": 54,
+      "old_tissue": 45,
+      "intersection": 34,
+      "union": 65,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 414,
+      "new_tissue": 0,
+      "old_tissue": 0,
+      "intersection": 0,
+      "union": 0,
+      "new_guide_valid": false,
+      "old_guide_valid": false
+    },
+    {
+      "ordinal": 415,
+      "new_tissue": 71,
+      "old_tissue": 48,
+      "intersection": 37,
+      "union": 82,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 416,
+      "new_tissue": 35,
+      "old_tissue": 39,
+      "intersection": 31,
+      "union": 43,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 417,
+      "new_tissue": 67,
+      "old_tissue": 54,
+      "intersection": 42,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 418,
+      "new_tissue": 79,
+      "old_tissue": 65,
+      "intersection": 51,
+      "union": 93,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 419,
+      "new_tissue": 71,
+      "old_tissue": 64,
+      "intersection": 48,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 420,
+      "new_tissue": 61,
+      "old_tissue": 55,
+      "intersection": 45,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 421,
+      "new_tissue": 64,
+      "old_tissue": 69,
+      "intersection": 54,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 422,
+      "new_tissue": 67,
+      "old_tissue": 73,
+      "intersection": 57,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 423,
+      "new_tissue": 83,
+      "old_tissue": 77,
+      "intersection": 56,
+      "union": 104,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 424,
+      "new_tissue": 66,
+      "old_tissue": 58,
+      "intersection": 44,
+      "union": 80,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 425,
+      "new_tissue": 57,
+      "old_tissue": 66,
+      "intersection": 47,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 426,
+      "new_tissue": 71,
+      "old_tissue": 82,
+      "intersection": 63,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 427,
+      "new_tissue": 62,
+      "old_tissue": 74,
+      "intersection": 57,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 428,
+      "new_tissue": 72,
+      "old_tissue": 90,
+      "intersection": 66,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 429,
+      "new_tissue": 76,
+      "old_tissue": 86,
+      "intersection": 63,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 430,
+      "new_tissue": 82,
+      "old_tissue": 94,
+      "intersection": 68,
+      "union": 108,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 431,
+      "new_tissue": 85,
+      "old_tissue": 103,
+      "intersection": 76,
+      "union": 112,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 432,
+      "new_tissue": 80,
+      "old_tissue": 87,
+      "intersection": 68,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 433,
+      "new_tissue": 110,
+      "old_tissue": 100,
+      "intersection": 72,
+      "union": 138,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 434,
+      "new_tissue": 71,
+      "old_tissue": 68,
+      "intersection": 48,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 435,
+      "new_tissue": 67,
+      "old_tissue": 81,
+      "intersection": 53,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 436,
+      "new_tissue": 54,
+      "old_tissue": 51,
+      "intersection": 37,
+      "union": 68,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 437,
+      "new_tissue": 51,
+      "old_tissue": 63,
+      "intersection": 41,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 438,
+      "new_tissue": 59,
+      "old_tissue": 59,
+      "intersection": 42,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 439,
+      "new_tissue": 78,
+      "old_tissue": 90,
+      "intersection": 59,
+      "union": 109,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 440,
+      "new_tissue": 60,
+      "old_tissue": 59,
+      "intersection": 48,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 441,
+      "new_tissue": 71,
+      "old_tissue": 75,
+      "intersection": 60,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 442,
+      "new_tissue": 76,
+      "old_tissue": 93,
+      "intersection": 75,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 443,
+      "new_tissue": 56,
+      "old_tissue": 60,
+      "intersection": 47,
+      "union": 69,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 444,
+      "new_tissue": 75,
+      "old_tissue": 93,
+      "intersection": 70,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 445,
+      "new_tissue": 75,
+      "old_tissue": 78,
+      "intersection": 61,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 446,
+      "new_tissue": 61,
+      "old_tissue": 67,
+      "intersection": 51,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 447,
+      "new_tissue": 74,
+      "old_tissue": 85,
+      "intersection": 66,
+      "union": 93,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 448,
+      "new_tissue": 65,
+      "old_tissue": 87,
+      "intersection": 61,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 449,
+      "new_tissue": 63,
+      "old_tissue": 73,
+      "intersection": 57,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 450,
+      "new_tissue": 57,
+      "old_tissue": 72,
+      "intersection": 52,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 451,
+      "new_tissue": 42,
+      "old_tissue": 53,
+      "intersection": 38,
+      "union": 57,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 452,
+      "new_tissue": 48,
+      "old_tissue": 64,
+      "intersection": 47,
+      "union": 65,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 453,
+      "new_tissue": 58,
+      "old_tissue": 62,
+      "intersection": 48,
+      "union": 72,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 454,
+      "new_tissue": 60,
+      "old_tissue": 65,
+      "intersection": 50,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 455,
+      "new_tissue": 66,
+      "old_tissue": 72,
+      "intersection": 53,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 456,
+      "new_tissue": 75,
+      "old_tissue": 82,
+      "intersection": 61,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 457,
+      "new_tissue": 59,
+      "old_tissue": 64,
+      "intersection": 48,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 458,
+      "new_tissue": 71,
+      "old_tissue": 78,
+      "intersection": 52,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 459,
+      "new_tissue": 90,
+      "old_tissue": 97,
+      "intersection": 70,
+      "union": 117,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 460,
+      "new_tissue": 99,
+      "old_tissue": 104,
+      "intersection": 72,
+      "union": 131,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 461,
+      "new_tissue": 71,
+      "old_tissue": 61,
+      "intersection": 48,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 462,
+      "new_tissue": 77,
+      "old_tissue": 72,
+      "intersection": 49,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 463,
+      "new_tissue": 82,
+      "old_tissue": 70,
+      "intersection": 51,
+      "union": 101,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 464,
+      "new_tissue": 72,
+      "old_tissue": 73,
+      "intersection": 54,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 465,
+      "new_tissue": 58,
+      "old_tissue": 60,
+      "intersection": 43,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 466,
+      "new_tissue": 70,
+      "old_tissue": 68,
+      "intersection": 52,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 467,
+      "new_tissue": 76,
+      "old_tissue": 80,
+      "intersection": 58,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 468,
+      "new_tissue": 78,
+      "old_tissue": 87,
+      "intersection": 62,
+      "union": 103,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 469,
+      "new_tissue": 72,
+      "old_tissue": 77,
+      "intersection": 55,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 470,
+      "new_tissue": 76,
+      "old_tissue": 82,
+      "intersection": 59,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 471,
+      "new_tissue": 81,
+      "old_tissue": 82,
+      "intersection": 60,
+      "union": 103,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 472,
+      "new_tissue": 75,
+      "old_tissue": 81,
+      "intersection": 60,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 473,
+      "new_tissue": 70,
+      "old_tissue": 77,
+      "intersection": 62,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 474,
+      "new_tissue": 77,
+      "old_tissue": 86,
+      "intersection": 66,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 475,
+      "new_tissue": 77,
+      "old_tissue": 94,
+      "intersection": 72,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 476,
+      "new_tissue": 59,
+      "old_tissue": 75,
+      "intersection": 59,
+      "union": 75,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 477,
+      "new_tissue": 75,
+      "old_tissue": 95,
+      "intersection": 71,
+      "union": 99,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 478,
+      "new_tissue": 62,
+      "old_tissue": 70,
+      "intersection": 56,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 479,
+      "new_tissue": 74,
+      "old_tissue": 85,
+      "intersection": 67,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 480,
+      "new_tissue": 73,
+      "old_tissue": 88,
+      "intersection": 65,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 481,
+      "new_tissue": 74,
+      "old_tissue": 86,
+      "intersection": 67,
+      "union": 93,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 482,
+      "new_tissue": 88,
+      "old_tissue": 109,
+      "intersection": 80,
+      "union": 117,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 483,
+      "new_tissue": 68,
+      "old_tissue": 78,
+      "intersection": 60,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 484,
+      "new_tissue": 86,
+      "old_tissue": 103,
+      "intersection": 77,
+      "union": 112,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 485,
+      "new_tissue": 76,
+      "old_tissue": 79,
+      "intersection": 59,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 486,
+      "new_tissue": 73,
+      "old_tissue": 77,
+      "intersection": 58,
+      "union": 92,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 487,
+      "new_tissue": 60,
+      "old_tissue": 72,
+      "intersection": 43,
+      "union": 89,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 488,
+      "new_tissue": 64,
+      "old_tissue": 74,
+      "intersection": 51,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 489,
+      "new_tissue": 71,
+      "old_tissue": 82,
+      "intersection": 60,
+      "union": 93,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 490,
+      "new_tissue": 63,
+      "old_tissue": 66,
+      "intersection": 53,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 491,
+      "new_tissue": 78,
+      "old_tissue": 98,
+      "intersection": 63,
+      "union": 113,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 492,
+      "new_tissue": 74,
+      "old_tissue": 99,
+      "intersection": 73,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 493,
+      "new_tissue": 57,
+      "old_tissue": 72,
+      "intersection": 56,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 494,
+      "new_tissue": 72,
+      "old_tissue": 91,
+      "intersection": 65,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 495,
+      "new_tissue": 88,
+      "old_tissue": 118,
+      "intersection": 81,
+      "union": 125,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 496,
+      "new_tissue": 61,
+      "old_tissue": 78,
+      "intersection": 58,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 497,
+      "new_tissue": 60,
+      "old_tissue": 72,
+      "intersection": 59,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 498,
+      "new_tissue": 54,
+      "old_tissue": 65,
+      "intersection": 52,
+      "union": 67,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 499,
+      "new_tissue": 57,
+      "old_tissue": 76,
+      "intersection": 55,
+      "union": 78,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 500,
+      "new_tissue": 54,
+      "old_tissue": 64,
+      "intersection": 53,
+      "union": 65,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 501,
+      "new_tissue": 72,
+      "old_tissue": 86,
+      "intersection": 68,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 502,
+      "new_tissue": 66,
+      "old_tissue": 80,
+      "intersection": 65,
+      "union": 81,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 503,
+      "new_tissue": 56,
+      "old_tissue": 70,
+      "intersection": 56,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 504,
+      "new_tissue": 62,
+      "old_tissue": 75,
+      "intersection": 60,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 505,
+      "new_tissue": 56,
+      "old_tissue": 64,
+      "intersection": 53,
+      "union": 67,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 506,
+      "new_tissue": 63,
+      "old_tissue": 72,
+      "intersection": 62,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 507,
+      "new_tissue": 62,
+      "old_tissue": 74,
+      "intersection": 59,
+      "union": 77,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 508,
+      "new_tissue": 78,
+      "old_tissue": 99,
+      "intersection": 75,
+      "union": 102,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 509,
+      "new_tissue": 67,
+      "old_tissue": 75,
+      "intersection": 63,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 510,
+      "new_tissue": 87,
+      "old_tissue": 99,
+      "intersection": 77,
+      "union": 109,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 511,
+      "new_tissue": 71,
+      "old_tissue": 78,
+      "intersection": 61,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 512,
+      "new_tissue": 57,
+      "old_tissue": 63,
+      "intersection": 49,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 513,
+      "new_tissue": 53,
+      "old_tissue": 61,
+      "intersection": 46,
+      "union": 68,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 514,
+      "new_tissue": 66,
+      "old_tissue": 64,
+      "intersection": 51,
+      "union": 79,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 515,
+      "new_tissue": 82,
+      "old_tissue": 100,
+      "intersection": 72,
+      "union": 110,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 516,
+      "new_tissue": 77,
+      "old_tissue": 93,
+      "intersection": 70,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 517,
+      "new_tissue": 51,
+      "old_tissue": 65,
+      "intersection": 50,
+      "union": 66,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 518,
+      "new_tissue": 49,
+      "old_tissue": 69,
+      "intersection": 47,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 519,
+      "new_tissue": 55,
+      "old_tissue": 67,
+      "intersection": 52,
+      "union": 70,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 520,
+      "new_tissue": 58,
+      "old_tissue": 73,
+      "intersection": 55,
+      "union": 76,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 521,
+      "new_tissue": 65,
+      "old_tissue": 80,
+      "intersection": 61,
+      "union": 84,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 522,
+      "new_tissue": 65,
+      "old_tissue": 82,
+      "intersection": 62,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 523,
+      "new_tissue": 75,
+      "old_tissue": 98,
+      "intersection": 71,
+      "union": 102,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 524,
+      "new_tissue": 80,
+      "old_tissue": 93,
+      "intersection": 73,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 525,
+      "new_tissue": 86,
+      "old_tissue": 91,
+      "intersection": 64,
+      "union": 113,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 526,
+      "new_tissue": 69,
+      "old_tissue": 74,
+      "intersection": 56,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 527,
+      "new_tissue": 81,
+      "old_tissue": 94,
+      "intersection": 68,
+      "union": 107,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 528,
+      "new_tissue": 88,
+      "old_tissue": 101,
+      "intersection": 72,
+      "union": 117,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 529,
+      "new_tissue": 102,
+      "old_tissue": 114,
+      "intersection": 82,
+      "union": 134,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 530,
+      "new_tissue": 70,
+      "old_tissue": 78,
+      "intersection": 60,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 531,
+      "new_tissue": 86,
+      "old_tissue": 100,
+      "intersection": 72,
+      "union": 114,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 532,
+      "new_tissue": 67,
+      "old_tissue": 79,
+      "intersection": 59,
+      "union": 87,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 533,
+      "new_tissue": 70,
+      "old_tissue": 79,
+      "intersection": 59,
+      "union": 90,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 534,
+      "new_tissue": 83,
+      "old_tissue": 89,
+      "intersection": 65,
+      "union": 107,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 535,
+      "new_tissue": 75,
+      "old_tissue": 79,
+      "intersection": 54,
+      "union": 100,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 536,
+      "new_tissue": 67,
+      "old_tissue": 70,
+      "intersection": 54,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 537,
+      "new_tissue": 69,
+      "old_tissue": 108,
+      "intersection": 67,
+      "union": 110,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 538,
+      "new_tissue": 54,
+      "old_tissue": 52,
+      "intersection": 35,
+      "union": 71,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 539,
+      "new_tissue": 73,
+      "old_tissue": 88,
+      "intersection": 58,
+      "union": 103,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 540,
+      "new_tissue": 90,
+      "old_tissue": 109,
+      "intersection": 68,
+      "union": 131,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 541,
+      "new_tissue": 110,
+      "old_tissue": 123,
+      "intersection": 93,
+      "union": 140,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 542,
+      "new_tissue": 81,
+      "old_tissue": 100,
+      "intersection": 76,
+      "union": 105,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 543,
+      "new_tissue": 93,
+      "old_tissue": 113,
+      "intersection": 85,
+      "union": 121,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 544,
+      "new_tissue": 76,
+      "old_tissue": 89,
+      "intersection": 67,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 545,
+      "new_tissue": 108,
+      "old_tissue": 131,
+      "intersection": 96,
+      "union": 143,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 546,
+      "new_tissue": 65,
+      "old_tissue": 73,
+      "intersection": 52,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 547,
+      "new_tissue": 46,
+      "old_tissue": 46,
+      "intersection": 33,
+      "union": 59,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 548,
+      "new_tissue": 75,
+      "old_tissue": 92,
+      "intersection": 70,
+      "union": 97,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 549,
+      "new_tissue": 72,
+      "old_tissue": 86,
+      "intersection": 67,
+      "union": 91,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 550,
+      "new_tissue": 77,
+      "old_tissue": 99,
+      "intersection": 71,
+      "union": 105,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 551,
+      "new_tissue": 77,
+      "old_tissue": 95,
+      "intersection": 69,
+      "union": 103,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 552,
+      "new_tissue": 79,
+      "old_tissue": 95,
+      "intersection": 67,
+      "union": 107,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 553,
+      "new_tissue": 79,
+      "old_tissue": 97,
+      "intersection": 71,
+      "union": 105,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 554,
+      "new_tissue": 70,
+      "old_tissue": 79,
+      "intersection": 64,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 555,
+      "new_tissue": 78,
+      "old_tissue": 80,
+      "intersection": 64,
+      "union": 94,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 556,
+      "new_tissue": 66,
+      "old_tissue": 86,
+      "intersection": 64,
+      "union": 88,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 557,
+      "new_tissue": 76,
+      "old_tissue": 88,
+      "intersection": 69,
+      "union": 95,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 558,
+      "new_tissue": 83,
+      "old_tissue": 98,
+      "intersection": 75,
+      "union": 106,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 559,
+      "new_tissue": 76,
+      "old_tissue": 72,
+      "intersection": 65,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 560,
+      "new_tissue": 85,
+      "old_tissue": 83,
+      "intersection": 64,
+      "union": 104,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 561,
+      "new_tissue": 69,
+      "old_tissue": 69,
+      "intersection": 53,
+      "union": 85,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 562,
+      "new_tissue": 58,
+      "old_tissue": 50,
+      "intersection": 35,
+      "union": 73,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 563,
+      "new_tissue": 52,
+      "old_tissue": 47,
+      "intersection": 33,
+      "union": 66,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 564,
+      "new_tissue": 62,
+      "old_tissue": 83,
+      "intersection": 49,
+      "union": 96,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 565,
+      "new_tissue": 91,
+      "old_tissue": 96,
+      "intersection": 76,
+      "union": 111,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 566,
+      "new_tissue": 83,
+      "old_tissue": 94,
+      "intersection": 76,
+      "union": 101,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 567,
+      "new_tissue": 98,
+      "old_tissue": 117,
+      "intersection": 88,
+      "union": 127,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 568,
+      "new_tissue": 84,
+      "old_tissue": 89,
+      "intersection": 67,
+      "union": 106,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 569,
+      "new_tissue": 68,
+      "old_tissue": 72,
+      "intersection": 57,
+      "union": 83,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 570,
+      "new_tissue": 68,
+      "old_tissue": 79,
+      "intersection": 61,
+      "union": 86,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 571,
+      "new_tissue": 82,
+      "old_tissue": 88,
+      "intersection": 68,
+      "union": 102,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 572,
+      "new_tissue": 80,
+      "old_tissue": 89,
+      "intersection": 71,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 573,
+      "new_tissue": 86,
+      "old_tissue": 85,
+      "intersection": 67,
+      "union": 104,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 574,
+      "new_tissue": 78,
+      "old_tissue": 92,
+      "intersection": 72,
+      "union": 98,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    },
+    {
+      "ordinal": 575,
+      "new_tissue": 39,
+      "old_tissue": 40,
+      "intersection": 31,
+      "union": 48,
+      "new_guide_valid": true,
+      "old_guide_valid": true
+    }
+  ],
+  "pooled_guide_iou": 0.6538004750593824,
+  "old_guide_envelope_geometry": {
+    "n": 576,
+    "guide_invalid": 3,
+    "mean_guide_tissue_cells": 76.79861111111111,
+    "mean_context_tokens": 76.44444444444444,
+    "mean_context_tissue": 13.18576388888889,
+    "tissue_hidden_pct": 75.51767790939506,
+    "tissue_visible_pct": 17.169273894565514,
+    "image_hidden_pct": 48.588053385416664,
+    "target_tissue_purity_pct": 46.626469028277924,
+    "zero_tissue_contexts": 28
+  },
+  "new_guide_envelope_geometry": {
+    "n": 576,
+    "guide_invalid": 3,
+    "mean_guide_tissue_cells": 68.25347222222223,
+    "mean_context_tokens": 83.44444444444444,
+    "mean_context_tissue": 11.130208333333334,
+    "tissue_hidden_pct": 76.17896932390497,
+    "tissue_visible_pct": 16.30716792999949,
+    "image_hidden_pct": 46.370442708333336,
+    "target_tissue_purity_pct": 43.800456300456304,
+    "zero_tissue_contexts": 33
+  },
+  "old_envelope_context_new_definition_mean": 11.92361111111111,
+  "limitations": [
+    "Neither segmentation product is clinical ground truth.",
+    "Guide variants may consume different placement RNG; not identically realized placements.",
+    "Current guided loader preserves historical schema-1 behavior; historical launch source not retained for every run."
+  ],
+  "fixture_sha256": "1b8a23249237d8d585a3ec2624d4743c4c455464da645b49a1e1642f205da32e",
+  "script_sha256": "b9f2e52ec99df0d7f9056ee7b27d982bbc7539e0a7b2f891531e7a962cae0bac"
+}

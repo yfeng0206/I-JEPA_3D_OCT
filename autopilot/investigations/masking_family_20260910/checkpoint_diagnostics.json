@@ -1,0 +1,1834 @@
+{
+  "manifest": {
+    "pid": 14580,
+    "status": "running",
+    "optimizer_updates": 0,
+    "max_checkpoints": 11,
+    "max_images": 24,
+    "max_backward_calls": 12,
+    "purpose": "Fixed-input historical checkpoint sensitivity/feature and actual ANATOMY mask-to-loss diagnosis",
+    "fixture_sha256": "1b8a23249237d8d585a3ec2624d4743c4c455464da645b49a1e1642f205da32e",
+    "script_sha256": "b9f2e52ec99df0d7f9056ee7b27d982bbc7539e0a7b2f891531e7a962cae0bac",
+    "torch_version": "2.7.1+cu128",
+    "cuda": "12.8",
+    "gpu_preflight": "1904, [Insufficient Permissions]\n6196, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\CrossDeviceResume.exe\n9180, C:\\Windows\\explorer.exe\n10608, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\SearchHost.exe\n10616, C:\\Windows\\SystemApps\\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\\StartMenuExperienceHost.exe\n12232, C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.53\\msedgewebview2.exe\n12708, C:\\Windows\\SystemApps\\ShellExperienceHost_cw5n1h2txyewy\\ShellExperienceHost.exe\n14436, C:\\Windows\\SystemApps\\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\\TextInputHost.exe\n1200, C:\\Program Files\\WindowsApps\\Microsoft.ZuneVideo_10.26061.10051.0_x64__8wekyb3d8bbwe\\Video.UI.exe\n19520, C:\\Program Files\\WindowsApps\\Microsoft.Edge.GameAssist_1.0.4019.0_x64__8wekyb3d8bbwe\\EdgeGameAssist.exe\n16760, C:\\Program Files\\WindowsApps\\SpotifyAB.SpotifyMusic_1.298.301.0_x64__zpdnekdrzrea0\\SpotifyXboxGamebarWebView.exe\n19652, C:\\Windows\\SystemApps\\Microsoft.LockApp_cw5n1h2txyewy\\LockApp.exe\n11020, C:\\Program Files\\WindowsApps\\Microsoft.WindowsTerminal_1.24.11911.0_x64__8wekyb3d8bbwe\\WindowsTerminal.exe\n1044, C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.53\\msedgewebview2.exe\n1732, C:\\Program Files\\WindowsApps\\Microsoft.YourPhone_1.26071.164.0_x64__8wekyb3d8bbwe\\PhoneExperienceHost.exe\n21596, C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\n18948, C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\n3124, C:\\Windows\\System32\\ShellHost.exe\n7480, C:\\Program Files\\WindowsApps\\Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb3d8bbwe\\Notepad\\Notepad.exe\n11336, C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\n",
+    "code_sha256": {
+      "src\\models\\vision_transformer.py": "ab0de995167c62ecb817c0be6b01a43b90c9749d1484474f349a6b4c6f973bf0",
+      "src\\train_patch.py": "aa19998729d062887b2480ac3e86a8d7bb9499516e202185cc96ec46c9e77a34",
+      "src\\masks\\curriculum.py": "6a0564e87170f36e241b07d597345680a837fa35cff524d6aaa6ae5e2ad23b66",
+      "src\\datasets\\oct_slices_guided.py": "231145343f6fbfed3462481430a18a824670afc8fbd59c1b10217e7d5e17eaf2"
+    }
+  },
+  "checkpoints": {
+    "ancestor25": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\fairvision-glaucoma\\checkpoint-ep25\\jepa_patch-random_posfix-ep25.pth.tar",
+        "bytes": 1507519602,
+        "mtime_ns": 1785485870625551000,
+        "model_components_sha256": "399594184c4e9d65b592913a4783f54854560c6e287d0ff53a42396eb69cf21c",
+        "epoch": 25,
+        "lr": 0.0002236961423426868,
+        "loss": 0.11738181596910449,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 1048576.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 690
+        },
+        "adam_step_min": 29292.0,
+        "adam_step_max": 29292.0,
+        "optimizer_groups": [
+          {
+            "lr": 0.0002236961423426868,
+            "weight_decay": 0.09280275817392158,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.0002236961423426868,
+            "weight_decay": 0.09280275817392158,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.0002236961423426868,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.0002236961423426868,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.3551594491500847,
+        "pooled_effective_rank": 17.09852499342902,
+        "pooled_top_eigenvalue_fraction": 0.1416311099098408,
+        "same_position_between_image_rms": 0.76510627159673,
+        "within_image_spatial_rms": 0.7589837425521837,
+        "mean_feature_norm": 25.469075276816373,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.08392290805473415,
+          "wrong_image_context_loss": 0.42450625968638794,
+          "wrong_image_penalty": 0.3405833516316538,
+          "leave_one_image_out_position_template_loss": 0.2948914964716084,
+          "prediction_change_rms": 1.001502253499689,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.07991059893464071,
+          "background_loss": 0.0855953341496807
+        },
+        "oracle": {
+          "normal_loss": 0.0860640461987065,
+          "wrong_image_context_loss": 0.39826977093276567,
+          "wrong_image_penalty": 0.31220572473405916,
+          "leave_one_image_out_position_template_loss": 0.27567350045560646,
+          "prediction_change_rms": 0.9979953262745747,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.08312702482634059,
+          "background_loss": 0.08810062819631641
+        },
+        "envelope": {
+          "normal_loss": 0.11137593638908645,
+          "wrong_image_context_loss": 0.3900579197130923,
+          "wrong_image_penalty": 0.27868198332400584,
+          "leave_one_image_out_position_template_loss": 0.2655397807927336,
+          "prediction_change_rms": 0.9655149730520018,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.09321803679690899,
+          "background_loss": 0.12549492788456568
+        },
+        "anatomy": {
+          "normal_loss": 0.07519444966540807,
+          "wrong_image_context_loss": 0.3921840436135729,
+          "wrong_image_penalty": 0.31698959394816484,
+          "leave_one_image_out_position_template_loss": 0.23637623758016466,
+          "prediction_change_rms": 1.01680443881668,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.07668801437320381,
+          "background_loss": 0.050318871945913494
+        },
+        "cover_legacy": {
+          "normal_loss": 0.10286885611881542,
+          "wrong_image_context_loss": 0.3968321143027645,
+          "wrong_image_penalty": 0.2939632581839491,
+          "leave_one_image_out_position_template_loss": 0.27554197389834795,
+          "prediction_change_rms": 0.9599296625492132,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.08287144296129818,
+          "background_loss": 0.1159305467551515
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.10445762523157369,
+          "wrong_image_context_loss": 0.39553580286985024,
+          "wrong_image_penalty": 0.29107817763827654,
+          "leave_one_image_out_position_template_loss": 0.27627367938494785,
+          "prediction_change_rms": 0.9599006723070463,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.08814113687020263,
+          "background_loss": 0.11587178405812558
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.11878218527717657,
+          "wrong_image_context_loss": 0.3963662566145023,
+          "wrong_image_penalty": 0.27758407133732577,
+          "leave_one_image_out_position_template_loss": 0.27033625865658634,
+          "prediction_change_rms": 0.9801791714533659,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.10664509124588221,
+          "background_loss": 0.12778930515197756
+        }
+      },
+      "backward": [],
+      "historical_transformer_parity": {
+        "fp32": {
+          "encoder_max_abs_difference": 0.0,
+          "predictor_max_abs_difference": 0.0
+        },
+        "amp": {
+          "encoder_max_abs_difference": 0.0,
+          "predictor_max_abs_difference": 0.0
+        }
+      }
+    },
+    "envelope50": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep50.pth.tar",
+        "bytes": 1507537825,
+        "mtime_ns": 1785649016169093400,
+        "model_components_sha256": "90b36d80d53ea0e351292bda28d7689a2bd1affbffaeae32d866e3c51b01ac9b",
+        "epoch": 50,
+        "lr": 0.00013570404052862784,
+        "loss": 0.12156316472291946,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 2097152.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 185
+        },
+        "adam_step_min": 58580.0,
+        "adam_step_max": 58580.0,
+        "optimizer_groups": [
+          {
+            "lr": 0.00013570404052862784,
+            "weight_decay": 0.220106240018667,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00013570404052862784,
+            "weight_decay": 0.220106240018667,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00013570404052862784,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00013570404052862784,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.35762365953580133,
+        "pooled_effective_rank": 16.91775544379098,
+        "pooled_top_eigenvalue_fraction": 0.1788640382970959,
+        "same_position_between_image_rms": 0.7874951818021848,
+        "within_image_spatial_rms": 0.785632099750537,
+        "mean_feature_norm": 24.87020508699845,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.0989545224424396,
+          "wrong_image_context_loss": 0.47572038173516845,
+          "wrong_image_penalty": 0.3767658592927288,
+          "leave_one_image_out_position_template_loss": 0.3217868014904289,
+          "prediction_change_rms": 1.0714869302624608,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.07924199464364289,
+          "background_loss": 0.10717117397683054
+        },
+        "oracle": {
+          "normal_loss": 0.09145056565775198,
+          "wrong_image_context_loss": 0.45689598348138494,
+          "wrong_image_penalty": 0.365445417823633,
+          "leave_one_image_out_position_template_loss": 0.3062295228643571,
+          "prediction_change_rms": 1.0768002995178712,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.0812045171165352,
+          "background_loss": 0.09855535495278868
+        },
+        "envelope": {
+          "normal_loss": 0.09774920668232794,
+          "wrong_image_context_loss": 0.44993323597886437,
+          "wrong_image_penalty": 0.35218402929653647,
+          "leave_one_image_out_position_template_loss": 0.29887826716541227,
+          "prediction_change_rms": 1.0568046856738011,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.0793300266114046,
+          "background_loss": 0.11207136137069851
+        },
+        "anatomy": {
+          "normal_loss": 0.07302780074072264,
+          "wrong_image_context_loss": 0.452292447638077,
+          "wrong_image_penalty": 0.3792646468973544,
+          "leave_one_image_out_position_template_loss": 0.27290464023826644,
+          "prediction_change_rms": 1.1093808049467266,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.07347678621681993,
+          "background_loss": 0.06554987022503354
+        },
+        "cover_legacy": {
+          "normal_loss": 0.10696069925083235,
+          "wrong_image_context_loss": 0.45953769440722037,
+          "wrong_image_penalty": 0.352576995156388,
+          "leave_one_image_out_position_template_loss": 0.30699851926261434,
+          "prediction_change_rms": 1.0576018200284645,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.08569530031965127,
+          "background_loss": 0.12085059890482562
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.10956477955617487,
+          "wrong_image_context_loss": 0.46148131765956824,
+          "wrong_image_penalty": 0.35191653810339335,
+          "leave_one_image_out_position_template_loss": 0.307150684836637,
+          "prediction_change_rms": 1.0697440079803489,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.08920475611111382,
+          "background_loss": 0.12380758328742571
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.11231336443629453,
+          "wrong_image_context_loss": 0.44233405550582783,
+          "wrong_image_penalty": 0.3300206910695333,
+          "leave_one_image_out_position_template_loss": 0.3022321849422682,
+          "prediction_change_rms": 1.048341899429813,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.09576323456887621,
+          "background_loss": 0.12459546452343243
+        }
+      },
+      "backward": [],
+      "historical_transformer_parity": null
+    },
+    "envelope100": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\runs\\patch_mirage_envelope\\jepa_patch_mirage-ep100.pth.tar",
+        "bytes": 1507538899,
+        "mtime_ns": 1785900724024778400,
+        "model_components_sha256": "4f25274fb21c8242e32c9066d87a34ede49c96d54009a18e480466eee6e85d4a",
+        "epoch": 100,
+        "lr": 1e-06,
+        "loss": 0.12338593340555827,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 8388608.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 554
+        },
+        "adam_step_min": 117160.0,
+        "adam_step_max": 117160.0,
+        "optimizer_groups": [
+          {
+            "lr": 1e-06,
+            "weight_decay": 0.4,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 1e-06,
+            "weight_decay": 0.4,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 1e-06,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 1e-06,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.3665620724841974,
+        "pooled_effective_rank": 18.901299935469876,
+        "pooled_top_eigenvalue_fraction": 0.1325605316635109,
+        "same_position_between_image_rms": 0.7812751120156134,
+        "within_image_spatial_rms": 0.7729663741903079,
+        "mean_feature_norm": 24.693966809725357,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.09370974584381445,
+          "wrong_image_context_loss": 0.4999468066512396,
+          "wrong_image_penalty": 0.4062370608074251,
+          "leave_one_image_out_position_template_loss": 0.3318217625252355,
+          "prediction_change_rms": 1.0888255047935225,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.07875566704881407,
+          "background_loss": 0.09994296239171162
+        },
+        "oracle": {
+          "normal_loss": 0.09902680043083506,
+          "wrong_image_context_loss": 0.48143118749451014,
+          "wrong_image_penalty": 0.3824043870636751,
+          "leave_one_image_out_position_template_loss": 0.32217696551491404,
+          "prediction_change_rms": 1.0723236659042554,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.09545333727695271,
+          "background_loss": 0.10150470229317547
+        },
+        "envelope": {
+          "normal_loss": 0.11152864379398683,
+          "wrong_image_context_loss": 0.4804979679814448,
+          "wrong_image_penalty": 0.3689693241874579,
+          "leave_one_image_out_position_template_loss": 0.3176637933618281,
+          "prediction_change_rms": 1.0644893311195671,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.08938908670947854,
+          "background_loss": 0.12874364251137782
+        },
+        "anatomy": {
+          "normal_loss": 0.07137725892365172,
+          "wrong_image_context_loss": 0.4843162697701094,
+          "wrong_image_penalty": 0.4129390108464577,
+          "leave_one_image_out_position_template_loss": 0.29874620614767383,
+          "prediction_change_rms": 1.1182601309733369,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.07125544741240718,
+          "background_loss": 0.07340605064541444
+        },
+        "cover_legacy": {
+          "normal_loss": 0.11055612599544616,
+          "wrong_image_context_loss": 0.4827969650935314,
+          "wrong_image_penalty": 0.37224083909808525,
+          "leave_one_image_out_position_template_loss": 0.32134306936250073,
+          "prediction_change_rms": 1.0575148633076172,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.09288915498131972,
+          "background_loss": 0.1220956440346027
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.10756413200503182,
+          "wrong_image_context_loss": 0.4888929086117445,
+          "wrong_image_penalty": 0.38132877660671266,
+          "leave_one_image_out_position_template_loss": 0.32267227925606173,
+          "prediction_change_rms": 1.0701549994945516,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.08985346777034492,
+          "background_loss": 0.11995358309409332
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.11206501929007105,
+          "wrong_image_context_loss": 0.4758613235907306,
+          "wrong_image_penalty": 0.3637963043006595,
+          "leave_one_image_out_position_template_loss": 0.3209638773157193,
+          "prediction_change_rms": 1.0598822899678402,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.10606792365200818,
+          "background_loss": 0.11651555408640714
+        }
+      },
+      "backward": [
+        {
+          "loss": 0.08679523319005966,
+          "amp": false,
+          "diagnostic_loss_scale": 1.0,
+          "images": 3,
+          "target_k": 40,
+          "encoder_grad_norm": 1.2479868094974669,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.6013371304071273,
+          "predictor_zero_grad_parameters": []
+        },
+        {
+          "loss": 0.08679815381765366,
+          "amp": true,
+          "diagnostic_loss_scale": 128.0,
+          "images": 3,
+          "target_k": 40,
+          "encoder_grad_norm": 1.246461910462918,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.6005956297204273,
+          "predictor_zero_grad_parameters": []
+        }
+      ],
+      "historical_transformer_parity": null
+    },
+    "anatomy_v1_30": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\runs\\patch_mirage_anatomy\\jepa_patch_mirage-ep30.pth.tar",
+        "bytes": 1507537825,
+        "mtime_ns": 1786296871002892400,
+        "model_components_sha256": "c8b3e52ea666d7b2a15a4f6c79f931657333b2750f1447fef46d1b78da73d670",
+        "epoch": 30,
+        "lr": 0.00020981638204319684,
+        "loss": 0.0608705114364624,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 4194304.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 79
+        },
+        "adam_step_min": 35151.0,
+        "adam_step_max": 35151.0,
+        "optimizer_groups": [
+          {
+            "lr": 0.00020981638204319684,
+            "weight_decay": 0.11420646837470588,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00020981638204319684,
+            "weight_decay": 0.11420646837470588,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00020981638204319684,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00020981638204319684,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.3406409462892371,
+        "pooled_effective_rank": 18.01338553899093,
+        "pooled_top_eigenvalue_fraction": 0.1447125914161624,
+        "same_position_between_image_rms": 0.7822392287714319,
+        "within_image_spatial_rms": 0.7897191515276334,
+        "mean_feature_norm": 25.679533425022868,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.09899870849574527,
+          "wrong_image_context_loss": 0.45793654765096653,
+          "wrong_image_penalty": 0.35893783915522126,
+          "leave_one_image_out_position_template_loss": 0.3143385282050148,
+          "prediction_change_rms": 1.0262647961531184,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.08910375238813426,
+          "background_loss": 0.10312316209774834
+        },
+        "oracle": {
+          "normal_loss": 0.09704181768795568,
+          "wrong_image_context_loss": 0.4364423413024035,
+          "wrong_image_penalty": 0.33940052361444784,
+          "leave_one_image_out_position_template_loss": 0.29758118006526724,
+          "prediction_change_rms": 1.024033600309916,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.09326476236667257,
+          "background_loss": 0.09966089392065787
+        },
+        "envelope": {
+          "normal_loss": 0.13096874007777656,
+          "wrong_image_context_loss": 0.4200708843843022,
+          "wrong_image_penalty": 0.2891021443065256,
+          "leave_one_image_out_position_template_loss": 0.2871104694438723,
+          "prediction_change_rms": 0.9720101862400593,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.11399932078817633,
+          "background_loss": 0.14416360798729536
+        },
+        "anatomy": {
+          "normal_loss": 0.061310464232519735,
+          "wrong_image_context_loss": 0.44181806372944266,
+          "wrong_image_penalty": 0.3805075994969229,
+          "leave_one_image_out_position_template_loss": 0.26453081984072924,
+          "prediction_change_rms": 1.0794965412534767,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.06212784304027108,
+          "background_loss": 0.0476968792620404
+        },
+        "cover_legacy": {
+          "normal_loss": 0.11941520651853003,
+          "wrong_image_context_loss": 0.430158156085327,
+          "wrong_image_penalty": 0.31074294956679693,
+          "leave_one_image_out_position_template_loss": 0.29588622623247207,
+          "prediction_change_rms": 0.984749477118143,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.09857386718265652,
+          "background_loss": 0.1330281235847432
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.11088092798859087,
+          "wrong_image_context_loss": 0.43118942550088935,
+          "wrong_image_penalty": 0.3203084975122985,
+          "leave_one_image_out_position_template_loss": 0.2971727375310069,
+          "prediction_change_rms": 0.9941549055240738,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.0911797515097355,
+          "background_loss": 0.12466283696429695
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.1286789579478145,
+          "wrong_image_context_loss": 0.4243254538177174,
+          "wrong_image_penalty": 0.29564649586990294,
+          "leave_one_image_out_position_template_loss": 0.29189947351448325,
+          "prediction_change_rms": 0.9834983842424195,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.11523195963527541,
+          "background_loss": 0.13865817747474518
+        }
+      },
+      "backward": [],
+      "historical_transformer_parity": null
+    },
+    "anatomy40": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\runs\\anatomy_v2_ep25\\jepa_patch_mirage-ep40.pth.tar",
+        "bytes": 1507537825,
+        "mtime_ns": 1786515659024488700,
+        "model_components_sha256": "66256df930880b67d575ae9fda3d6a58205154664783f9d6286f72ccbdf8f22e",
+        "epoch": 40,
+        "lr": 0.00017547566033482867,
+        "loss": 0.06821942396322886,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 4194304.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 1420
+        },
+        "adam_step_min": 46867.0,
+        "adam_step_max": 46867.0,
+        "optimizer_groups": [
+          {
+            "lr": 0.00017547566033482867,
+            "weight_decay": 0.16442746356785462,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00017547566033482867,
+            "weight_decay": 0.16442746356785462,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00017547566033482867,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00017547566033482867,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.40580237256954765,
+        "pooled_effective_rank": 17.036213047362086,
+        "pooled_top_eigenvalue_fraction": 0.14232323893275114,
+        "same_position_between_image_rms": 0.838130417293154,
+        "within_image_spatial_rms": 0.8239638738501064,
+        "mean_feature_norm": 27.060329447519205,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.24706082171398483,
+          "wrong_image_context_loss": 0.461605476011166,
+          "wrong_image_penalty": 0.21454465429718123,
+          "leave_one_image_out_position_template_loss": 0.3399863286505238,
+          "prediction_change_rms": 0.8826153503983157,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.24153500062780142,
+          "background_loss": 0.24936411567861427
+        },
+        "oracle": {
+          "normal_loss": 0.21767113943454333,
+          "wrong_image_context_loss": 0.4574179969553432,
+          "wrong_image_penalty": 0.23974685752079986,
+          "leave_one_image_out_position_template_loss": 0.3372339117276275,
+          "prediction_change_rms": 0.879727230928496,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.21226109060251744,
+          "background_loss": 0.22142256193393733
+        },
+        "envelope": {
+          "normal_loss": 0.26669442822464423,
+          "wrong_image_context_loss": 0.45408368307037855,
+          "wrong_image_penalty": 0.18738925484573435,
+          "leave_one_image_out_position_template_loss": 0.3345310845004674,
+          "prediction_change_rms": 0.8509051418273583,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.25365951837777945,
+          "background_loss": 0.27682994970046
+        },
+        "anatomy": {
+          "normal_loss": 0.090191200537447,
+          "wrong_image_context_loss": 0.4801060188037809,
+          "wrong_image_penalty": 0.3899148182663339,
+          "leave_one_image_out_position_template_loss": 0.3341946934427445,
+          "prediction_change_rms": 1.0464643337418755,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.08686686386698131,
+          "background_loss": 0.14555860094554807
+        },
+        "cover_legacy": {
+          "normal_loss": 0.25135053113336986,
+          "wrong_image_context_loss": 0.4486998114477014,
+          "wrong_image_penalty": 0.19734928031433155,
+          "leave_one_image_out_position_template_loss": 0.335101519692471,
+          "prediction_change_rms": 0.8511388430834587,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.2294460494482935,
+          "background_loss": 0.2656578598396433
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.23336644504314508,
+          "wrong_image_context_loss": 0.45374409926616854,
+          "wrong_image_penalty": 0.22037765422302344,
+          "leave_one_image_out_position_template_loss": 0.33641307065868403,
+          "prediction_change_rms": 0.883298451549968,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.20650867102631545,
+          "background_loss": 0.2521547340160042
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.2609917360533493,
+          "wrong_image_context_loss": 0.4484597819205671,
+          "wrong_image_penalty": 0.1874680458672178,
+          "leave_one_image_out_position_template_loss": 0.3364390443466977,
+          "prediction_change_rms": 0.8468216418660527,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.2566146912635304,
+          "background_loss": 0.2642400067693559
+        }
+      },
+      "backward": [
+        {
+          "loss": 0.11516951024532318,
+          "amp": false,
+          "diagnostic_loss_scale": 1.0,
+          "images": 3,
+          "target_k": 16,
+          "encoder_grad_norm": 0.9138962772969939,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.24418950540980514,
+          "predictor_zero_grad_parameters": []
+        },
+        {
+          "loss": 0.11518342047929764,
+          "amp": true,
+          "diagnostic_loss_scale": 128.0,
+          "images": 3,
+          "target_k": 16,
+          "encoder_grad_norm": 0.914409411011518,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.24408236427271787,
+          "predictor_zero_grad_parameters": []
+        }
+      ],
+      "historical_transformer_parity": null
+    },
+    "anatomy50": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\runs\\anatomy_v2_ep25\\jepa_patch_mirage-ep50.pth.tar",
+        "bytes": 1507537825,
+        "mtime_ns": 1786629321576167300,
+        "model_components_sha256": "71ae87df4d30c154db26083feab27a5fdcbf175133fad7c18ba6b4bf3d3b6409",
+        "epoch": 50,
+        "lr": 0.00013577762459796098,
+        "loss": 0.07609909300525983,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 4194304.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 21
+        },
+        "adam_step_min": 58581.0,
+        "adam_step_max": 58581.0,
+        "optimizer_groups": [
+          {
+            "lr": 0.00013577762459796098,
+            "weight_decay": 0.22000482909203736,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00013577762459796098,
+            "weight_decay": 0.22000482909203736,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00013577762459796098,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00013577762459796098,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.44767180207662394,
+        "pooled_effective_rank": 17.651877211954062,
+        "pooled_top_eigenvalue_fraction": 0.13109043734471942,
+        "same_position_between_image_rms": 0.9088686708654595,
+        "within_image_spatial_rms": 0.8802408643208164,
+        "mean_feature_norm": 28.326594907237364,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.2952300099144205,
+          "wrong_image_context_loss": 0.49221870217857144,
+          "wrong_image_penalty": 0.19698869226415094,
+          "leave_one_image_out_position_template_loss": 0.3674935946068444,
+          "prediction_change_rms": 0.8778621630458558,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.2897986658389482,
+          "background_loss": 0.2974939236086479
+        },
+        "oracle": {
+          "normal_loss": 0.27325466453743436,
+          "wrong_image_context_loss": 0.4855344173785089,
+          "wrong_image_penalty": 0.2122797528410745,
+          "leave_one_image_out_position_template_loss": 0.37009926586629105,
+          "prediction_change_rms": 0.8772203247722655,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.2823669924721684,
+          "background_loss": 0.26693601694337626
+        },
+        "envelope": {
+          "normal_loss": 0.2996272200022262,
+          "wrong_image_context_loss": 0.4890519514465675,
+          "wrong_image_penalty": 0.1894247314443413,
+          "leave_one_image_out_position_template_loss": 0.370675071637534,
+          "prediction_change_rms": 0.8352663635380015,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.28930949804736433,
+          "background_loss": 0.30764994464578416
+        },
+        "anatomy": {
+          "normal_loss": 0.10357708989249659,
+          "wrong_image_context_loss": 0.5218054302386008,
+          "wrong_image_penalty": 0.41822834034610423,
+          "leave_one_image_out_position_template_loss": 0.3694561203786482,
+          "prediction_change_rms": 1.0827326773413364,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.10281801114618531,
+          "background_loss": 0.11621967728795676
+        },
+        "cover_legacy": {
+          "normal_loss": 0.3006657211881635,
+          "wrong_image_context_loss": 0.4768391010233452,
+          "wrong_image_penalty": 0.17617337983518172,
+          "leave_one_image_out_position_template_loss": 0.3682877110739866,
+          "prediction_change_rms": 0.8244930370033806,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.2847382159567265,
+          "background_loss": 0.311069074077007
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.27572040756841026,
+          "wrong_image_context_loss": 0.48415952501173853,
+          "wrong_image_penalty": 0.20843911744332827,
+          "leave_one_image_out_position_template_loss": 0.36941385372314717,
+          "prediction_change_rms": 0.8843350120855042,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.24856585365651418,
+          "background_loss": 0.29471630817827055
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.3146469152509706,
+          "wrong_image_context_loss": 0.4804678173602833,
+          "wrong_image_penalty": 0.16582090210931275,
+          "leave_one_image_out_position_template_loss": 0.371555640424688,
+          "prediction_change_rms": 0.8381452740846832,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.3118287280178629,
+          "background_loss": 0.31673833434789656
+        }
+      },
+      "backward": [
+        {
+          "loss": 0.16651251912117004,
+          "amp": false,
+          "diagnostic_loss_scale": 1.0,
+          "images": 3,
+          "target_k": 16,
+          "encoder_grad_norm": 1.710835352252503,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.32698756387963324,
+          "predictor_zero_grad_parameters": []
+        },
+        {
+          "loss": 0.1666073352098465,
+          "amp": true,
+          "diagnostic_loss_scale": 128.0,
+          "images": 3,
+          "target_k": 16,
+          "encoder_grad_norm": 1.7091044792075862,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.3270224809114228,
+          "predictor_zero_grad_parameters": []
+        }
+      ],
+      "historical_transformer_parity": null
+    },
+    "anatomy75": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\runs\\blob_fp32_ep56\\jepa_patch_blob_fp32-ep75.pth.tar",
+        "bytes": 1507541047,
+        "mtime_ns": 1787753518784124800,
+        "model_components_sha256": "0c002014e2b3dbf74a308ddb7780997526b21237767d16e51fd66485dc6298d0",
+        "epoch": 75,
+        "lr": 4.118102890389882e-05,
+        "loss": 0.07610063607136408,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 4194304.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 1697
+        },
+        "adam_step_min": 87871.0,
+        "adam_step_max": 87871.0,
+        "optimizer_groups": [
+          {
+            "lr": 4.118102890389882e-05,
+            "weight_decay": 0.34727580879767767,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 4.118102890389882e-05,
+            "weight_decay": 0.34727580879767767,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 4.118102890389882e-05,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 4.118102890389882e-05,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.4320942356246719,
+        "pooled_effective_rank": 18.332638651369113,
+        "pooled_top_eigenvalue_fraction": 0.13928379172772873,
+        "same_position_between_image_rms": 0.9591905365237694,
+        "within_image_spatial_rms": 0.9424488648446961,
+        "mean_feature_norm": 29.405257797160967,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.3246897998919534,
+          "wrong_image_context_loss": 0.5155880279973927,
+          "wrong_image_penalty": 0.1908982281054393,
+          "leave_one_image_out_position_template_loss": 0.38465563524454927,
+          "prediction_change_rms": 0.8758295293273194,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.3334482693159742,
+          "background_loss": 0.3210390610335818
+        },
+        "oracle": {
+          "normal_loss": 0.3039441086923162,
+          "wrong_image_context_loss": 0.5114938695225726,
+          "wrong_image_penalty": 0.2075497608302564,
+          "leave_one_image_out_position_template_loss": 0.3889174591492032,
+          "prediction_change_rms": 0.8597572083247759,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.31924122774438213,
+          "background_loss": 0.2933368187454824
+        },
+        "envelope": {
+          "normal_loss": 0.3508788259309162,
+          "wrong_image_context_loss": 0.51861017377089,
+          "wrong_image_penalty": 0.16773134783997387,
+          "leave_one_image_out_position_template_loss": 0.3913014515980491,
+          "prediction_change_rms": 0.8392456588351298,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.348948678417824,
+          "background_loss": 0.352379645790836
+        },
+        "anatomy": {
+          "normal_loss": 0.10102630491989355,
+          "wrong_image_context_loss": 0.5720693466913266,
+          "wrong_image_penalty": 0.471043041771433,
+          "leave_one_image_out_position_template_loss": 0.38996185377861065,
+          "prediction_change_rms": 1.138231250933986,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.10124701201103324,
+          "background_loss": 0.09735039026401508
+        },
+        "cover_legacy": {
+          "normal_loss": 0.33120673303953563,
+          "wrong_image_context_loss": 0.5057803787870275,
+          "wrong_image_penalty": 0.17457364574749185,
+          "leave_one_image_out_position_template_loss": 0.3875855346496938,
+          "prediction_change_rms": 0.8077967782287584,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.3196954653219312,
+          "background_loss": 0.3387255364255061
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.3190971630148359,
+          "wrong_image_context_loss": 0.5207417744536179,
+          "wrong_image_penalty": 0.20164461143878196,
+          "leave_one_image_out_position_template_loss": 0.3893018302183372,
+          "prediction_change_rms": 0.8695211983722901,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.3079257969531251,
+          "background_loss": 0.3269120643412635
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.34601259137542484,
+          "wrong_image_context_loss": 0.5077551710077177,
+          "wrong_image_penalty": 0.1617425796322929,
+          "leave_one_image_out_position_template_loss": 0.39111592080265567,
+          "prediction_change_rms": 0.8235266786256152,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.3488376349210739,
+          "background_loss": 0.34391608410592645
+        }
+      },
+      "backward": [
+        {
+          "loss": 0.14401666820049286,
+          "amp": false,
+          "diagnostic_loss_scale": 1.0,
+          "images": 3,
+          "target_k": 16,
+          "encoder_grad_norm": 5.160261667221951,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.4550167261020706,
+          "predictor_zero_grad_parameters": []
+        },
+        {
+          "loss": 0.1438315063714981,
+          "amp": true,
+          "diagnostic_loss_scale": 128.0,
+          "images": 3,
+          "target_k": 16,
+          "encoder_grad_norm": 5.132098370252234,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.4547135395285095,
+          "predictor_zero_grad_parameters": []
+        }
+      ],
+      "historical_transformer_parity": null
+    },
+    "cover50": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\runs\\cover_f021_ep25\\jepa_patch_cover_f021-ep50.pth.tar",
+        "bytes": 1507542121,
+        "mtime_ns": 1787238812161045200,
+        "model_components_sha256": "3e5a2ea3040f769fe6a1c783ffa57340e125935d65175e0d53dff188d39131b8",
+        "epoch": 50,
+        "lr": 0.00013578462942677374,
+        "loss": 0.145424516248703,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 4194304.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 1885
+        },
+        "adam_step_min": 58581.0,
+        "adam_step_max": 58581.0,
+        "optimizer_groups": [
+          {
+            "lr": 0.00013578462942677374,
+            "weight_decay": 0.2199951750283483,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00013578462942677374,
+            "weight_decay": 0.2199951750283483,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00013578462942677374,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 0.00013578462942677374,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.35207004382465346,
+        "pooled_effective_rank": 17.615913012700535,
+        "pooled_top_eigenvalue_fraction": 0.14761432301187988,
+        "same_position_between_image_rms": 0.7857269954085957,
+        "within_image_spatial_rms": 0.7849507344901536,
+        "mean_feature_norm": 24.7022736851328,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.11166247515839994,
+          "wrong_image_context_loss": 0.48453849899811674,
+          "wrong_image_penalty": 0.3728760238397168,
+          "leave_one_image_out_position_template_loss": 0.333540001443733,
+          "prediction_change_rms": 1.070256171994549,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.11170979658756995,
+          "background_loss": 0.11164275045857615
+        },
+        "oracle": {
+          "normal_loss": 0.10831624790986442,
+          "wrong_image_context_loss": 0.47031865637705794,
+          "wrong_image_penalty": 0.3620024084671935,
+          "leave_one_image_out_position_template_loss": 0.3216238210614497,
+          "prediction_change_rms": 1.0660375645680245,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.10176314671205354,
+          "background_loss": 0.11286028291537982
+        },
+        "envelope": {
+          "normal_loss": 0.1290216603657554,
+          "wrong_image_context_loss": 0.4595418389930258,
+          "wrong_image_penalty": 0.3305201786272704,
+          "leave_one_image_out_position_template_loss": 0.3148929931112308,
+          "prediction_change_rms": 1.0455414702945727,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.11195924746612913,
+          "background_loss": 0.1422888370785268
+        },
+        "anatomy": {
+          "normal_loss": 0.08413965228889235,
+          "wrong_image_context_loss": 0.4792577867823032,
+          "wrong_image_penalty": 0.3951181344934109,
+          "leave_one_image_out_position_template_loss": 0.30374660176069784,
+          "prediction_change_rms": 1.115857122746006,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.08432726721228546,
+          "background_loss": 0.08101489339237926
+        },
+        "cover_legacy": {
+          "normal_loss": 0.12587593805294828,
+          "wrong_image_context_loss": 0.47176476528707406,
+          "wrong_image_penalty": 0.34588882723412573,
+          "leave_one_image_out_position_template_loss": 0.3219911331277146,
+          "prediction_change_rms": 1.0629861006894328,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.10910543465278942,
+          "background_loss": 0.13682991122453092
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.11091227948648757,
+          "wrong_image_context_loss": 0.475395160073591,
+          "wrong_image_penalty": 0.36448288058710343,
+          "leave_one_image_out_position_template_loss": 0.32325414191491114,
+          "prediction_change_rms": 1.0737554341708893,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.09711621417742304,
+          "background_loss": 0.12056328263934449
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.12047714919037324,
+          "wrong_image_context_loss": 0.4602469421260622,
+          "wrong_image_penalty": 0.339769792935689,
+          "leave_one_image_out_position_template_loss": 0.31845187804244135,
+          "prediction_change_rms": 1.0458442060782887,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.11322209257166832,
+          "background_loss": 0.12586123573486668
+        }
+      },
+      "backward": [
+        {
+          "loss": 0.10108625143766403,
+          "amp": false,
+          "diagnostic_loss_scale": 1.0,
+          "images": 3,
+          "target_k": 40,
+          "encoder_grad_norm": 0.7076022972598689,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.48721233005797815,
+          "predictor_zero_grad_parameters": []
+        },
+        {
+          "loss": 0.10103870183229446,
+          "amp": true,
+          "diagnostic_loss_scale": 128.0,
+          "images": 3,
+          "target_k": 40,
+          "encoder_grad_norm": 0.7061967037635793,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.48711129094337813,
+          "predictor_zero_grad_parameters": []
+        }
+      ],
+      "historical_transformer_parity": null
+    },
+    "cover75": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\runs\\cover_f021_ep25\\jepa_patch_cover_f021-ep75.pth.tar",
+        "bytes": 1507542121,
+        "mtime_ns": 1787491747352718000,
+        "model_components_sha256": "4914864068c83961fd9a6e80abc510b7a458c8dc03e5d5d03583b492f7ce7557",
+        "epoch": 75,
+        "lr": 4.118102890389882e-05,
+        "loss": 0.1522351792383194,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 4194304.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 251
+        },
+        "adam_step_min": 87866.0,
+        "adam_step_max": 87866.0,
+        "optimizer_groups": [
+          {
+            "lr": 4.118102890389882e-05,
+            "weight_decay": 0.34727580879767767,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 4.118102890389882e-05,
+            "weight_decay": 0.34727580879767767,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 4.118102890389882e-05,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 4.118102890389882e-05,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.3365855885022622,
+        "pooled_effective_rank": 17.280004332013597,
+        "pooled_top_eigenvalue_fraction": 0.15006717490728097,
+        "same_position_between_image_rms": 0.7708553633825811,
+        "within_image_spatial_rms": 0.7845978178632715,
+        "mean_feature_norm": 24.554963173353375,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.11694918077784225,
+          "wrong_image_context_loss": 0.4845024477829314,
+          "wrong_image_penalty": 0.3675532670050891,
+          "leave_one_image_out_position_template_loss": 0.3331591755556413,
+          "prediction_change_rms": 1.0571242139843495,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.11399551777346102,
+          "background_loss": 0.11818033793357263
+        },
+        "oracle": {
+          "normal_loss": 0.12254875531758323,
+          "wrong_image_context_loss": 0.47920232993987993,
+          "wrong_image_penalty": 0.3566535746222967,
+          "leave_one_image_out_position_template_loss": 0.330150497769808,
+          "prediction_change_rms": 1.0617216211681337,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.12129178819075827,
+          "background_loss": 0.1234203583117477
+        },
+        "envelope": {
+          "normal_loss": 0.12614462055718176,
+          "wrong_image_context_loss": 0.47436885000132145,
+          "wrong_image_penalty": 0.34822422944413967,
+          "leave_one_image_out_position_template_loss": 0.32624035999099543,
+          "prediction_change_rms": 1.0473748971044965,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.11373369834922613,
+          "background_loss": 0.13579494956223195
+        },
+        "anatomy": {
+          "normal_loss": 0.09734843800288218,
+          "wrong_image_context_loss": 0.49469321545620915,
+          "wrong_image_penalty": 0.39734477745332697,
+          "leave_one_image_out_position_template_loss": 0.32413037460840616,
+          "prediction_change_rms": 1.1153610835781804,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.09861197536894788,
+          "background_loss": 0.07630400531978786
+        },
+        "cover_legacy": {
+          "normal_loss": 0.1251715507576018,
+          "wrong_image_context_loss": 0.48391591718061344,
+          "wrong_image_penalty": 0.35874436642301166,
+          "leave_one_image_out_position_template_loss": 0.32848908380070685,
+          "prediction_change_rms": 1.0678041802815252,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.11451553377245033,
+          "background_loss": 0.13213173086586094
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.11263387432099738,
+          "wrong_image_context_loss": 0.48554506812431114,
+          "wrong_image_penalty": 0.3729111938033138,
+          "leave_one_image_out_position_template_loss": 0.3303061408666186,
+          "prediction_change_rms": 1.0709825782193791,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.10388954914383407,
+          "background_loss": 0.11875094523678673
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.13299477057401546,
+          "wrong_image_context_loss": 0.4675454238610178,
+          "wrong_image_penalty": 0.3345506532870023,
+          "leave_one_image_out_position_template_loss": 0.32815087457307485,
+          "prediction_change_rms": 1.0336920888223766,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.13191516637685707,
+          "background_loss": 0.1337959610728343
+        }
+      },
+      "backward": [],
+      "historical_transformer_parity": null
+    },
+    "cover100": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\runs\\cover_f021_ep25\\jepa_patch_cover_f021-ep100.pth.tar",
+        "bytes": 1507543195,
+        "mtime_ns": 1787595840339053800,
+        "model_components_sha256": "ae934099c23174855d2316b8d7205dd0143fe551a030aa4b8f8eb5b9e9152082",
+        "epoch": 100,
+        "lr": 1.000000049560616e-06,
+        "loss": 0.14072851293881733,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 4194304.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 81
+        },
+        "adam_step_min": 117152.0,
+        "adam_step_max": 117152.0,
+        "optimizer_groups": [
+          {
+            "lr": 1.000000049560616e-06,
+            "weight_decay": 0.39999999993533236,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 1.000000049560616e-06,
+            "weight_decay": 0.39999999993533236,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 1.000000049560616e-06,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 1.000000049560616e-06,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.31980561320019807,
+        "pooled_effective_rank": 17.39168837808182,
+        "pooled_top_eigenvalue_fraction": 0.14504515417853536,
+        "same_position_between_image_rms": 0.7532252984796113,
+        "within_image_spatial_rms": 0.7805997258172281,
+        "mean_feature_norm": 24.477975503841137,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.10477017971892326,
+          "wrong_image_context_loss": 0.47788212904994226,
+          "wrong_image_penalty": 0.373111949331019,
+          "leave_one_image_out_position_template_loss": 0.325178206673128,
+          "prediction_change_rms": 1.04684752599702,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.10225531968932886,
+          "background_loss": 0.1058184333336731
+        },
+        "oracle": {
+          "normal_loss": 0.10488804152430778,
+          "wrong_image_context_loss": 0.47465257032420305,
+          "wrong_image_penalty": 0.3697645287998953,
+          "leave_one_image_out_position_template_loss": 0.3251352444552956,
+          "prediction_change_rms": 1.0526104160429295,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.10172324245783497,
+          "background_loss": 0.10708256855958063
+        },
+        "envelope": {
+          "normal_loss": 0.10850559439112385,
+          "wrong_image_context_loss": 0.4702053627989099,
+          "wrong_image_penalty": 0.36169976840778606,
+          "leave_one_image_out_position_template_loss": 0.3219841149049445,
+          "prediction_change_rms": 1.0436885462812746,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.09850273796935961,
+          "background_loss": 0.11628348984827419
+        },
+        "anatomy": {
+          "normal_loss": 0.08951474958121253,
+          "wrong_image_context_loss": 0.4864097068299695,
+          "wrong_image_penalty": 0.39689495724875695,
+          "leave_one_image_out_position_template_loss": 0.32073674964097637,
+          "prediction_change_rms": 1.0967128665527026,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.08957359199704612,
+          "background_loss": 0.08853471900026004
+        },
+        "cover_legacy": {
+          "normal_loss": 0.10811234036578546,
+          "wrong_image_context_loss": 0.4780519770317502,
+          "wrong_image_penalty": 0.3699396366659647,
+          "leave_one_image_out_position_template_loss": 0.3222964054630143,
+          "prediction_change_rms": 1.0516806049974756,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.10146090250356861,
+          "background_loss": 0.112456853476494
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.09476818207227868,
+          "wrong_image_context_loss": 0.4796537601441557,
+          "wrong_image_penalty": 0.38488557807187707,
+          "leave_one_image_out_position_template_loss": 0.3246038453425335,
+          "prediction_change_rms": 1.0586471499263843,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.09035244516613875,
+          "background_loss": 0.09785719983557838
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.11331628095502425,
+          "wrong_image_context_loss": 0.4626402496057736,
+          "wrong_image_penalty": 0.3493239686507494,
+          "leave_one_image_out_position_template_loss": 0.32353007680755325,
+          "prediction_change_rms": 1.0256761147206273,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.11337665279628709,
+          "background_loss": 0.11327147810436536
+        }
+      },
+      "backward": [
+        {
+          "loss": 0.07566507160663605,
+          "amp": false,
+          "diagnostic_loss_scale": 1.0,
+          "images": 3,
+          "target_k": 40,
+          "encoder_grad_norm": 4.0361060031927956,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.40134555718881054,
+          "predictor_zero_grad_parameters": []
+        },
+        {
+          "loss": 0.0755726620554924,
+          "amp": true,
+          "diagnostic_loss_scale": 128.0,
+          "images": 3,
+          "target_k": 40,
+          "encoder_grad_norm": 3.9888885698851544,
+          "encoder_zero_grad_parameters": [],
+          "predictor_grad_norm": 0.40058845472489213,
+          "predictor_zero_grad_parameters": []
+        }
+      ],
+      "historical_transformer_parity": null
+    },
+    "oracle100": {
+      "checkpoint": {
+        "path": "D:\\jepa_phase0\\checkpoints_hf\\oracle-anatomical-100ep\\jepa_patch_oracle-ep100.pth.tar",
+        "bytes": 1507537861,
+        "mtime_ns": 1786690833337892900,
+        "model_components_sha256": "3b165dc1749ba1c75a5267aa2fc58e6d8f7d79aba32ed73c5cd00fa7fdb32262",
+        "epoch": 100,
+        "lr": 1e-06,
+        "loss": 0.13031900953302716,
+        "batch_size": 64,
+        "scaler": {
+          "scale": 1048576.0,
+          "growth_factor": 2.0,
+          "backoff_factor": 0.5,
+          "growth_interval": 2000,
+          "_growth_tracker": 1282
+        },
+        "adam_step_min": 117153.0,
+        "adam_step_max": 117153.0,
+        "optimizer_groups": [
+          {
+            "lr": 1e-06,
+            "weight_decay": 0.4,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 1e-06,
+            "weight_decay": 0.4,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 1e-06,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          },
+          {
+            "lr": 1e-06,
+            "weight_decay": 0.0,
+            "eps": 1e-08,
+            "betas": [
+              0.9,
+              0.999
+            ]
+          }
+        ]
+      },
+      "features": {
+        "pooled_centered_rms": 0.36178365299531895,
+        "pooled_effective_rank": 19.42323523427625,
+        "pooled_top_eigenvalue_fraction": 0.11777396954277544,
+        "same_position_between_image_rms": 0.7968808407117532,
+        "within_image_spatial_rms": 0.7923717939574341,
+        "mean_feature_norm": 25.150671706272664,
+        "n_images": 24,
+        "rank_ceiling": 23
+      },
+      "cross_task": {
+        "random": {
+          "normal_loss": 0.11295656764510864,
+          "wrong_image_context_loss": 0.5048032283695678,
+          "wrong_image_penalty": 0.39184666072445923,
+          "leave_one_image_out_position_template_loss": 0.342054030932367,
+          "prediction_change_rms": 1.0591942749711643,
+          "target_slots": 3756,
+          "tissue_target_slots": 1105,
+          "tissue_loss": 0.09827341019972417,
+          "background_loss": 0.11907685771570459
+        },
+        "oracle": {
+          "normal_loss": 0.1179788726227233,
+          "wrong_image_context_loss": 0.4987993006960462,
+          "wrong_image_penalty": 0.3808204280733229,
+          "leave_one_image_out_position_template_loss": 0.3380686303162283,
+          "prediction_change_rms": 1.0861994388271519,
+          "target_slots": 3756,
+          "tissue_target_slots": 1538,
+          "tissue_loss": 0.11807258137331013,
+          "background_loss": 0.117913893335797
+        },
+        "envelope": {
+          "normal_loss": 0.11950279678157566,
+          "wrong_image_context_loss": 0.49409353078260654,
+          "wrong_image_penalty": 0.3745907340010309,
+          "leave_one_image_out_position_template_loss": 0.3330699221188395,
+          "prediction_change_rms": 1.066194244050454,
+          "target_slots": 3756,
+          "tissue_target_slots": 1643,
+          "tissue_loss": 0.10642584200383902,
+          "background_loss": 0.12967101102664016
+        },
+        "anatomy": {
+          "normal_loss": 0.09512048722293305,
+          "wrong_image_context_loss": 0.5220015122904442,
+          "wrong_image_penalty": 0.4268810250675112,
+          "leave_one_image_out_position_template_loss": 0.33038398705927347,
+          "prediction_change_rms": 1.1363284077236226,
+          "target_slots": 1536,
+          "tissue_target_slots": 1449,
+          "tissue_loss": 0.09559483847884864,
+          "background_loss": 0.08722008527095976
+        },
+        "cover_legacy": {
+          "normal_loss": 0.13198961126067624,
+          "wrong_image_context_loss": 0.48731624456251454,
+          "wrong_image_penalty": 0.3553266333018383,
+          "leave_one_image_out_position_template_loss": 0.33655565852523484,
+          "prediction_change_rms": 1.039686980681146,
+          "target_slots": 3756,
+          "tissue_target_slots": 1484,
+          "tissue_loss": 0.11933258468300265,
+          "background_loss": 0.1402567888316567
+        },
+        "cover_v2_guard": {
+          "normal_loss": 0.11737626410189607,
+          "wrong_image_context_loss": 0.49840097760938357,
+          "wrong_image_penalty": 0.38102471350748746,
+          "leave_one_image_out_position_template_loss": 0.3383964713904868,
+          "prediction_change_rms": 1.065518602480548,
+          "target_slots": 3756,
+          "tissue_target_slots": 1546,
+          "tissue_loss": 0.10768570625650929,
+          "background_loss": 0.12415526972586348
+        },
+        "envelope_original_guide": {
+          "normal_loss": 0.13605968023256595,
+          "wrong_image_context_loss": 0.4853880254430766,
+          "wrong_image_penalty": 0.34932834521051065,
+          "leave_one_image_out_position_template_loss": 0.33615162475500754,
+          "prediction_change_rms": 1.0421871555550544,
+          "target_slots": 3756,
+          "tissue_target_slots": 1600,
+          "tissue_loss": 0.13320425444864667,
+          "background_loss": 0.13817873461766372
+        }
+      },
+      "backward": [],
+      "historical_transformer_parity": null
+    }
+  },
+  "elapsed_seconds": 95.20293000002857,
+  "peak_gpu_bytes": 1802387968,
+  "backward_calls": 12,
+  "optimizer_updates": 0,
+  "limitations": [
+    "24 fixed Training images from 24 selected volume files; no clinical labels or Test metrics.",
+    "Production batch64 masks preserved, but model forwards use smaller batches; no batch normalization exists.",
+    "Wrong-image perturbation is a diagnostic distribution shift, not a counterfactual pretraining campaign.",
+    "Feature rank cannot establish clinical usefulness or rule out all representation degeneration.",
+    "Mask policies other than original-guide ENVELOPE use the common new guide in the earlier replay.",
+    "Model-component digest binds encoder/predictor/teacher weights, not the whole optimizer file.",
+    "No optimizer steps, EMA updates, new checkpoints, or sustained pretraining."
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "scope": "Bounded primary-source review beyond DSeq-JEPA; research-agent findings, not a causal diagnosis of the OCT runs",
+  "review_date": "2026-09-10",
+  "research_agent": "480c5afd-5b78-4d67-ad85-5e08c9574cf6",
+  "studies": [
+    {
+      "title": "US-JEPA: A Joint Embedding Predictive Architecture for Ultrasound",
+      "version": "2602.19322v2",
+      "version_date": "2026-09-07",
+      "url": "https://arxiv.org/pdf/2602.19322v2",
+      "objective": "Latent patch Smooth-L1 prediction with a frozen URFM teacher and SALT adaptation",
+      "guide": "Deterministic valid-ultrasound-content envelope, not organ segmentation or SAM",
+      "intervention": "Region conditioning changes both context and target support; intensity rescaling is also region-conditioned",
+      "source_locations": ["sections 4.1-4.4, pages 4-5", "Table 2, page 7", "Appendix B.2, page 14", "Table C.1, page 15"],
+      "metric": "Downstream macro-F1 percent; means across five probe seeds, not established independent pretraining replications",
+      "comparisons": [
+        {"task": "AUL", "US_JEPA": 69.6, "USrc_JEPA": 67.6},
+        {"task": "BUSBRA", "US_JEPA": 73.8, "USrc_JEPA": 76.0},
+        {"task": "BUTTERFLY", "US_JEPA": 90.8, "USrc_JEPA": 91.5},
+        {"task": "FATTY LIVER", "US_JEPA": 82.5, "USrc_JEPA": 89.2},
+        {"task": "GBCU", "US_JEPA": 67.0, "USrc_JEPA": 70.2},
+        {"task": "MMOTU", "US_JEPA": 52.2, "USrc_JEPA": 46.8},
+        {"task": "POCUS", "US_JEPA": 93.1, "USrc_JEPA": 92.5},
+        {"task": "TN5000", "US_JEPA": 73.1, "USrc_JEPA": 70.8}
+      ],
+      "interpretation": "Genuine medical JEPA guidance gains on four tasks and losses on four. Does not isolate target placement at matched delivered token budgets."
+    },
+    {
+      "title": "What to Hide from Your Students: Attention-Guided Masked Image Modeling",
+      "short_name": "AttMask",
+      "venue": "ECCV 2022",
+      "version": "2203.12719v2",
+      "url": "https://arxiv.org/pdf/2203.12719v2",
+      "doi": "10.1007/978-3-031-20056-4_18",
+      "objective": "iBOT dense teacher-student feature-distribution prediction plus global/multi-crop distillation; not pixel reconstruction or canonical I-JEPA-only regression",
+      "guide": "EMA teacher CLS-to-patch attention",
+      "intervention": "Highest-attention versus random selected patch targets with the same nominal mask-ratio distribution",
+      "primary_source": "Table 1, page 10; 20% ImageNet, ViT-S/16, 100 epochs",
+      "metric": "ImageNet top-1 percent",
+      "comparisons": [
+        {"mask": "random patches", "ratio": "10-50%", "knn": 47.8, "linear": 56.7},
+        {"mask": "AttMask-High", "ratio": "10-50%", "knn": 49.7, "linear": 57.9},
+        {"mask": "AttMask-Low", "ratio": "10-50%", "knn": 44.0, "linear": 53.4},
+        {"mask": "random patches", "ratio": "75%", "knn": 47.3, "linear": 55.5}
+      ],
+      "additional_controls": [
+        {"source": "Table A13, page 21", "scope": "100% ImageNet, 300 epochs", "iBOT_linear": 77.4, "AttMask_linear": 77.5},
+        {"source": "Table A16, page 23", "scope": "AttMask-High increasing ratio range", "knn_10_to_50_percent": 49.7, "knn_10_to_70_percent": 48.5}
+      ],
+      "interpretation": "Relatively clean positive evidence for important-target selection in latent prediction. Effect depends on masking strength and training regime; global distillation remains different from this OCT pipeline."
+    },
+    {
+      "title": "Causal-JEPA: Learning World Models through Object-Level Latent Masking",
+      "version": "2602.11389v2",
+      "version_date": "2026-05-28",
+      "url": "https://arxiv.org/pdf/2602.11389v2",
+      "objective": "Predict masked history slots and future object slots with L2, using a frozen object-centric encoder",
+      "guide": "VideoSAUR or SAVi object slots, not SAM",
+      "context": "Earliest identity anchor and other visible object histories are retained",
+      "source": "Appendix K and Table A4, pages 21-23",
+      "metric": "CLEVRER counterfactual per-question accuracy percent",
+      "matched_budget_comparisons": [
+        {"budget": "2/7 objects versus 28% latent tokens", "object": 50.25, "random_tokens": 65.82, "tube": 61.71},
+        {"budget": "4/7 objects versus 56% latent tokens", "object": 68.81, "random_tokens": 68.88, "tube": 69.81}
+      ],
+      "positive_control": {
+        "source": "Table 1, pages 5-6",
+        "encoder": "VideoSAUR",
+        "unmasked": 47.68,
+        "four_objects_masked": 68.81
+      },
+      "interpretation": "Masking can strongly help a latent world model without object-aware masks dominating budget-matched alternatives. Frozen-encoder dynamics learning is not OCT encoder pretraining."
+    },
+    {
+      "title": "A-JEPA: Joint-Embedding Predictive Architecture Can Listen",
+      "version": "2311.15830v3",
+      "version_date": "2024-01-11",
+      "url": "https://arxiv.org/pdf/2311.15830v3",
+      "objective": "L2 latent spectrogram prediction with an EMA teacher",
+      "guide": "Time/frequency coordinate prior, not learned semantic saliency",
+      "intervention": "Curriculum changes target count/geometry and expands context exclusion along time/frequency bands",
+      "source": "Table 3, page 6; Appendix B, page 12",
+      "metric": "AudioSet-2M mAP, ViT-B",
+      "random_block": 47.8,
+      "random_to_time_frequency": 48.6,
+      "inverse_curriculum": 46.3,
+      "interpretation": "Positive structural-curriculum control with a negative reversed curriculum; not a selection-only semantic-guidance result."
+    }
+  ],
+  "excluded_conflations": [
+    {
+      "method": "Mask-JEPA",
+      "url": "https://arxiv.org/pdf/2407.10733v1",
+      "reason": "Uses random feature-map patches in a mask-classification architecture; its name does not imply SAM-generated pretraining masks. Includes a pixel denoising objective."
+    },
+    {
+      "method": "DMT-JEPA",
+      "url": "https://arxiv.org/pdf/2405.17995v1",
+      "reason": "Keeps I-JEPA block masking and changes semantic target construction/aggregation, not anatomical mask locations."
+    }
+  ],
+  "sam_search": {
+    "result": "No genuine SAM-generated-mask plus JEPA pretraining method verified in this bounded search",
+    "limitation": "Not evidence that none exists; an additional OpenReview lead was inaccessible."
+  },
+  "overall_limit": "These studies motivate hypotheses and demonstrate both positive guidance effects and conditional failures. None determines the cause of the local COVER or ANATOMY AUC trajectory."
+}

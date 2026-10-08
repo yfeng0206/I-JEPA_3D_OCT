@@ -195,6 +195,93 @@
         "figures/fig_delivered_task_token_maps.pdf": "fc820c751befece1ab57a61284eedb224a196b8b463e7c1e4f13704267285ab6",
         "figures/fig_delivered_task_token_maps.svg": "b38c2590306f389b21aacadca11e8e457a8f41b424c5d37775aaf27a51fc37cd"
       }
+    },
+    "figures/fig_oct_target_selection_cr.png": {
+      "script": "autopilot/investigations/submission_refresh_20260910/figure/generate_external_target_selection.py",
+      "script_sha256_at_export": "9028c6d9b849f54528532c322f4849e2053203b907ff8414ac443c80ec01c5cf",
+      "exported_filename": "fig_oct_target_selection.png",
+      "inputs": [
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_figure1_original.png",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_primary_license.html",
+        "src/masks/multiblock.py",
+        "src/masks/curriculum.py",
+        "configs/patch_oracle_anatomical.yaml"
+      ],
+      "evidence_manifest": "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_target_selection.evidence.json",
+      "evidence_manifest_sha256": "34cd8310c4bf8ef957c09e5a4f6b9614cbd88e6de0ce2533af3c612a7a7b18dd",
+      "expected_output_sha256": "bf0549ea716607846262b13ad34806e65272cdbf7ee703b51239fc2560d61888",
+      "refresh_policy": "camera-ready re-render with the trained CENTROID band (lateral fraction 0.6, samplers pinned to 86ae882); changed outputs or caption require renewed review",
+      "evidence_scope": "Attributed CC BY 4.0 OCTDL Figure 1 crop, not FairVision. RANDOM and intensity-CENTROID masks from the trained sampler configuration, a shared input and matched block sizes. RANDOM masks are byte-identical to the submitted figure; the CENTROID guide and union change with the trained band width. One illustrative replay; no historical-batch reconstruction, cohort statistic or performance claim.",
+      "license": "CC BY 4.0",
+      "license_source": "https://arxiv.org/abs/2312.08255v3",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "clinical_image_source": "Publicly published external OCTDL figure crop; no private FairVision image",
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_oct_target_selection_cr.pdf": "b0b00e69e52373e50a594f975800b84b73faac7bbca7b49b0ed1f5170dd4958d",
+        "figures/fig_oct_target_selection_cr.svg": "880b9742c0436e8f0ef2215cab36f6ce88d8bb38d7dd99dc81049c40c2f0d8c9"
+      }
+    },
+    "figures/fig_oct_jepa_comparison_final_cr.png": {
+      "script": "autopilot/investigations/submission_refresh_20260910/comparison_final/generate_comparison_final.py",
+      "script_sha256_at_export": "e3db377e2dd5d58fdf12f6361da90a970f89888126b774bd46ae83a79144abd9",
+      "exported_filename": "fig_oct_jepa_comparison_final.png",
+      "inputs": [
+        "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_target_selection.evidence.json",
+        "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_jepa_comparison.evidence.json",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_figure1_original.png"
+      ],
+      "evidence_manifest": "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_jepa_comparison_final.evidence.json",
+      "evidence_manifest_sha256": "19f6205b8e13b310cf799dcec9d0ba7ab84483a320da5542c22d3be166604279",
+      "expected_output_sha256": "14307f0a7f43f1a9f11b544fb54932773ac4f7a2da9e2e9526275323cc8b0ebc",
+      "refresh_policy": "camera-ready re-render chained from the staged Figure 1 masks; changed outputs or caption require renewed review",
+      "evidence_scope": "Same licensed OCTDL crop and exact staged RANDOM/CENTROID masks (trained band width). Symmetric I-JEPA pathways with positional queries, full-image EMA teachers, stopped-gradient targets and parallel prediction. Layout unchanged from the submitted figure; no new sampling claim, ranking, sequential predictor or performance values.",
+      "license": "CC BY 4.0",
+      "license_source": "https://arxiv.org/abs/2312.08255v3",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "clinical_image_source": "Previously reviewed public OCTDL figure crop; no private FairVision image",
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_oct_jepa_comparison_final_cr.pdf": "e2f06f9ceec069661e99af48d7d16d4249ab7e859eff07afa2ce2b34f59d2681",
+        "figures/fig_oct_jepa_comparison_final_cr.svg": "1771b10741cca052f9acf357cf0e4b7a92aeacb172489304186b907eeed3d8f1"
+      }
+    },
+    "figures/fig_oct_all_strategies.png": {
+      "script": "autopilot/investigations/submission_refresh_20260910/figure/generate_all_strategies.py",
+      "script_sha256_at_export": "e7713307bf60c7858148f3012e315bff2b0124e0ee51dd9492b53d62d65bf076",
+      "inputs": [
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_figure1_original.png",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_primary_license.html",
+        "autopilot/investigations/submission_refresh_20260910/figure/produce_external_guides.py",
+        "autopilot/investigations/camera_ready_20261008/figures_staging/external_guides/octdl_crop_guides.npz",
+        "autopilot/investigations/camera_ready_20261008/figures_staging/external_guides/octdl_crop_guides.json",
+        "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_target_selection.evidence.json",
+        "src/masks/multiblock.py",
+        "src/masks/curriculum.py",
+        "src/masks/anatomy.py",
+        "src/masks/cover.py",
+        "configs/patch_oracle_anatomical.yaml",
+        "configs/patch_mirage_envelope.yaml",
+        "configs/patch_anatomy_v2.yaml",
+        "configs/patch_cover_f021_ep25.yaml"
+      ],
+      "evidence_manifest": "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_all_strategies.evidence.json",
+      "evidence_manifest_sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7",
+      "expected_output_sha256": "015939ce8ee2818258b86a897bdb74f1b44df92e05e673afcb8da1c400b3f886",
+      "refresh_policy": "camera-ready illustration (reviewer GZo3); changed outputs or caption require renewed review",
+      "evidence_scope": "All five strategies on the same attributed CC BY 4.0 OCTDL crop, not FairVision: final target unions from the trained sampler configurations with matched block sizes and a fixed seed, plus each strategy's placement-guide outline. MIRAGE guides were produced on this crop by the training guide pipelines (CPU fp32); MIRAGE was not trained on OCTDL, so the outlines are not a validated segmentation. RANDOM and CENTROID masks equal the staged Figure 1. No cohort statistic or performance claim.",
+      "license": "CC BY 4.0",
+      "license_source": "https://arxiv.org/abs/2312.08255v3",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "clinical_image_source": "Publicly published external OCTDL figure crop; no private FairVision image",
+      "subject_identifiers_rendered": false,
+      "companions": {
+        "figures/fig_oct_all_strategies.pdf": "2886ec25fd432a3ebb96381453ae3ca5e3d334595285b7b6bf27b840fc244e35",
+        "figures/fig_oct_all_strategies.svg": "e9b12ca1685972656a419f4bdc56af55071794306dae3618fa8ade013c7c353b"
+      }
     }
   },
   "fixed_inputs": {},

@@ -140,6 +140,8 @@ FILE_MAP = {
     "main_submission.tex": "main.tex",
     "references.bib": "references.bib",
     "neurips_2026.sty": "neurips_2026.sty",
+    # Camera-ready workshop configuration; it loads neurips_2026.sty in final mode.
+    "genai4health_2026.sty": "genai4health_2026.sty",
     # A Word rendering for collaborators who do not write LaTeX. Named so it
     # cannot be mistaken for the source: Overleaf compiles main.tex, and edits
     # made in Word have to be carried back by hand. Rebuild it with
@@ -443,8 +445,15 @@ def verify_local_release(paper, manifest):
     if manifest.get("ALL_PASS") is not True or not manifest.get("checks"):
         raise ValueError("manifest is not a successful release")
     required = {"immutable_figure_inputs", "no_placeholders", "all_graphics_present", "manuscript", "numeric_evidence",
-                "numeric_review_input", "citation_metadata", "compiles_standalone", "page_limit", "anonymous",
+                "numeric_review_input", "citation_metadata", "compiles_standalone", "page_limit",
                 "no_undefined_refs", "docx_generated", "docx_complete"}
+    mode = manifest.get("mode", "submission")
+    if mode == "camera_ready":
+        required |= {"authors_present", "no_local_paths", "camera_ready_template"}
+    elif mode == "submission":
+        required.add("anonymous")
+    else:
+        raise ValueError("unknown release mode: %r" % mode)
     if not required.issubset(manifest["checks"]) or not all(
             manifest["checks"][name] is True for name in required):
         raise ValueError("required release gates are missing or failed")

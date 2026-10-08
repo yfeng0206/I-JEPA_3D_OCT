@@ -19,7 +19,7 @@ Steps 3 and 4 are the slow ones (bootstrap resampling), so `--fast` skips the
 subgroup re-run when no new probe affects it.
 
 Usage:
-  python refresh_all.py [--fast] [--out <zip path>]
+  python refresh_all.py [--fast] [--camera-ready] [--out <zip path>]
 """
 import argparse
 import os
@@ -54,13 +54,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fast", action="store_true",
                     help="skip the subgroup re-run (slow) when no subgroup input changed")
-    ap.add_argument("--out", default=r"C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_FINAL.zip")
+    ap.add_argument("--out", help="ZIP path (default depends on --camera-ready)")
+    ap.add_argument("--camera-ready", action="store_true",
+                    help="build with the camera-ready gates (authors present, 10 main pages)")
     ap.add_argument("--staging-root")
     ap.add_argument("--expected-docx-sha256",
                     help="reviewed current Word hash when adopting an untracked Word copy")
     ap.add_argument("--citation-record", help="persisted, title-matched authority records")
     ap.add_argument("--review-file", help="explicit numeric binding/review input")
     a = ap.parse_args()
+    if not a.out:
+        a.out = (r"C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_camera_ready.zip" if a.camera_ready
+                 else r"C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_FINAL.zip")
 
     t0 = time.time()
     run("1/8 integrate fp32 + COVER probes", [PY, os.path.join(HERE, "p3b_integrate_fp32.py")])
@@ -95,6 +100,8 @@ def main():
         numeric_command += ["--review-file", a.review_file]
     run("6d/8 number provenance check (no cross-arm attribution)", numeric_command)
     command = [PY, os.path.join(HERE, "p13_build_zip.py"), "--out", a.out]
+    if a.camera_ready:
+        command.append("--camera-ready")
     for name in ("staging_root", "expected_docx_sha256", "citation_record", "review_file"):
         if getattr(a, name):
             command += ["--" + name.replace("_", "-"), getattr(a, name)]

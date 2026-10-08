@@ -88,6 +88,22 @@ def compile_aux(paper, work, snapshot=None):
     return aux
 
 
+def normalize_author(body):
+    """Keep only author names for the Word front matter and creator metadata.
+
+    Affiliations, e-mail addresses, \\thanks notes and \\And/\\AND layout stay in
+    the PDF. An anonymous (empty) or placeholder-only block yields an empty
+    author, so the document metadata stays empty.
+    """
+    match = re.search(r"\\author\s*\{", body)
+    if not match:
+        return body
+    _, end = assets.group(body, match.end() - 1)
+    names = [entry for entry in assets.author_entries(body)
+             if re.sub(r"\\[A-Za-z]+\*?|[{}\s~]", "", entry)]
+    return body[:match.start()] + r"\author{" + r" \and ".join(names) + "}" + body[end:]
+
+
 def build(paper, out, aux=None, staging_root=None, expected_docx_sha256=None):
     import pypandoc
     paper, out = Path(paper).resolve(), Path(out).resolve()
@@ -108,6 +124,7 @@ def build(paper, out, aux=None, staging_root=None, expected_docx_sha256=None):
     body = re.sub(r"\\title\{(.*?)\}",
                   lambda m: "\\title{" + re.sub(r"\\\\\s*", " ", m[1]).strip() + "}",
                   body, count=1, flags=re.S)
+    body = normalize_author(body)
     generated, body = render_tikz(body, work)
     banner = (r"\begin{center}\textbf{Working copy for comment and editing.}\\"
               r"The LaTeX source is authoritative. Generated "

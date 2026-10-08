@@ -165,6 +165,11 @@ class Evidence:
                 if not 0 <= args[0] <= 1:
                     raise ValueError("p-value outside [0, 1]")
                 value = "$<$0.0001" if args[0] < 1e-4 else "%.4f" % args[0]
+            elif op == "pvalue3":
+                # Three-decimal display of p3b_integrate_fp32.format_p: never 0.000.
+                if not 0 <= args[0] <= 1:
+                    raise ValueError("p-value outside [0, 1]")
+                value = "$<$0.001" if args[0] < 1e-3 else "%.3f" % args[0]
             elif op == "tex_scientific":
                 digits = expr.get("digits", 2)
                 if type(digits) is not int or not 1 <= digits <= 8 or len(args) != 1:
@@ -638,8 +643,17 @@ def table_bindings(rel, source, evidence):
                     raise ValueError("ambiguous/missing fp32 row")
                 i = matches[0]
                 for col, field, pattern in ((1, "epoch", "%d"), (2, "auc_fp16", "%.6f"), (3, "auc_fp32", "%.6f"),
-                                            (4, "delta_fp32_minus_fp16", "%+.6f"), (5, "delong_p", "%.3f")):
+                                            (4, "delta_fp32_minus_fp16", "%+.6f")):
                     specs[col] = fmt(pattern, ref(src, "rows", i, field))
+                # Current generator prints "$<$0.001"; the v9 table printed the same p rounded
+                # to "0.000". Either display must still equal the evidence value.
+                p_ref = ref(src, "rows", i, "delong_p")
+                if len(parts) > 5 and "$<$" in parts[5]:
+                    if not evidence.evaluate(p_ref) < 1e-3:
+                        errors.append("%s: '<' display for p >= 0.001 (%s epoch %d)" % (rel, arm, ep))
+                    specs[5] = operation("pvalue3", p_ref)
+                else:
+                    specs[5] = fmt("%.3f", p_ref)
                 seen.append((arm, ep))
             elif rel == "auto/table_labeleff.tex" and re.fullmatch(r"\d+\\%", parts[0].strip()):
                 frac = float(parts[0].strip().replace(r"\%", "")) / 100

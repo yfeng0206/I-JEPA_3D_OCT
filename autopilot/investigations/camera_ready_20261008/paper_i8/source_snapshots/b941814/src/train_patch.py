@@ -1,0 +1,1122 @@
+"""
+Patch-level I-JEPA pretraining on OCT slices.
+
+Each OCT volume is sliced into individual 2-D images (256x256), which are
+treated as independent samples for standard I-JEPA training with 2-D block
+masking on the 16x16 patch grid.
+
+Usage:
+    torchrun --nproc_per_node=4 train_patch.py --config configs/patch_vitb16_ep100.yaml
+
+Compatible with PyTorch 1.13.1 and Python 3.8.
+"""
+
+import argparse
+import copy
+import hashlib
+import json
+import math
+import os
+import random
+import sys
+import time
+
+import numpy as np
+import torch
+import torch.distributed as dist
+import torch.nn.functional as F
+from torch.cuda.amp import GradScaler, autocast
+from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.utils.data import DataLoader, ConcatDataset
+from torch.utils.data.distributed import DistributedSampler
+
+import yaml
+
+# Ensure the project root is on the path so `src.*` imports work when
+# invoked as ``python src/train_patch.py`` or via torchrun.
+_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _project_root not in sys.path:
+    sys.path.insert(0, _project_root)
+
+from src.helper import (
+    init_patch_model, init_opt, load_checkpoint, save_checkpoint,
+    capture_rng_state, optimizer_step, update_ema,
+)
+from src.masks.multiblock import MaskCollator
+from src.masks.curriculum import CurriculumMaskGenerator, MirageMaskCollator
+from src.masks.utils import apply_masks
+from src.datasets.oct_slices import OCTSliceDataset
+from src.datasets.oct_slices_guided import GuidedOCTSliceDataset
+from src.transforms import make_transforms, make_paired_transforms
+from src.utils.distributed import init_distributed
+from src.utils.logging import CSVLogger, AverageMeter, gpu_timer
+from src.utils.tensors import repeat_interleave_batch
+
+
+# ---------------------------------------------------------------------------
+# Blob upload helper (best-effort, non-fatal)
+# ---------------------------------------------------------------------------
+
+import threading
+
+_upload_threads = []  # Track background upload threads
+
+
+def _upload_worker(local_path, blob_prefix, log_fn):
+    """Background worker for blob upload."""
+    try:
+        from azure.identity import ManagedIdentityCredential
+        from azure.storage.blob import ContainerClient
+        account = os.environ['BLOB_ACCOUNT']
+        container_name = os.environ['BLOB_CONTAINER']
+        cred = ManagedIdentityCredential()
+        container = ContainerClient(
+            account_url='https://%s.blob.core.windows.net' % account,
+            container_name=container_name,
+            credential=cred,
+        )
+        fname = os.path.basename(local_path)
+        blob_name = '%s/%s' % (blob_prefix, fname)
+        size = os.path.getsize(local_path)
+        log_fn('  Uploading %s (%s bytes) -> %s' % (fname, format(size, ','), blob_name))
+        with open(local_path, 'rb') as f:
+            container.upload_blob(blob_name, f, overwrite=True)
+        log_fn('  Upload OK: %s' % fname)
+    except Exception as e:
+        log_fn('  Upload skipped: %s' % e)
+
+
+def upload_to_blob(local_path, blob_prefix, log_fn=print, blocking=False):
+    """Upload a file to Azure Blob Storage in a background thread.
+
+    Non-blocking by default so DDP rank 0 is not held up while other
+    ranks wait at the next collective.  Use blocking=True for final
+    uploads where we need to ensure completion before exit.
+    """
+    if blocking:
+        _upload_worker(local_path, blob_prefix, log_fn)
+    else:
+        t = threading.Thread(
+            target=_upload_worker,
+            args=(local_path, blob_prefix, log_fn),
+            daemon=True,
+        )
+        t.start()
+        _upload_threads.append(t)
+
+
+# ---------------------------------------------------------------------------
+# Momentum scheduler for EMA
+# ---------------------------------------------------------------------------
+
+def momentum_schedule(base_value, final_value, num_steps):
+    """Yield a cosine schedule from base_value to final_value over num_steps."""
+    for step in range(num_steps):
+        progress = step / max(1, num_steps - 1)
+        value = final_value - (final_value - base_value) * (
+            math.cos(math.pi * progress) + 1.0
+        ) / 2.0
+        yield value
+
+
+def accumulation_window_size(iteration, num_batches, accum_steps):
+    """Actual microbatch count of the current (possibly partial) window."""
+    if accum_steps < 1 or not 0 <= iteration < num_batches:
+        raise ValueError("Invalid accumulation window")
+    return min(accum_steps, num_batches - (iteration // accum_steps) * accum_steps)
+
+
+def jepa_forward_loss(encoder, predictor, target_encoder, images, masks_enc,
+                      masks_pred, use_amp=False, amp_target=False, h_full=None):
+    """Production selected-token Smooth-L1 path, also used by bounded diagnostics."""
+    with torch.no_grad():
+        if h_full is None:
+            with autocast(enabled=amp_target):
+                h_full = target_encoder(images)
+            h_full = F.layer_norm(h_full.float(), (h_full.size(-1),))
+        targets = apply_masks(h_full, masks_pred)
+        targets = repeat_interleave_batch(targets, images.size(0), len(masks_enc))
+    with autocast(enabled=use_amp):
+        predictions = predictor(encoder(images, masks_enc), masks_enc, masks_pred)
+        loss = F.smooth_l1_loss(predictions, targets)
+    return loss, predictions, targets
+
+
+def format_cover_stats(stats):
+    """Keep policy-complement diagnostics distinct from delivered context."""
+    message = (
+        '    [COVER] hidden=%.3f  visible_cells=%.1f  floor_ok=%.3f  '
+        'stats_scope=policy_target_complement  transition=%.2f  random=%.2f'
+        % (stats.get('cover_hidden_frac', 0.0),
+           stats.get('cover_visible_cells', 0.0),
+           stats.get('cover_floor_ok', 0.0),
+           stats.get('cover_transition_blocks', 0.0),
+           stats.get('cover_random_blocks', 0.0)))
+    fields = ('delivered_context_floor_satisfied', 'delivered_context_floor_unsatisfied',
+              'delivered_context_interventions')
+    if all(field in stats for field in fields):
+        message += ('  delivered_context_floor_satisfied=%d  '
+                    'delivered_context_floor_unsatisfied=%d  '
+                    'delivered_context_interventions=%d'
+                    % tuple(stats[field] for field in fields))
+    else:
+        message += '  delivered_context_floor=not_reported'
+    return message
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main(args):
+    # ---- Load config -------------------------------------------------------
+    with open(args.config, 'r') as f:
+        config = yaml.safe_load(f)
+
+    data_cfg = config['data']
+    mask_cfg = config['mask']
+    meta_cfg = config['meta']
+    opt_cfg = config['optimization']
+    log_cfg = config['logging']
+    resume_policy = meta_cfg.get('resume_policy', 'exact')
+    if resume_policy not in ('exact', 'fork'):
+        raise ValueError("meta.resume_policy must be 'exact' or 'fork'")
+    if resume_policy == 'fork' and not (
+            meta_cfg.get('load_checkpoint') and meta_cfg.get('read_checkpoint')):
+        raise ValueError("meta.resume_policy='fork' requires load_checkpoint and read_checkpoint")
+    if 'fork_start_epoch' in meta_cfg and resume_policy != 'fork':
+        raise ValueError("meta.fork_start_epoch requires meta.resume_policy='fork'")
+
+    # ---- Distributed setup -------------------------------------------------
+    world_size, rank = init_distributed()
+    local_rank = int(os.environ.get('LOCAL_RANK', 0))
+    if torch.cuda.is_available():
+        torch.cuda.set_device(local_rank)
+        device = torch.device('cuda', local_rank)
+    else:
+        device = torch.device('cpu')
+
+    is_main = (rank == 0)
+
+    # ---- Seeding -----------------------------------------------------------
+    # Pretraining was previously unseeded, which meant two runs differing in
+    # one config field also differed in crop draws, mask draws and dropout.
+    # That made "the arms differ only in masking" untrue and made
+    # pretraining-seed variance impossible to estimate. Rank offset keeps
+    # workers from drawing identical streams under DDP.
+    seed = int(meta_cfg.get('seed', 0))
+    run_seed = seed + rank
+    random.seed(run_seed)
+    np.random.seed(run_seed)
+    torch.manual_seed(run_seed)
+    torch.cuda.manual_seed_all(run_seed)
+
+    # ---- Output directory --------------------------------------------------
+    output_dir = log_cfg['folder']
+    write_tag = log_cfg['write_tag']
+    # Blob prefix for periodic uploads (derive from output_dir basename)
+    blob_prefix = 'ijepa-results/%s' % os.path.basename(output_dir)
+    if is_main:
+        os.makedirs(output_dir, exist_ok=True)
+
+    # ---- Logging -----------------------------------------------------------
+    csv_logger = None
+    if is_main:
+        csv_path = os.path.join(output_dir, '%s-log.csv' % write_tag)
+        csv_logger = CSVLogger(
+            csv_path,
+            'epoch', 'iteration', 'loss', 'lr', 'wd', 'ema',
+            'data_time_ms', 'forward_time_ms', 'backward_time_ms',
+            'gpu_mem_mb',
+        )
+
+    def log(msg):
+        if is_main:
+            print(msg, flush=True)
+
+    log('=' * 70)
+    log('Patch-level I-JEPA Pretraining')
+    log('  Config:     %s' % args.config)
+    log('  World size: %d' % world_size)
+    log('  Device:     %s' % device)
+    if torch.cuda.is_available():
+        log('  GPU:        %s' % torch.cuda.get_device_name(device))
+        log('  GPU memory: %.1f GB' % (torch.cuda.get_device_properties(device).total_memory / 1e9))
+    log('=' * 70)
+
+    # ---- Model -------------------------------------------------------------
+    encoder, predictor = init_patch_model(
+        device=device,
+        patch_size=mask_cfg['patch_size'],
+        crop_size=data_cfg['crop_size'],
+        model_name=meta_cfg['model_name'],
+        pred_depth=meta_cfg['pred_depth'],
+        pred_emb_dim=meta_cfg['pred_emb_dim'],
+    )
+
+    # Optionally load ImageNet pretrained weights into encoder
+    pretrained_path = meta_cfg.get('pretrained_encoder', None)
+    if pretrained_path and os.path.exists(pretrained_path):
+        log('  Loading pretrained encoder from %s ...' % pretrained_path)
+        pretrained = torch.load(pretrained_path, map_location=device)
+        pretrained_sd = pretrained.get('encoder', pretrained)
+        # Load matching keys, skip mismatched (pos_embed size differs)
+        encoder_sd = encoder.state_dict()
+        loaded, skipped = 0, 0
+        for key, value in pretrained_sd.items():
+            if key in encoder_sd and encoder_sd[key].shape == value.shape:
+                encoder_sd[key] = value
+                loaded += 1
+            else:
+                skipped += 1
+        encoder.load_state_dict(encoder_sd)
+        log('  Loaded %d keys, skipped %d (shape mismatch or missing)' % (loaded, skipped))
+
+    # Target encoder (EMA copy — also gets pretrained weights if loaded)
+    target_encoder = copy.deepcopy(encoder)
+    for p in target_encoder.parameters():
+        p.requires_grad = False
+
+    enc_params = sum(p.numel() for p in encoder.parameters())
+    pred_params = sum(p.numel() for p in predictor.parameters())
+    log('  Encoder params:   %s' % format(enc_params, ','))
+    log('  Predictor params: %s' % format(pred_params, ','))
+    if pretrained_path:
+        log('  Encoder init:     ImageNet pretrained (%s)' % pretrained_path)
+    else:
+        log('  Encoder init:     random')
+
+    # ---- Mask collator -----------------------------------------------------
+    # The uniform multiblock collator is ALWAYS instantiated — it backs the
+    # val_loader and any diagnostic eval, even when curriculum is enabled
+    # (so val loss stays comparable across R1 / R2 / R3a / R3b runs).
+    crop_size = data_cfg['crop_size']
+    mask_collator = MaskCollator(
+        input_size=(crop_size, crop_size),
+        patch_size=mask_cfg['patch_size'],
+        enc_mask_scale=tuple(mask_cfg['enc_mask_scale']),
+        pred_mask_scale=tuple(mask_cfg['pred_mask_scale']),
+        aspect_ratio=tuple(mask_cfg['aspect_ratio']),
+        nenc=mask_cfg['num_enc_masks'],
+        npred=mask_cfg['num_pred_masks'],
+        min_keep=mask_cfg['min_keep'],
+        allow_overlap=mask_cfg['allow_overlap'],
+    )
+
+    # Optional curriculum mask generator.  Drives the training masks only;
+    # val/diag always use the uniform mask_collator above.
+    curr_cfg = mask_cfg.get('curriculum', {}) or {}
+    use_curriculum = bool(curr_cfg.get('enabled', False))
+    mask_gen = None
+    if use_curriculum:
+        mask_gen = CurriculumMaskGenerator(
+            input_size=(crop_size, crop_size),
+            patch_size=mask_cfg['patch_size'],
+            enc_mask_scale=tuple(mask_cfg['enc_mask_scale']),
+            pred_mask_scale=tuple(mask_cfg['pred_mask_scale']),
+            aspect_ratio=tuple(mask_cfg['aspect_ratio']),
+            nenc=mask_cfg['num_enc_masks'],
+            npred=mask_cfg['num_pred_masks'],
+            min_keep=mask_cfg['min_keep'],
+            allow_overlap=mask_cfg['allow_overlap'],
+            # Required by mirage_anatomy: irregular anatomy targets are ragged,
+            # so each is resampled to exactly K indices rather than the whole
+            # microbatch being front-sliced down to its smallest target.
+            pred_target_k=mask_cfg.get('pred_target_k'),
+            curriculum_cfg=curr_cfg,
+            world_size=world_size,
+            rank=rank,
+            device=device,   # NCCL backend requires CUDA tensors for collectives
+        )
+        log('  Curriculum mask enabled: mode=%s T_warm=%d T_total=%d r_max=%.3f ramp=%s'
+            % (curr_cfg.get('mode'), curr_cfg.get('T_warm', 25),
+               curr_cfg.get('T_total', opt_cfg['epochs']),
+               curr_cfg.get('r_max', 0.5), curr_cfg.get('ramp_shape', 'linear')))
+        if curr_cfg.get('mode') == 'mirage_anatomy':
+            # Recorded because it changes the mask DISTRIBUTION: targets become
+            # edge-connected (4-conn 51.3% -> 100.0%) at the same cell count.
+            # A run log without this line cannot be attributed to either sampler.
+            log('  Anatomy sampler: mass_cap=%.2f tau=%.2f bridge_diagonals=%s'
+                % (curr_cfg.get('anatomy_mass_cap', 0.90),
+                   curr_cfg.get('anatomy_tau', 0.10),
+                   bool(curr_cfg.get('anatomy_bridge_diagonals', False))))
+        if curr_cfg.get('mode') == 'mirage_cover':
+            # Recorded for the same reason as the anatomy line: these knobs
+            # set how much anatomy the targets hide, which IS the experiment.
+            log('  Cover sampler: leave_frac=%.2f min_visible_frac=%.2f '
+                'min_visible_cells=%d fill=%s tau=%.2f'
+                % (curr_cfg.get('cover_leave_frac', 0.15),
+                   curr_cfg.get('cover_min_visible_frac', 0.15),
+                   int(curr_cfg.get('cover_min_visible_cells', 4)),
+                   curr_cfg.get('cover_fill',
+                                'transition' if curr_cfg.get('cover_transition', True)
+                                else 'random'),
+                   curr_cfg.get('anatomy_tau', 0.10)))
+            log('  Cover delivery: algorithm=%s context_guard=%s'
+                % (curr_cfg.get('cover_algorithm', 'legacy_v1'),
+                   bool(curr_cfg.get('cover_context_guard', False))))
+
+    # ---- Transforms --------------------------------------------------------
+    transform = make_transforms(
+        crop_size=crop_size,
+        crop_scale=tuple(data_cfg.get('crop_scale', (0.3, 1.0))),
+        gaussian_blur=data_cfg.get('use_gaussian_blur', False),
+        horizontal_flip=data_cfg.get('use_horizontal_flip', False),
+        color_distortion=data_cfg.get('use_color_distortion', False),
+        color_jitter=data_cfg.get('color_jitter_strength', 0.0),
+    )
+
+    # ---- Dataset -----------------------------------------------------------
+    data_dir = data_cfg['data_dir']
+    num_slices = data_cfg.get('num_slices', 32)
+    log('Loading dataset from %s ...' % data_dir)
+
+    # MIRAGE-guided training needs the image and its retinal envelope to share
+    # one random crop, so it uses a paired transform + guided dataset.  Every
+    # other path is untouched.
+    use_mirage = use_curriculum and curr_cfg.get('mode') in (
+        'mirage_envelope', 'mirage_anatomy', 'mirage_cover'
+    )
+    guide_dir = curr_cfg.get('mirage_guide_dir')
+    if use_mirage:
+        if not guide_dir:
+            raise ValueError(
+                "curriculum.mode=%r requires curriculum.mirage_guide_dir"
+                % curr_cfg.get('mode')
+            )
+        paired_transform = make_paired_transforms(
+            crop_size=crop_size,
+            crop_scale=tuple(data_cfg.get('crop_scale', (0.3, 1.0))),
+            gaussian_blur=data_cfg.get('use_gaussian_blur', False),
+            horizontal_flip=data_cfg.get('use_horizontal_flip', False),
+            color_distortion=data_cfg.get('use_color_distortion', False),
+            color_jitter=data_cfg.get('color_jitter_strength', 0.0),
+        )
+        log('  MIRAGE guides: %s (dilate=%d patches, occupancy_threshold=%.2f)'
+            % (guide_dir, int(curr_cfg.get('mirage_dilate_patches', 1)),
+               float(curr_cfg.get('mirage_occupancy_threshold', 0.5))))
+
+    # Training set
+    train_dir = os.path.join(data_dir, 'Training')
+    if not os.path.isdir(train_dir):
+        raise FileNotFoundError("No Training split found under %s" % data_dir)
+    slice_cache_dir = data_cfg.get('slice_cache_dir')
+
+    def _slice_cache(split):
+        """Path to the prebuilt slice cache for ``split``, if configured."""
+        if not slice_cache_dir:
+            return None
+        path = os.path.join(slice_cache_dir, split)
+        if not os.path.isdir(path):
+            raise FileNotFoundError(
+                "slice_cache_dir is set but %s does not exist. Build it with "
+                "scripts/build_slice_cache.py." % path
+            )
+        return path
+
+    if use_mirage:
+        train_dataset = GuidedOCTSliceDataset(
+            data_dir=train_dir,
+            guide_dir=os.path.join(guide_dir, 'Training'),
+            num_slices=num_slices,
+            slice_size=crop_size,
+            transform=paired_transform,
+            patch_size=mask_cfg['patch_size'],
+            dilate_patches=int(curr_cfg.get('mirage_dilate_patches', 1)),
+            # The dataset builds the channel-1 placement grid that the collator
+            # draws target-block candidates from, so it must use the SAME
+            # threshold the collator scores against.  Without this the dataset
+            # silently kept its 0.5 default while the collator used the
+            # configured value, placing blocks under one policy and measuring
+            # them under another.
+            occupancy_threshold=float(
+                curr_cfg.get('mirage_occupancy_threshold', 0.5)
+            ),
+            slice_cache=_slice_cache('Training'),
+        )
+    else:
+        train_dataset = OCTSliceDataset(
+            data_dir=train_dir, num_slices=num_slices,
+            slice_size=crop_size, transform=transform,
+            slice_cache=_slice_cache('Training'),
+        )
+    log('  Training: %d slices (%d volumes)' % (len(train_dataset), len(train_dataset.file_paths)))
+    if slice_cache_dir:
+        log('  Slice cache: %s' % slice_cache_dir)
+
+    # Validation set (for val loss tracking)
+    val_dir = os.path.join(data_dir, 'Validation')
+    val_dataset = None
+    if os.path.isdir(val_dir):
+        val_dataset = OCTSliceDataset(
+            data_dir=val_dir, num_slices=num_slices,
+            slice_size=crop_size, transform=transform,
+            slice_cache=_slice_cache('Validation'),
+        )
+        log('  Validation: %d slices (%d volumes)' % (len(val_dataset), len(val_dataset.file_paths)))
+
+    # MIRAGE masks depend only on the precomputed guide, so their (expensive)
+    # rejection sampling is pushed into the DataLoader workers where it overlaps
+    # with GPU compute instead of stalling the training loop.
+    mirage_collator = None
+    if use_mirage:
+        mirage_collator = MirageMaskCollator(
+            input_size=(crop_size, crop_size),
+            patch_size=mask_cfg['patch_size'],
+            enc_mask_scale=tuple(mask_cfg['enc_mask_scale']),
+            pred_mask_scale=tuple(mask_cfg['pred_mask_scale']),
+            aspect_ratio=tuple(mask_cfg['aspect_ratio']),
+            nenc=mask_cfg['num_enc_masks'],
+            npred=mask_cfg['num_pred_masks'],
+            min_keep=mask_cfg['min_keep'],
+            allow_overlap=mask_cfg['allow_overlap'],
+            # Required by mirage_anatomy: irregular anatomy targets are ragged,
+            # so each is resampled to exactly K indices rather than the whole
+            # microbatch being front-sliced down to its smallest target.
+            pred_target_k=mask_cfg.get('pred_target_k'),
+            curriculum_cfg=curr_cfg,
+        )
+
+    train_sampler = DistributedSampler(
+        train_dataset, num_replicas=world_size, rank=rank, shuffle=True,
+    )
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=data_cfg['batch_size'],
+        sampler=train_sampler,
+        num_workers=data_cfg['num_workers'],
+        pin_memory=data_cfg.get('pin_mem', True),
+        drop_last=True,
+        # A deeper prefetch queue absorbs the burst pattern that leaves the GPU
+        # idle ~47% of the time when the loader cannot keep up. Only valid when
+        # workers exist.
+        #
+        # persistent_workers is deliberately NOT enabled: MirageMaskCollator
+        # delivers the curriculum ramp to workers by being re-pickled when each
+        # epoch's iterator is created. Persistent workers are pickled once, so
+        # r_t would freeze at its first-epoch value for the rest of the run.
+        **({'prefetch_factor': int(data_cfg.get('prefetch_factor', 4))}
+           if data_cfg['num_workers'] > 0 else {}),
+        collate_fn=(
+            mirage_collator
+            if use_mirage
+            else (CurriculumMaskGenerator.stack_collate
+                  if use_curriculum else mask_collator)
+        ),
+    )
+
+    val_loader = None
+    if val_dataset is not None:
+        val_sampler = DistributedSampler(
+            val_dataset, num_replicas=world_size, rank=rank, shuffle=False,
+        )
+        val_loader = DataLoader(
+            val_dataset,
+            batch_size=data_cfg['batch_size'],
+            sampler=val_sampler,
+            # Validation runs between training epochs but its workers are spawned
+            # on top of the training loader's, so a high count here doubles peak
+            # commit.  On Windows that surfaced as "Couldn't open shared file
+            # mapping ... error code 1455" (commit limit) and killed a run.
+            # Validation is a small fraction of wall time, so keep this low.
+            num_workers=data_cfg.get('val_num_workers', 2),
+            pin_memory=data_cfg.get('pin_mem', True),
+            drop_last=False,
+            collate_fn=mask_collator,  # ALWAYS uniform — keeps val loss comparable
+        )
+
+    accum_steps = opt_cfg.get('accum_steps', 1)
+    # CEIL, not floor.  The training loop steps the optimizer on the final
+    # partial accumulation window too ("(itr + 1) == len(train_loader)"), so a
+    # 9375-batch epoch at accum 8 performs ceil(9375/8) = 1172 optimizer steps,
+    # not 9375 // 8 = 1171.  Using the floor here made the LR/WD/EMA
+    # fast-forward on resume fall one step behind PER COMPLETED EPOCH (~75
+    # steps by epoch 100), silently desynchronising a resumed run from an
+    # uninterrupted one.
+    iterations_per_epoch = -(-len(train_loader) // accum_steps)
+    # Run the EMA-teacher forward under autocast.  It is ~59% of the training
+    # step in fp32, so this is the single largest speed lever (1.66x overall).
+    # Off by default because every previously trained arm used fp32 targets.
+    # Validation deliberately stays fp32 so val loss remains comparable across
+    # arms (train_patch pins validation to a uniform collator for the same
+    # reason).
+    amp_target = bool(meta_cfg.get('amp_target', False))
+    log('  Target-encoder autocast (amp_target): %s%s'
+        % (amp_target,
+           '  <- targets computed in fp16; val stays fp32' if amp_target else ''))
+    iterations_per_epoch = -(-len(train_loader) // accum_steps)
+    log('  Batches per epoch: %d (%d iters x %d accum)' % (len(train_loader), iterations_per_epoch, accum_steps))
+    log('  Effective batch size: %d' % (data_cfg['batch_size'] * world_size * accum_steps))
+
+    # ---- Optimizer ---------------------------------------------------------
+    optimizer, scaler, lr_scheduler, wd_scheduler = init_opt(
+        encoder=encoder,
+        predictor=predictor,
+        wd=opt_cfg['weight_decay'],
+        final_wd=opt_cfg['final_weight_decay'],
+        start_lr=opt_cfg['start_lr'],
+        ref_lr=opt_cfg['lr'],
+        final_lr=opt_cfg['final_lr'],
+        iterations_per_epoch=iterations_per_epoch,
+        warmup=opt_cfg['warmup'],
+        num_epochs=opt_cfg['epochs'],
+        ipe_scale=opt_cfg.get('ipe_scale', 1.0),
+        use_bfloat16=meta_cfg.get('use_bfloat16', False),
+    )
+
+    # ---- DDP wrap ----------------------------------------------------------
+    if world_size > 1:
+        encoder = DDP(encoder, device_ids=[local_rank])
+        predictor = DDP(predictor, device_ids=[local_rank])
+
+    # ---- Load checkpoint ---------------------------------------------------
+    start_epoch = 0
+    resume_state = {}
+    topology = {
+        'world_size': world_size,
+        'num_workers': data_cfg['num_workers'],
+        'val_num_workers': data_cfg.get('val_num_workers', 2),
+        'batch_size': data_cfg['batch_size'],
+        'accum_steps': accum_steps,
+        'train_batches': len(train_loader),
+        'seed': seed,
+        'persistent_workers': False,
+        'device_type': device.type,
+        'cuda_device_count': torch.cuda.device_count() if device.type == 'cuda' else 0,
+        'torch_version': str(torch.__version__),
+        'run_contract_sha256': hashlib.sha256(json.dumps({
+            'data': data_cfg, 'mask': mask_cfg, 'optimization': opt_cfg,
+            'model': {key: value for key, value in meta_cfg.items()
+                      if key not in ('load_checkpoint', 'read_checkpoint',
+                                     'resume_policy', 'fork_start_epoch')},
+        }, sort_keys=True).encode('utf-8')).hexdigest(),
+    }
+    if meta_cfg.get('load_checkpoint', False) and meta_cfg.get('read_checkpoint'):
+        r_path = meta_cfg['read_checkpoint']
+        enc_unwrap = encoder.module if hasattr(encoder, 'module') else encoder
+        pred_unwrap = predictor.module if hasattr(predictor, 'module') else predictor
+        enc_unwrap, pred_unwrap, target_encoder, optimizer, scaler, start_epoch = \
+            load_checkpoint(device, r_path, enc_unwrap, pred_unwrap,
+                            target_encoder, optimizer, scaler,
+                            mask_gen=mask_gen, training_state=resume_state,
+                            rank=rank, topology=topology, resume_policy=resume_policy)
+        if resume_policy == 'fork':
+            start_epoch = int(meta_cfg.get('fork_start_epoch', start_epoch))
+            if not 0 <= start_epoch <= opt_cfg['epochs']:
+                raise ValueError("meta.fork_start_epoch must be within the new optimization horizon")
+            random.seed(run_seed)
+            np.random.seed(run_seed)
+            torch.manual_seed(run_seed)
+            torch.cuda.manual_seed_all(run_seed)
+            for index, group in enumerate(optimizer.param_groups):
+                group['lr'] = opt_cfg['start_lr']
+                group['weight_decay'] = (opt_cfg['weight_decay']
+                                         if index in wd_scheduler._wd_group_indices else 0.0)
+            resume_state['lineage'].update({
+                'fork_start_epoch': start_epoch, 'seed': seed,
+                'seed_policy': 'config_seed_plus_rank',
+                'schedule_offset_updates': start_epoch * iterations_per_epoch,
+                'target_run_contract_sha256': topology['run_contract_sha256'],
+                'optimizer_lr_wd': 'reconstructed_from_new_schedules; moments/counters retained',
+            })
+            log('  FORK: start_epoch=%d; configured seed=%d; new LR/WD/EMA schedules, '
+                'fresh curriculum and best/patience; optimizer moments retained.'
+                % (start_epoch, seed))
+    exact_state = resume_state if resume_policy == 'exact' else {}
+
+    # ---- Momentum schedule for EMA -----------------------------------------
+    ema_start, ema_end = opt_cfg['ema']
+    total_steps = opt_cfg['epochs'] * iterations_per_epoch
+    mom_schedule = momentum_schedule(ema_start, ema_end, total_steps)
+
+    successful_updates = exact_state.get('successful_updates',
+                                           start_epoch * iterations_per_epoch)
+    last_momentum = ema_start
+    if exact_state:
+        lr_scheduler.load_state_dict(exact_state['lr_scheduler'])
+        wd_scheduler.load_state_dict(exact_state['wd_scheduler'])
+    # Preserve the historical post-update scheduler phase. Only successful
+    # updates count; legacy checkpoints cannot reveal past AMP overflows.
+    for _ in range(successful_updates):
+        last_momentum = next(mom_schedule)
+        if not exact_state:
+            lr_scheduler.step()
+            wd_scheduler.step()
+
+    # ---- Val loss evaluation function --------------------------------------
+    @torch.no_grad()
+    def evaluate_val():
+        if val_loader is None:
+            return None
+        enc_unwrap = encoder.module if hasattr(encoder, 'module') else encoder
+        pred_unwrap = predictor.module if hasattr(predictor, 'module') else predictor
+        enc_unwrap.eval()
+        pred_unwrap.eval()
+        val_loss_meter = AverageMeter()
+        for imgs_v, masks_enc_v, masks_pred_v in val_loader:
+            imgs_v = imgs_v.to(device, non_blocking=True)
+            masks_enc_v = [m.to(device, non_blocking=True) for m in masks_enc_v]
+            masks_pred_v = [m.to(device, non_blocking=True) for m in masks_pred_v]
+            B_v = imgs_v.size(0)
+            h = target_encoder(imgs_v)
+            h = F.layer_norm(h, (h.size(-1),))
+            h = apply_masks(h, masks_pred_v)
+            h = repeat_interleave_batch(h, B_v, repeat=len(masks_enc_v))
+            z = enc_unwrap(imgs_v, masks_enc_v)
+            z = pred_unwrap(z, masks_enc_v, masks_pred_v)
+            loss = F.smooth_l1_loss(z, h)
+            val_loss_meter.update(loss.item())
+        enc_unwrap.train()
+        pred_unwrap.train()
+        # Aggregate across ranks so early stopping sees the same value
+        # everywhere (otherwise ranks can diverge and hang on a collective).
+        if dist.is_initialized() and world_size > 1:
+            stats = torch.tensor(
+                [val_loss_meter.sum, float(val_loss_meter.count)],
+                device=device, dtype=torch.float64,
+            )
+            dist.all_reduce(stats, op=dist.ReduceOp.SUM)
+            return (stats[0] / stats[1]).item()
+        return val_loss_meter.avg
+
+    # ---- Training loop -----------------------------------------------------
+    patience = opt_cfg.get('patience', 8)
+    warmup_epochs = opt_cfg.get('warmup', 5)
+    best_val_loss = exact_state.get('best_val_loss', float('inf'))
+    epochs_no_improve = exact_state.get('epochs_no_improve', 0)
+
+    log('-' * 70)
+    log('Starting training from epoch %d to %d (patience=%d, early-stop after epoch %d)'
+        % (start_epoch + 1, opt_cfg['epochs'], patience, warmup_epochs))
+    log('-' * 70)
+
+    # Track last valid scheduler/EMA values for logging
+    lr_val = optimizer.param_groups[0]['lr']
+    wd_val = optimizer.param_groups[0]['weight_decay']
+    m = exact_state.get('ema', last_momentum)
+    num_micro_batches = len(train_loader)
+    stop_epoch = opt_cfg['epochs']
+    if (exact_state and start_epoch > warmup_epochs
+            and epochs_no_improve >= patience and math.isfinite(best_val_loss)):
+        log('Checkpoint already exhausted early-stopping patience; no new updates.')
+        stop_epoch = start_epoch
+
+    for epoch in range(start_epoch, stop_epoch):
+        train_sampler.set_epoch(epoch)
+        if use_curriculum:
+            # ``epoch`` is the loop's 0-indexed counter; ``start_epoch`` was
+            # restored from the resume checkpoint's saved (epoch + 1) value
+            # (see save_checkpoint in train_patch.py).  So when resuming from
+            # the R1 ep25 checkpoint, ``epoch`` starts at 25.
+            # We pass it directly so the curriculum's ``T_warm=25`` ramp
+            # treats this first resumed epoch as r_t=0 (the design's BOOTSTRAP
+            # epoch) and r_t engages at epoch 26.
+            mask_gen.set_epoch(epoch, opt_cfg['epochs'])
+            if mirage_collator is not None:
+                # Workers receive a pickled copy when the epoch's iterator is
+                # created below, so the ramp must be set before that happens.
+                mirage_collator.set_epoch(epoch, opt_cfg['epochs'])
+            if is_main:
+                # Per-epoch curriculum diagnostic (A5/C8 audit fix + user
+                # request for cluster-quality visibility).
+                #   r_t              : ramp value applied this epoch
+                #   loss_mature      : whether R2 loss-map has enough obs
+                #   clusters_mature  : whether R3b clusters have enough obs
+                #   loss_spread      : (min/max/mean) of R2's per-cell loss
+                #                      EMA — wide spread means the
+                #                      hand-crafted prior is finding signal
+                #   cluster_spread   : (min/max/mean/std) of R3b's per-cluster
+                #                      loss EMA — small spread means K=4 is
+                #                      NOT separating semantic groups and
+                #                      cluster_foreground bias will be noisy
+                #   fg_clusters      : actual cluster IDs chosen as fg this
+                #                      epoch (so user can see if same IDs
+                #                      persist or flip iter-to-iter)
+                lm_min = float(mask_gen._loss_map[mask_gen._loss_count > 0].min().item()) \
+                    if (mask_gen._loss_count > 0).any() else float('nan')
+                lm_max = float(mask_gen._loss_map.max().item())
+                lm_mean = float(mask_gen._loss_map[mask_gen._loss_count > 0].mean().item()) \
+                    if (mask_gen._loss_count > 0).any() else float('nan')
+                cl_min, cl_max, cl_mean, cl_std = mask_gen.cluster_loss_spread()
+                try:
+                    fg_ids = mask_gen._foreground_cluster_mask().nonzero().flatten().tolist()
+                except Exception:
+                    fg_ids = []
+                log('  [Curriculum] ep=%d mode=%s r_t=%.4f '
+                    'loss_mature=%s clusters_mature=%s '
+                    'loss[min/max/mean]=%.4f/%.4f/%.4f '
+                    'cluster_loss[min/max/mean/std]=%.4f/%.4f/%.4f/%.4f '
+                    'fg_clusters=%s'
+                    % (epoch, mask_gen.mode, mask_gen.r_t,
+                       mask_gen._is_loss_map_mature(),
+                       mask_gen._are_clusters_mature(),
+                       lm_min, lm_max, lm_mean,
+                       cl_min, cl_max, cl_mean, cl_std,
+                       fg_ids))
+        loss_meter = AverageMeter()
+
+        t_epoch_start = time.time()
+
+        for itr, batch in enumerate(train_loader):
+            t_data = time.time()
+
+            # ---- Unpack batch + mask generation ----
+            # When curriculum is enabled, the train loader returns only the
+            # stacked image tensor (no masks).  We generate masks inline so
+            # that R3b can condition on the teacher's full-grid output.
+            if use_curriculum:
+                if use_mirage:
+                    # Masks already came from the workers.
+                    imgs_cpu, masks_enc, masks_pred, mirage_stats = batch
+                    imgs = imgs_cpu.to(device, non_blocking=True)
+                    masks_enc = [m.to(device, non_blocking=True) for m in masks_enc]
+                    masks_pred = [m.to(device, non_blocking=True) for m in masks_pred]
+                    B = imgs.size(0)
+                    h_full = None  # computed inside _forward_backward
+                else:
+                    imgs_cpu = batch
+                    mirage_stats = None
+                    imgs = batch.to(device, non_blocking=True)
+                    B = imgs.size(0)
+
+                    # For cluster mode, compute the teacher's full unmasked grid
+                    # FIRST so generate() can assign clusters.  For other modes
+                    # this is unused — but we still compute it here to avoid
+                    # re-forwarding in _forward_backward below (zero extra cost
+                    # vs the R1 baseline which already does this inside
+                    # _forward_backward).
+                    with torch.no_grad():
+                        with autocast(enabled=amp_target):
+                            h_full = target_encoder(imgs)  # (B, N, D)
+                        h_full = F.layer_norm(h_full.float(), (h_full.size(-1),))
+
+                    # mask_gen.generate() must run on every rank (no rank-0
+                    # short-circuit) so its internal state stays in sync.
+                    masks_enc, masks_pred = mask_gen.generate(
+                        batch_size=B,
+                        imgs_cpu=imgs_cpu,      # CPU tensor for intensity prior
+                        h_for_cluster=h_full,   # GPU tensor; only used by R3b
+                    )
+                    masks_enc = [m_t.to(device, non_blocking=True) for m_t in masks_enc]
+                    masks_pred = [m_t.to(device, non_blocking=True) for m_t in masks_pred]
+            else:
+                imgs, masks_enc, masks_pred = batch
+                imgs = imgs.to(device, non_blocking=True)
+                masks_enc = [m_t.to(device, non_blocking=True) for m_t in masks_enc]
+                masks_pred = [m_t.to(device, non_blocking=True) for m_t in masks_pred]
+                B = imgs.size(0)
+                h_full = None  # _forward_backward will compute it
+
+            data_ms = (time.time() - t_data) * 1000.0
+
+            def _forward_backward():
+                # Only zero gradients at the start of an accumulation window
+                if itr % accum_steps == 0:
+                    optimizer.zero_grad(set_to_none=True)
+
+                use_amp = (scaler is not None)
+                raw_loss, z, h_rep = jepa_forward_loss(
+                    encoder, predictor, target_encoder, imgs, masks_enc, masks_pred,
+                    use_amp=use_amp, amp_target=amp_target, h_full=h_full)
+                window_size = accumulation_window_size(itr, num_micro_batches, accum_steps)
+                loss = raw_loss / window_size
+
+                if use_amp:
+                    scaler.scale(loss).backward()
+                else:
+                    loss.backward()
+
+                # Step optimizer only at the end of accumulation window
+                did_step = False
+                if (itr + 1) % accum_steps == 0 or (itr + 1) == len(train_loader):
+                    did_step = optimizer_step(optimizer, scaler)
+
+                # Compute per-token L2 (for curriculum loss-guided / cluster
+                # update).  Use the same z and h_rep so the loss map matches
+                # what the predictor actually saw.  Detach + float to avoid
+                # AMP dtype mismatches and keep memory low.
+                # NOTE: shape is (B*npred*nenc, K_pred) — the curriculum
+                # generator does the (npred, nenc, B, K) reshape internally.
+                if use_curriculum:
+                    with torch.no_grad():
+                        per_token = (z.detach().float()
+                                     - h_rep.detach().float()).pow(2).mean(dim=-1)
+                else:
+                    per_token = None
+
+                return raw_loss.item(), per_token, did_step
+
+            (fb_result, fwd_bwd_ms) = gpu_timer(_forward_backward)
+            loss_val, per_token_loss, did_step = fb_result
+
+            # Scheduler + EMA only on optimizer step iterations
+            is_step = (itr + 1) % accum_steps == 0 or (itr + 1) == num_micro_batches
+            if did_step:
+                successful_updates += 1
+                lr_val = lr_scheduler.step()
+                wd_val = wd_scheduler.step()
+                try:
+                    m = next(mom_schedule)
+                except StopIteration:
+                    pass  # keep last momentum value
+                update_ema(encoder, target_encoder, m)
+
+            # ---- Curriculum state update ----
+            # Must run on every rank (collectives inside); never gated on
+            # is_main.  Accumulates per-microbatch, folds into EMA only on
+            # optimizer-step boundaries.
+            #
+            # Skipped for mirage_envelope: its masks are produced in the
+            # workers and depend on nothing this would update, so the
+            # collectives and EMA bookkeeping would be pure overhead.
+            if use_curriculum and not use_mirage and per_token_loss is not None:
+                mask_gen.update_after_iter(
+                    per_token_loss=per_token_loss,
+                    masks_pred_idx=masks_pred,
+                    h_for_cluster=h_full,
+                    is_step=is_step,
+                )
+
+            loss_meter.update(loss_val)
+
+            # GPU memory
+            gpu_mem_mb = 0.0
+            if torch.cuda.is_available():
+                gpu_mem_mb = torch.cuda.max_memory_allocated(device) / (1024 * 1024)
+
+            # Log every 50 iterations
+            if is_main and (itr + 1) % 50 == 0:
+                log('  [Epoch %d/%d | Iter %d/%d] loss=%.4f  lr=%.2e  wd=%.4f  '
+                    'ema=%.5f  gpu=%.0fMB'
+                    % (epoch + 1, opt_cfg['epochs'], itr + 1, num_micro_batches,
+                       loss_val, lr_val, wd_val, m, gpu_mem_mb))
+                if use_mirage:
+                    # The six required MIRAGE mask statistics, plus the
+                    # acceptance / fallback health of the guide.
+                    ms = mirage_stats
+                    if ms:
+                        log('    [MIRAGE] patches/block=%.1f  unique_targets=%.1f  '
+                            'context=%.1f  on_region=%.3f  background=%.3f  '
+                            'fallbacks=%d  infeasible=%d  unbiased=%d  '
+                            'accept=%.2f  fill=%.3f  retina_visible=%.3f  tries=%.1f'
+                            % (ms['patches_per_block'], ms['unique_target_patches'],
+                               ms['context_patches'], ms['target_on_region'],
+                               ms['target_background'], ms['fallbacks'],
+                               ms['infeasible'], ms['unbiased_by_ramp'],
+                               ms['accept_rate'], ms['mean_block_fill'],
+                               ms['retina_visible'], ms['mean_attempts']))
+                        if curr_cfg.get('mode') == 'mirage_cover':
+                            log(format_cover_stats(ms))
+
+            # CSV log
+            if csv_logger is not None:
+                csv_logger.log(
+                    epoch + 1, itr + 1, loss_val, lr_val, wd_val, m,
+                    data_ms, fwd_bwd_ms, 0.0, gpu_mem_mb,
+                )
+
+        # End-of-epoch diagnostic: prediction quality on one batch
+        if is_main and val_loader is not None:
+            enc_diag = encoder.module if hasattr(encoder, 'module') else encoder
+            pred_diag = predictor.module if hasattr(predictor, 'module') else predictor
+            enc_diag.eval()
+            pred_diag.eval()
+            with torch.no_grad():
+                for diag_imgs, diag_menc, diag_mpred in val_loader:
+                    diag_imgs = diag_imgs.to(device)
+                    diag_menc = [mk.to(device) for mk in diag_menc]
+                    diag_mpred = [mk.to(device) for mk in diag_mpred]
+                    B_d = diag_imgs.size(0)
+
+                    # Target
+                    h_d = target_encoder(diag_imgs)
+                    h_d = F.layer_norm(h_d, (h_d.size(-1),))
+                    h_masked = apply_masks(h_d, diag_mpred)
+                    h_masked = repeat_interleave_batch(h_masked, B_d, repeat=len(diag_menc))
+
+                    # Prediction
+                    z_d = enc_diag(diag_imgs, diag_menc)
+                    z_d = pred_diag(z_d, diag_menc, diag_mpred)
+
+                    # Cosine similarity
+                    cos_sim = F.cosine_similarity(z_d, h_masked, dim=-1)
+                    avg_cos = cos_sim.mean().item()
+                    min_cos = cos_sim.min().item()
+                    max_cos = cos_sim.max().item()
+
+                    # L2 distance
+                    l2_dist = (z_d - h_masked).norm(dim=-1).mean().item()
+
+                    # Representation diversity: pairwise cosine across all patches (first sample)
+                    num_patches = h_d.size(1)
+                    all_reps = F.normalize(h_d[0], dim=-1)
+                    pairwise = all_reps @ all_reps.T
+                    mask_diag = ~torch.eye(num_patches, dtype=torch.bool, device=device)
+                    avg_pairwise = pairwise[mask_diag].mean().item()
+
+                    log('  [DIAG] Epoch %d: cos_sim=%.4f (min=%.4f max=%.4f) '
+                        'l2_dist=%.4f  rep_diversity=%.4f (1.0=collapsed)'
+                        % (epoch + 1, avg_cos, min_cos, max_cos, l2_dist, avg_pairwise))
+                    log('  [DIAG] z shape=%s h shape=%s num_patches=%d'
+                        % (str(z_d.shape), str(h_masked.shape), num_patches))
+                    break
+            enc_diag.train()
+            pred_diag.train()
+
+        # Train eval loss (20 batches, no grad)
+        # NOTE: skipped when curriculum is enabled because train_loader's
+        # collate_fn (stack_collate) returns only the image tensor — there
+        # are no masks in the batch.  Train-loss is already tracked via
+        # loss_meter; the val_loss + DIAG block above already serve the
+        # same purpose with the uniform val_loader.
+        if is_main and val_loader is not None and not use_curriculum:
+            enc_u = encoder.module if hasattr(encoder, 'module') else encoder
+            pred_u = predictor.module if hasattr(predictor, 'module') else predictor
+            enc_u.eval()
+            pred_u.eval()
+            train_eval_meter = AverageMeter()
+            with torch.no_grad():
+                for t_idx, (t_imgs, t_menc, t_mpred) in enumerate(train_loader):
+                    if t_idx >= 20:
+                        break
+                    t_imgs = t_imgs.to(device)
+                    t_menc = [mk.to(device) for mk in t_menc]
+                    t_mpred = [mk.to(device) for mk in t_mpred]
+                    B_t = t_imgs.size(0)
+                    h_t = target_encoder(t_imgs)
+                    h_t = F.layer_norm(h_t, (h_t.size(-1),))
+                    h_t = apply_masks(h_t, t_mpred)
+                    h_t = repeat_interleave_batch(h_t, B_t, repeat=len(t_menc))
+                    z_t = enc_u(t_imgs, t_menc)
+                    z_t = pred_u(z_t, t_menc, t_mpred)
+                    train_eval_meter.update(F.smooth_l1_loss(z_t, h_t).item())
+            if is_main:
+                log('  train_eval_loss=%.6f' % train_eval_meter.avg)
+            enc_u.train()
+            pred_u.train()
+
+        # End-of-epoch summary
+        epoch_time = time.time() - t_epoch_start
+
+        # Validation loss
+        val_loss = evaluate_val()
+        val_str = '  val_loss=%.4f' % val_loss if val_loss is not None else ''
+        improved = ''
+
+        if val_loss is not None:
+            # Only track best / early-stop after warmup to avoid the
+            # artificially-low pre-warmup loss (EMA target hasn't diverged
+            # from online encoder yet, so val_loss looks unrealistically low).
+            past_warmup = (epoch + 1) > warmup_epochs
+            if past_warmup:
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
+                    epochs_no_improve = 0
+                    improved = ' *'
+                else:
+                    epochs_no_improve += 1
+
+        log('Epoch %d/%d  (%.0fs)  train_loss=%.4f%s%s'
+            % (epoch + 1, opt_cfg['epochs'], epoch_time, loss_meter.avg,
+               val_str, improved))
+
+        local_state = {
+            'rng': capture_rng_state(),
+            'curriculum': mask_gen.state_dict() if mask_gen is not None else None,
+        }
+        rank_states = [local_state]
+        if dist.is_initialized() and world_size > 1:
+            rank_states = [None] * world_size
+            dist.all_gather_object(rank_states, local_state)
+        training_state = {
+            'version': 1, 'successful_updates': successful_updates,
+            'lr_scheduler': lr_scheduler.state_dict(),
+            'wd_scheduler': wd_scheduler.state_dict(),
+            'best_val_loss': best_val_loss, 'epochs_no_improve': epochs_no_improve,
+            'lr': lr_val, 'wd': wd_val, 'ema': m,
+            'topology': topology, 'rank_states': rank_states,
+            'resume_boundary': 'completed_epoch_nonpersistent_workers',
+            'lineage': resume_state.get('lineage'),
+        }
+
+        # Save periodic + best checkpoints (main process only)
+        if is_main:
+            if improved:
+                best_path = os.path.join(output_dir, '%s-best.pth.tar' % write_tag)
+                save_checkpoint(
+                    best_path, encoder, predictor, target_encoder, optimizer,
+                    scaler, epoch + 1, val_loss, data_cfg['batch_size'],
+                    world_size, lr_val, mask_gen=mask_gen, training_state=training_state)
+                upload_to_blob(best_path, blob_prefix, log)
+            # Rolling resume point, written EVERY epoch.
+            #
+            # `-best` tracks validation loss, but validation uses a plain
+            # MaskCollator (42-cell rectangles) while curriculum runs train on
+            # 16-cell anatomy blobs, so val loss rises as the ramp engages and
+            # `-best` sticks at an early epoch. With save_every=5 that left up
+            # to five epochs (~15 h here) with no usable resume point, and a
+            # crash at the epoch 29->30 boundary cost exactly that. A 1.4 GB
+            # write per epoch is ~15 s against ~3 h of compute -- cheap
+            # insurance. Written to a temp file and moved into place so a crash
+            # mid-write cannot corrupt the only good resume point.
+            last_path = os.path.join(output_dir, '%s-last.pth.tar' % write_tag)
+            tmp_path = last_path + '.tmp'
+            save_checkpoint(
+                tmp_path, encoder, predictor, target_encoder, optimizer,
+                scaler, epoch + 1, loss_meter.avg, data_cfg['batch_size'],
+                world_size, lr_val,
+                mask_gen=mask_gen, training_state=training_state,
+            )
+            os.replace(tmp_path, last_path)
+
+            save_every = int(opt_cfg.get('save_every', 25))
+            if (epoch + 1) % save_every == 0:
+                ep_path = os.path.join(output_dir, '%s-ep%d.pth.tar' % (write_tag, epoch + 1))
+                save_checkpoint(
+                    ep_path, encoder, predictor, target_encoder, optimizer,
+                    scaler, epoch + 1, loss_meter.avg, data_cfg['batch_size'],
+                    world_size, lr_val,
+                    mask_gen=mask_gen, training_state=training_state,
+                )
+                upload_to_blob(ep_path, blob_prefix, log)
+            # Upload log CSV every 5 epochs
+            if (epoch + 1) % 5 == 0:
+                csv_file = os.path.join(output_dir, '%s-log.csv' % write_tag)
+                if os.path.exists(csv_file):
+                    upload_to_blob(csv_file, blob_prefix, log)
+
+        # Early stopping (only active after warmup)
+        if val_loss is not None and past_warmup and epochs_no_improve >= patience:
+            log('Early stopping: val loss has not improved for %d epochs (best=%.4f)'
+                % (patience, best_val_loss))
+            break
+
+    log('=' * 70)
+    log('Training complete. Best val loss: %.4f' % best_val_loss)
+    log('=' * 70)
+
+    # Wait for any background uploads to finish, then do final uploads
+    if is_main:
+        for t in _upload_threads:
+            t.join(timeout=300)  # Wait up to 5 min per thread
+        for fname in ['%s-log.csv' % write_tag, 'config.yaml']:
+            fpath = os.path.join(output_dir, fname)
+            if os.path.exists(fpath):
+                upload_to_blob(fpath, blob_prefix, log, blocking=True)
+
+    # Clean DDP shutdown so torchrun exits cleanly
+    if dist.is_initialized():
+        dist.barrier()
+        dist.destroy_process_group()
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Patch-level I-JEPA pretraining')
+    parser.add_argument('--config', type=str, required=True,
+                        help='Path to YAML config file')
+    args = parser.parse_args()
+    main(args)

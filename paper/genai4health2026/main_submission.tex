@@ -1,8 +1,16 @@
 \documentclass{article}
 
-\usepackage{neurips_2026}
-\usepackage[utf8]{inputenc}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+\fi
 \usepackage[T1]{fontenc}
+% natbib options must be passed before the workshop style loads natbib.
+\PassOptionsToPackage{round}{natbib}
+% Camera-ready configuration: loads the unmodified neurips_2026 style with
+% [dblblindworkshop,final] and sets the workshop notice. Do not load
+% neurips_2026 separately.
+\usepackage{genai4health_2026}
 \usepackage{hyperref}
 \hypersetup{hidelinks}
 \usepackage{url}
@@ -23,6 +31,17 @@
 % at their source locations. Macro resolution alone does not verify every claim.
 \input{auto/auto_numbers}
 \input{auto/delivered_numbers}
+% Camera-ready mask-audit, guide-agreement and reference values (make_cr_numbers.py).
+\input{auto/cr_numbers}
+
+% CAMERA-READY RESULTS PENDING. Registered replication results (continuation
+% seeds, matched-budget control, pooling variants) are inserted from generated
+% macros once the results freeze. Each placeholder renders in red and keeps the
+% release gates closed until it is replaced.
+\newcommand{\CRSeedResultsPending}{\ph{seed-replication result pending}}
+\newcommand{\CRControlResultsPending}{\ph{matched-budget control result pending}}
+\newcommand{\CRPoolingResultsPending}{\ph{pooling-variant result pending}}
+\newcommand{\CRCell}{\ph{--}}
 
 % ARM DISPLAY NAMES. Defined once so a rename is a one-line change and cannot
 % drift between prose, tables and figure captions. \ArmBest is the strongest
@@ -33,13 +52,30 @@
 \title{Where to Predict in Retinal OCT?\\
 Anatomy-Guided Target Selection for I-JEPA}
 
-\author{}
+% CAMERA-READY INPUT REQUIRED (authors). Replace \CRAuthorsPending with the
+% author block from OpenReview: author order, affiliations, e-mail addresses
+% and any equal-contribution or corresponding-author marks. Use \And between
+% authors and \AND to start a new row, for example
+%   First Author \\ Department, Institution \\ City, Country \\ \texttt{email}
+%   \And
+%   Second Author \\ Department, Institution \\ City, Country \\ \texttt{email}
+% Then delete \CRAuthorsPending and \CRAcknowledgmentsPending and record the
+% same names in camera_ready_authors.json. The camera-ready release gate
+% fails while either macro remains.
+\newcommand{\CRAuthorsPending}{\textcolor{red}{AUTHORS PENDING}\\
+\textcolor{red}{names, affiliations and e-mail addresses from OpenReview}}
+\newcommand{\CRAcknowledgmentsPending}{\textcolor{red}{ACKNOWLEDGMENTS PENDING:
+acknowledgments and funding disclosure to be supplied by the authors.}}
+
+\author{\CRAuthorsPending}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
+% CR: the result sentences of this abstract are revised once the registered
+% replication results are available (scenario text prepared in the campaign plan).
 Learning transferable representations from retinal optical coherence
 tomography (OCT) is challenging because disease-related changes can be subtle
 and large, consistently labelled datasets require substantial expert
@@ -66,7 +102,7 @@ comparisons of what to predict and what to keep visible.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{fig_oct_target_selection.png}
+\includegraphics[width=\linewidth]{fig_oct_target_selection_cr.png}
 \caption{Target-selection intuition on an external OCT example, not FairVision
 data. (a) One annotation-free crop from the real OCT B-scan in Kulyabin et al.,
 OCTDL, Fig.~1 (arXiv:2312.08255v3), adapted under CC BY 4.0.
@@ -74,12 +110,11 @@ OCTDL, Fig.~1 (arXiv:2312.08255v3), adapted under CC BY 4.0.
 (c) \ArmBest{}'s intensity-derived guide.
 (d) \ArmBest{} final target union.
 The same crop is downsampled to 256 by 256 pixels without contrast enhancement;
-masks use the production samplers, matched block-size draws and fixed seed.
+masks use the samplers in their trained configuration, matched block-size draws and a fixed seed.
 Overlays show exact delivered indices; encoder context is omitted.
 This single illustrative replay is not a segmentation annotation, historical
 training batch, evaluation sample or performance comparison.
-Source and license: \url{https://arxiv.org/abs/2312.08255v3} and
-\url{https://creativecommons.org/licenses/by/4.0/}.}
+License: \url{https://creativecommons.org/licenses/by/4.0/}.}
 \label{fig:target_selection}
 \end{figure}
 
@@ -104,14 +139,10 @@ the context encoder. This creates a prediction task without diagnosis labels.
 Unlike masked autoencoders~\citep{he2022mae,xie2022simmim}, I-JEPA does not
 require the predictor to reproduce each pixel.
 
-Our interest in anatomical guidance also arose from an exploratory
-feature-occlusion analysis of glaucoma classifiers initialized from
-uniform-masking I-JEPA and subsequently fine-tuned with diagnosis labels.
-Selected attribution maps showed prediction sensitivity near retinal
-structures: removing patch features from the pooled representation changed
-the classifier logit. This observation motivated asking whether retinal
-anatomy could guide target selection during pretraining
-(Appendix~\ref{app:interp}).
+Our interest in anatomical guidance also arose from exploratory
+feature-occlusion maps of glaucoma classifiers initialized from
+uniform-masking I-JEPA and then fine-tuned with diagnosis labels, which showed
+prediction sensitivity near retinal structures (Appendix~\ref{app:interp}).
 
 Standard I-JEPA places rectangular targets uniformly across the image.
 In retinal OCT, many such targets include little retinal tissue. This raises
@@ -134,13 +165,17 @@ The study includes six implementations, with two versions of anatomy-shaped
 masking.
 
 Tissue-directed rectangle placement gives higher AUC than uniform masking in
-the reported runs. More detailed anatomical targeting does not consistently
-improve on these simpler strategies. To understand what the comparisons test,
-we measure the target and context patches that actually reach the model.
-This analysis identifies differences in target size, retained context and
-repeated target indices, as well as a coverage-scoring mismatch. We therefore
-present comparisons of implemented masking strategies, not controlled
-ablations of anatomical coverage.
+the original continuations. More detailed anatomical targeting does not
+consistently improve on these simpler strategies. To understand what the
+comparisons test, we measure the target and context patches that actually
+reach the model. At the training batch size, \ArmBest{} leaves
+$\CRCtxGapCentroid$ percentage points more of the patch grid visible to the
+context encoder than \textsc{random}, and \textsc{envelope} leaves
+$\CRCtxGapEnvelope$ points more (Table~\ref{tab:geometry}). The strategies also
+differ in target size and repeated target indices, and the coverage strategy
+shows a scoring mismatch. Target location and visible context therefore change
+together, and we present comparisons of implemented masking strategies, not
+controlled ablations of target location. \CRSeedResultsPending
 
 \paragraph{Contributions.}
 \begin{itemize}
@@ -149,8 +184,10 @@ ablations of anatomical coverage.
       uniform target selection for I-JEPA on retinal OCT.
 \item Frozen-probe results showing gains from tissue-directed rectangle
       placement, alongside mixed results for more specific anatomical targeting.
-\item An analysis of the actual target and context masks that identifies
-      implementation constraints for better-controlled guided-masking studies.
+\item An analysis of the target and context masks delivered at the training
+      batch size, which shows how target placement, target size and visible
+      context change together and identifies constraints for better-controlled
+      guided-masking studies.
 \end{itemize}
 
 \section{Related work}
@@ -180,14 +217,11 @@ sufficiently large targets and informative context~\citep{assran2023ijepa}.
 \paragraph{Medical region-conditioned prediction.}
 US-JEPA uses a frozen ultrasound teacher, and its region-conditioned variant
 restricts both context and target sampling to valid ultrasound
-content~\citep{radhachandran2026usjepa}. Our study addresses a different
-question: how intensity-based and retinal-segmentation guidance change
-target selection within the EMA-based I-JEPA framework for OCT.
-We compare simple rectangle placement with anatomy-shaped and
-coverage-constrained targets, without introducing sequential prediction
-or a new teacher architecture. The contribution is this OCT comparison
-and analysis of the resulting prediction tasks, not the general idea
-of informed masking.
+content~\citep{radhachandran2026usjepa}. We instead study how intensity-based
+and retinal-segmentation guidance change target selection within the
+EMA-based I-JEPA framework for OCT, without sequential prediction or a new
+teacher architecture. The contribution is this OCT comparison and analysis of
+the resulting prediction tasks, not the general idea of informed masking.
 
 \paragraph{Informed masking.}
 ADIOS learns adversarial masks~\citep{shi2022adios}; SemMAE uses semantic
@@ -220,6 +254,22 @@ We first define the I-JEPA prediction task, then describe how each masking
 strategy selects its targets. The architecture and latent prediction loss
 are shared; differences in guide sources, target size and final context
 are part of the strategy comparisons.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_oct_jepa_comparison_final_cr.png}
+\caption{Uniform and anatomy-guided target selection within the same I-JEPA
+framework. In both panels, the context encoder and predictor are trainable,
+the EMA target encoder receives the full image, and normalized target
+embeddings are selected afterward with gradients stopped. The predictor uses
+visible context and positional queries to predict each target group in
+parallel with the same Smooth-L1 objective. The panels differ only in target
+selection and the resulting visible context. The guided panel illustrates
+\ArmBest{} on the image and exact masks of Figure~\ref{fig:target_selection}.
+Masked views show omitted tokens, not zero-filled inputs, and colours identify
+target groups, not relevance.}
+\label{fig:policies}
+\end{figure}
 
 \subsection{I-JEPA preliminaries}
 
@@ -271,6 +321,9 @@ Figure~\ref{fig:policies} shows the pretraining and evaluation paths.
 
 \subsection{Anatomy-guided target selection}
 
+Background patches above and below the retina are nearly uniform and easy to
+predict, whereas tissue patches carry the layered structure. Guided strategies
+direct targets toward tissue so that the prediction task depends more on it.
 For strategy $s$, let $A_s(x)$ denote its patch-grid guidance:
 an intensity-derived band for \ArmBest{}, a repaired segmentation envelope
 for \textsc{envelope}, or soft retinal-class score maps for the anatomy-shaped
@@ -296,7 +349,8 @@ context.
 
 \subsection{Compared masking strategies}
 
-All policies request $M{=}4$ target blocks and one context block. Rectangle
+All policies request $M{=}4$ target blocks and one context block
+(Table~\ref{tab:strategies}, Figure~\ref{fig:allstrategies}). Rectangle
 policies share nominal scale and aspect-ratio ranges, but placement and
 collation can change unique target area and encoder-visible context.
 
@@ -308,21 +362,33 @@ collation can change unique target area and encoder-visible context.
 \item[\textsc{envelope} (random-within-retina).] The same nominal rectangle
 count, scale and aspect-ratio distributions as \textsc{random}, but
 rejection-sampled onto the MIRAGE-derived repaired retinal
-envelope~\citep{morano2025mirage}. The predicted inner-retina and choroid union
-is repaired across the unlabeled middle-retina gap in native label space,
-then transformed jointly with the image. This
+envelope~\citep{morano2025mirage}. The guide model is MIRAGE-Large fine-tuned
+for layer segmentation on GOALS circumpapillary
+B-scans~\citep{fang2022goals}. Its held-out GOALS foreground Dice of
+$\CRMirageDice$ is in-domain context only, not an accuracy on FairVision, which
+has no layer annotations and a different scan protocol. The predicted
+inner-retina and choroid union is repaired across the unlabeled middle-retina
+gap in native label space, then transformed jointly with the image. This
   changes the placement policy, not target shape. Overlap and delivered context
   are consequences of that intervention, not independently matched controls.
 
-\item[\ArmBest{} (segmentation-free).] A band whose vertical position is
-  located per slice by a per-column intensity-weighted row centroid, smoothed
-  across columns, with no segmentation model and no ground-truth
-  annotation of any kind. This band guides the placement of four rectangular
-  targets; it is not itself the target shape.
+\item[\ArmBest{} (segmentation-free).] Let $\bar x_{ij}$ be the mean intensity
+  of the patch in row $i$ and column $j$, minus the smallest patch mean in the
+  image. The band
+  centre in column $j$ is the intensity-weighted row centroid
+  \begin{equation}
+   c_j=\textstyle\sum_i i\,\bar x_{ij}\big/\sum_i \bar x_{ij},
+   \label{eq:centroid}
+  \end{equation}
+  averaged over neighbouring columns. A band of fixed height centred on $c_j$
+  across the central columns (Appendix~\ref{app:repro}) weights the placement of
+  four rectangular targets; it is not itself the target shape. No segmentation
+  model or annotation of any kind is used.
 
 \item[\textsc{anatomy-v1} / \textsc{anatomy-v2}.] Ragged connected components
-  grown on the MIRAGE score map, so target \emph{shape} follows tissue rather
-  than being rectangular. v2 also bridges diagonal adjacencies.
+  grown on soft MIRAGE retinal-class scores from a frozen adapter, so target
+  \emph{shape} follows tissue rather than being rectangular. Each target is
+  resampled to a fixed $K{=}16$ indices. v2 also bridges diagonal adjacencies.
 
 \item[\textsc{cover} $f$.] Targets chosen greedily to cover anatomy while
   leaving a fraction $f$ of supported soft guide mass outside the target union. The historical run uses
@@ -331,23 +397,39 @@ then transformed jointly with the image. This
   the intended coverage (Appendix~\ref{app:covbug}).
 \end{description}
 
+\begin{table}[t]
+\centering
+\caption{Compared strategies. Variable-length rectangle targets are shortened
+to the shortest target in the batch (Appendix~\ref{app:covbug}). Delivered
+target and context budgets are reported in Table~\ref{tab:geometry}.}
+\label{tab:strategies}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lllll}
+\toprule
+policy & guide $A_s(x)$ & target shape & placement & target length \\
+\midrule
+\textsc{random} & none & rectangles & uniform & variable \\
+\textsc{envelope} & hard MIRAGE envelope & rectangles & rejection-sampled on envelope & variable \\
+\ArmBest{} & intensity-centroid band & rectangles & weighted by band overlap & variable \\
+\textsc{anatomy-v1/v2} & soft MIRAGE scores & connected components & grown on scores & fixed ($K$) \\
+\textsc{cover} & soft MIRAGE scores & rectangles & greedy coverage & variable \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{fig_oct_jepa_comparison_final.png}
-\caption{Uniform and anatomy-guided target selection within the same I-JEPA
-framework. In both panels, the context encoder and predictor are trainable.
-The EMA target encoder receives the full image; normalized target embeddings
-are selected afterward with gradients stopped. The predictor uses visible
-context and positional queries to predict each target group in parallel,
-with the same Smooth-L1 objective. The panels differ in target selection
-and the resulting visible context, not the architecture or loss.
-The guided panel illustrates \ArmBest{}, not a relevance-ranking or
-sequential-prediction method. Masked views visualize omitted tokens rather
-than zero-filled encoder inputs.
-The image and exact masks reuse the licensed example in
-Figure~\ref{fig:target_selection}; colours identify target groups, not relevance.
-The shared footer shows frozen-encoder evaluation.}
-\label{fig:policies}
+\includegraphics[width=0.74\linewidth]{fig_oct_all_strategies.png}
+\caption{All five strategies on the external OCT crop of
+Figure~\ref{fig:target_selection}, not FairVision data. Each panel shows the
+final target union from the sampler in its trained configuration, with matched
+block-size draws and a fixed seed. Outlines mark each strategy's placement
+guide. The MIRAGE guides were produced on this crop by the training guide
+pipelines, although MIRAGE was not trained on OCTDL. Encoder context is omitted.
+This single illustrative replay is not a segmentation, historical training
+batch or performance comparison.}
+\label{fig:allstrategies}
 \end{figure}
 
 \section{Experimental setup}
@@ -363,13 +445,13 @@ Diagnosis labels are used only for downstream evaluation, not JEPA pretraining.
 Demographic attributes are not model inputs.
 
 \paragraph{Pretraining.} Patch-level I-JEPA, ViT-Base, $256{\times}256$ crops,
-patch size 16, predictor depth 6, EMA target encoder. The reference fork is the
-epoch-25 checkpoint, with matched nominal optimiser, learning-rate and
+patch size 16, predictor depth 6, EMA target encoder. The original
+continuations fork from a shared epoch-25 checkpoint of uniform-masking
+pretraining, with matched nominal optimiser, learning-rate and
 weight-decay schedules and effective batch size (512).
 Guidance is ramped linearly from epoch 25 to 30 and held at full strength
-thereafter. The early \textsc{anatomy-v1} result has incomplete launch
-documentation; its configuration resumes an \textsc{envelope} epoch-27
-checkpoint rather than directly documenting an epoch-25 fork.
+thereafter. The lineage of the early \textsc{anatomy-v1} continuation is
+described in Appendix~\ref{app:excluded}.
 The encoder processes B-scans independently, without learned cross-slice
 attention. Rectangle strategies share nominal target scales, but the guide
 products and realized masks are not identical. \textsc{anatomy-v2} also uses
@@ -378,10 +460,23 @@ Appendix~\ref{app:repro}.
 
 \textsc{random}, \ArmBest{}, \textsc{envelope} and \textsc{cover} reach
 epoch 100. \textsc{anatomy-v2} reaches epoch 75; its epoch-100 result is
-unmeasured. \textsc{anatomy-v1} has only an epoch-30 result. We compare
+unmeasured. We compare
 strategies at matched pretraining epochs, with epoch 50 as the common
 endpoint for the five main policies. Excluded continuations are listed
 separately in Appendix~\ref{app:excluded}.
+
+\paragraph{Replication and controls.} The original comparison has one
+continuation per strategy. A replication analysis was registered before any
+new run was evaluated (Appendix~\ref{app:replication}). It adds two further
+continuations each of \textsc{random}, \ArmBest{} and \textsc{envelope} from the
+same epoch-25 checkpoint, with seeds that change data order, crops and mask
+draws, stopped at epoch 50, and a control that places targets uniformly with
+\ArmBest{}'s per-image target and context budgets. These are repeated
+continuations from a shared checkpoint, not independent initializations. Their
+probes use fp32 and average AUC over five head seeds. They are evaluated on the
+same test split as the original runs. Test predictions stay sealed until the
+results freeze, and all run decisions use validation AUC.
+\CRSeedResultsPending
 
 \paragraph{Evaluation.} The EMA target encoder is frozen. We average patch features within each
 B-scan, then average across the volume and train a LayerNorm--linear head.
@@ -405,8 +500,9 @@ target-encoder precision.
 
 We first compare downstream classification, then examine the actual masks
 to determine which properties changed. These are strategy comparisons,
-not factorial ablations: each policy has one pretraining continuation, and
-some policies change several aspects of the prediction task.
+not factorial ablations: each original policy has one pretraining
+continuation, and some policies change several aspects of the prediction
+task. Section~\ref{sec:replication} adds the registered repeated continuations.
 
 \subsection{Comparison of target-selection strategies}
 
@@ -419,7 +515,8 @@ versus \textsc{random} at the \emph{matched} epoch. The upper block is
 precision-matched (fp16 throughout) and carries every headline claim; the lower
 block is fp32, each $\Delta$ taken against an fp32 null re-probed at the same
 epoch. The measured fp16/fp32
-gap is at most $2\times10^{-4}$ (Appendix~\ref{app:fp32}).}
+gap is at most $2\times10^{-4}$ (Appendix~\ref{app:fp32}). The last row is a
+value reported by FairVision for a different, fully supervised protocol.}
 \label{tab:main}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -435,6 +532,8 @@ policy & guidance signal & AUC & $\Delta$ & AUC & $\Delta$ & AUC & $\Delta$ \\
 \midrule
 \textsc{anatomy-v2} & segmenter (target shape) & \TAUCAnatomyTwoEpFifty & \TAnatomyTwoRandomEpFifty & \TAUCAnatomyTwoEpSeventyFive & \TAnatomyTwoRandomEpSeventyFive & \TAUCAnatomyTwoEpHundred & \TAnatomyTwoRandomEpHundred \\
 \textsc{cover} $f{=}.21$ & segmenter (coverage) & \TAUCCoverEpFifty & \TCoverRandomEpFifty & \TAUCCoverEpSeventyFive & \TCoverRandomEpSeventyFive & \TAUCCoverEpHundred & \TCoverRandomEpHundred \\
+\midrule
+\multicolumn{2}{l}{reported: supervised 3D ResNet~\citep{luo2024fairvision}} & \multicolumn{6}{l}{\CRFairVisionAUC{} (trained end to end on all B-scans; not this probe)} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -448,9 +547,12 @@ Both strategies have positive paired differences from \textsc{random}
 at all three evaluated epochs (Figure~\ref{fig:traj}).
 The full intervals and multiple-comparison adjustment are reported in
 Appendix~\ref{app:contrasts}.
-These gains support tissue-directed target placement in the observed runs.
-They do not require targets to contain only retinal tissue: the large
-rectangles also include background (Table~\ref{tab:geom}).
+These gains favour tissue-directed target placement in the original runs.
+Both strategies also leave more of the grid visible to the context encoder
+than \textsc{random} (Table~\ref{tab:geometry}), so these comparisons do not
+separate target location from visible context. The gains do not require
+targets to contain only retinal tissue: the large rectangles also include
+background.
 
 \begin{figure}[t]
 \centering
@@ -472,10 +574,8 @@ answer a different question.}
 \paragraph{Anatomy-shaped targets.}
 At the matched epoch 50, \textsc{anatomy-v2}
 has lower AUC than \textsc{envelope} ($\Delta=\DAnatomyTwoEnvelopeEpFifty$; CI
-$\DAnatomyTwoEnvelopeEpFiftyCI$). At epoch 30, however, \textsc{anatomy-v1} sits
-$\DAnatomyOneEnvelopeEpThirty$ \emph{above} it (CI
-$\DAnatomyOneEnvelopeEpThirtyCI$), with the early continuation's lineage
-uncertainty described in Section~\ref{sec:setup}. At epoch 50,
+$\DAnatomyTwoEnvelopeEpFiftyCI$). The early \textsc{anatomy-v1} continuation
+is reported in Appendix~\ref{app:excluded}. At epoch 50,
 the intervals for both \textsc{anatomy-v2} and \textsc{cover} versus
 \textsc{random} include zero.
 
@@ -485,10 +585,11 @@ $\CoverPeakEpoch$, then \emph{falls}, losing $\DCoverPeakToHundred$ from its own
 peak ($p\,\DCoverPeakToHundredP$) while the unguided null keeps improving
 (Figure~\ref{fig:traj}).
 Although \textsc{cover} selects rectangles by anatomical coverage, batching
-shortens the targets after placement. Its final masks therefore hide less
-anatomy than \textsc{envelope}'s (Table~\ref{tab:geom}), rather than providing
-a higher-coverage comparison. Appendix~\ref{app:covbug} describes this
-target-sizing behavior.
+shortens the targets after placement, so less guide mass is hidden at the loss
+than at placement (Appendix~\ref{app:covbug}). Its final masks hide slightly
+more tissue than \textsc{envelope}'s but keep less context
+(Table~\ref{tab:geometry}), so the trained policy is not a controlled
+higher-coverage counterpart.
 
 \ArmBest{} has the highest epoch-100 point estimate, exceeding
 \textsc{envelope} by $\DOracleEnvelopeEpHundred$ (CI
@@ -496,52 +597,108 @@ $\DOracleEnvelopeEpHundredCI$). The paired \ArmBest{}--\textsc{envelope}
 difference intervals include zero at epochs 50 and 75.
 Thus a simple intensity-based strategy is a useful comparator
 for segmentation-guided methods, not an anatomical oracle.
+For context, FairVision reports a test AUC of $\CRFairVisionAUC$ for a
+supervised 3D ResNet trained end to end on all B-scans of the same released
+split~\citep{luo2024fairvision}. This value comes from a different protocol and
+is not a ranking.
+
+\subsection{Replication across continuations and matched-budget control}
+\label{sec:replication}
+
+\begin{table}[t]
+\centering
+\caption{Registered replication at epoch 50: fp32 probes with AUC averaged over
+five head seeds; the original encoders are re-probed under the same protocol.
+Seeds A and B are further continuations from the shared epoch-25 checkpoint.
+\textsc{random-cb} places targets uniformly with \ArmBest{}'s per-image target
+and context budgets (seed A). \CRSeedResultsPending}
+\label{tab:replication}
+\footnotesize
+\begin{tabular}{lccccc}
+\toprule
+policy & original & seed A & seed B & mean & $\Delta$ vs \textsc{random} \\
+\midrule
+\textsc{random}   & \CRCell & \CRCell & \CRCell & \CRCell & --- \\
+\textsc{envelope} & \CRCell & \CRCell & \CRCell & \CRCell & \CRCell \\
+\ArmBest{}        & \CRCell & \CRCell & \CRCell & \CRCell & \CRCell \\
+\midrule
+\textsc{random-cb} & --- & \CRCell & --- & --- & \CRCell \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Repeated continuations.} \CRSeedResultsPending
+
+\paragraph{Matched-budget control.} \textsc{random-cb} receives \ArmBest{}'s
+per-image unique targets, prediction instances and visible context but places
+its targets uniformly. Its difference from \ArmBest{} therefore reflects
+placement at equal budgets, and its difference from \textsc{random} reflects the
+change of budget. \textsc{envelope} is not budget-matched in this design.
+\CRControlResultsPending
+
+\paragraph{Pooling.} The registered analysis also probes every new and
+re-probed encoder with patch maxima within B-scans and with maxima across
+B-scans in place of the means. \CRPoolingResultsPending
 
 \subsection{Analysis of target and context masks}
 \label{sec:results-h3}
 
 \begin{table}[t]
 \centering
-\caption{Per-image mask geometry on 600 training slices using the production
-samplers, before batch-level context truncation.
+\caption{Masks delivered at the training batch size of $\CRAuditBatch$,
+measured by replaying the sampler code in each strategy's trained configuration
+on $\CRAuditViews$ fixed training views. The masks used during the original
+training were not recorded. Values are means over $\CRAuditSeedCount$ sampler
+seeds of $\CRAuditDraws$ batches each, with crops and block sizes paired across
+strategies. The context column also gives the across-seed s.d.
 Tissue statistics use a thresholded MIRAGE-derived proxy, not ground-truth
-retinal annotations.
-``purity'' is the fraction of masked cells lying on tissue; ``loss slots'' counts
-supervised target-token instances, summed over the $M$ targets and including
-duplicates. AUC is quoted at the
-\emph{matched} epoch 50, so the geometry-to-AUC association is not read across
-mixed epochs. Final encoder-context fractions at the production batch size
-are reported in Table~\ref{tab:delivered}.}
-\label{tab:geom}
+annotations. ``Tissue hidden'' is the share of tissue cells in the target
+union, ``purity'' the share of target cells on tissue, ``targets'' the number
+of unique target cells, ``loss slots'' the supervised target-token instances
+including duplicates, and ``context'' the share of the grid supplied to the
+context encoder. Submitted values came from one unpaired replay with the
+code-default \ArmBest{} band width and \textsc{envelope} placed on the soft
+guide (Appendix~\ref{app:geomprov}). AUC is at the matched epoch 50.}
+\label{tab:geometry}
 \footnotesize
-\begin{tabular}{lcccccc}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccccc}
 \toprule
-policy & anatomy hidden & purity & mask ratio & context kept & loss slots & AUC @ep50 \\
+& & & & & \multicolumn{2}{c}{context (\% of grid)} & \\
+\cmidrule(lr){6-7}
+policy & tissue hidden & purity & targets & loss slots & trained config. & submitted & AUC @ep50 \\
 \midrule
-\textsc{random}   & 54.0\% & 31.5\% & 44.5\% & 41.9\% & 159.9 & \AUCRandomEpFifty \\
-\ArmBest{}   & 62.1\% & 40.0\% & 40.3\% & 45.5\% & 159.0 & \AUCOracleEpFifty \\
-\textsc{envelope} & 77.6\% & 43.3\% & 46.5\% & 40.6\% & 159.7 & \textbf{\AUCEnvelopeEpFifty} \\
-\textsc{cover}    & 73.5\% & 44.2\% & 43.2\% & 43.2\% & 159.1 & \AUCCoverEpFifty \\
-\textsc{anatomy-v2} & 79.9\% & \textbf{97.1\%} & 21.3\% & 67.7\% & 64.0 & \AUCAnatomyTwoEpFifty \\
+\textsc{random}     & \CRHidRandom\%     & \CRPurRandom\%     & \CRUniqRandom     & \CRSlotsRandom     & $\CRCtxRandom\pm\CRCtxSDRandom$         & \CRCtxOldRandom     & \AUCRandomEpFifty \\
+\ArmBest{}          & \CRHidCentroid\%   & \CRPurCentroid\%   & \CRUniqCentroid   & \CRSlotsCentroid   & $\CRCtxCentroid\pm\CRCtxSDCentroid$     & \CRCtxOldCentroid   & \AUCOracleEpFifty \\
+\textsc{envelope}   & \CRHidEnvelope\%   & \CRPurEnvelope\%   & \CRUniqEnvelope   & \CRSlotsEnvelope   & $\CRCtxEnvelope\pm\CRCtxSDEnvelope$     & \CRCtxOldEnvelope   & \textbf{\AUCEnvelopeEpFifty} \\
+\textsc{cover}      & \CRHidCover\%      & \CRPurCover\%      & \CRUniqCover      & \CRSlotsCover      & $\CRCtxCover\pm\CRCtxSDCover$           & \CRCtxOldCover      & \AUCCoverEpFifty \\
+\textsc{anatomy-v2} & \CRHidAnatomyTwo\% & \textbf{\CRPurAnatomyTwo\%} & \CRUniqAnatomyTwo & \CRSlotsAnatomyTwo & $\CRCtxAnatomyTwo\pm\CRCtxSDAnatomyTwo$ & \CRCtxOldAnatomyTwo & \AUCAnatomyTwoEpFifty \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+Table~\ref{tab:geometry} reports the masks that reach the model. At the
+training batch size, \ArmBest{} leaves $\CRCtxGapCentroid$ points more of the
+grid visible than \textsc{random} (pooled 95\% interval over batches
+\CRCtxGapCentroidCI), and \textsc{envelope} $\CRCtxGapEnvelope$ points more
+(\CRCtxGapEnvelopeCI). \ArmBest{} also has fewer unique targets and more
+repeated indices than \textsc{random}. \textsc{envelope} differs least from
+\textsc{random} in target and context budgets but has the highest tissue purity
+among the rectangle strategies. These context differences are smaller than in
+the submitted table, which used one unpaired replay, and keep their sign.
+
 The samplers do not differ only in how much tissue they target.
 \textsc{anatomy-v2} has high tissue purity but a smaller target union and
-more total context than the rectangle strategies (Table~\ref{tab:geom}).
+more total context than the rectangle strategies.
 Its fixed $K{=}16$ indices per target give $4\times16=64$ prediction
-instances, compared with about $159$ for the rectangle strategies.
+instances, compared with $\CRSlotsRandom$ for each rectangle strategy.
 This is an explicit target-length choice, not an inherent property of
 irregular shapes. Repeated target indices also affect loss weighting.
 The anatomy-shaped and coverage strategies use different guide products
 from the historical \textsc{envelope} run (Appendix~\ref{app:repro}).
-
-We therefore report target and context geometry alongside AUC.
-Appendix~\ref{app:geomprov} gives the per-image measurement protocol;
-Appendix~\ref{app:delivered_audit} measures the final masks in complete
-training-sized batches. Together, these distinguish tissue outside the
-target union from tissue actually supplied to the context encoder.
+Appendix~\ref{app:geomprov} gives the measurement protocol and the per-image
+geometry before batching, and Appendix~\ref{app:delivered_audit} audits the
+coverage strategy in complete training-sized batches.
 
 \section{Discussion and limitations}
 \label{sec:limits}
@@ -554,22 +711,32 @@ retained context. Future comparisons should control these factors while
 varying the target-selection rule.
 
 \paragraph{Experimental limits.}
-Each policy has one pretraining continuation, so test-case confidence
-intervals do not establish a ranking over retrainings~\citep{bouthillier2021variance}.
+Each original policy has one pretraining continuation, so its test-case
+confidence intervals do not establish a ranking over
+retrainings~\citep{bouthillier2021variance}. The registered replication adds
+continuations from the same epoch-25 checkpoint. It measures variation across
+continuations, not across independent initializations. \CRSeedResultsPending
 The early anatomy-shaped result has incomplete continuation documentation,
 and \textsc{anatomy-v2} was stopped after inspecting its epoch-75 deficit.
 Its later trajectory is unknown. Probe optimization and initialization
 can also affect frozen-probe comparisons; the reported fixed-budget
 protocol is not a measurement of the best achievable classifier for each
-encoder. Repeated pretraining comparisons remain future work.
+encoder.
 
 The study uses one dataset and one downstream task. Policies, checkpoints
 and analyses were chosen after repeated inspection of the same test split,
 although probe heads were fitted on training data and selected on validation
 data. Reported intervals are therefore descriptive rather than confirmatory.
-Segmentation accuracy on the OCT pretraining data is not independently
-established. Only the specified coverage setting was pretrained, so we
-identify neither an optimal coverage level nor a mechanism for its AUC decline.
+The replication uses the same test split with a plan registered before any new
+run was evaluated, which limits but does not remove this reuse.
+FairVision has no layer annotations, so guide accuracy cannot be measured on
+it. On $\CRGuideVolumes$ stratified training volumes, the \ArmBest{} band
+disagreed grossly with the MIRAGE envelope in $\CRFOne\%$ of B-scans, more often
+in glaucoma and low-signal scans, and $\CREnvAnyFlag\%$ of envelopes raised a
+plausibility flag (Appendix~\ref{app:guides}). These are agreement statistics
+between two automatic guides, not anatomical accuracy. Only the specified
+coverage setting was pretrained, so we identify neither an optimal coverage
+level nor a mechanism for its AUC decline.
 
 \paragraph{Broader impact and ethics.}
 This study uses a public, de-identified retinal dataset under its release terms
@@ -580,11 +747,16 @@ is clinically validated or intended for deployment (Appendix~\ref{app:ethics}).
 
 We investigated where I-JEPA should predict in retinal OCT.
 Tissue-directed rectangle placement improves frozen-probe glaucoma AUC in
-the observed runs, including a simple intensity-centroid strategy.
+the original runs, including a simple intensity-centroid strategy.
 More anatomically specific targeting does not consistently improve these
-results, and the implementations differ in more than target location.
-The next step is to compare target selection under matched guidance,
-target sizes and visible context across repeated pretraining runs.
+results, and the implementations differ in more than target location,
+including the context they leave visible. \CRSeedResultsPending
+Comparisons that match guidance, target sizes and visible context across
+independent pretraining runs remain the next step.
+
+\begin{ack}
+\CRAcknowledgmentsPending
+\end{ack}
 
 \bibliographystyle{plainnat}
 \bibliography{references}
@@ -605,12 +777,14 @@ lower portion of each rectangle rather than a spatially random subset.
 Coverage at placement time can consequently differ from coverage at the loss.
 
 \paragraph{Measured geometry.}
-The retained floor sweep over $6{,}137$ slices gives anatomical coverage of
-$73.1\%$ for \textsc{cover} and $77.6\%$ for \textsc{envelope}.
 Across $24{,}000$ emitted targets, $73.4\%$ remain perfect rectangles.
-Thus the trained \textsc{cover} policy is not a higher-coverage counterpart
-to \textsc{envelope}. Table~\ref{tab:geom} reports the final target sets,
-and Appendix~\ref{app:delivered_audit} provides a fixed-crop batch replay.
+In the batch-level audit of the trained configurations, \textsc{cover} hides
+$\CRHidCover\%$ of tissue cells against $\CRHidEnvelope\%$ for \textsc{envelope}
+while supplying less context (Table~\ref{tab:geometry}), and the guide mass
+hidden at the loss is $\DTLegacyDeliveredMass\%$ against
+$\DTLegacyScoredMass\%$ at placement (Table~\ref{tab:delivered_repair}).
+Thus the trained \textsc{cover} policy is not a controlled higher-coverage
+counterpart to \textsc{envelope}.
 
 \textsc{envelope} shares the same shortening rule but does not optimize an
 exact coverage level. The anatomy-shaped strategies instead resample

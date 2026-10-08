@@ -159,7 +159,7 @@
     },
     "lr_eval_code": {
       "root": "repo",
-      "path": "src\\eval_downstream.py",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\paper_i8\\source_snapshots\\b941814\\src\\eval_downstream.py",
       "sha256": "cad331b703a116985f2ce81e8abf02b12c300044a3825e22d4d6ab73c47b55ed"
     },
     "lr_interpretability_code": {
@@ -194,7 +194,7 @@
     },
     "lr_training": {
       "root": "repo",
-      "path": "src\\train_patch.py",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\paper_i8\\source_snapshots\\b941814\\src\\train_patch.py",
       "sha256": "aa19998729d062887b2480ac3e86a8d7bb9499516e202185cc96ec46c9e77a34"
     },
     "lr_lock": {
@@ -334,7 +334,7 @@
     },
     "refresh_ema_code": {
       "root": "repo",
-      "path": "src\\helper.py",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\paper_i8\\source_snapshots\\b941814\\src\\helper.py",
       "sha256": "c0f063ef236bfca598cee79e4f19c16bd0188061c2085c15036a64b8be61b9ca"
     },
     "refresh_uniform_masks": {
@@ -344,7 +344,7 @@
     },
     "refresh_guided_masks": {
       "root": "repo",
-      "path": "src\\masks\\curriculum.py",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\paper_i8\\source_snapshots\\b941814\\src\\masks\\curriculum.py",
       "sha256": "6a0564e87170f36e241b07d597345680a837fa35cff524d6aaa6ae5e2ad23b66"
     },
     "refresh_citation_authorities": {
@@ -426,6 +426,81 @@
       "root": "repo",
       "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\REVIEW.md",
       "sha256": "3c83752a07346d0f13f8098ed7334f7ff1800d29095366061cc217a10cd5460f"
+    },
+    "cr_mask_bs64": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/mask_audit/delivered_mask_audit_trained_3seeds_100draws.json",
+      "sha256": "1523354f143c9ab977fbd25f8b6565b120304cea9b19fecf6e61d913eabf40f3"
+    },
+    "cr_mask_bs1": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/mask_audit/runs/per_image_bs1_trained_3seeds.json",
+      "sha256": "7d1d6e6fb84511ea0c63cf719d1dcf919eeffffa3f124b7edd816121a4ac8470"
+    },
+    "cr_guide": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/guide_quality/summary.json",
+      "sha256": "cca5af0c0696963bf942178a040b95b11cb390517ac34e9b94f964e05b66aaae"
+    },
+    "cr_external": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/paper_i8/external_reference_values.json",
+      "sha256": "ed1802801cfd67450fa982aa183aa1012ad5d7a614850eb2cdcea4cd677af966"
+    },
+    "cr_prereg": {
+      "root": "repo",
+      "path": "paper/genai4health2026/PREREGISTRATION_cr_seed_v1.md",
+      "sha256": "837be8faa205998deba132c769b467f7e910dba8dc674bc0f632be563c023cde"
+    },
+    "cr_guide_plan": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/guide_quality/ANALYSIS_PLAN.md",
+      "sha256": "ad2e04f9d8db49ba862fefff4104f8b5d4b6797db58c468c2ac1cfefd1fe0c98"
+    },
+    "cr_fig1_evidence": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_target_selection.evidence.json",
+      "sha256": "34cd8310c4bf8ef957c09e5a4f6b9614cbd88e6de0ce2533af3c612a7a7b18dd"
+    },
+    "cr_fig2_evidence": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_jepa_comparison_final.evidence.json",
+      "sha256": "19f6205b8e13b310cf799dcec9d0ba7ab84483a320da5542c22d3be166604279"
+    },
+    "cr_fig2_chain_evidence": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_jepa_comparison.evidence.json",
+      "sha256": "ce06b96d83a68ea50b2e7cfd40d83c337b7f083635b07b7aa67c506f748bc590"
+    },
+    "cr_figall_evidence": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_all_strategies.evidence.json",
+      "sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7"
+    },
+    "cr_external_guides": {
+      "root": "repo",
+      "path": "autopilot/investigations/camera_ready_20261008/figures_staging/external_guides/octdl_crop_guides.json",
+      "sha256": "f9456a3f0fa806bc0891c765b934b903c7649b7d7d2d524a14bcedaafc19cc2b"
+    },
+    "cr_fig1_generator": {
+      "root": "repo",
+      "path": "autopilot/investigations/submission_refresh_20260910/figure/generate_external_target_selection.py",
+      "sha256": "9028c6d9b849f54528532c322f4849e2053203b907ff8414ac443c80ec01c5cf"
+    },
+    "cr_fig2_generator": {
+      "root": "repo",
+      "path": "autopilot/investigations/submission_refresh_20260910/comparison_final/generate_comparison_final.py",
+      "sha256": "e3db377e2dd5d58fdf12f6361da90a970f89888126b774bd46ae83a79144abd9"
+    },
+    "cr_figall_generator": {
+      "root": "repo",
+      "path": "autopilot/investigations/submission_refresh_20260910/figure/generate_all_strategies.py",
+      "sha256": "e7713307bf60c7858148f3012e315bff2b0124e0ee51dd9492b53d62d65bf076"
+    },
+    "cr_guides_producer": {
+      "root": "repo",
+      "path": "autopilot/investigations/submission_refresh_20260910/figure/produce_external_guides.py",
+      "sha256": "d845a62680fc079082802ef503ea4fc35359f1d9f5374b65359aca6606c819b0"
     }
   },
   "macros": {
@@ -763,176 +838,1698 @@
         ],
         "format": "%d"
       }
+    },
+    "CRHidRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/random/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRPurRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/random/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRUniqRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/random/unique_targets_U/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRSlotsRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/random/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/random/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxSDRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/random/context_pct_grid/seed_sd"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxOldRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom64",
+                "pointer": "/random/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/random/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidOldRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/random/hidden_share_of_all_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/random/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurOldRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/random/hidden_pct_on_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/random/mask_ratio_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskOldRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/random/hidden_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/random/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxOldRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/random/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/random/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsOldRandom": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/random/n_slots_mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRHidCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/centroid/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRPurCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/centroid/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRUniqCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/centroid/unique_targets_U/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRSlotsCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/centroid/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/centroid/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxSDCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/centroid/context_pct_grid/seed_sd"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxOldCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom64",
+                "pointer": "/oracle/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/centroid/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidOldCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/oracle/hidden_share_of_all_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/centroid/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurOldCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/oracle/hidden_pct_on_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/centroid/mask_ratio_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskOldCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/oracle/hidden_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/centroid/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxOldCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/oracle/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/centroid/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsOldCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/oracle/n_slots_mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRHidEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/envelope/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRPurEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/envelope/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRUniqEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/envelope/unique_targets_U/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRSlotsEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/envelope/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/envelope/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxSDEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/envelope/context_pct_grid/seed_sd"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxOldEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom64",
+                "pointer": "/envelope/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/envelope/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidOldEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/envelope/hidden_share_of_all_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/envelope/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurOldEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/envelope/hidden_pct_on_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/envelope/mask_ratio_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskOldEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/envelope/hidden_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/envelope/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxOldEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/envelope/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/envelope/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsOldEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/envelope/n_slots_mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRHidCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/cover/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRPurCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/cover/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRUniqCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/cover/unique_targets_U/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRSlotsCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/cover/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/cover/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxSDCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/cover/context_pct_grid/seed_sd"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxOldCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom64",
+                "pointer": "/cover/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/cover/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidOldCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/cover/hidden_share_of_all_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/cover/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurOldCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/cover/hidden_pct_on_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/cover/mask_ratio_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskOldCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/cover/hidden_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/cover/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxOldCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/cover/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/cover/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsOldCover": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/cover/n_slots_mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRHidAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/anatomy/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRPurAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/anatomy/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRUniqAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/anatomy/unique_targets_U/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRSlotsAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/anatomy/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/anatomy/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxSDAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/summary/anatomy/context_pct_grid/seed_sd"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxOldAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom64",
+                "pointer": "/anatomy/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/anatomy/anatomy_hidden_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgHidOldAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/anatomy/hidden_share_of_all_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/anatomy/purity_soft_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgPurOldAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/anatomy/hidden_pct_on_anat"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/anatomy/mask_ratio_pct/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgMaskOldAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/anatomy/hidden_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/anatomy/context_pct_grid/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgCtxOldAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "lr_geom",
+                "pointer": "/anatomy/ctx_frac_of_grid"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/summary/anatomy/loss_slots_L/mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRImgSlotsOldAnatomyTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom",
+            "pointer": "/anatomy/n_slots_mean"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxGapCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/centroid/mean_of_seeds"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxGapCentroidCI": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/centroid/pooled_normal_95ci/0"
+          },
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/centroid/pooled_normal_95ci/1"
+          }
+        ],
+        "format": "%.1f--%.1f"
+      }
+    },
+    "CRCtxGapSDCentroid": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/centroid/seed_sd"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxGapEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/envelope/mean_of_seeds"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRCtxGapEnvelopeCI": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/envelope/pooled_normal_95ci/0"
+          },
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/envelope/pooled_normal_95ci/1"
+          }
+        ],
+        "format": "%.1f--%.1f"
+      }
+    },
+    "CRCtxGapSDEnvelope": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/envelope/seed_sd"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRAuditSeedCount": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "length",
+            "args": [
+              {
+                "source": "cr_mask_bs64",
+                "pointer": "/protocol/audit_seeds"
+              }
+            ]
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRAuditDraws": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/protocol/budget_draws_per_seed"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRAuditBatch": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/protocol/batch_size"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRAuditViews": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/protocol/views"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRAuditVolumes": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/protocol/volumes"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRAuditSlices": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/protocol/slices_per_volume"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRImgDraws": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_mask_bs1",
+            "pointer": "/protocol/budget_draws_per_seed"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRSamplerCommit": {
+      "expression": {
+        "source": "cr_mask_bs64",
+        "pointer": "/samplers/commit"
+      }
+    },
+    "CROldSlices": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom64",
+            "pointer": "/_meta/slices"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CROldVolumes": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom64",
+            "pointer": "/_meta/volumes"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CROldSeed": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_geom64",
+            "pointer": "/_meta/seed"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRBandRows": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/design/ribbon/band_h"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRBandCols": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/design/ribbon/x_keep"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRBandRegion": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/design/ribbon/region_frac"
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "CRBandLateral": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/design/ribbon/lateral_frac"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRGuideVolumes": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/design/n_volumes"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRGuideBscans": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/design/n_bscans"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRGuidePerStratum": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/design/per_stratum"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRCensusVolumes": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/census/n_volumes"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    "CRFOne": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/F1/overall_popweighted/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRFOneCI": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/F1/overall_popweighted/ci95/0"
+              }
+            ]
+          },
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/F1/overall_popweighted/ci95/1"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f--%.1f"
+      }
+    },
+    "CRFOneCensus": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/census/rates/F1/overall/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRFOneNormal": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/F1/label=0/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRFOneGlaucoma": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/F1/label=1/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRFOneLowSNR": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/F1/snr_t0/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRFOneHighSNR": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/F1/snr_t2/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRFTwo": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/F2/overall_popweighted/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRIoUMedian": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/continuous/iou/all/median"
+          }
+        ],
+        "format": "%.2f"
+      }
+    },
+    "CREnvAnyFlag": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/env_any_flag/overall_popweighted/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CREnvAnyFlagCI": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/env_any_flag/overall_popweighted/ci95/0"
+              }
+            ]
+          },
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/env_any_flag/overall_popweighted/ci95/1"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f--%.1f"
+      }
+    },
+    "CREnvFragmented": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/fragmented/overall_popweighted/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CREnvThickness": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/thickness_irregular/overall_popweighted/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CREnvPosition": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "op": "percent",
+            "args": [
+              {
+                "source": "cr_guide",
+                "pointer": "/rates/position_implausible/overall_popweighted/rate"
+              }
+            ]
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    "CRMirageDice": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_guide",
+            "pointer": "/mirage_context/goals_test_evaluation/foreground_mean_dice/value"
+          }
+        ],
+        "format": "%.3f"
+      }
+    },
+    "CRFairVisionAUC": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_external",
+            "pointer": "/fairvision_glaucoma_3d_resnet/overall_auc"
+          }
+        ],
+        "format": "%.4f"
+      }
+    },
+    "CRFairVisionSD": {
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "cr_external",
+            "pointer": "/fairvision_glaucoma_3d_resnet/overall_auc_sd"
+          }
+        ],
+        "format": "%.4f"
+      }
     }
   },
   "literals": [
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "67ba5728f6b70b1d38de0a8daa4390c790d04d69ce25351918e24701ef2159e7",
-      "token_index": 0,
-      "value": "1",
-      "review": {
-        "kind": "citation",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10",
-        "rationale": "Figure1 identifies the published OCTDL source image, not this paper's result number.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/source_image_url"
-          },
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/attribution"
-          }
-        ],
-        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
-        "locator": "Figure 1 and version-pinned article record"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "67ba5728f6b70b1d38de0a8daa4390c790d04d69ce25351918e24701ef2159e7",
-      "token_index": 1,
-      "value": "2312.08255",
-      "review": {
-        "kind": "citation",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10",
-        "rationale": "2312.08255 is the source arXiv identifier, not an empirical value.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/primary_license_url"
-          }
-        ],
-        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
-        "locator": "Figure 1 and version-pinned article record"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "67ba5728f6b70b1d38de0a8daa4390c790d04d69ce25351918e24701ef2159e7",
-      "token_index": 2,
-      "value": "3",
-      "review": {
-        "kind": "citation",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10",
-        "rationale": "3 is the explicitly pinned source-article version v3.",
-        "evidence": [
-          {
-            "source": "external_oct_license",
-            "excerpt": "2312.08255v3"
-          }
-        ],
-        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
-        "locator": "Figure 1 and version-pinned article record"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "67ba5728f6b70b1d38de0a8daa4390c790d04d69ce25351918e24701ef2159e7",
-      "token_index": 3,
-      "value": "4.0",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10",
-        "rationale": "4.0 is the CC BY license version. The retained primary version-pinned article page links this license; it is not the FairVision ND license.",
-        "evidence": [
-          {
-            "source": "external_oct_license",
-            "excerpt": "creativecommons.org/licenses/by/4.0/"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "67ba5728f6b70b1d38de0a8daa4390c790d04d69ce25351918e24701ef2159e7",
-      "token_index": 4,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10",
-        "rationale": "256 is the input crop width after whole-crop bilinear downsampling, independently reproduced from the retained published image.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/sampler_config/input_size/0"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "67ba5728f6b70b1d38de0a8daa4390c790d04d69ce25351918e24701ef2159e7",
-      "token_index": 5,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10",
-        "rationale": "256 is the input crop height after the same whole-crop downsampling, not a cohort or model outcome.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/sampler_config/input_size/1"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "67ba5728f6b70b1d38de0a8daa4390c790d04d69ce25351918e24701ef2159e7",
-      "token_index": 6,
-      "value": "2312.08255",
-      "review": {
-        "kind": "citation",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10",
-        "rationale": "2312.08255 repeats the version-pinned source identifier in the attribution URL.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/primary_license_url"
-          }
-        ],
-        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
-        "locator": "Figure 1 and version-pinned article record"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "67ba5728f6b70b1d38de0a8daa4390c790d04d69ce25351918e24701ef2159e7",
-      "token_index": 7,
-      "value": "3",
-      "review": {
-        "kind": "citation",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10",
-        "rationale": "3 repeats source version v3 in the attribution URL.",
-        "evidence": [
-          {
-            "source": "external_oct_license",
-            "excerpt": "2312.08255v3"
-          }
-        ],
-        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
-        "locator": "Figure 1 and version-pinned article record"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "67ba5728f6b70b1d38de0a8daa4390c790d04d69ce25351918e24701ef2159e7",
-      "token_index": 8,
-      "value": "4.0",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10",
-        "rationale": "4.0 repeats the CC BY license version in its attribution URL.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/license_url"
-          }
-        ]
-      }
-    },
     {
       "file": "main_submission.tex",
       "context_sha256": "fbe5b9bf82a8c905034f7713726b89cbb0a81ae375a5e2829bcbeda82222b34c",
@@ -946,40 +2543,6 @@
           {
             "source": "refresh_citation_authorities",
             "pointer": "/items/2/resolved_title"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "2b42becf941029e61eae0f5bcb814c1d93b445987a0e0468f74759bf94602b8f",
-      "token_index": 0,
-      "value": "4",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
-        "rationale": "Declared target-block count M=4.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "num_pred_masks: 4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "2b11c0d54843c6d2577562d7fd56d964b130f5a8649a9455116b66a596be4eec",
-      "token_index": 0,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10",
-        "rationale": "The 1 in Smooth-L1 is the unchanged production loss name, not an empirical value. Both diagram panels preserve the same mean Smooth-L1 objective. Current-context review: The unchanged caption still names the same production Smooth-L1 loss; only the included image filename changed.",
-        "evidence": [
-          {
-            "source": "lr_training",
-            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
           }
         ]
       }
@@ -1069,722 +2632,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 0,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 1,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 2,
-      "value": "16",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 3,
-      "value": "6",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 4,
-      "value": "-25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/5"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 5,
-      "value": "512",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 6,
-      "value": "25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 7,
-      "value": "30",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 9,
-      "value": "-27",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Epoch27 is the checked-in anatomy-v1 resume filename. This does not establish the missing historical launch, as the text explicitly qualifies. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_v1_cfg",
-            "excerpt": "resume-ep27.pth.tar"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d2c7401dd68a537b32de4227da14101bf8bb7ea703201ac6cf7965afcb6ee73e",
-      "token_index": 10,
-      "value": "-25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/5"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "4ecbecc2868f647e4b80be2c8ce645f6c08c5a343e2607dba38f18f3548f6a4f",
-      "token_index": 0,
-      "value": "100",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "The completed rectangle/coverage endpoint is epoch100 for random, centroid, envelope and historical COVER, each separately identified in the primary statistics. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/29/epoch"
-          },
-          {
-            "source": "lr_stats",
-            "pointer": "/table/23/epoch"
-          },
-          {
-            "source": "lr_stats",
-            "pointer": "/table/18/epoch"
-          },
-          {
-            "source": "lr_stats",
-            "pointer": "/table/12/epoch"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "4ecbecc2868f647e4b80be2c8ce645f6c08c5a343e2607dba38f18f3548f6a4f",
-      "token_index": 2,
-      "value": "75",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for anatomy-v2, epoch 75. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Observed anatomy-v2 epoch75, explicitly unmeasured epoch100, and the common five-policy epoch50 comparison remain unchanged.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "4ecbecc2868f647e4b80be2c8ce645f6c08c5a343e2607dba38f18f3548f6a4f",
-      "token_index": 3,
-      "value": "-100",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Epoch100 is explicitly an unmeasured anatomy-v2 horizon, not a measured checkpoint. Re-reviewed current context: Observed anatomy-v2 epoch75, explicitly unmeasured epoch100, and the common five-policy epoch50 comparison remain unchanged.",
-        "evidence": [
-          {
-            "source": "lr_p8_code",
-            "excerpt": "NOT_RUN = {\"EpHundred\"}"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "4ecbecc2868f647e4b80be2c8ce645f6c08c5a343e2607dba38f18f3548f6a4f",
-      "token_index": 5,
-      "value": "-30",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "The lexical hyphen in epoch-30 is not a negative epoch. The sole primary anatomy-v1 row is anatomy-v1@ep30@fp32. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/0"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "4ecbecc2868f647e4b80be2c8ce645f6c08c5a343e2607dba38f18f3548f6a4f",
-      "token_index": 6,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Observed anatomy-v2 epoch75, explicitly unmeasured epoch100, and the common five-policy epoch50 comparison remain unchanged.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/14"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "bdb389ce1f6b397960fa792a54250a9433da97e32b610cec31a4b50c21d1d452",
-      "token_index": 0,
-      "value": "25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/5"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "bdb389ce1f6b397960fa792a54250a9433da97e32b610cec31a4b50c21d1d452",
-      "token_index": 6,
-      "value": "2",
-      "assertion": {
-        "expression": {
-          "op": "max",
-          "args": [
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/0/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/1/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/2/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/3/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/4/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/5/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/6/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/7/delta_fp32_minus_fp16"
-                }
-              ]
-            }
-          ]
-        },
-        "relation": "le",
-        "bound": "2\\times10^{-4}",
-        "component": 0
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "bdb389ce1f6b397960fa792a54250a9433da97e32b610cec31a4b50c21d1d452",
-      "token_index": 7,
-      "value": "10",
-      "assertion": {
-        "expression": {
-          "op": "max",
-          "args": [
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/0/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/1/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/2/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/3/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/4/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/5/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/6/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/7/delta_fp32_minus_fp16"
-                }
-              ]
-            }
-          ]
-        },
-        "relation": "le",
-        "bound": "2\\times10^{-4}",
-        "component": 1
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "bdb389ce1f6b397960fa792a54250a9433da97e32b610cec31a4b50c21d1d452",
-      "token_index": 8,
-      "value": "-4",
-      "assertion": {
-        "expression": {
-          "op": "max",
-          "args": [
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/0/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/1/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/2/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/3/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/4/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/5/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/6/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/7/delta_fp32_minus_fp16"
-                }
-              ]
-            }
-          ]
-        },
-        "relation": "le",
-        "bound": "2\\times10^{-4}",
-        "component": 2
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "ae19e064278a0e07aa5df8f62895fb9273cda45775afd693cd621062fbf3e9fa",
       "token_index": 1,
       "value": "50",
@@ -1853,40 +2700,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "53c0a063afa18579f7754d9347a68d3af3cffff755a00363a2a10ea6d2d2744f",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/14"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "53c0a063afa18579f7754d9347a68d3af3cffff755a00363a2a10ea6d2d2744f",
-      "token_index": 1,
-      "value": "100",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 100. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/23"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "68842f114eb20003f14df2011e9ad451c1aa2690c6f33fd8686a8f854d2742a5",
       "token_index": 1,
       "value": "-25",
@@ -1917,272 +2730,6 @@
             "pointer": "/table/9"
           }
         ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "a987c425833a8ce21e27e282ea7e5045dabb078c5ded3262096058eac46ad614",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for cover-f021, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Historical COVER rises through epoch50; peak and subsequent decline are still separate source-bound macros. Current-context review: Historical COVER epoch50 is unchanged; the new adjacent sentence still distinguishes candidate coverage from final shortened targets.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/9"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "8756eb13bdc476f4a6731b75b4f0376a5ff792731ca5e14679ffad24407edbbb",
-      "token_index": 0,
-      "value": "-100",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 100. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Centroid-versus-envelope comparison uses centroid epoch100,50,75 receipts, not a similarly spelled COVER epoch100 receipt.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/23"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "8756eb13bdc476f4a6731b75b4f0376a5ff792731ca5e14679ffad24407edbbb",
-      "token_index": 1,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Centroid-versus-envelope comparison uses centroid epoch100,50,75 receipts, not a similarly spelled COVER epoch100 receipt.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/20"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "8756eb13bdc476f4a6731b75b4f0376a5ff792731ca5e14679ffad24407edbbb",
-      "token_index": 2,
-      "value": "75",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 75. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Centroid-versus-envelope comparison uses centroid epoch100,50,75 receipts, not a similarly spelled COVER epoch100 receipt.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/22"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "507aaf09e761862f1e22d51f5853336396f16b7fae196ad0feab1295f471471e",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/14"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "7d83fe2cb3a12544e3922134a91c63fa2013494dd101d766d1e23e07a2378322",
-      "token_index": 1,
-      "value": "16",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
-        "evidence": [
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "pred_target_k: 16"
-          },
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "num_pred_masks: 4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "7d83fe2cb3a12544e3922134a91c63fa2013494dd101d766d1e23e07a2378322",
-      "token_index": 2,
-      "value": "4",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
-        "evidence": [
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "pred_target_k: 16"
-          },
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "num_pred_masks: 4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "7d83fe2cb3a12544e3922134a91c63fa2013494dd101d766d1e23e07a2378322",
-      "token_index": 3,
-      "value": "16",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
-        "evidence": [
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "pred_target_k: 16"
-          },
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "num_pred_masks: 4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "7d83fe2cb3a12544e3922134a91c63fa2013494dd101d766d1e23e07a2378322",
-      "token_index": 4,
-      "value": "64",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "The displayed 64 is the arithmetic product of four target lists and K=16, not a newly measured statistic. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
-        "evidence": [
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "pred_target_k: 16"
-          },
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "num_pred_masks: 4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "7d83fe2cb3a12544e3922134a91c63fa2013494dd101d766d1e23e07a2378322",
-      "token_index": 5,
-      "value": "159",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "mean",
-            "args": [
-              {
-                "source": "lr_geom",
-                "pointer": "/random/n_slots_mean"
-              },
-              {
-                "source": "lr_geom",
-                "pointer": "/oracle/n_slots_mean"
-              },
-              {
-                "source": "lr_geom",
-                "pointer": "/envelope/n_slots_mean"
-              },
-              {
-                "source": "lr_geom",
-                "pointer": "/cover/n_slots_mean"
-              }
-            ]
-          }
-        ],
-        "format": "%.0f"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "12e01f57377b1c453050d9b49a37130dd810cc0fe75c183afa53139357af9c16",
-      "token_index": 1,
-      "value": "73.1",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "source": "lr_floor",
-            "pointer": "/0.21/pct_anat_hid"
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "12e01f57377b1c453050d9b49a37130dd810cc0fe75c183afa53139357af9c16",
-      "token_index": 2,
-      "value": "77.6",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "source": "lr_floor",
-            "pointer": "/envelope/pct_anat_hid"
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "12e01f57377b1c453050d9b49a37130dd810cc0fe75c183afa53139357af9c16",
-      "token_index": 3,
-      "value": "24{,}000",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "source": "lr_rectangles",
-            "pointer": "/random_legal/blocks_checked"
-          }
-        ],
-        "format": "%d"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "12e01f57377b1c453050d9b49a37130dd810cc0fe75c183afa53139357af9c16",
-      "token_index": 4,
-      "value": "73.4",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "source": "lr_rectangles",
-            "pointer": "/random_legal/perfect_rectangles_pct"
-          }
-        ],
-        "format": "%.1f"
       }
     },
     {
@@ -2443,290 +2990,6 @@
           }
         ],
         "format": "%d"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2fc981e70bbf1cf0af317b390217d50ba6876b8ea9f3787be9e6195190762bb0",
-      "token_index": 0,
-      "value": "600",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/slices"
-          }
-        ],
-        "format": "%d"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2fc981e70bbf1cf0af317b390217d50ba6876b8ea9f3787be9e6195190762bb0",
-      "token_index": 1,
-      "value": "64",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
-        "rationale": "Production-batch geometry measurement uses batch64.",
-        "evidence": [
-          {
-            "source": "lr_geom64",
-            "pointer": "/_meta/batch_size"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2fc981e70bbf1cf0af317b390217d50ba6876b8ea9f3787be9e6195190762bb0",
-      "token_index": 2,
-      "value": "0.4",
-      "assertion": {
-        "expression": {
-          "op": "subtract",
-          "args": [
-            {
-              "source": "lr_geom",
-              "pointer": "/random/ctx_frac_of_grid"
-            },
-            {
-              "source": "lr_geom",
-              "pointer": "/random/ctx_frac_of_grid"
-            }
-          ]
-        },
-        "relation": "le",
-        "bound": "0.4",
-        "component": 0
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "349e726fc1083abb956b43333f8057656067e990a95bcd11d992a6591c6d3939",
-      "token_index": 0,
-      "value": "64",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
-        "rationale": "Column label names the measured batch64 protocol.",
-        "evidence": [
-          {
-            "source": "lr_geom64",
-            "pointer": "/_meta/batch_size"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "6f0a82cf4c1ccee32249665e9a0abfa9aab7a1c2e0a868d6590cc9b33215ee76",
-      "token_index": 0,
-      "value": "41.9",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry42",
-                "pointer": "/random/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "6f0a82cf4c1ccee32249665e9a0abfa9aab7a1c2e0a868d6590cc9b33215ee76",
-      "token_index": 1,
-      "value": "24.7",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry_batch64",
-                "pointer": "/random/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "ff4f04d82d05975deacfbcf6f5687e4551588995ab23c293a98160e0ff678b6f",
-      "token_index": 0,
-      "value": "45.5",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry42",
-                "pointer": "/oracle/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "ff4f04d82d05975deacfbcf6f5687e4551588995ab23c293a98160e0ff678b6f",
-      "token_index": 1,
-      "value": "32.9",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry_batch64",
-                "pointer": "/oracle/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "7f09d588b989f1bba5294eba647a830b9ca89e71dc30671c7220fd8864553f2e",
-      "token_index": 0,
-      "value": "40.6",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry42",
-                "pointer": "/envelope/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "7f09d588b989f1bba5294eba647a830b9ca89e71dc30671c7220fd8864553f2e",
-      "token_index": 1,
-      "value": "30.7",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry_batch64",
-                "pointer": "/envelope/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "4ca7aac075f07ee7a040f05dfb745ef0cd756c05bc325b24c81e44d1e5d630a1",
-      "token_index": 0,
-      "value": "43.2",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry42",
-                "pointer": "/cover/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "4ca7aac075f07ee7a040f05dfb745ef0cd756c05bc325b24c81e44d1e5d630a1",
-      "token_index": 1,
-      "value": "30.1",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry_batch64",
-                "pointer": "/cover/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "257b93226e3c9f95a374082f903d57b47a20cf5ea48cbb6d179e5d166eabbfb8",
-      "token_index": 1,
-      "value": "67.7",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry42",
-                "pointer": "/anatomy/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "257b93226e3c9f95a374082f903d57b47a20cf5ea48cbb6d179e5d166eabbfb8",
-      "token_index": 2,
-      "value": "63.5",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "op": "percent",
-            "args": [
-              {
-                "source": "geometry_batch64",
-                "pointer": "/anatomy/ctx_frac_of_grid"
-              }
-            ]
-          }
-        ],
-        "format": "%.1f"
       }
     },
     {
@@ -3515,142 +3778,6 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "4d30289ab8873542b4ea9ee516d870e67ac39bbcb9a270e69988a8c1189ce9be",
-      "token_index": 1,
-      "value": "-27",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Epoch27 identifies the configured anatomy-v1 resume filename, with the missing producing-launch caveat retained. The leading hyphen is lexical, not a negative setting.",
-        "evidence": [
-          {
-            "source": "lr_v1_cfg",
-            "excerpt": "resume-ep27.pth.tar"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "78f534e92c326c5dd7377ff0e032ad71b2df99db6362b80bd273c8571f5ab379",
-      "token_index": 0,
-      "value": "-42",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Mask-measurement protocol from the retained geometry artifact _meta/seed. The leading hyphen is lexical, not a negative setting.",
-        "evidence": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/seed"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "78f534e92c326c5dd7377ff0e032ad71b2df99db6362b80bd273c8571f5ab379",
-      "token_index": 1,
-      "value": "600",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Mask-measurement protocol from the retained geometry artifact _meta/slices.",
-        "evidence": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/slices"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "78f534e92c326c5dd7377ff0e032ad71b2df99db6362b80bd273c8571f5ab379",
-      "token_index": 2,
-      "value": "24",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Mask-measurement protocol from the retained geometry artifact _meta/volumes.",
-        "evidence": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/volumes"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "78f534e92c326c5dd7377ff0e032ad71b2df99db6362b80bd273c8571f5ab379",
-      "token_index": 3,
-      "value": "25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Mask-measurement protocol from the retained geometry artifact _meta/slices_per_volume.",
-        "evidence": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/slices_per_volume"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "78f534e92c326c5dd7377ff0e032ad71b2df99db6362b80bd273c8571f5ab379",
-      "token_index": 6,
-      "value": "0.25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Mask-measurement protocol from the retained geometry artifact _meta/occupancy_threshold.",
-        "evidence": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/occupancy_threshold"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "78f534e92c326c5dd7377ff0e032ad71b2df99db6362b80bd273c8571f5ab379",
-      "token_index": 4,
-      "value": "16",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
-        "evidence": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/grid"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "78f534e92c326c5dd7377ff0e032ad71b2df99db6362b80bd273c8571f5ab379",
-      "token_index": 5,
-      "value": "16",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
-        "evidence": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/grid"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
       "context_sha256": "39112ffe9716a115615d2e4543f40c3a12c5af78e0cedbb946383ac42062817a",
       "token_index": 0,
       "value": "4.0",
@@ -3696,74 +3823,6 @@
           {
             "source": "lr_primary_result",
             "pointer": "/config/training/epochs"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "1092e76a97ecddbcbce867807f9a16118cee224a512d0c1a9a1953ad8960a797",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Same named anatomy comparison epoch and unchanged signed difference/interval macros; lower AUC wording removes the prior negative-below ambiguity.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/3"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "1092e76a97ecddbcbce867807f9a16118cee224a512d0c1a9a1953ad8960a797",
-      "token_index": 2,
-      "value": "30",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Same named anatomy comparison epoch and unchanged signed difference/interval macros; lower AUC wording removes the prior negative-below ambiguity.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/0"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "1092e76a97ecddbcbce867807f9a16118cee224a512d0c1a9a1953ad8960a797",
-      "token_index": 4,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Same named anatomy comparison epoch and unchanged signed difference/interval macros; lower AUC wording removes the prior negative-below ambiguity.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/3"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "c40a376877f554f278e49eda8e4df6063b5287779098a64ef25bf61ac54addd8",
-      "token_index": 2,
-      "value": "-75",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "The shortened limitations paragraph retains anatomy-v2 epoch75 and its inspection-based stopping caveat. The leading hyphen is lexical, not a negative setting.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/4"
           }
         ]
       }
@@ -3963,27 +4022,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "808804f6a99a07dbdcac2fac2b3fd3337d333615450d7a484c353c7b3ac21a7d",
-      "token_index": 0,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
-        "rationale": "T_1 denotes the first target list, not a measured constant. Uniform locations are image-independent; guided placement uses image-derived weights. The separate context block removes the target union before truncation, so target complement is not encoder-visible context. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: T_1 remains the first target list. Joint sampling of context and targets now matches the production collation and strategy-specific intensity/segmentation guidance; no ground-truth equivalence is asserted.",
-        "evidence": [
-          {
-            "source": "refresh_uniform_masks",
-            "excerpt": "kept = [i for i in indices if i not in pred_indices_union]"
-          },
-          {
-            "source": "refresh_guided_masks",
-            "excerpt": "def _anatomical_prior_weight_grid_for_image("
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "896b15184be94e1b29f980fd255758e3ae3f2563c959a75ca57b6c1a68b2af1c",
       "token_index": 0,
       "value": "0.21",
@@ -4001,13 +4039,492 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "e263edb8f699cac8260e801e9c79da101ca218f87a0aac16bf90c10448d59a17",
+      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
+      "token_index": 0,
+      "value": "1",
+      "review": {
+        "kind": "citation",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Figure1 identifies the published OCTDL source image, not this paper's result number.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/source_image_url"
+          },
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/attribution"
+          }
+        ],
+        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
+        "locator": "Figure 1 and version-pinned article record"
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
       "token_index": 1,
+      "value": "2312.08255",
+      "review": {
+        "kind": "citation",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "2312.08255 is the source arXiv identifier, not an empirical value.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/primary_license_url"
+          }
+        ],
+        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
+        "locator": "Figure 1 and version-pinned article record"
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
+      "token_index": 2,
+      "value": "3",
+      "review": {
+        "kind": "citation",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "3 is the explicitly pinned source-article version v3.",
+        "evidence": [
+          {
+            "source": "external_oct_license",
+            "excerpt": "2312.08255v3"
+          }
+        ],
+        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
+        "locator": "Figure 1 and version-pinned article record"
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
+      "token_index": 3,
+      "value": "4.0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "4.0 is the CC BY license version. The retained primary version-pinned article page links this license; it is not the FairVision ND license.",
+        "evidence": [
+          {
+            "source": "external_oct_license",
+            "excerpt": "creativecommons.org/licenses/by/4.0/"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
+      "token_index": 4,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "256 is the input crop width after whole-crop bilinear downsampling, independently reproduced from the retained published image.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/sampler_config/input_size/0"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
+      "token_index": 5,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "256 is the input crop height after the same whole-crop downsampling, not a cohort or model outcome.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/sampler_config/input_size/1"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
+      "token_index": 6,
+      "value": "4.0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "4.0 repeats the CC BY license version in its attribution URL.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/license_url"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "398bde8b3745187f8434861319045d7f5396481583e4bc851f892b12febcf0ab",
+      "token_index": 0,
+      "value": "4",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Declared target-block count M=4.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "num_pred_masks: 4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
+      "token_index": 0,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
+      "token_index": 1,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
+      "token_index": 2,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
+      "token_index": 3,
+      "value": "6",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
+      "token_index": 5,
+      "value": "512",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
+      "token_index": 6,
+      "value": "25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
+      "token_index": 7,
+      "value": "30",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
+      "token_index": 0,
+      "value": "100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The completed rectangle/coverage endpoint is epoch100 for random, centroid, envelope and historical COVER, each separately identified in the primary statistics. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/29/epoch"
+          },
+          {
+            "source": "lr_stats",
+            "pointer": "/table/23/epoch"
+          },
+          {
+            "source": "lr_stats",
+            "pointer": "/table/18/epoch"
+          },
+          {
+            "source": "lr_stats",
+            "pointer": "/table/12/epoch"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
+      "token_index": 2,
+      "value": "75",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for anatomy-v2, epoch 75. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Observed anatomy-v2 epoch75, explicitly unmeasured epoch100, and the common five-policy epoch50 comparison remain unchanged.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
+      "token_index": 4,
       "value": "50",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Revised geometry caption retains the same matched epoch50 AUC, not a new geometry measurement. Updated-context review: The same epoch50 AUC is retained. Added caption text correctly identifies a MIRAGE-derived tissue proxy, not ground truth; no geometry values changed.",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Observed anatomy-v2 epoch75, explicitly unmeasured epoch100, and the common five-policy epoch50 comparison remain unchanged.",
         "evidence": [
           {
             "source": "lr_stats",
@@ -4015,120 +4532,979 @@
           }
         ]
       }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "575df217f87586e5fff7b691827cc02f9fb1591f7da0bdcc082412ac6fb02df7",
+      "token_index": 0,
+      "value": "25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/5"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "575df217f87586e5fff7b691827cc02f9fb1591f7da0bdcc082412ac6fb02df7",
+      "token_index": 6,
+      "value": "2",
+      "assertion": {
+        "expression": {
+          "op": "max",
+          "args": [
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/0/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/1/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/2/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/3/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/4/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/5/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/6/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/7/delta_fp32_minus_fp16"
+                }
+              ]
+            }
+          ]
+        },
+        "relation": "le",
+        "bound": "2\\times10^{-4}",
+        "component": 0
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "575df217f87586e5fff7b691827cc02f9fb1591f7da0bdcc082412ac6fb02df7",
+      "token_index": 7,
+      "value": "10",
+      "assertion": {
+        "expression": {
+          "op": "max",
+          "args": [
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/0/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/1/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/2/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/3/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/4/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/5/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/6/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/7/delta_fp32_minus_fp16"
+                }
+              ]
+            }
+          ]
+        },
+        "relation": "le",
+        "bound": "2\\times10^{-4}",
+        "component": 1
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "575df217f87586e5fff7b691827cc02f9fb1591f7da0bdcc082412ac6fb02df7",
+      "token_index": 8,
+      "value": "-4",
+      "assertion": {
+        "expression": {
+          "op": "max",
+          "args": [
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/0/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/1/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/2/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/3/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/4/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/5/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/6/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/7/delta_fp32_minus_fp16"
+                }
+              ]
+            }
+          ]
+        },
+        "relation": "le",
+        "bound": "2\\times10^{-4}",
+        "component": 2
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "8eb58e1aa87334d243a42e101deb66532a2ba250f99382f8d61f281cd61664b5",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/14"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "8eb58e1aa87334d243a42e101deb66532a2ba250f99382f8d61f281cd61664b5",
+      "token_index": 1,
+      "value": "100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 100. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/23"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2d6d374af56ac3faf95233476b2ba84e1f3748ad48a28e4c1d322a20644912e3",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Same named anatomy comparison epoch and unchanged signed difference/interval macros; lower AUC wording removes the prior negative-below ambiguity.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/3"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d09c1c15daf77cc2b78db1510b0c0a8aa881498677e5162df093ed4d269cf480",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for cover-f021, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Historical COVER rises through epoch50; peak and subsequent decline are still separate source-bound macros. Current-context review: Historical COVER epoch50 is unchanged; the new adjacent sentence still distinguishes candidate coverage from final shortened targets.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/9"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "552bb16dd122bf9da0fea68c63cebbb035673aefc6040a3ae6af684ad19c2ca5",
+      "token_index": 2,
+      "value": "4",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          },
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "num_pred_masks: 4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "552bb16dd122bf9da0fea68c63cebbb035673aefc6040a3ae6af684ad19c2ca5",
+      "token_index": 3,
+      "value": "16",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          },
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "num_pred_masks: 4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "552bb16dd122bf9da0fea68c63cebbb035673aefc6040a3ae6af684ad19c2ca5",
+      "token_index": 4,
+      "value": "64",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The displayed 64 is the arithmetic product of four target lists and K=16, not a newly measured statistic. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          },
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "num_pred_masks: 4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "868041b76b9c0feb3e3c0a4c8ca2fae3e35b4b89e49b20f7c99251cb4e71ab58",
+      "token_index": 1,
+      "value": "73.4",
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_rectangles",
+            "pointer": "/random_legal/perfect_rectangles_pct"
+          }
+        ],
+        "format": "%.1f"
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "0700576844578b752c250d2b0225ef9f60e943adb7059aca757aa9e9d8e39ead",
+      "token_index": 2,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Ancestor checkpoint epoch 25 in the moved anatomy-v1 lineage sentence; hyphen is lexical. Template evidence: Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/5"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "3e601f93641cd1b114f2a279a071c329cf40a8a6932ff6c64d1bbf3a999ec9ea",
+      "token_index": 0,
+      "value": "0.25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Envelope reference of the guide-agreement analysis: patch occupancy >= 0.25, fixed in the analysis plan.",
+        "evidence": [
+          {
+            "source": "cr_guide_plan",
+            "excerpt": "`E = occupancy >= 0.25`"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "3e601f93641cd1b114f2a279a071c329cf40a8a6932ff6c64d1bbf3a999ec9ea",
+      "token_index": 1,
+      "value": "0.2",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Primary gross-disagreement rule F1 uses IoU < 0.20 (printed 0.2), fixed before computing any rate.",
+        "evidence": [
+          {
+            "source": "cr_guide_plan",
+            "excerpt": "`iou < 0.20` OR `ribbon_zero_env_frac > 0.50`"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "3e601f93641cd1b114f2a279a071c329cf40a8a6932ff6c64d1bbf3a999ec9ea",
+      "token_index": 2,
+      "value": "95",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Interval convention of the guide-agreement analysis: 95% volume-cluster bootstrap.",
+        "evidence": [
+          {
+            "source": "cr_guide_plan",
+            "excerpt": "95% CIs: volume-cluster bootstrap"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "42093ff9891f0c971e53e95b10d146765f43108d4d4a6d3fd29196abbb5f5cb6",
+      "token_index": 2,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Fixed anatomy target length K=16 in both anatomy-shaped configurations.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          },
+          {
+            "source": "lr_v1_cfg",
+            "excerpt": "pred_target_k: 16"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
+      "token_index": 4,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Shared epoch-25 ancestor of the original continuations; the hyphen is lexical. Template evidence: Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/5"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
+      "token_index": 3,
+      "value": "-100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Unmeasured anatomy-v2 epoch-100 horizon; unchanged statement after removing the anatomy-v1 sentence. Template evidence: Epoch100 is explicitly an unmeasured anatomy-v2 horizon, not a measured checkpoint. Re-reviewed current context: Observed anatomy-v2 epoch75, explicitly unmeasured epoch100, and the common five-policy epoch50 comparison remain unchanged.",
+        "evidence": [
+          {
+            "source": "lr_p8_code",
+            "excerpt": "NOT_RUN = {\"EpHundred\"}"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2d6d374af56ac3faf95233476b2ba84e1f3748ad48a28e4c1d322a20644912e3",
+      "token_index": 3,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Unchanged anatomy-v2/cover interval statement at epoch 50. Template evidence: Same named anatomy comparison epoch and unchanged signed difference/interval macros; lower AUC wording removes the prior negative-below ambiguity.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/3"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "abc4456536f61edd3ed74275d3a1b9801c7128304cfa0bc701ae0bd17af4db70",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Replication table endpoint: epoch 50.",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "- Endpoint: epoch-50 target encoder."
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "abc4456536f61edd3ed74275d3a1b9801c7128304cfa0bc701ae0bd17af4db70",
+      "token_index": 2,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Replication seeds continue from the shared epoch-25 checkpoint; the hyphen is lexical.",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "continuation from the shared RANDOM epoch-25 checkpoint"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "bd762969cf05b2a75cfb80cb729ccd5ac91f170decc876897360e65d4b63f08c",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Column label AUC @ep50 of the geometry table. Template evidence: Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/14"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "4e7b860090e340b2e6fe2d77f40f8d5488e7d4162b916863366e2ae5ac82737f",
+      "token_index": 0,
+      "value": "95",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Interval convention of the paired context gaps: pooled normal 95% interval over 300 paired batches.",
+        "evidence": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/centroid/pooled_normal_95ci"
+          },
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/paired_context_gaps_vs_random/envelope/pooled_normal_95ci"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "552bb16dd122bf9da0fea68c63cebbb035673aefc6040a3ae6af684ad19c2ca5",
+      "token_index": 1,
+      "value": "16",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Fixed K=16 and M=4 give 4x16=64 prediction instances by construction; the rectangle comparison is now the bound macro.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          },
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "num_pred_masks: 4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "62a38b99b3539eec66f0abc93f511459c6a394e1698f0e5574c65c33523d522b",
+      "token_index": 1,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "rationale": "Registered continuations start from the same epoch-25 checkpoint; the hyphen is lexical.",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "These are repeated continuations from a shared epoch-25 checkpoint"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "868041b76b9c0feb3e3c0a4c8ca2fae3e35b4b89e49b20f7c99251cb4e71ab58",
+      "token_index": 0,
+      "value": "24{,}000",
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_rectangles",
+            "pointer": "/random_legal/blocks_checked"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "0700576844578b752c250d2b0225ef9f60e943adb7059aca757aa9e9d8e39ead",
+      "token_index": 1,
+      "value": "-27",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Epoch27 is the checked-in anatomy-v1 resume filename. This does not establish the missing historical launch, as the text explicitly qualifies. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_v1_cfg",
+            "excerpt": "resume-ep27.pth.tar"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "0700576844578b752c250d2b0225ef9f60e943adb7059aca757aa9e9d8e39ead",
+      "token_index": 3,
+      "value": "30",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The moved anatomy-v1 sentence names its only evaluated epoch, 30, with the unchanged contrast macros. Template evidence: Same named anatomy comparison epoch and unchanged signed difference/interval macros; lower AUC wording removes the prior negative-below ambiguity.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/0"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "11fa2f455fb1e4e7065e16a120f3ca9ec10724ab16f415fe057fda42b40a1a3d",
+      "token_index": 0,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The 1 in Smooth-L1 in the shortened framework caption is the production loss name, not a value. Template evidence: The 1 in Smooth-L1 is the unchanged production loss name, not an empirical value. Both diagram panels preserve the same mean Smooth-L1 objective. Current-context review: The unchanged caption still names the same production Smooth-L1 loss; only the included image filename changed.",
+        "evidence": [
+          {
+            "source": "lr_training",
+            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "852ccea5f86db737b9ec032f3615dd94bc14dd73d5a117cb1928f7072c4b747c",
+      "token_index": 0,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "T_1 denotes the first target list, not a measured constant. Uniform locations are image-independent; guided placement uses image-derived weights. The separate context block removes the target union before truncation, so target complement is not encoder-visible context. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: T_1 remains the first target list. Joint sampling of context and targets now matches the production collation and strategy-specific intensity/segmentation guidance; no ground-truth equivalence is asserted.",
+        "evidence": [
+          {
+            "source": "refresh_uniform_masks",
+            "excerpt": "kept = [i for i in indices if i not in pred_indices_union]"
+          },
+          {
+            "source": "refresh_guided_masks",
+            "excerpt": "def _anatomical_prior_weight_grid_for_image("
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "48072c5c27cd729d8dd4a515ff63e471356a6c180c31341d348de1bfd0949a66",
+      "token_index": 0,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Registered continuations start from the same epoch-25 checkpoint; the hyphen is lexical.",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "continuation from the shared RANDOM epoch-25 checkpoint"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "48072c5c27cd729d8dd4a515ff63e471356a6c180c31341d348de1bfd0949a66",
+      "token_index": 1,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Registered runs stop at epoch 50 (fixed endpoint).",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "stop after the saved epoch-50 checkpoint"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "0951569dd3ecf82e0fb289b97a7f3368c28c3ff9c539f05a12e64f535358ee8e",
+      "token_index": 0,
+      "value": "-100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 100. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Centroid-versus-envelope comparison uses centroid epoch100,50,75 receipts, not a similarly spelled COVER epoch100 receipt.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/23"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "0951569dd3ecf82e0fb289b97a7f3368c28c3ff9c539f05a12e64f535358ee8e",
+      "token_index": 1,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Centroid-versus-envelope comparison uses centroid epoch100,50,75 receipts, not a similarly spelled COVER epoch100 receipt.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/20"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "0951569dd3ecf82e0fb289b97a7f3368c28c3ff9c539f05a12e64f535358ee8e",
+      "token_index": 2,
+      "value": "75",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 75. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Centroid-versus-envelope comparison uses centroid epoch100,50,75 receipts, not a similarly spelled COVER epoch100 receipt.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/22"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "7ff029a7ef39f4f337998f0efdd034da7117ac761588b6d4285b0f2d842a1635",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Geometry-table AUC column is quoted at the matched epoch 50. Template evidence: Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Revised geometry caption retains the same matched epoch50 AUC, not a new geometry measurement. Updated-context review: The same epoch50 AUC is retained. Added caption text correctly identifies a MIRAGE-derived tissue proxy, not ground truth; no geometry values changed.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/14"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "62a38b99b3539eec66f0abc93f511459c6a394e1698f0e5574c65c33523d522b",
+      "token_index": 3,
+      "value": "-75",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The shortened limitations paragraph retains anatomy-v2 epoch75 and its inspection-based stopping caveat. The leading hyphen is lexical, not a negative setting.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "f609a3b1da3d09f5bc09b86e3b12d5e5beac1c3f81dfc2dc9e468a6e017c827b",
+      "token_index": 0,
+      "value": "0.25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Tissue proxy of the camera-ready mask audit: patch occupancy of at least 0.25 on the soft MIRAGE envelope.",
+        "evidence": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/protocol/tissue_proxies/soft"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "f609a3b1da3d09f5bc09b86e3b12d5e5beac1c3f81dfc2dc9e468a6e017c827b",
+      "token_index": 1,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Patch-grid dimension (16 x 16) of the same model input, unchanged in the camera-ready audit. Template evidence: The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
+        "evidence": [
+          {
+            "source": "lr_geom",
+            "pointer": "/_meta/grid"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "f609a3b1da3d09f5bc09b86e3b12d5e5beac1c3f81dfc2dc9e468a6e017c827b",
+      "token_index": 2,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Patch-grid dimension (16 x 16) of the same model input, unchanged in the camera-ready audit. Template evidence: The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
+        "evidence": [
+          {
+            "source": "lr_geom",
+            "pointer": "/_meta/grid"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "311af792443d89d5c783b92dbdb45488c68f39d18f0153b46d59f6b5daa8b595",
+      "token_index": 13,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Registered continuations start from the shared epoch-25 checkpoint; the hyphen is lexical.",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "continuation from the shared RANDOM epoch-25 checkpoint"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "311af792443d89d5c783b92dbdb45488c68f39d18f0153b46d59f6b5daa8b595",
+      "token_index": 14,
+      "value": "-50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Registered runs stop after the saved epoch-50 checkpoint; the hyphen is lexical.",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "stop after the saved epoch-50 checkpoint"
+          }
+        ]
+      }
     }
   ],
   "figures": [
-    {
-      "path": "figures/fig_oct_target_selection.png",
-      "sha256": "950549859f6ac051184c3b2c7485e90fba35a35b17c3aabc0912934745183208",
-      "caption_sha256": "ce1fb4f070f4bf8ec139e735bd976269c68b1410692a2d4d7148a8bc7fe22148",
-      "inputs": [
-        {
-          "source": "external_oct_manifest",
-          "pointer": "/masks",
-          "sha256": "08fcb74889fd42be83062e929d542bb54485d5532729f7c80c003e740c2af2b5"
-        },
-        {
-          "source": "external_oct_manifest",
-          "pointer": "/guide",
-          "sha256": "08fcb74889fd42be83062e929d542bb54485d5532729f7c80c003e740c2af2b5"
-        },
-        {
-          "source": "external_oct_generator",
-          "pointer": "/",
-          "sha256": "561eeb9d3909a5b4eea5cbb7d42bc9b2d49d70afe42f4dcbe508d88ca10bcb04"
-        },
-        {
-          "source": "external_oct_source_image",
-          "pointer": "/sha256",
-          "sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5"
-        },
-        {
-          "source": "external_oct_license",
-          "pointer": "/",
-          "sha256": "98f0608fea4d233a4b41040413a224aaeb1e5ff8cf93a827be5751d8dc18ce18"
-        }
-      ],
-      "validation": {
-        "method": "reviewed_source_illustration",
-        "reviewer": "GitHub Copilot source, crop, sampler and final-PNG review, 2026-09-10",
-        "quantitative_scope": "illustrative_only",
-        "limitations": "One attributed CC BY 4.0 external OCTDL Figure1 crop; not FairVision. A single fixed-seed RANDOM/CENTROID replay with matched block sizes illustrates delivered target sets. Context is omitted. It is not a segmentation annotation, historical training batch, evaluation sample, cohort statistic or performance comparison. Source/mask replay and visual inspection are not mathematical verification of every rendered pixel.",
-        "review_checks": [
-          "Final PNG visually inspected: actual OCT in all panels, categorical overlays, attribution/license visible, no subject identifiers or performance readouts.",
-          "Primary version-pinned article record links CC BY 4.0; source crop, transformations and attribution are preserved.",
-          "Independently reproduced crop tensor, intensity guide, and exact production RANDOM/CENTROID target/context lists against the retained manifest.",
-          "Producer, source modules, original image, license snapshot and all three output hashes match the frozen evidence.",
-          "Final manuscript caption is explicitly pinned and disclaims clinical annotation, historical reconstruction and performance inference."
-        ]
-      }
-    },
-    {
-      "path": "figures/fig_oct_jepa_comparison_final.png",
-      "sha256": "3f7f55008ccf8334ee8ab86aec1d3f1604b684b5862a58c3afbefd1d143cc27f",
-      "caption_sha256": "a1dc964fb3644eb9cfcf5c696cd3b6d025047c1b8b0b739914855e1ebf0f7fdf",
-      "inputs": [
-        {
-          "source": "final_comparison_manifest",
-          "pointer": "/mask_contract",
-          "sha256": "7adbed0c197857514095b9a8f5d779889203de9e8dc36e59ff7513b68dbff019"
-        },
-        {
-          "source": "final_comparison_generator",
-          "pointer": "/",
-          "sha256": "0ac3b4507ce3e158e3851e55cf7a0cdfcdefce94cd89630522955e9b010497e3"
-        },
-        {
-          "source": "comparison_manifest",
-          "pointer": "/mask_contract",
-          "sha256": "9848dd68c5e7e5f507366cdea81be13eeee88df03b18d4069e1298201a45d017"
-        },
-        {
-          "source": "external_oct_source_image",
-          "pointer": "/sha256",
-          "sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5"
-        },
-        {
-          "source": "external_oct_license",
-          "pointer": "/",
-          "sha256": "98f0608fea4d233a4b41040413a224aaeb1e5ff8cf93a827be5751d8dc18ce18"
-        },
-        {
-          "source": "lr_training",
-          "pointer": "/",
-          "sha256": "aa19998729d062887b2480ac3e86a8d7bb9499516e202185cc96ec46c9e77a34"
-        },
-        {
-          "source": "refresh_predictor_code",
-          "pointer": "/",
-          "sha256": "ab0de995167c62ecb817c0be6b01a43b90c9749d1484474f349a6b4c6f973bf0"
-        },
-        {
-          "source": "refresh_ema_code",
-          "pointer": "/",
-          "sha256": "c0f063ef236bfca598cee79e4f19c16bd0188061c2085c15036a64b8be61b9ca"
-        },
-        {
-          "source": "lr_eval_code",
-          "pointer": "/",
-          "sha256": "cad331b703a116985f2ce81e8abf02b12c300044a3825e22d4d6ab73c47b55ed"
-        }
-      ],
-      "validation": {
-        "method": "reviewed_source_illustration",
-        "reviewer": "GitHub Copilot final diagram source/code/PNG review, 2026-09-10",
-        "quantitative_scope": "illustrative_only",
-        "limitations": "The same single external CC BY 4.0 OCTDL crop and saved RANDOM/CENTROID masks, not FairVision evaluation data. Two symmetric schematics illustrate the shared I-JEPA architecture. Colors T1--T4 name categorical target lists, not relevance or measured outcomes. Gray patches visualize omitted tokens, not zero-filled encoder input. No new mask draws, altered misses/hits, relevance ranking, sequential prediction, experimental values or attachment pixels were introduced.",
-        "review_checks": [
-          "Inspected the final PNG and generator: detached Index queries boxes feed only predictors; teacher normalized target embeddings flow only to the loss, not the predictor.",
-          "Teacher barred-theta labels and no-gradient states are explicit. Dashed online-to-teacher arrows represent parameter EMA; both predictors remain trainable and predict target groups in parallel.",
-          "Full teacher images are unoccluded apart from categorical outlines. Both mask lists and context-display hashes equal the independently reviewed prior comparison; source crop and guide hashes are unchanged.",
-          "Production source hashes match the verified no_grad/full-image/LN/gather/Smooth-L1 path, positional query construction, EMA update and frozen-encoder evaluation.",
-          "Actual parent caption is unchanged in meaning and explicitly disclaims ranking/sequential prediction and relevance-valued colors.",
-          "All old figure sources, generators, manifests and outputs remain byte-identical; this is a separately registered export."
-        ]
-      }
-    },
     {
       "path": "figures/fig_archived_occlusion_examples.png",
       "sha256": "9792883349d0c3b173f41be67e3ab9cbc3a7c621c3d51934fe341ee724fae391",
@@ -4177,6 +5553,164 @@
           "Read interpretability.py: alternative B-scan mean omits patch p with denominator P-1; contribution is baseline_logit minus alt_logits. This supports the new delta equation and both sign interpretations.",
           "Documented renderer uses per-image max absolute heatmap limits, linear zoom, RdBu_r and alpha blending; caption forbids cross-image magnitude comparison and discloses the archived status.",
           "Producer/source/code/output hashes are pinned; raw attribution arrays remain unavailable and no new analysis was run."
+        ]
+      }
+    },
+    {
+      "path": "figures/fig_oct_target_selection_cr.png",
+      "sha256": "bf0549ea716607846262b13ad34806e65272cdbf7ee703b51239fc2560d61888",
+      "caption_sha256": "815579066cd1fe5fdfc8f5c420d60bd6b470446c1efb6c68553d4d6faf2c2641",
+      "inputs": [
+        {
+          "source": "cr_fig1_evidence",
+          "pointer": "/masks",
+          "sha256": "34cd8310c4bf8ef957c09e5a4f6b9614cbd88e6de0ce2533af3c612a7a7b18dd"
+        },
+        {
+          "source": "cr_fig1_evidence",
+          "pointer": "/guide",
+          "sha256": "34cd8310c4bf8ef957c09e5a4f6b9614cbd88e6de0ce2533af3c612a7a7b18dd"
+        },
+        {
+          "source": "cr_fig1_evidence",
+          "pointer": "/centroid_setting",
+          "sha256": "34cd8310c4bf8ef957c09e5a4f6b9614cbd88e6de0ce2533af3c612a7a7b18dd"
+        },
+        {
+          "source": "cr_fig1_generator",
+          "pointer": "/",
+          "sha256": "9028c6d9b849f54528532c322f4849e2053203b907ff8414ac443c80ec01c5cf"
+        },
+        {
+          "source": "external_oct_source_image",
+          "pointer": "/sha256",
+          "sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5"
+        },
+        {
+          "source": "external_oct_license",
+          "pointer": "/",
+          "sha256": "98f0608fea4d233a4b41040413a224aaeb1e5ff8cf93a827be5751d8dc18ce18"
+        }
+      ],
+      "validation": {
+        "method": "reviewed_source_illustration",
+        "reviewer": "GitHub Copilot I8 camera-ready figure review, 2026-10-08",
+        "quantitative_scope": "illustrative_only",
+        "limitations": "Attributed CC BY 4.0 OCTDL Figure 1 crop (arXiv:2312.08255v3), not FairVision. A single fixed-seed replay with matched block sizes; context omitted. Not a segmentation annotation, historical training batch, evaluation sample, cohort statistic or performance comparison. Hash and evidence checks are not mathematical verification of every rendered pixel. RANDOM masks equal the submitted figure; the CENTROID guide and union use the trained band width (lateral fraction 0.6).",
+        "review_checks": [
+          "Final PNG rendered and inspected: OCT crop in all four panels, categorical target/guide overlays, attribution line, no subject identifiers or performance readouts.",
+          "PNG/PDF/SVG hashes equal the staged evidence outputs and autopilot/release_assets.json pins.",
+          "Evidence records the pinned sampler commit, the trained CENTROID configuration and the change_vs_published_v9 block (guide 70 vs 78 cells; RANDOM masks identical).",
+          "Generator hash equals the evidence generator_sha256; source image and licence hashes unchanged.",
+          "Caption states the trained configuration and disclaims annotation, historical batch and performance use."
+        ]
+      }
+    },
+    {
+      "path": "figures/fig_oct_jepa_comparison_final_cr.png",
+      "sha256": "14307f0a7f43f1a9f11b544fb54932773ac4f7a2da9e2e9526275323cc8b0ebc",
+      "caption_sha256": "bb9db69fdf1d48d3e428be9bb3e0f7461e00ffb478f29adb56fec7a14b70d2b0",
+      "inputs": [
+        {
+          "source": "cr_fig2_evidence",
+          "pointer": "/mask_contract",
+          "sha256": "19f6205b8e13b310cf799dcec9d0ba7ab84483a320da5542c22d3be166604279"
+        },
+        {
+          "source": "cr_fig2_evidence",
+          "pointer": "/figure_evidence_sha256",
+          "sha256": "19f6205b8e13b310cf799dcec9d0ba7ab84483a320da5542c22d3be166604279"
+        },
+        {
+          "source": "cr_fig2_chain_evidence",
+          "pointer": "/",
+          "sha256": "ce06b96d83a68ea50b2e7cfd40d83c337b7f083635b07b7aa67c506f748bc590"
+        },
+        {
+          "source": "cr_fig2_generator",
+          "pointer": "/",
+          "sha256": "e3db377e2dd5d58fdf12f6361da90a970f89888126b774bd46ae83a79144abd9"
+        },
+        {
+          "source": "external_oct_source_image",
+          "pointer": "/sha256",
+          "sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5"
+        },
+        {
+          "source": "external_oct_license",
+          "pointer": "/",
+          "sha256": "98f0608fea4d233a4b41040413a224aaeb1e5ff8cf93a827be5751d8dc18ce18"
+        }
+      ],
+      "validation": {
+        "method": "reviewed_source_illustration",
+        "reviewer": "GitHub Copilot I8 camera-ready figure review, 2026-10-08",
+        "quantitative_scope": "illustrative_only",
+        "limitations": "Attributed CC BY 4.0 OCTDL Figure 1 crop (arXiv:2312.08255v3), not FairVision. A single fixed-seed replay with matched block sizes; context omitted. Not a segmentation annotation, historical training batch, evaluation sample, cohort statistic or performance comparison. Hash and evidence checks are not mathematical verification of every rendered pixel. Schematic I-JEPA pathways; embedding blocks are illustrative. Layout is unchanged from the submitted figure, including a pre-existing tight label in the query box.",
+        "review_checks": [
+          "Final PNG rendered and inspected: symmetric uniform/CENTROID pathways, EMA teacher, stopped-gradient targets, positional queries and parallel prediction; no performance values.",
+          "Evidence chains to the staged Figure 1 masks (figure_evidence_sha256) and the staged comparison evidence.",
+          "PNG/PDF/SVG hashes equal the staged evidence outputs and registry pins; generator hash matches.",
+          "Shortened caption keeps the architecture, omitted-token and colour-coding disclaimers."
+        ]
+      }
+    },
+    {
+      "path": "figures/fig_oct_all_strategies.png",
+      "sha256": "015939ce8ee2818258b86a897bdb74f1b44df92e05e673afcb8da1c400b3f886",
+      "caption_sha256": "a5f1ac0d3945ed7aba1b9ac5ed00de08c2c518f26e9d38d0a01b5d1b5f0c2f76",
+      "inputs": [
+        {
+          "source": "cr_figall_evidence",
+          "pointer": "/masks",
+          "sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7"
+        },
+        {
+          "source": "cr_figall_evidence",
+          "pointer": "/guide_overlays",
+          "sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7"
+        },
+        {
+          "source": "cr_figall_evidence",
+          "pointer": "/consistency_with_staged_figure1",
+          "sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7"
+        },
+        {
+          "source": "cr_external_guides",
+          "pointer": "/",
+          "sha256": "f9456a3f0fa806bc0891c765b934b903c7649b7d7d2d524a14bcedaafc19cc2b"
+        },
+        {
+          "source": "cr_figall_generator",
+          "pointer": "/",
+          "sha256": "e7713307bf60c7858148f3012e315bff2b0124e0ee51dd9492b53d62d65bf076"
+        },
+        {
+          "source": "cr_guides_producer",
+          "pointer": "/",
+          "sha256": "d845a62680fc079082802ef503ea4fc35359f1d9f5374b65359aca6606c819b0"
+        },
+        {
+          "source": "external_oct_source_image",
+          "pointer": "/sha256",
+          "sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5"
+        },
+        {
+          "source": "external_oct_license",
+          "pointer": "/",
+          "sha256": "98f0608fea4d233a4b41040413a224aaeb1e5ff8cf93a827be5751d8dc18ce18"
+        }
+      ],
+      "validation": {
+        "method": "reviewed_source_illustration",
+        "reviewer": "GitHub Copilot I8 camera-ready figure review, 2026-10-08",
+        "quantitative_scope": "illustrative_only",
+        "limitations": "Attributed CC BY 4.0 OCTDL Figure 1 crop (arXiv:2312.08255v3), not FairVision. A single fixed-seed replay with matched block sizes; context omitted. Not a segmentation annotation, historical training batch, evaluation sample, cohort statistic or performance comparison. Hash and evidence checks are not mathematical verification of every rendered pixel. MIRAGE envelope and soft scores were produced on this crop by the training guide pipelines on CPU; MIRAGE was not trained on OCTDL, so the outlines are not a validated segmentation.",
+        "review_checks": [
+          "Final PNG rendered and inspected: six panels (crop, RANDOM, CENTROID, ENVELOPE, ANATOMY-V2, COVER), final target unions and guide outlines, attribution line; no identifiers or performance readouts.",
+          "Evidence asserts RANDOM and CENTROID masks equal the staged Figure 1 and records the guide checkpoints matching the training caches; no fallback guide was used.",
+          "PNG/PDF/SVG hashes equal the staged evidence outputs and registry pins; generator and guide producer hashes recorded.",
+          "Caption states the external crop, trained configurations and that MIRAGE was not trained on OCTDL."
         ]
       }
     }

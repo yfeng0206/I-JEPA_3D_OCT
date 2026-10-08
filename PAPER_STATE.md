@@ -56,6 +56,13 @@ Release commands from the repository root:
     $env:MPLBACKEND = 'Agg'
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p13_build_zip.py --out C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_20260910_v8.zip --stats-dir D:\jepa_phase0\autopilot_out\p1_stats --citation-record autopilot\investigations\submission_refresh_20260910\citation_authorities.json --review-file paper\genai4health2026\numeric_reviews.json
 
+Camera-ready release (2026-10-08 tooling; authors-present gate, 10 main pages,
+workshop template gate). It fails while `\CRAuthorsPending`,
+`\CRAcknowledgmentsPending` or any `\ph` result placeholder remains, and until
+`paper\genai4health2026\camera_ready_authors.json` is confirmed:
+
+    D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p13_build_zip.py --camera-ready --stats-dir D:\jepa_phase0\autopilot_out\p1_stats --citation-record autopilot\investigations\camera_ready_20261008\paper_i8\citation_authorities_cr.json --review-file paper\genai4health2026\numeric_reviews.json
+
 The publisher uses `paper\genai4health2026\numeric_reviews.json`, retained local
 statistics and source-review evidence. Full third-party PDFs are not committed;
 their acquisition manifest is under the investigation's `literal_sources\public`.

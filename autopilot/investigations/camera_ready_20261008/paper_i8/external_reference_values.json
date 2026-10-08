@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "purpose": "Published reference values quoted in the camera-ready manuscript. Transcribed from the cited sources; each entry names its locator. These are not results of this study.",
+  "fairvision_glaucoma_3d_resnet": {
+    "citation_key": "luo2024fairvision",
+    "immutable_locator": "https://arxiv.org/abs/2310.02492v3",
+    "html_retrieved": "https://arxiv.org/html/2310.02492v3",
+    "html_sha256_at_retrieval": "897dc6f4409b5bfad495d51b84d9f30d7f215df268b11b0d01ad2343e88434b9",
+    "retrieved_utc": "2026-10-08T12:54:08Z",
+    "locator": "Table VI (OCT B-scans, protected attribute race), row Glaucoma / 3D ResNet, column Overall AUC",
+    "excerpt": "Glaucoma 3D ResNet 86.49 \\pm 0.19",
+    "reported_overall_auc_percent": 86.49,
+    "reported_overall_auc_sd_percent": 0.19,
+    "overall_auc": 0.8649,
+    "overall_auc_sd": 0.0019,
+    "protocol_note": "End-to-end supervised 3D ResNet on the FairVision glaucoma OCT release with its released 6,000/1,000/3,000 split; mean and SD over repeated training runs as reported. Different model, input (all B-scans) and training protocol from this study's frozen-encoder probe.",
+    "cross_check": "paper/genai4health2026/research/dataset_facts.md (VERIFIED entry, overall AUC 0.8649); camera_ready/05_external_research.md (A5, VERIFIED)"
+  }
+}

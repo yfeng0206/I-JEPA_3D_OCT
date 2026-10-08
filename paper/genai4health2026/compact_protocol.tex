@@ -18,13 +18,19 @@ $0.05$, batch size 256, seed 42, and a 50-epoch budget with validation-AUC
 selection and patience 15.
 
 \paragraph{Guide sources.}
-\textsc{envelope} uses the MIRAGE-derived repaired hard retinal envelope.
-The anatomy-shaped and coverage strategies use precomputed soft guides from
+\textsc{envelope} uses the MIRAGE-derived repaired hard retinal envelope,
+produced by MIRAGE-Large (frozen encoder, ConvNeXt decoder) fine-tuned only on
+GOALS layer annotations (background, nerve fibre layer, ganglion cell and inner
+plexiform layers, choroid). The anatomy-shaped and coverage strategies use
+precomputed soft guides from
 MIRAGE with frozen residual adapters. The anatomy-v1 guide uses a
 decoder-feature adapter; anatomy-v2 and \textsc{cover} use an encoder-feature
 adapter. These guide products are not independently controlled in the
 cross-strategy comparison. \ArmBest{} uses image intensity rather than a
-segmentation model.
+segmentation model: in the trained configuration its band
+(Equation~\ref{eq:centroid}) is $\CRBandRows$ rows high and spans the central
+$\CRBandCols$ columns of the patch grid (region fraction $\CRBandRegion$,
+lateral fraction $\CRBandLateral$).
 The adapters optimize feature-similarity objectives on FairVision-derived
 image caches, not a glaucoma classification loss, and are frozen during
 I-JEPA training. The retained provenance does not independently establish
@@ -33,7 +39,11 @@ subject-level non-overlap for all data used to train the guidance models.
 \paragraph{Included and excluded continuations.}
 \label{app:excluded}
 The early anatomy-v1 configuration resumes an \textsc{envelope} epoch-27
-checkpoint; its producing launch record is incomplete.
+checkpoint rather than a documented epoch-25 fork, and its producing launch record
+is incomplete. Its only result is at epoch 30, where it lies
+$\DAnatomyOneEnvelopeEpThirty$ above \textsc{envelope} (CI
+$\DAnatomyOneEnvelopeEpThirtyCI$). This comparison inherits the lineage
+uncertainty.
 Anatomy-v2 results use the continuation with full-precision target-encoder
 outputs. Probes from its earlier mixed-target-precision continuation are
 excluded, as are earlier uniform controls that used different target
@@ -42,30 +52,42 @@ policy endpoints, including the adverse \textsc{cover} trajectory.
 
 \paragraph{Mask measurement.}
 \label{app:geomprov}
-Table~\ref{tab:geom} uses the seed-42 measurement on 600 training slices
-from 24 volumes, with 25 slices per volume.
-The samplers are evaluated one image at a time on a $16\times16$ patch
-grid, using guide occupancy at threshold $0.25$.
-The ``context kept'' column is the per-image context; batching can shorten
-it further. Table~\ref{tab:delivered} records that difference.
+Table~\ref{tab:geometry} replays the sampler code in each strategy's trained
+configuration (commit {\footnotesize\texttt{\CRSamplerCommit}}), including
+the \ArmBest{} band above and \textsc{envelope} placement on the hard envelope
+with the fallback rule used in training. The scope is $\CRAuditVolumes$
+training volumes with $\CRAuditSlices$ views each; every strategy sees the same
+crops, block sizes and placement seeds. Tissue is guide occupancy of at least
+$0.25$ on the soft MIRAGE envelope, on the $16\times16$ patch grid. The
+submitted tables used $\CROldSlices$ slices from $\CROldVolumes$ volumes with
+seed $\CROldSeed$, sizes drawn separately for each strategy, the code-default
+\ArmBest{} band width and \textsc{envelope} placed on the soft guide.
+Table~\ref{tab:delivered} compares both. The band width has little effect on
+delivered context; most of the difference comes from replay noise and
+pairing, and for \textsc{envelope} also from the guide product and fallback
+rule.
 
 \begin{table}[h]
 \centering
-\caption{Visible context as a fraction of the patch grid, same 600 slices and
-same seed, measured per image and as delivered to the encoder at the production
-batch size of 64. The per-image column reproduces
-Table~\ref{tab:geom}'s ``context kept'' to within $0.4$ points.}
+\caption{Submitted versus camera-ready mask geometry. Each cell gives the
+submitted value, then the value under the trained configuration and the
+protocol of Table~\ref{tab:geometry}. Per-image columns are measured one view
+at a time ($\CRImgDraws$ single-view draws per seed), before batching;
+the last column is the context delivered at batch size $\CRAuditBatch$.}
 \label{tab:delivered}
-\small
-\begin{tabular}{lcc}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lcccccc}
 \toprule
-policy & per image & delivered at batch 64 \\
+& \multicolumn{5}{c}{per image} & delivered \\
+\cmidrule(lr){2-6}
+policy & tissue hidden & purity & mask ratio & context & loss slots & context \\
 \midrule
-\textsc{random}     & 41.9\% & 24.7\% \\
-\ArmBest{}          & 45.5\% & 32.9\% \\
-\textsc{envelope}   & 40.6\% & 30.7\% \\
-\textsc{cover}      & 43.2\% & 30.1\% \\
-\textsc{anatomy-v2} & 67.7\% & 63.5\% \\
+\textsc{random}     & \CRImgHidOldRandom{} / \CRImgHidRandom         & \CRImgPurOldRandom{} / \CRImgPurRandom         & \CRImgMaskOldRandom{} / \CRImgMaskRandom         & \CRImgCtxOldRandom{} / \CRImgCtxRandom         & \CRImgSlotsOldRandom{} / \CRImgSlotsRandom         & \CRCtxOldRandom{} / \CRCtxRandom \\
+\ArmBest{}          & \CRImgHidOldCentroid{} / \CRImgHidCentroid     & \CRImgPurOldCentroid{} / \CRImgPurCentroid     & \CRImgMaskOldCentroid{} / \CRImgMaskCentroid     & \CRImgCtxOldCentroid{} / \CRImgCtxCentroid     & \CRImgSlotsOldCentroid{} / \CRImgSlotsCentroid     & \CRCtxOldCentroid{} / \CRCtxCentroid \\
+\textsc{envelope}   & \CRImgHidOldEnvelope{} / \CRImgHidEnvelope     & \CRImgPurOldEnvelope{} / \CRImgPurEnvelope     & \CRImgMaskOldEnvelope{} / \CRImgMaskEnvelope     & \CRImgCtxOldEnvelope{} / \CRImgCtxEnvelope     & \CRImgSlotsOldEnvelope{} / \CRImgSlotsEnvelope     & \CRCtxOldEnvelope{} / \CRCtxEnvelope \\
+\textsc{cover}      & \CRImgHidOldCover{} / \CRImgHidCover           & \CRImgPurOldCover{} / \CRImgPurCover           & \CRImgMaskOldCover{} / \CRImgMaskCover           & \CRImgCtxOldCover{} / \CRImgCtxCover           & \CRImgSlotsOldCover{} / \CRImgSlotsCover           & \CRCtxOldCover{} / \CRCtxCover \\
+\textsc{anatomy-v2} & \CRImgHidOldAnatomyTwo{} / \CRImgHidAnatomyTwo & \CRImgPurOldAnatomyTwo{} / \CRImgPurAnatomyTwo & \CRImgMaskOldAnatomyTwo{} / \CRImgMaskAnatomyTwo & \CRImgCtxOldAnatomyTwo{} / \CRImgCtxAnatomyTwo & \CRImgSlotsOldAnatomyTwo{} / \CRImgSlotsAnatomyTwo & \CRCtxOldAnatomyTwo{} / \CRCtxAnatomyTwo \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -79,3 +101,59 @@ determination is not recorded for this project. The models are not clinically
 validated or intended for patient care. The illustrative OCT image in the
 main paper comes from the separately attributed CC BY 4.0 OCTDL publication,
 not from the FairVision evaluation cohort.
+
+\section{Registered replication protocol}
+\label{app:replication}
+The replication plan was committed to the project repository before any new
+continuation produced a checkpoint and before any new probe (commit
+{\footnotesize\texttt{86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5}}).
+\textsc{random}, \ArmBest{} and \textsc{envelope} each continue from the shared
+epoch-25 checkpoint with two new seeds, which set data order, crops, mask draws
+and data-loader streams. Runs with the same seed share data order only.
+\textsc{envelope} uses the fallback placement of the original run. A
+uniform-placement control receives \ArmBest{}'s per-image budgets with the first
+seed. Optimiser, schedule horizon and effective batch size match the original
+continuations, with full-precision teacher targets as in the originals; each run
+stops after its epoch-50 checkpoint. The original \textsc{random} and \ArmBest{}
+continuations ran on different GPU hardware from the original \textsc{envelope}
+continuation and all new runs.
+The probe keeps the main protocol but runs in fp32, seeds each of five linear
+heads after the feature caches are created, and reports the mean AUC over head
+seeds together with their s.d.; the original encoders are re-probed in the same
+way. Test predictions are stored sealed until the results freeze, and decisions
+during the campaign use validation AUC only. For each new seed the primary
+contrasts are \ArmBest{} and \textsc{envelope} minus \textsc{random}, with paired
+test-case bootstrap intervals. A guided strategy is labelled consistent in
+direction only if both new-seed differences are positive and their mean exceeds
+the range of the three \textsc{random} realizations. A positive mean otherwise
+counts as within run-to-run variation, and a non-positive mean as reversed.
+Analyses including the original runs, validation-split differences and pooling
+variants are secondary. Every started run is reported.
+
+\section{Guide agreement and envelope plausibility}
+\label{app:guides}
+FairVision has no retinal layer annotations, so neither guide can be scored for
+accuracy on it. We fixed failure rules before computing any rate and compared
+the \ArmBest{} band with the hard MIRAGE envelope (patch occupancy at least
+$0.25$) on full B-scans of $\CRGuideVolumes$ training volumes,
+$\CRGuidePerStratum$ from each combination of glaucoma label and tertile of a
+signal-to-noise proxy, with ten B-scans per volume ($\CRGuideBscans$ B-scans).
+The computation was repeated on all $\CRCensusVolumes$ training volumes. A
+B-scan counts as a gross disagreement when the band--envelope IoU is below
+$0.2$ or more than half of the band cells contain no envelope. Rates are
+population-weighted, with 95\% volume-cluster bootstrap intervals.
+
+The band disagreed grossly with the envelope in $\CRFOne\%$ of B-scans
+(\CRFOneCI, all training volumes $\CRFOneCensus\%$) and was off-centre in at
+least three of ten columns in $\CRFTwo\%$. Disagreement was more frequent in
+glaucoma than in normal eyes ($\CRFOneGlaucoma\%$ versus $\CRFOneNormal\%$) and
+in the lowest than in the highest signal tertile ($\CRFOneLowSNR\%$ versus
+$\CRFOneHighSNR\%$). The median IoU was $\CRIoUMedian$. Because the envelope is
+typically about half as thick as the $\CRBandRows$-row band, an IoU of this
+size is expected even for a centred band. Of the envelopes, $\CREnvAnyFlag\%$
+(\CREnvAnyFlagCI) raised at least one plausibility flag: three or more
+components ($\CREnvFragmented\%$), irregular thickness ($\CREnvThickness\%$) or
+implausible position ($\CREnvPosition\%$). These are agreement and plausibility
+statistics between two automatic guides, not anatomical accuracy. The envelope
+model's only quantitative validation is in-domain on GOALS (foreground Dice
+$\CRMirageDice$).

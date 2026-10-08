@@ -304,11 +304,19 @@ def check(docx, paper, aux, *, generated_images=()):
         if not title or citations.norm(title) not in bib_text:
             errors.append("bibliography title absent: " + key)
     if core is not None:
-        identifying = [element.text for element in core.iter()
-                       if element.tag.rsplit("}", 1)[-1] in ("creator", "lastModifiedBy")
-                       and element.text and element.text.strip()]
-        if identifying:
-            errors.append("nonempty creator/lastModifiedBy metadata")
+        # Anonymous sources must leave the Word metadata empty. Camera-ready sources
+        # may carry exactly the source author names, in order (pandoc joins with "; ").
+        expected_names = [assets.plain_name(name) for name in assets.author_names(source)]
+        creators = [element.text for element in core.iter()
+                    if element.tag.rsplit("}", 1)[-1] == "creator" and element.text and element.text.strip()]
+        modified = [element.text for element in core.iter()
+                    if element.tag.rsplit("}", 1)[-1] == "lastModifiedBy" and element.text and element.text.strip()]
+        found_names = [assets.plain_name(name) for text in creators for name in text.split(";")]
+        if modified:
+            errors.append("nonempty lastModifiedBy metadata")
+        if found_names != expected_names:
+            errors.append("nonempty creator metadata" if not expected_names else
+                          "creator metadata differs from the source author names")
     if assets.input_hashes(paper) != snapshot:
         errors.append("source inputs changed during Word validation")
     return {"ALL_PASS": not errors, "errors": errors,

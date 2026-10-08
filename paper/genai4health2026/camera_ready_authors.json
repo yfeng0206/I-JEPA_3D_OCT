@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "status": "pending_user_input",
+  "instructions": "Copy the author list from the OpenReview record of submission 252 (order, names as printed; affiliations and e-mail addresses go in the LaTeX author block). Authors may be reordered or corrected but not added, removed or replaced. Set status to confirmed only after the names below match the \\author block in main_submission.tex.",
+  "authors": [],
+  "acknowledgments": "pending: supplied by the authors (funding, compute and other disclosures)"
+}

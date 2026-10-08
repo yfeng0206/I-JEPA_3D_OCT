@@ -84,6 +84,64 @@ def without_definitions(text):
     return text
 
 
+ACCENT = re.compile(r"\\[`'^\"~=.]\s*(?:\{\s*([A-Za-z])\s*\}|([A-Za-z]))")
+
+
+def author_block(text):
+    """Contents of the first \\author{...} group (comments removed), or None."""
+    text = uncomment(text)
+    match = re.search(r"\\author\s*\{", text)
+    if not match:
+        return None
+    body, _ = group(text, match.end() - 1)
+    return body
+
+
+def author_entries(text):
+    """Raw TeX of the first line of each \\And/\\AND/\\and-separated author entry.
+
+    Affiliations, e-mail addresses and \\thanks notes are dropped. Entries made
+    only of macros (for example a pending-author placeholder) are kept here and
+    removed by author_names.
+    """
+    body = author_block(text)
+    if body is None:
+        return []
+    while True:
+        match = re.search(r"\\thanks\s*\{", body)
+        if not match:
+            break
+        _, end = group(body, match.end() - 1)
+        body = body[:match.start()] + body[end:]
+    entries = []
+    for entry in re.split(r"\\(?:And|AND|and)(?![A-Za-z])", body):
+        line = re.sub(r"\s+", " ", re.split(r"\\\\", entry)[0]).strip()
+        if line:
+            entries.append(line)
+    return entries
+
+
+def author_names(text):
+    """Plain-text author names (TeX accents reduced to base letters)."""
+    names = []
+    for line in author_entries(text):
+        line = ACCENT.sub(lambda m: m[1] or m[2], line)
+        line = re.sub(r"\\[A-Za-z]+\*?", " ", line)
+        line = re.sub(r"[{}~]", " ", line)
+        line = re.sub(r"\s+", " ", line).strip()
+        if line:
+            names.append(line)
+    return names
+
+
+def plain_name(text):
+    """Comparison form: accents removed, case folded, whitespace collapsed."""
+    import unicodedata
+    text = unicodedata.normalize("NFKD", text)
+    text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    return re.sub(r"\s+", " ", text).strip().casefold()
+
+
 def source_tree(paper, main=None):
     """Read all literal input/include dependencies, rejecting missing/cyclic inputs."""
     paper = Path(paper).resolve()
@@ -142,12 +200,35 @@ def resolve_graphic(paper, name):
     raise FileNotFoundError("missing graphic: " + name)
 
 
+STYLE_LOADER = re.compile(r"\\(?:usepackage|RequirePackage)\s*(?:\[[^\]]*\]\s*)?\{([^}]+)\}")
+
+
+def local_packages(paper, text):
+    """Project-local .sty files loaded by the source, following nested RequirePackage."""
+    paper = Path(paper).resolve()
+    found, pending = set(), [text]
+    while pending:
+        for match in STYLE_LOADER.finditer(uncomment(pending.pop())):
+            for name in match[1].split(","):
+                name = name.strip()
+                if not re.fullmatch(r"[A-Za-z0-9_.-]+", name):
+                    continue
+                rel = name + ".sty"
+                path = safe_path(paper, rel)
+                if rel not in found and path.is_file():
+                    found.add(rel)
+                    pending.append(path.read_text(encoding="utf-8"))
+    return found
+
+
 def input_hashes(paper):
     text, files = source_tree(paper)
     paths = set(files)
     paths.add("references.bib")
     if (Path(paper) / "neurips_2026.sty").exists():
         paths.add("neurips_2026.sty")
+    # The camera-ready source loads genai4health_2026.sty, which requires neurips_2026.sty.
+    paths.update(local_packages(paper, text))
     for name in graphics(text):
         paths.add(resolve_graphic(paper, name).relative_to(Path(paper).resolve()).as_posix())
     return {rel: sha256(safe_path(paper, rel)) for rel in sorted(paths)}

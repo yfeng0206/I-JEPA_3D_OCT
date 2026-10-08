@@ -21,6 +21,8 @@ Writes ``<state_dir>/ALERT_<KIND>_<timestamp>.txt`` when
                  for 2 consecutive samples (e.g. a pause_ctl suspend)
   GPU_FORBIDDEN  a process matching the campaign's forbid_gpu_process_regex holds a
                  GPU context while the trainer is alive (e.g. a game)
+While the campaign is PAUSED (cr_campaign.py --request-pause) LOG_STALL, TRAINER_SUSPENDED
+and GPU_FORBIDDEN are suppressed and current_step shows "(PAUSED)"; hardware alerts stay on.
 An alert is written at onset and repeated every ``--realert-minutes`` while the
 condition persists.  The watchdog never kills or signals any process and opens
 no process other than the tracked trainer (PID/creation time only).
@@ -133,7 +135,9 @@ class Watchdog:
             errors.append("gpu_apps:%r" % (e,))
         st = cc.read_json(self.state_dir / "state.json", {}) or {}
         cur = st.get("current") or {}
-        row["current_step"] = cur.get("step")
+        # Graceful campaign pause (cr_campaign.py --request-pause): no trainer by design.
+        row["paused"] = st.get("status") == "PAUSED" or bool(cur.get("paused"))
+        row["current_step"] = ("%s (PAUSED)" % (cur.get("step") or "campaign")) if row["paused"] else cur.get("step")
         row["trainer_pid"] = cur.get("pid")
         if cur.get("pid"):
             try:
@@ -181,7 +185,8 @@ class Watchdog:
         conds["RAM_LOW"] = (self.ram_low_run >= th["ram_low_consecutive"],
                             "available RAM %s MB < %s MB for %d consecutive samples"
                             % (ram, th["ram_low_mb"], self.ram_low_run))
-        if row.get("trainer_suspended"):
+        paused = bool(row.get("paused"))
+        if row.get("trainer_suspended") and not paused:
             self.suspended_run += 1
         else:
             self.suspended_run = 0
@@ -205,13 +210,14 @@ class Watchdog:
         conds["GPU_TEMP"] = (gt is not None and gt >= th["gpu_temp_c"],
                              "GPU temperature %s C >= %s C" % (gt, th["gpu_temp_c"]))
         ssl = row.get("seconds_since_log")
-        conds["LOG_STALL"] = (bool(row.get("trainer_alive")) and ssl is not None and ssl > th["log_stall_s"],
+        conds["LOG_STALL"] = (not paused and bool(row.get("trainer_alive")) and ssl is not None
+                              and ssl > th["log_stall_s"],
                               "no trainer log output for %s s while pid %s is alive (step %s, last %s)"
                               % (ssl, row.get("trainer_pid"), row.get("current_step"), row.get("latest_iter")))
         dd, dc = row.get("disk_free_d_gib"), row.get("disk_free_c_gib")
         conds["DISK_D"] = (dd is not None and dd < th["disk_d_gib"], "D: free %s GiB < %s GiB" % (dd, th["disk_d_gib"]))
         conds["DISK_C"] = (dc is not None and dc < th["disk_c_gib"], "C: free %s GiB < %s GiB" % (dc, th["disk_c_gib"]))
-        conds["GPU_FORBIDDEN"] = (bool(row.get("trainer_alive")) and bool(row.get("gpu_forbidden_apps")),
+        conds["GPU_FORBIDDEN"] = (not paused and bool(row.get("trainer_alive")) and bool(row.get("gpu_forbidden_apps")),
                                   "forbidden GPU process(es) while training: %s" % row.get("gpu_forbidden_apps"))
         now = time.time()
         fired = []

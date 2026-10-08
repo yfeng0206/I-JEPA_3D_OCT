@@ -38,7 +38,7 @@ def kinds(alerts):
 def test_sample_row_has_all_columns(tmp_path):
     w, _ = make(tmp_path)
     row = w.sample()
-    assert set(row) == set(wd.COLUMNS)
+    assert set(row) == set(wd.COLUMNS) | {"paused"} and row["paused"] is False
     assert row["commit_headroom_mb"] == 10000.0
     assert row["trainer_alive"] is True and row["trainer_pid"] == 4242
     assert row["latest_iter"] == "28:150/9375" and row["latest_epoch"] == 27
@@ -164,3 +164,18 @@ def test_v3_first_sample_with_deferred_mtime_is_not_a_stall(tmp_path):
     assert "LOG_STALL" not in kinds(w.evaluate(row))
     v["now"] = 10000.0 + 31 * 60  # size unchanged for an observed 31 min -> confirmed stall
     assert kinds(w.evaluate(w.sample())) == ["LOG_STALL"]
+
+
+
+def test_paused_campaign_suppresses_trainer_alerts(tmp_path):
+    w, v = make(tmp_path, now=1000.0, log_mtime=1000.0, suspended=[4243], forbidden=["League of Legends.exe"])
+    (tmp_path / "state.json").write_text(json.dumps({"status": "PAUSED", "current": {
+        "step": "R1:train", "paused": True, "pid": 4242, "create_time": 1.0, "log": str(tmp_path / "x.log")}}))
+    row = w.sample()
+    assert row["paused"] is True and row["current_step"] == "R1:train (PAUSED)"
+    assert w.evaluate(row) == []
+    v["now"] = 1000.0 + 3 * 3600  # hours without log growth while paused: still quiet
+    for _ in range(3):
+        assert w.evaluate(w.sample()) == []
+    v["temp"] = 90.0  # hardware alerts stay on
+    assert [k for k, _ in w.evaluate(w.sample())] == ["GPU_TEMP"]

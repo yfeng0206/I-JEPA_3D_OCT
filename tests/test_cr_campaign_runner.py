@@ -83,6 +83,7 @@ if meta["resume_policy"] == "exact" and start >= a.stop_after_epoch:
     write_stop(start)
     sys.exit(0)
 for e in range(start + 1, 101):
+    time.sleep(ctl.get("epoch_sleep", 0.0))  # the epoch's work happens before its summary line
     if mode == "crash" and e == ctl.get("crash_epoch", start + 2):
         print("simulated crash in epoch %d" % e, flush=True); sys.exit(1)
     tr, va = ref["train"][str(e)], ref["val"][str(e)]
@@ -91,7 +92,6 @@ for e in range(start + 1, 101):
     for it in (50, 100):
         print("  [Epoch %d/100 | Iter %d/9375] loss=%.4f  lr=2.0e-04  wd=0.1  ema=0.997  gpu=1MB" % (e, it, tr), flush=True)
     print("Epoch %d/100  (1s)  train_loss=%.4f  val_loss=%.4f" % (e, tr, va), flush=True)
-    time.sleep(ctl.get("epoch_sleep", 0.0))
     if mode == "nan" and e == ctl["nan_epoch"]:
         time.sleep(120)
     if mode == "nan_exit4" and e == ctl["nan_epoch"]:
@@ -99,6 +99,7 @@ for e in range(start + 1, 101):
     save(os.path.join(out, tag + "-last.pth.tar"), e)
     if e % 5 == 0 or e == a.stop_after_epoch:
         save(os.path.join(out, "%s-ep%d.pth.tar" % (tag, e)), e)
+    print("  [CKPT] epoch=%d saved: last" % e, flush=True)
     if e == a.stop_after_epoch:
         if mode == "exit0_nostop":
             sys.exit(0)
@@ -122,6 +123,7 @@ ap.add_argument("--seal-test", action="store_true")
 a = ap.parse_args()
 ctl = json.load(open(os.environ["CR_FAKE_CONTROL"]))
 mode = ctl.get("probe_mode", "ok")
+time.sleep(ctl.get("probe_sleep", 0.0))
 if mode == "fail":
     print("probe exploded"); sys.exit(1)
 os.makedirs(a.output_dir)
@@ -935,3 +937,167 @@ def test_set_commit_comma_list_pins_only_listed_and_requires_configs(env):
     with pytest.raises(SystemExit, match="does not contain"):
         camp_mod.main(["--campaign", str(env.camp_path), "--set-commit", new, "--runs", "R3"])
     assert [r for r in json.loads(env.camp_path.read_text())["runs"] if r["id"] == "R3"][0]["git_commit"] is None
+
+
+
+# ---------------------------------------------------------------------------
+# Graceful PAUSE / RESUME (coordinator 11:51)
+# ---------------------------------------------------------------------------
+
+import threading
+
+
+def _poll_state(env, pred, timeout=180):
+    t0 = time.time()
+    while time.time() - t0 < timeout:
+        try:
+            st = json.loads(env.state_path.read_text())
+            if pred(st):
+                return st
+        except (OSError, ValueError):
+            pass
+        time.sleep(0.05)
+    raise AssertionError("timed out waiting for state condition")
+
+
+def _cli(env, *args):
+    return camp_mod.main(["--campaign", str(env.camp_path)] + list(args))
+
+
+def _controller(env, request_when, checks):
+    """Background: request a pause when `request_when(state)`; once PAUSED, snapshot + resume."""
+    out = {}
+
+    def body():
+        try:
+            _poll_state(env, request_when)
+            assert _cli(env, "--request-pause", "test pause") == 0
+            out["paused_state"] = _poll_state(env, lambda st: st.get("status") == "PAUSED"
+                                              and (st.get("pause") or {}).get("status") == "PAUSED")
+            lines = []
+            camp_mod.Runner(env.camp_path, out=lines.append).status()
+            out["status_lines"] = lines
+            out["checks"] = checks(env)
+            assert _cli(env, "--resume") == 0
+        except BaseException as e:  # noqa: BLE001
+            out["error"] = repr(e)
+            try:
+                _cli(env, "--resume")
+            except BaseException:  # noqa: BLE001
+                pass
+    t = threading.Thread(target=body, daemon=True)
+    t.start()
+    return t, out
+
+
+def test_pause_at_epoch_boundary_and_exact_resume(env):
+    env.set_ctl(epoch_sleep=0.6)
+
+    def checks(env):
+        last = env.run_dir / ("%s-last.pth.tar" % env.tag)
+        import torch
+        return {"last_epoch": int(torch.load(last, weights_only=False)["epoch"]),
+                "last_sha": cc.sha256_file(last)}
+    t, out = _controller(env, lambda st: len((st.get("runs", {}).get("R1", {}).get("train", {})
+                                                .get("epochs") or {})) >= 3, checks)
+    assert env.run() == 0
+    t.join(timeout=60)
+    assert "error" not in out, out.get("error")
+    ps = out["paused_state"]
+    tr_p = ps["runs"]["R1"]["train"]
+    a0 = tr_p["attempts"][0]
+    E = ps["pause"]["epoch"]
+    assert a0["paused"] and a0["terminated_by_runner"] and a0["pause"]["epoch"] == E
+    assert out["checks"]["last_epoch"] == E and out["checks"]["last_sha"] == a0["pause"]["last_sha256"]
+    assert tr_p["restarts_since_ack"] == 0 and ps["current"]["paused"] is True
+    assert any("PAUSED since" in line for line in out["status_lines"])
+    st = env.state()
+    tr = st["runs"]["R1"]["train"]
+    assert [a["kind"] for a in tr["attempts"]] == ["fork", "exact"]
+    a1 = tr["attempts"][1]
+    assert a1["after_pause"] is True and a1["resume_from_epoch"] == E
+    assert tr["restarts_since_ack"] == 0
+    assert sorted(int(e) for e in tr["epochs"]) == list(range(26, 51))  # nothing skipped or repeated
+    assert tr["pinned"]["epoch"] == 50 and st["status"] == "DONE"
+    assert len(st["pauses"]) == 1 and st["pauses"][0]["epoch"] == E and st["pause"] is None
+    rcfg = yaml.safe_load(open(a1["config"]))
+    assert rcfg["meta"]["resume_policy"] == "exact" and "fork_start_epoch" not in rcfg["meta"]
+    assert a1["manifest_checked"]["ok"] is True  # same run_uuid / contract after the pause
+
+
+def test_pause_during_probe_waits_for_probe_then_pauses_before_next_gpu_step(env):
+    anc = env.camp["ancestor"]
+    env.rewrite(anchors={"id": "ANCHORS", "enabled": True, "git_commit": env.commit, "items": [
+        {"name": "anchor_random_ep50", "arm": "random", "mode": "checkpoint", "run_uuid": "orig-random-ep50",
+         "checkpoint": anc["path"], "sha256": anc["sha256"]}]},
+        sequence=["R1:train", "R1:probe", "ANCHORS:probe"])
+    env.set_ctl(probe_sleep=3.0)
+
+    def checks(env):
+        st = env.state()
+        return {"r1_probe": st["runs"]["R1"]["probe"]["status"],
+                "anchor_attempts": len(((st["runs"].get("ANCHORS") or {}).get("probe") or {})
+                                       .get("items", {}).get("anchor_random_ep50", {}).get("attempts", [])),
+                "step": st["current"]["step"]}
+    t, out = _controller(env, lambda st: (st.get("current") or {}).get("step") == "R1:probe"
+                         and (st.get("current") or {}).get("pid"), checks)
+    assert env.run() == 0
+    t.join(timeout=60)
+    assert "error" not in out, out.get("error")
+    assert out["checks"] == {"r1_probe": "DONE", "anchor_attempts": 0, "step": "ANCHORS:probe"}
+    st = env.state()
+    assert st["status"] == "DONE" and len(st["runs"]["R1"]["probe"]["attempts"]) == 1
+    assert st["runs"]["ANCHORS"]["probe"]["status"] == "DONE" and st["pauses"][0]["step"] == "ANCHORS:probe"
+
+
+def test_pause_requested_at_stop_epoch_never_interrupts_it(env):
+    env.set_ctl(epoch_sleep=0.05)
+    t, out = _controller(env, lambda st: "50" in (st.get("runs", {}).get("R1", {}).get("train", {})
+                                                   .get("epochs") or {}), lambda env: None)
+    assert env.run() == 0
+    t.join(timeout=60)
+    assert "error" not in out, out.get("error")
+    ps = out["paused_state"]
+    assert len(ps["runs"]["R1"]["train"]["attempts"]) == 1
+    assert not ps["runs"]["R1"]["train"]["attempts"][0].get("paused")
+    assert ps["runs"]["R1"]["train"]["pinned"]["epoch"] == 50 and ps["pause"]["step"] == "R1:probe"
+    assert env.state()["runs"]["R1"]["probe"]["status"] == "DONE"
+
+
+def test_pause_resume_cli_idempotent_and_status(env, capsys):
+    assert _cli(env, "--request-pause", "first") == 0
+    req = env.tmp / "state" / "PAUSE_REQUEST"
+    first = req.read_text()
+    assert _cli(env, "--request-pause", "second") == 0
+    assert req.read_text() == first and "already requested" in capsys.readouterr().out
+    lines = []
+    camp_mod.Runner(env.camp_path, out=lines.append).status()
+    assert lines == ["no state yet (%s)" % env.state_path]
+    assert _cli(env, "--resume") == 0 and not req.exists()
+    assert _cli(env, "--resume") == 0 and "no pause request" in capsys.readouterr().out
+    assert not env.state_path.exists()  # pause CLI never touches campaign state
+
+
+def test_pause_requested_before_start_idles_before_fork(env):
+    def checks(env):
+        st = env.state()
+        return {"attempts": len(st["runs"]["R1"]["train"]["attempts"]), "step": st["current"]["step"]}
+    assert _cli(env, "--request-pause", "before start") == 0
+    out = {}
+
+    def body():
+        try:
+            out["paused_state"] = _poll_state(env, lambda st: st.get("status") == "PAUSED")
+            out["checks"] = checks(env)
+            lines = []
+            camp_mod.Runner(env.camp_path, out=lines.append).status()
+            out["status_lines"] = lines
+        finally:
+            _cli(env, "--resume")
+    t = threading.Thread(target=body, daemon=True)
+    t.start()
+    assert env.run() == 0
+    t.join(timeout=60)
+    assert out["checks"] == {"attempts": 0, "step": "R1:train"}
+    assert any("PAUSED since" in line for line in out["status_lines"])
+    assert env.state()["runs"]["R1"]["train"]["restarts_since_ack"] == 0

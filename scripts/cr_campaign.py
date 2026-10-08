@@ -45,10 +45,22 @@ Usage:
   python scripts/cr_campaign.py --status
   python scripts/cr_campaign.py --set-commit <sha> [--runs R1,C1,...]
   python scripts/cr_campaign.py --clear-stop "reason checked, safe to continue"
+  python scripts/cr_campaign.py --request-pause "user needs the GPU"   # graceful pause
+  python scripts/cr_campaign.py --resume                               # lift the pause
+
+Graceful pause: ``--request-pause`` writes ``<state_dir>/PAUSE_REQUEST``.  A running trainer
+is stopped only after the in-progress epoch's summary line AND its ``[CKPT] epoch=N saved``
+line have appeared (all of epoch N's checkpoints written atomically); the runner then
+terminates its OWN trainer tree, verifies ``<tag>-last.pth.tar`` (epoch == N, sha256 recorded)
+and idles with ``status: PAUSED`` (not a crash; no restart budget used).  A probe in flight
+is finished first; every GPU launch point waits while the request exists.  ``--resume``
+removes the request; the runner continues with an exact resume from the verified -last
+(unchanged sha) or with the next step.  The stop epoch itself is never interrupted.
 """
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import math
 import os
@@ -72,6 +84,8 @@ REPO = SCRIPTS.parent
 DEFAULT_CAMPAIGN = REPO / "configs" / "cr_seed_v1" / "campaign.json"
 STATE_SCHEMA = "cr_campaign_state_v1"
 STOP_FILE_SCHEMA = "jepa_stop_epoch_v1"
+PAUSE_FILE = "PAUSE_REQUEST"
+CKPT_RE = re.compile(r"\[CKPT\] epoch=(\d+) saved")
 SEAL_SCHEMA = "cr_sealed_v1"
 EXIT_STOPPED = 2
 EXIT_LOCKED = 3
@@ -368,16 +382,38 @@ class Runner:
             return p.poll()
         return None  # re-attached: exit code unknown
 
-    def kill_own_tree(self, a: dict, why: str) -> None:
-        """Terminate a process tree this runner launched (never anything else)."""
+    def own_tree_identities(self, a: dict) -> list:
+        """[[pid, creation_time], ...] of the runner's own trainer tree (root + descendants)."""
+        pid, ct = a.get("pid"), a.get("create_time")
+        ids = [[pid, ct]]
+        if cc.psutil is not None and cc.same_process_alive(pid, ct):
+            try:
+                for c in cc.psutil.Process(int(pid)).children(recursive=True):
+                    ids.append([c.pid, cc.process_create_time(c.pid)])
+            except Exception:  # noqa: BLE001  (root just exited / access denied)
+                pass
+        return ids
+
+    @staticmethod
+    def alive_identities(ids) -> list:
+        return [[p, ct] for p, ct in (ids or []) if p is not None and ct is not None
+                and cc.same_process_alive(p, ct)]
+
+    def kill_own_tree(self, a: dict, why: str, tree=None) -> bool:
+        """Terminate a process tree this runner launched (never anything else, identity = PID +
+        creation time).  Returns True only when the root and every recorded descendant are gone."""
         pid = a.get("pid")
+        if tree is None:
+            tree = self.own_tree_identities(a)
         own = pid in self.children or cc.same_process_alive(pid, a.get("create_time"))
         if not own or not cc.same_process_alive(pid, a.get("create_time")):
-            return
+            return not self.alive_identities(tree)  # root gone: nothing to signal; are we clean?
         self.event("terminating OWN process tree pid=%s (%s)" % (pid, why))
+        rc = 0
         if cc.IS_WINDOWS:
-            subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True, timeout=120,
-                           **NO_WINDOW)
+            r = subprocess.run(["taskkill", "/PID", str(pid), "/T", "/F"], capture_output=True, timeout=120,
+                               **NO_WINDOW)
+            rc = r.returncode
         else:
             try:
                 os.kill(int(pid), 15)
@@ -386,9 +422,19 @@ class Runner:
         p = self.children.get(pid)
         if p is not None:
             try:
-                p.wait(timeout=120)
+                p.wait(timeout=120 if rc == 0 else 5)
             except subprocess.TimeoutExpired:
                 pass
+        deadline = time.time() + (float(self.camp.get("kill_wait_seconds", 60)) if rc == 0 else 5.0)
+        while True:
+            alive = self.alive_identities(tree)
+            if not alive:
+                return True
+            if time.time() >= deadline:
+                self.event("termination of own tree pid=%s incomplete (taskkill rc=%s); still alive: %s"
+                           % (pid, rc, alive))
+                return False
+            time.sleep(0.2)
 
     # -- training ---------------------------------------------------------
     def run_paths(self, cfg: dict) -> tuple[Path, str]:
@@ -433,18 +479,25 @@ class Runner:
                 if run_dir.exists() and any(run_dir.iterdir()):
                     self.stop("%s: run folder %s is not empty but the campaign never started this run"
                               % (rid, run_dir))
-                self.verify_ancestor()
-                self.preflight("%s fork launch" % rid)
-                if not rs.get("run_uuid"):
-                    import uuid
-                    rs["run_uuid"] = str(uuid.uuid4())
-                self.start_attempt(rid, spec, wt, cfg_path, cfg_sha, kind="fork")
+                def prep_fork():
+                    self.verify_ancestor()
+                    self.preflight("%s fork launch" % rid)
+
+                def go_fork():
+                    if not rs.get("run_uuid"):
+                        import uuid
+                        rs["run_uuid"] = str(uuid.uuid4())
+                    self.start_attempt(rid, spec, wt, cfg_path, cfg_sha, kind="fork")
+                self.gated_launch("%s:train" % rid, prep_fork, go_fork)
                 continue
             if a["status"] == "LAUNCHING":
                 self.stop("%s attempt %d was being launched when the runner died; verify no trainer "
                           "is running, then --clear-stop" % (rid, a["k"]))
             if a["status"] == "RUNNING":
                 self.monitor_train(rid, spec, a)
+            if a["status"] == "EXITED" and a.get("paused"):
+                self.resume_paused_attempt(rid, spec, a, wt, cfg, run_dir, tag)
+                continue
             if a["status"] == "EXITED":
                 verdict = self.resolve_exit(rid, a, run_dir)
                 if verdict == "OK":
@@ -478,10 +531,13 @@ class Runner:
                     self.stop("%s: rolling checkpoint epoch %d is not past the fork epoch %d"
                               % (rid, ep, self.fork_start))
                 rcfg_path = self.write_resume_config(rid, spec, cfg, last, len(tr["attempts"]))
-                self.preflight("%s exact resume from epoch %d" % (rid, ep))
-                tr["restarts_since_ack"] += 1
-                self.start_attempt(rid, spec, wt, rcfg_path, cc.sha256_file(rcfg_path), kind="exact",
-                                   resume_from_epoch=ep)
+
+                def go_resume():
+                    tr["restarts_since_ack"] += 1
+                    self.start_attempt(rid, spec, wt, rcfg_path, cc.sha256_file(rcfg_path), kind="exact",
+                                       resume_from_epoch=ep)
+                self.gated_launch("%s:train" % rid,
+                                  lambda: self.preflight("%s exact resume from epoch %d" % (rid, ep)), go_resume)
                 continue
             if a["status"] not in ("RUNNING", "EXITED"):
                 self.stop("%s attempt %d in unexpected status %s" % (rid, a["k"], a["status"]))
@@ -510,13 +566,14 @@ class Runner:
         cc.atomic_write_text(path, text)
         return path
 
-    def start_attempt(self, rid, spec, wt, cfg_path, cfg_sha, *, kind, resume_from_epoch=None):
+    def start_attempt(self, rid, spec, wt, cfg_path, cfg_sha, *, kind, resume_from_epoch=None,
+                      after_pause=False):
         tr = self.rstate(rid)["train"]
         k = len(tr["attempts"])
         run_dir = Path(tr["run_dir"])
         log = run_dir / ("train_a%d.log" % k)
         a = {"k": k, "kind": kind, "status": "LAUNCHING", "config": str(cfg_path), "config_sha256": cfg_sha,
-             "resume_from_epoch": resume_from_epoch, "log": str(log)}
+             "resume_from_epoch": resume_from_epoch, "log": str(log), "after_pause": bool(after_pause)}
         tr["attempts"].append(a)
         self.save()
         run_dir.mkdir(parents=True, exist_ok=True)
@@ -534,6 +591,273 @@ class Runner:
     def fmt(tmpl: str, **kw) -> str:
         return str(tmpl).format(**kw)
 
+    # -- graceful pause / resume -------------------------------------------
+    @property
+    def pause_path(self) -> Path:
+        return self.state_dir / PAUSE_FILE
+
+    def pause_requested(self) -> bool:
+        return self.pause_path.exists()
+
+    @contextlib.contextmanager
+    def launch_lock(self, timeout: float = 120.0):
+        """Short OS lock shared by every GPU launch and by --request-pause, so a published pause
+        request and a recorded launch can never interleave."""
+        lk = cc.ExclusiveLock(self.state_dir / "launch.lock")
+        deadline = time.time() + timeout
+        while True:
+            try:
+                lk.acquire()
+                break
+            except cc.LockHeld:
+                if time.time() >= deadline:
+                    raise CampaignStop("could not acquire %s within %.0f s" % (lk.path, timeout))
+                time.sleep(0.05)
+        try:
+            yield
+        finally:
+            lk.release()
+
+    def gated_launch(self, where: str, prepare, launch):
+        """Run slow pre-launch checks, then launch only if no pause request exists at that instant.
+        The final check, the attempt journal entry and the process start happen under launch_lock;
+        a request that appeared during the checks sends us back to idle and re-runs the checks."""
+        while True:
+            self.pause_gate(where)
+            prepare()
+            with self.launch_lock():
+                if not self.pause_requested():
+                    return launch()
+            self.event("%s: pause requested during pre-launch checks; not launching" % where)
+
+    def _attempt_epochs(self, tr, a) -> list[int]:
+        return sorted(int(e) for e, v in tr.get("epochs", {}).items() if v.get("attempt") == a["k"])
+
+    @staticmethod
+    def _log_progress(a) -> tuple:
+        """From THIS attempt's log: (latest summarised epoch, whether its [CKPT] line follows its
+        summary, highest epoch seen in iteration-progress lines)."""
+        summ, ck, inprog = {}, {}, None
+        for i, line in enumerate(cc.tail_text(a["log"], 1 << 22).splitlines()):
+            m = gate.EPOCH_RE.match(line.strip())
+            if m:
+                summ[int(m.group(1))] = i
+                continue
+            m = CKPT_RE.search(line)
+            if m:
+                ck[int(m.group(1))] = i
+                continue
+            m = gate.ITER_RE.search(line)
+            if m:
+                inprog = max(inprog or 0, int(m.group(1)))
+        if not summ:
+            return None, False, inprog
+        latest = max(summ)
+        return latest, latest in ck and ck[latest] > summ[latest], inprog
+
+    def stop_epoch_running(self, latest, inprog) -> bool:
+        """The trainer is in (or about to start) the stop epoch: never terminate it."""
+        return ((latest is not None and latest >= self.stop_epoch - 1)
+                or (inprog is not None and inprog >= self.stop_epoch))
+
+    def try_pause_trainer(self, rid, spec, a, run_dir: Path) -> bool:
+        """Stop the runner's own trainer at a completed-and-saved epoch boundary.
+
+        Target = the in-progress epoch at notice time (or the just-summarised epoch whose saves
+        were still running).  Termination is allowed only when, in THIS attempt's log, the latest
+        summarised epoch L >= target has its ``[CKPT] epoch=L saved`` line after its summary (all of
+        L's checkpoints written atomically; no newer epoch summarised), and neither L nor the target
+        is the stop epoch.  Termination must be verified (whole owned tree gone) and -last
+        verified (epoch == L, sha recorded) before PAUSED is published; the transition is
+        journaled (``pause_intent``) so a runner restart can finish it."""
+        tr = self.rstate(rid)["train"]
+        p = self.state.get("pause") or {}
+        latest, saved, inprog = self._log_progress(a)
+        if p.get("status") != "PENDING" or p.get("attempt") != a["k"] or p.get("step") != "%s:train" % rid:
+            start = a.get("resume_from_epoch") or self.fork_start
+            if latest is not None and not saved:
+                target, base = latest, time.time()  # summary seen, saves in progress
+            else:
+                target = (latest or start) + 1
+                base = (float(tr["epochs"].get(str(latest), {}).get("observed_at", time.time()))
+                        if latest is not None else float(a.get("started_at") or time.time()))
+            durs = epoch_durations(tr)
+            per = statistics.median(durs[-5:]) if durs else self.epoch_minutes(spec["arm"]) * 60.0
+            expected = base if target == latest else base + per
+            req = cc.read_json(self.pause_path, {}) or {}
+            p = {"status": "PENDING", "step": "%s:train" % rid, "attempt": a["k"], "target_epoch": target,
+                 "requested_at": req.get("requested_at"), "note": req.get("note"), "noticed_at": cc.now_iso(),
+                 "expected_at": fmt_ts(expected),
+                 "stop_epoch_in_flight": target >= self.stop_epoch - 1 or self.stop_epoch_running(latest, inprog)}
+            self.state["pause"] = p
+            self.event("%s: pause requested; %s" % (rid, (
+                "the stop epoch %d is (about to be) running: it finishes and is pinned normally; the pause "
+                "applies before the next GPU step" % self.stop_epoch) if p["stop_epoch_in_flight"] else
+                "trainer will be stopped after epoch %d is saved (~%s)" % (target, fmt_ts(expected))))
+            self.save()
+        target = int(p["target_epoch"])
+        if (latest is None or not saved or latest < target or target >= self.stop_epoch
+                or self.stop_epoch_running(latest, inprog)):
+            return False
+        # epoch `latest` is completely written, nothing newer summarised, and it is not the stop epoch
+        tree = self.own_tree_identities(a)
+        p.update({"status": "PAUSING", "epoch": latest})
+        self.state["pause"] = p
+        a["pause_intent"] = {"epoch": latest, "at": cc.now_iso(), "tree": tree}
+        self.save()  # journal the full termination identity set BEFORE signalling
+        ok = self.kill_own_tree(a, "graceful pause after epoch %d" % latest, tree=tree)
+        if ok is False or self.proc_alive(a) or self.alive_identities(tree):
+            a["pause_intent"]["kill_failed"] = cc.now_iso()
+            p["status"] = "PENDING"
+            self.save()
+            self.stop("%s: graceful pause could not terminate the trainer (pid %s still alive); nothing was "
+                      "marked PAUSED and tracking is kept" % (rid, a.get("pid")))
+        self.finalize_pause(rid, a, run_dir)
+        return True
+
+    def finalize_pause(self, rid, a, run_dir: Path) -> None:
+        """Owned trainer is gone: verify -last (epoch == journaled epoch, sha) and publish PAUSED
+        together with the EXITED/paused attempt in one state write.  Idempotent on restart."""
+        tr = self.rstate(rid)["train"]
+        intent = a.get("pause_intent") or {}
+        if self.proc_alive(a):
+            self.stop("%s: cannot finalize pause: trainer pid %s is still alive" % (rid, a.get("pid")))
+        ids = intent.get("tree") or [[a.get("pid"), a.get("create_time")]]
+        deadline = time.time() + float(self.camp.get("pause_recovery_wait_seconds", 10))
+        alive = self.alive_identities(ids)
+        while alive and time.time() < deadline:
+            time.sleep(0.2)
+            alive = self.alive_identities(ids)
+        if alive:
+            self.stop("%s: cannot finalize pause: owned process(es) %s of the terminated trainer tree are still "
+                      "alive; PAUSED not published, tracking kept" % (rid, alive))
+        want = intent.get("epoch")
+        last = run_dir / ("%s-last.pth.tar" % tr["tag"])
+        ep = read_checkpoint_epoch(last, self.camp["python"]) if last.exists() else None
+        if want is None or ep != want:
+            intent["verification_failed"] = "%s holds epoch %r, expected %r" % (last.name, ep, want)
+            a["pause_intent"] = intent
+            self.save()
+            self.stop("%s: pause verification failed: %s holds epoch %r, expected the journaled epoch %r "
+                      "(no older checkpoint is relabelled)" % (rid, last.name, ep, want))
+        sha = cc.sha256_file(last)
+        now = cc.now_iso()
+        intent["finalized_at"] = now
+        a.update({"pause_intent": intent, "rc": self.proc_rc(a), "ended_at": a.get("ended_at") or now,
+                  "status": "EXITED", "terminated_by_runner": True, "paused": True,
+                  "pause": {"epoch": ep, "last_path": str(last), "last_sha256": sha, "at": now}})
+        self.children.pop(a.get("pid"), None)
+        p = self.state.get("pause") or {"step": "%s:train" % rid, "attempt": a["k"]}
+        p.update({"status": "PAUSED", "paused_at": now, "epoch": ep, "last_sha256": sha,
+                  "step": "%s:train" % rid, "attempt": a["k"]})
+        self.state["pause"] = p
+        self.state["status"] = "PAUSED"
+        self.state["current"] = {"step": "%s:train" % rid, "paused": True, "attempt": a["k"]}
+        self.event("%s: PAUSED after verified epoch %d (-last sha256 %s); waiting for --resume" % (rid, ep, sha[:12]))
+        self.save()
+
+    def wait_until_resumed(self, where: str) -> None:
+        p = self.state.get("pause") or {}
+        if p.get("status") != "PAUSED":
+            req = cc.read_json(self.pause_path, {}) or {}
+            p = {"status": "PAUSED", "step": where, "requested_at": req.get("requested_at"),
+                 "note": req.get("note"), "paused_at": cc.now_iso()}
+            self.event("PAUSED before %s; waiting for --resume" % where)
+        self.state["pause"] = p
+        self.state["status"] = "PAUSED"
+        self.state["current"] = {"step": where, "paused": True, "attempt": p.get("attempt")}
+        self.save()
+        while self.pause_requested():
+            time.sleep(self.poll)
+        p["resumed_at"] = cc.now_iso()
+        self.state.setdefault("pauses", []).append(p)
+        self.state["pause"] = None
+        self.state["status"] = "RUNNING"
+        self.state["current"] = {"step": where}
+        self.event("resumed (%s)" % where)
+        self.save()
+
+    def pause_gate(self, where: str) -> None:
+        """Called before every GPU launch: idle while a pause is requested."""
+        if self.pause_requested() or (self.state.get("pause") or {}).get("status") == "PAUSED":
+            self.wait_until_resumed(where)
+
+    def resume_paused_attempt(self, rid, spec, a, wt, cfg, run_dir: Path, tag: str) -> None:
+        tr = self.rstate(rid)["train"]
+        p = a.get("pause") or {}
+        if not p.get("last_sha256"):
+            # verification not yet performed (runner died mid-transition): finish it now
+            intent = a.get("pause_intent") or {}
+            if intent.get("verification_failed"):
+                self.stop("%s: paused attempt %d failed verification: %s" % (rid, a["k"], intent["verification_failed"]))
+            if intent.get("epoch") is None:
+                latest, saved, _ = self._log_progress(a)
+                if latest is None or not saved:
+                    self.stop("%s: paused attempt %d has no completed epoch boundary in its log" % (rid, a["k"]))
+                a["pause_intent"] = dict(intent, epoch=latest, at=cc.now_iso(), recovered=True)
+            self.finalize_pause(rid, a, run_dir)
+            p = a["pause"]
+        self.wait_until_resumed("%s:train" % rid)
+        last = run_dir / ("%s-last.pth.tar" % tag)
+        if not last.exists() or cc.sha256_file(last) != p["last_sha256"]:
+            self.stop("%s: %s changed or vanished while paused (expected sha256 %s)"
+                      % (rid, last.name, p["last_sha256"]))
+        ep = int(p["epoch"])
+        rcfg_path = self.write_resume_config(rid, spec, cfg, last, len(tr["attempts"]))
+
+        def prep():
+            if cc.sha256_file(last) != p["last_sha256"]:
+                self.stop("%s: %s changed while paused (expected sha256 %s)" % (rid, last.name, p["last_sha256"]))
+            self.preflight("%s exact resume after pause from epoch %d" % (rid, ep))
+        self.gated_launch("%s:train" % rid, prep,
+                          lambda: self.start_attempt(rid, spec, wt, rcfg_path, cc.sha256_file(rcfg_path),
+                                                     kind="exact", resume_from_epoch=ep, after_pause=True))
+
+    def request_pause(self, note: str) -> int:
+        if self.pause_path.exists():
+            req = cc.read_json(self.pause_path, {}) or {}
+            self.out("pause already requested at %s (note %r); nothing changed" % (req.get("requested_at"), req.get("note")))
+            return 0
+        self.state_dir.mkdir(parents=True, exist_ok=True)
+        with self.launch_lock():  # serialized with every GPU launch decision
+            if not self.pause_path.exists():
+                cc.atomic_write_json(self.pause_path, {"requested_at": cc.now_iso(), "note": note,
+                                                       "by": cc.own_identity()})
+        st = cc.read_json(self.state_path) or {}
+        self.out("pause requested; expected pause: %s" % (self.expected_pause(st) or "before the next GPU step"))
+        return 0
+
+    def resume(self) -> int:
+        if not self.pause_path.exists():
+            self.out("no pause request; nothing to resume")
+            return 0
+        os.remove(self.pause_path)
+        self.out("pause request removed; the runner continues (exact resume from the verified -last "
+                 "or the next step)")
+        return 0
+
+    def expected_pause(self, st) -> str | None:
+        """End of the current epoch per the projection (for --status / --request-pause)."""
+        p = st.get("pause") or {}
+        if p.get("expected_at"):
+            return "%s (after epoch %s)" % (p["expected_at"], p.get("target_epoch"))
+        cur = st.get("current") or {}
+        step = cur.get("step") or ""
+        if not step.endswith(":train") or not cur.get("pid"):
+            return None
+        tr = (st.get("runs", {}).get(step.split(":")[0]) or {}).get("train") or {}
+        eps = tr.get("epochs") or {}
+        durs = epoch_durations(tr)
+        per = statistics.median(durs[-5:]) if durs else None
+        if per is None:
+            for row in (st.get("projection") or {}).get("steps", []):
+                if row.get("step") == step and row.get("sec_per_epoch"):
+                    per = float(row["sec_per_epoch"])
+        if per is None or not eps:
+            return None
+        last = max(eps, key=int)
+        return "%s (end of epoch %d)" % (fmt_ts(float(eps[last]["observed_at"]) + per), int(last) + 1)
+
     def monitor_train(self, rid, spec, a) -> None:
         tr = self.rstate(rid)["train"]
         run_dir = Path(tr["run_dir"])
@@ -541,13 +865,31 @@ class Runner:
                                  "log": a.get("log"), "run_dir": str(run_dir), "attempt": a.get("k")}
         self.save()
         self.say("%s: monitoring attempt %d pid=%s" % (rid, a["k"], a["pid"]))
-        seen = set(tr["epochs"].keys())
+        # Epochs logged by an earlier attempt beyond this attempt's start were never checkpointed
+        # (crash or pause before the save) and are re-observed from this attempt's log.
+        start = int(a.get("resume_from_epoch") or self.fork_start)
+        seen = {e for e, v in tr["epochs"].items() if int(e) <= start or v.get("attempt") == a["k"]}
         sus_run, sus_alerted = 0, False
         while True:
             alive = self.proc_alive(a)
+            if a.get("pause_intent") and not a["pause_intent"].get("finalized_at"):
+                if not alive:  # terminated for a pause, runner died before finishing the transition
+                    self.finalize_pause(rid, a, run_dir)
+                    return
+                a.pop("pause_intent")  # termination never happened: re-apply the boundary rule
+                if (self.state.get("pause") or {}).get("status") == "PAUSING":
+                    self.state["pause"]["status"] = "PENDING"
+                self.save()
             self.observe_epochs(rid, spec, a, run_dir, seen)
             if not alive:
                 break
+            if self.pause_requested():
+                if self.try_pause_trainer(rid, spec, a, run_dir):
+                    return
+            elif (self.state.get("pause") or {}).get("status") == "PENDING":
+                self.state["pause"] = None
+                self.event("%s: pause request withdrawn before it took effect" % rid)
+                self.save()
             sus = cc.suspended_in_tree(a.get("pid"), a.get("create_time"))
             sus_run = sus_run + 1 if sus else 0
             if sus_run >= 3 and not sus_alerted:
@@ -616,14 +958,17 @@ class Runner:
         if status == "STOP":
             a["gate_stop"] = res["summary"]
             self.save()
-            self.kill_own_tree(a, "G1 STOP: " + res["summary"])
-            a["status"] = "EXITED"
-            a["rc"] = self.proc_rc(a)
-            a["ended_at"] = cc.now_iso()
-            a["terminated_by_runner"] = True
-            self.children.pop(a.get("pid"), None)
+            if self.kill_own_tree(a, "G1 STOP: " + res["summary"]) is not False and not self.proc_alive(a):
+                a["status"] = "EXITED"
+                a["rc"] = self.proc_rc(a)
+                a["ended_at"] = cc.now_iso()
+                a["terminated_by_runner"] = True
+                self.children.pop(a.get("pid"), None)
+                self.save()
+                self.stop("%s: G1 STOP-class failure: %s" % (rid, res["summary"]))
             self.save()
-            self.stop("%s: G1 STOP-class failure: %s" % (rid, res["summary"]))
+            self.stop("%s: G1 STOP-class failure: %s; termination of trainer pid %s FAILED (still tracked)"
+                      % (rid, res["summary"], a.get("pid")))
 
     def check_manifest(self, rid, spec, a, run_dir: Path) -> None:
         """The trainer's run_manifest.json must describe exactly the launched attempt."""
@@ -665,10 +1010,10 @@ class Runner:
         self.save()
         if bad:
             if a.get("status") == "RUNNING":
-                self.kill_own_tree(a, "run_manifest mismatch")
-                a["status"] = "EXITED"
-                a["rc"] = self.proc_rc(a)
-                a["terminated_by_runner"] = True
+                if self.kill_own_tree(a, "run_manifest mismatch") is not False and not self.proc_alive(a):
+                    a["status"] = "EXITED"
+                    a["rc"] = self.proc_rc(a)
+                    a["terminated_by_runner"] = True
             a["gate_stop"] = "run_manifest mismatch %s" % bad
             self.children.pop(a.get("pid"), None)
             self.save()
@@ -976,32 +1321,13 @@ class Runner:
                 "cr_probe_%s_ep%03d_%s_a%d" % (target["name"], self.stop_epoch, str(ident)[:12], k))
             if out_dir.exists():
                 self.stop("%s: probe output dir %s already exists; refusing to reuse results" % (rid, out_dir))
-            log = self.state_dir / "logs" / (out_dir.name + ".log")
-            a = {"k": k, "status": "LAUNCHING", "out_dir": str(out_dir), "log": str(log), "target": target}
-            attempts.append(a)
-            self.save()
-            self.preflight("%s probe %s" % (rid, target["name"]))
             missing = [f for f in self.required_repo_files(target) if not (wt / f).exists()]
             if missing:
                 self.stop("%s: pinned commit %s lacks files the probe needs: %s"
                           % (rid, str(wt.name)[:12], missing))
-            cmd = target.get("command") or ps["command"]
-            kw = dict(python=self.camp["python"], checkpoint=target.get("checkpoint", ""),
-                      out_dir=str(out_dir), probe_config=ps.get("config", ""),
-                      head_seeds=ps.get("head_seeds", ""), name=target["name"],
-                      cache_dir=target.get("cache_dir", ""), worktree=str(wt),
-                      arm=target.get("arm", ""), seed=target.get("seed", ""),
-                      role=target.get("role", "new"), run_uuid=target.get("run_uuid", ""),
-                      run_manifest=target.get("run_manifest", ""),
-                      run_provenance=target.get("run_provenance", ""),
-                      expected_sha256=target.get("sha256") or target.get("expected_identity") or "")
-            argv = [self.fmt(x, **kw) for x in cmd]
-            a.update(self.launch(argv, wt, log))
-            a["status"] = "RUNNING"
-            self.state["current"] = {"step": "%s:probe" % rid, "pid": a["pid"], "create_time": a["create_time"],
-                                     "log": str(log), "target": target["name"]}
-            self.event("%s: probe %s launched pid=%s out=%s" % (rid, target["name"], a["pid"], out_dir))
-            self.save()
+            a = self.gated_launch("%s:probe" % rid,
+                                  lambda: self.preflight("%s probe %s" % (rid, target["name"])),
+                                  lambda: self._launch_probe(rid, attempts, target, wt, out_dir, k))
         while self.proc_alive(a):
             time.sleep(self.poll)
         a["rc"] = self.proc_rc(a)
@@ -1016,6 +1342,33 @@ class Runner:
         a["status"] = "DONE"
         self.save()
         return res
+
+    def _launch_probe(self, rid, attempts, target, wt, out_dir: Path, k: int) -> dict:
+        ps = self.camp["probe"]
+        if out_dir.exists():
+            self.stop("%s: probe output dir %s already exists; refusing to reuse results" % (rid, out_dir))
+        log = self.state_dir / "logs" / (out_dir.name + ".log")
+        a = {"k": k, "status": "LAUNCHING", "out_dir": str(out_dir), "log": str(log), "target": target}
+        attempts.append(a)
+        self.save()
+        cmd = target.get("command") or ps["command"]
+        kw = dict(python=self.camp["python"], checkpoint=target.get("checkpoint", ""),
+                  out_dir=str(out_dir), probe_config=ps.get("config", ""),
+                  head_seeds=ps.get("head_seeds", ""), name=target["name"],
+                  cache_dir=target.get("cache_dir", ""), worktree=str(wt),
+                  arm=target.get("arm", ""), seed=target.get("seed", ""),
+                  role=target.get("role", "new"), run_uuid=target.get("run_uuid", ""),
+                  run_manifest=target.get("run_manifest", ""),
+                  run_provenance=target.get("run_provenance", ""),
+                  expected_sha256=target.get("sha256") or target.get("expected_identity") or "")
+        argv = [self.fmt(x, **kw) for x in cmd]
+        a.update(self.launch(argv, wt, log))
+        a["status"] = "RUNNING"
+        self.state["current"] = {"step": "%s:probe" % rid, "pid": a["pid"], "create_time": a["create_time"],
+                                 "log": str(log), "target": target["name"]}
+        self.event("%s: probe %s launched pid=%s out=%s" % (rid, target["name"], a["pid"], out_dir))
+        self.save()
+        return a
 
     def validate_probe(self, rid, a, target, ident) -> dict:
         ps = self.camp["probe"]
@@ -1464,6 +1817,16 @@ class Runner:
             ("held (recorded pid %s)" % lock.get("pid")) if live else "free"))
         if st.get("stop_reason"):
             self.out("STOP REASON: %s" % st["stop_reason"])
+        p = st.get("pause") or {}
+        if p.get("status") == "PAUSED":
+            self.out("PAUSED since %s before/at %s%s; lift with --resume%s" % (
+                p.get("paused_at"), p.get("step"),
+                (" after verified epoch %s" % p["epoch"]) if p.get("epoch") is not None else "",
+                "" if self.pause_path.exists() else " (request already removed: resuming)"))
+        elif self.pause_path.exists():
+            req = cc.read_json(self.pause_path, {}) or {}
+            self.out("PAUSE_PENDING (requested %s): expected pause %s" % (
+                req.get("requested_at"), self.expected_pause(st) or "before the next GPU step"))
         cur = st.get("current") or {}
         if cur:
             alive = cc.same_process_alive(cur.get("pid"), cur.get("create_time"))
@@ -1603,10 +1966,17 @@ def main(argv=None) -> int:
     ap.add_argument("--set-commit", default=None, metavar="SHA")
     ap.add_argument("--runs", default=None, help="comma-separated run ids for --set-commit")
     ap.add_argument("--poll-seconds", type=float, default=None)
+    ap.add_argument("--request-pause", nargs="?", const="", default=None, metavar="NOTE",
+                    help="graceful pause after the current epoch / before the next GPU step")
+    ap.add_argument("--resume", action="store_true", help="remove the pause request")
     args = ap.parse_args(argv)
     r = Runner(args.campaign, poll_seconds=args.poll_seconds)
     if args.status:
         return r.status()
+    if args.request_pause is not None:
+        return r.request_pause(args.request_pause)
+    if args.resume:
+        return r.resume()
     if args.dry_run:
         return r.dry_run(args.only)
     if args.set_commit:

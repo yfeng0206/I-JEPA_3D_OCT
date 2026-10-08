@@ -38,7 +38,8 @@ def _probs(labels, signal, common, rng):
 
 
 def make_run(root, name, arm, seed, role, val_signal=1.0, test_signal=1.0, uuid=None,
-             ckpt=None, epoch=50, variants=(PRIMARY,), head_seeds=(42, 43)):
+             ckpt=None, epoch=50, variants=(PRIMARY,), head_seeds=(42, 43), stop_time=None,
+             finished=None):
     out = os.path.join(str(root), name)
     os.makedirs(out)
     rng = np.random.default_rng(zlib.crc32(name.encode('utf-8')))
@@ -46,6 +47,18 @@ def make_run(root, name, arm, seed, role, val_signal=1.0, test_signal=1.0, uuid=
                 'run_uuid': uuid if uuid is not None else 'uuid-' + name,
                 'checkpoint_sha256': ckpt or ('%064x' % zlib.crc32(name.encode('utf-8'))),
                 'epoch': epoch}
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
+    if role == 'new':
+        # The trainer's epoch-50 stop file, passed to the probe as --run-provenance.
+        stop = os.path.join(str(root), 'train_' + name, 'stop_epoch_050.json')
+        os.makedirs(os.path.dirname(stop))
+        with open(stop, 'w') as stream:
+            json.dump({'schema': 'jepa_stop_epoch_v1', 'epoch': epoch,
+                       'timestamp_utc': stop_time or now,
+                       'checkpoints': [{'role': 'periodic', 'epoch': epoch,
+                                        'sha256': identity['checkpoint_sha256']}]}, stream)
+        identity.update({'run_provenance': os.path.realpath(stop),
+                         'run_provenance_sha256': evaluation.file_sha256(stop)})
     val_manifest, test_manifest = _manifest('Validation', N_VAL), _manifest('Test', N_TEST)
     summaries, entries = {}, []
     for variant in variants:
@@ -84,7 +97,7 @@ def make_run(root, name, arm, seed, role, val_signal=1.0, test_signal=1.0, uuid=
     results = {'schema': 'cr_probe_v1', 'status': 'complete', 'sealed': True,
                'head_seeds': list(head_seeds), 'identity': identity, 'variants': summaries,
                'best_val_auc': summaries[PRIMARY]['val_auc_mean'], 'test_auc': None,
-               'config': config}
+               'config': config, 'finished': finished or now}
     with open(os.path.join(out, 'results.json'), 'w') as stream:
         json.dump(results, stream)
     return out
@@ -201,6 +214,14 @@ def test_outcome_labels_follow_preregistration():
     assert cr_stats.outcome_label([0.01, 0.01], [0.86, 0.861]) == 'incomplete'
     assert cr_stats.outcome_label([0.01, 0.01], [0.86]) == 'incomplete'
     assert cr_stats.outcome_label([-0.01], random_values) == 'incomplete'
+    # Amendment 1: three complete seed indices, four RANDOM realizations.
+    four = [0.864, 0.865, 0.867, 0.868]  # range 0.004
+    assert cr_stats.outcome_label([0.010, 0.006, 0.008], four) == 'consistent_direction'
+    assert cr_stats.outcome_label([0.010, 0.006, -0.001], four) == 'within_run_to_run_variation'
+    assert cr_stats.outcome_label([0.003, 0.004, 0.005], four) == 'within_run_to_run_variation'
+    assert cr_stats.outcome_label([-0.010, 0.002, 0.001], four) == 'reversed'
+    assert cr_stats.outcome_label([0.010, 0.006, 0.008], random_values) == 'incomplete'
+    assert 9012 in cr_stats.REGISTERED_SEEDS
 
 
 def test_freeze_guard():
@@ -286,21 +307,91 @@ def test_final_primary_analysis_end_to_end(design, tmp_path):
     assert again['analysis'][PRIMARY]['primary_contrasts'] == primary['primary_contrasts']
 
 
+def test_v2_runs_finishing_after_the_freeze_are_not_primary(design, tmp_path):
+    root, runs, _ = design
+    late = '2026-10-22T08:00:01-07:00'
+    variants = (PRIMARY, 'patchmean_slicemax')
+    for case, kwargs in (('stop_file_late', {'stop_time': late}),
+                         ('probe_late', {'finished': late})):
+        extra = []
+        for prefix, arm, signal in (('r', 'random', 1.0), ('c', 'centroid', 1.6),
+                                    ('e', 'envelope', 0.6)):
+            name = '%s_9012_%s' % (prefix, case)
+            extra.append(make_run(tmp_path / case, name, arm, 9012, 'new', test_signal=signal,
+                                  variants=variants, **(kwargs if arm == 'envelope' else {})))
+            cr_stats.cmd_unseal(extra[-1], allow_before_freeze=True)
+        res = final(list(runs.values()) + extra, n_boot=50)
+        block = res['analysis'][PRIMARY]
+        assert block['complete_seed_indices'] == [1234, 5678], case
+        assert block['incomplete_seed_indices'] == [9012], case
+        reasons = {(c['kind'], c['reason']) for c in block['descriptive_incomplete_contrasts']}
+        assert reasons == {('centroid-random', 'seed index incomplete'),
+                           ('envelope-random', 'run not finished before the freeze')}, case
+        late_run = res['runs'][os.path.basename(extra[-1])]['eligibility']
+        assert late_run['eligible'] is False and any('after the freeze' in r
+                                                      for r in late_run['reasons'])
+        assert len(block['outcomes']['centroid']['random_realizations']) == 3
+    # A new run without a valid stop file is not eligible either.
+    orphan = make_run(tmp_path / 'orphan', 'e_9012_nostop', 'envelope', 9012, 'new',
+                      variants=variants)
+    os.remove(json.load(open(os.path.join(orphan, 'results.json')))['identity']['run_provenance'])
+    elig = cr_stats.completion_eligibility(
+        orphan, cr_stats.load_run(orphan), cr_stats.read_seal_manifest(orphan)[0])
+    assert elig['eligible'] is False and 'no epoch-50 stop file' in elig['reasons']
+
+
 def test_v2_incomplete_designs_are_labelled_incomplete(design):
     root, runs, _ = design
     cases = {'missing_E2': ['e_5678'], 'missing_anchor': ['orig_random'],
              'missing_R2': ['r_5678']}
     for case, drop in cases.items():
         res = final([d for n, d in runs.items() if n not in drop], n_boot=50)
-        outcomes = res['analysis'][PRIMARY]['outcomes']
+        block = res['analysis'][PRIMARY]
+        outcomes = block['outcomes']
+        for arm in ('centroid', 'envelope'):
+            assert outcomes[arm]['label'] == 'incomplete', (case, arm)
+            assert outcomes[arm]['design_complete'] is False
         if case == 'missing_E2':
-            assert outcomes['envelope']['n_new_seeds'] == 1
-            assert outcomes['envelope']['label'] == 'incomplete', case
-            assert outcomes['centroid']['label'] == 'consistent_direction', case
-        else:
-            for arm in ('centroid', 'envelope'):
-                assert outcomes[arm]['label'] == 'incomplete', (case, arm)
-                assert outcomes[arm]['design_complete'] is False
+            # Amendment 1: index 5678 lacks ENVELOPE, so C2-R2 is descriptive only.
+            assert block['complete_seed_indices'] == [1234]
+            assert block['incomplete_seed_indices'] == [5678]
+            assert [(c['kind'], c['train_seed']) for c in
+                    block['descriptive_incomplete_contrasts']] == [('centroid-random', 5678)]
+            assert outcomes['centroid']['n_new_seeds'] == 1
+
+
+def test_amendment1_third_seed_index(design, tmp_path):
+    root, runs, _ = design
+    variants = (PRIMARY, 'patchmean_slicemax')
+    extra = {}
+    for prefix, arm, signal in (('r', 'random', 1.0), ('c', 'centroid', 1.6),
+                                ('e', 'envelope', 0.6)):
+        name = '%s_9012' % prefix
+        extra[name] = make_run(tmp_path, name, arm, 9012, 'new', test_signal=signal,
+                               variants=variants)
+        cr_stats.cmd_unseal(extra[name], allow_before_freeze=True)
+    # Three complete indices: three deltas, four RANDOM realizations.
+    res = final(list(runs.values()) + list(extra.values()), n_boot=100)
+    block = res['analysis'][PRIMARY]
+    assert block['complete_seed_indices'] == [1234, 5678, 9012]
+    assert len(block['primary_contrasts']) == 6 and block['descriptive_incomplete_contrasts'] == []
+    outcomes = block['outcomes']
+    assert outcomes['centroid']['label'] == 'consistent_direction'
+    assert outcomes['envelope']['label'] == 'reversed'
+    assert len(outcomes['centroid']['random_realizations']) == 4
+    assert outcomes['centroid']['design_complete'] is True
+    # Index 9012 without ENVELOPE: descriptive only, R3 excluded from the label's range.
+    res = final(list(runs.values()) + [extra['r_9012'], extra['c_9012']], n_boot=100)
+    block = res['analysis'][PRIMARY]
+    assert block['complete_seed_indices'] == [1234, 5678]
+    assert block['incomplete_seed_indices'] == [9012]
+    assert [(c['kind'], c['train_seed'], c['descriptive_only']) for c in
+            block['descriptive_incomplete_contrasts']] == [('centroid-random', 9012, True)]
+    outcomes = block['outcomes']
+    assert len(outcomes['centroid']['random_realizations']) == 3
+    assert outcomes['centroid']['label'] == 'consistent_direction'
+    assert outcomes['centroid']['random_range_all_completed_runs'] >= \
+        outcomes['centroid']['random_range']
 
 
 def _clone(src, dst):
@@ -379,6 +470,12 @@ def test_final_refuses_mismatched_test_cases(tmp_path):
         json.dump(manifest, stream)
     with open(manifest_path + '.sha256', 'w') as stream:
         stream.write(evaluation.file_sha256(manifest_path) + '  sealed_manifest.json\n')
+    with pytest.raises(cr_stats.IntegrityError, match='not bound to the current seal'):
+        final([a, b], n_boot=20)
+    receipt = os.path.join(b, 'unsealed_results.json')
+    payload = json.load(open(receipt))
+    payload['sealed_manifest_sha256'] = evaluation.file_sha256(manifest_path)
+    json.dump(payload, open(receipt, 'w'))
     with pytest.raises(cr_stats.IntegrityError, match='case order'):
         final([a, b], n_boot=20)
 

@@ -15,7 +15,8 @@ Subcommands
   final      primary analysis after the freeze: per-seed paired, label-stratified
              test-case bootstrap CIs for CENTROID-RANDOM and ENVELOPE-RANDOM
              within each seed, RANDOM-CB contrasts, outcome labels; no
-             seed-level bootstrap (n = 2 seeds per arm).
+             seed-level bootstrap. Seeds 1234, 5678 and (amendment 1) 9012; a seed
+             index is primary only if RANDOM, CENTROID and ENVELOPE all completed.
 
 Every subcommand writes JSON and prints a table. ``gate`` and ``inventory``
 never open test predictions. ``unseal`` and ``final`` refuse to run before the
@@ -48,8 +49,9 @@ ARM_ALIASES = {'oracle': 'centroid', 'mirage': 'envelope', 'random-cb': 'random_
 N_BOOT = 10000
 BOOT_SEED = 20261022
 GATE_THRESHOLD = 0.01
-# Pre-registered design (PREREGISTRATION_cr_seed_v1.md sections 1-3).
-REGISTERED_SEEDS = (1234, 5678)
+# Pre-registered design (PREREGISTRATION_cr_seed_v1.md sections 1-3, amendment 1 = seed 9012).
+REGISTERED_SEEDS = (1234, 5678, 9012)
+PRIMARY_ARMS = ('random', 'centroid', 'envelope')
 REGISTERED_HEAD_SEEDS = (42, 43, 44, 45, 46)
 ENDPOINT_EPOCH = 50
 IDENTITY_KEYS = ('run_uuid', 'checkpoint_sha256', 'arm', 'train_seed', 'role', 'epoch')
@@ -326,8 +328,8 @@ def cmd_gate(pairs, threshold=GATE_THRESHOLD, out=None, allow_arm_mismatch=False
 # unseal
 # ---------------------------------------------------------------------------
 
-def load_sealed(run_dir):
-    """Verify the sealed manifest and every file hash; return predictions by (variant, seed)."""
+def read_seal_manifest(run_dir):
+    """Hash-verified sealed manifest JSON only; no prediction array is opened."""
     manifest_path = os.path.join(run_dir, 'sealed_manifest.json')
     sidecar = manifest_path + '.sha256'
     if not os.path.exists(manifest_path) or not os.path.exists(sidecar):
@@ -338,7 +340,93 @@ def load_sealed(run_dir):
     if manifest_sha != recorded:
         raise IntegrityError("sealed_manifest.json hash mismatch in %s" % run_dir)
     with open(manifest_path, 'r', encoding='utf-8') as stream:
-        manifest = json.load(stream)
+        return json.load(stream), manifest_sha
+
+
+def check_receipt(run_dir, manifest_sha):
+    """The unseal receipt must exist and belong to the current seal (checked before arrays)."""
+    receipt_path = os.path.join(run_dir, 'unsealed_results.json')
+    if not os.path.exists(receipt_path):
+        raise IntegrityError("%s has not been unsealed (run `unseal` first)" % run_dir)
+    with open(receipt_path, 'r', encoding='utf-8') as stream:
+        if json.load(stream).get('sealed_manifest_sha256') != manifest_sha:
+            raise IntegrityError("%s: unseal receipt is not bound to the current seal" % run_dir)
+
+
+def check_seal_identity(run_dir, ident, manifest):
+    """The (unhashed) results.json identity must equal the identity under the seal."""
+    sealed_ident = dict(manifest.get('identity') or {})
+    sealed_ident['arm'] = norm_arm(sealed_ident.get('arm'))
+    diff = [k for k in IDENTITY_KEYS if sealed_ident.get(k) != ident.get(k)]
+    if diff:
+        raise IntegrityError("%s: results.json identity contradicts the seal on %s"
+                             % (run_dir, diff))
+    return sealed_ident
+
+
+def check_seal_coverage(run_dir, res, preds):
+    """results.json per-seed predictions must be exactly the sealed files."""
+    listed = set((v, int(r['head_seed']), os.path.normpath(r['test_predictions']),
+                  r['test_predictions_sha256'])
+                 for v, s in res['variants'].items() for r in s['per_seed'])
+    sealed = set((v, s, os.path.normpath(p['rel_path']), p['sha256'])
+                 for (v, s), p in preds.items())
+    if listed != sealed:
+        raise IntegrityError("%s: results.json predictions differ from the sealed files" % run_dir)
+
+
+def _parse_time(text):
+    try:
+        stamp = datetime.datetime.fromisoformat(str(text).replace('Z', '+00:00'))
+    except ValueError:
+        try:
+            stamp = datetime.datetime.strptime(str(text), '%Y-%m-%dT%H:%M:%S%z')
+        except ValueError:
+            return None
+    return stamp if stamp.tzinfo else stamp.replace(tzinfo=datetime.timezone.utc)
+
+
+def completion_eligibility(run_dir, res, manifest, epoch=ENDPOINT_EPOCH):
+    """Amendment 1: a run counts only if it FINISHED before the freeze.
+
+    Evidence: the probe's seal creation time (hash-bound) and results.json finish time;
+    for new runs also the trainer's epoch-50 stop file, which must be the hash-recorded
+    run provenance of the probe, list the probed checkpoint and predate the freeze.
+    Missing or late evidence makes the run ineligible (reported descriptively).
+    """
+    freeze = datetime.datetime.fromisoformat(FREEZE)
+    ident = _identity(res)
+    times = {'seal_created': manifest.get('created'), 'probe_finished': res.get('finished')}
+    reasons = []
+    if ident.get('role') == 'new':
+        path = ident.get('run_provenance')
+        stop = None
+        if not path or not os.path.exists(path):
+            reasons.append('no epoch-%d stop file' % epoch)
+        elif sha256_file(path) != ident.get('run_provenance_sha256'):
+            reasons.append('stop file changed since the probe')
+        else:
+            with open(path, 'r', encoding='utf-8') as stream:
+                stop = json.load(stream)
+            listed = [c.get('sha256') for c in stop.get('checkpoints') or []]
+            if stop.get('schema') != 'jepa_stop_epoch_v1' or stop.get('epoch') != epoch \
+                    or ident.get('checkpoint_sha256') not in listed:
+                reasons.append('stop file does not certify the probed epoch-%d checkpoint'
+                               % epoch)
+            times['stop_file'] = stop.get('timestamp_utc')
+    for name, text in times.items():
+        stamp = _parse_time(text)
+        if stamp is None:
+            reasons.append('missing %s time' % name)
+        elif stamp >= freeze:
+            reasons.append('%s after the freeze (%s)' % (name, text))
+    return {'eligible': not reasons, 'reasons': reasons, 'times': times}
+
+
+def load_sealed(run_dir):
+    """Verify the sealed manifest and every file hash; return predictions by (variant, seed)."""
+    manifest_path = os.path.join(run_dir, 'sealed_manifest.json')
+    manifest, manifest_sha = read_seal_manifest(run_dir)
     label_id = manifest['test_label_identity']
     preds = {}
     for entry in manifest['files']:
@@ -456,15 +544,18 @@ class WeightedAUC(object):
 
 
 def outcome_label(deltas, random_values):
-    """PREREGISTRATION section 3 outcome label for one guided arm.
+    """PREREGISTRATION section 3 / amendment 1 outcome label for one guided arm.
 
-    The first two labels need the complete registered design: one delta per registered
-    seed and all three RANDOM realizations (original + both new seeds). Anything less is
-    labelled 'incomplete' (its numbers are still reported descriptively).
+    ``deltas`` are the guided-minus-RANDOM deltas of the COMPLETE seed indices only (all of
+    RANDOM, CENTROID and ENVELOPE finished); ``random_values`` are RANDOM's realizations
+    used for the range: the original plus the RANDOM runs of those complete indices.
+    Directional labels need at least two complete indices and the original RANDOM; with
+    two indices this is section 3 unchanged, with three amendment 1 (all three deltas > 0
+    and mean delta > range of the four realizations). Anything less is 'incomplete'.
     """
     if not deltas:
         return 'not_available'
-    if len(deltas) != len(REGISTERED_SEEDS) or len(random_values) != 1 + len(REGISTERED_SEEDS):
+    if len(deltas) < 2 or len(random_values) != 1 + len(deltas):
         return 'incomplete'
     mean = float(np.mean(deltas))
     if mean <= 0:
@@ -514,28 +605,12 @@ def _collect_final_inputs(run_dirs, allow_before_freeze, head_seeds=REGISTERED_H
             recipe = this_recipe
         elif this_recipe != recipe:
             raise IntegrityError("%s: probe recipe differs from the other runs" % run_dir)
-        receipt_path = os.path.join(run_dir, 'unsealed_results.json')
-        if not os.path.exists(receipt_path):
-            raise IntegrityError("%s has not been unsealed (run `unseal` first)" % run_dir)
+        # Seal first (manifest only), then the receipt, then identity; arrays come last.
+        manifest, manifest_sha = read_seal_manifest(run_dir)
+        check_receipt(run_dir, manifest_sha)
+        check_seal_identity(run_dir, ident, manifest)
         manifest, manifest_sha, preds = load_sealed(run_dir)
-        with open(receipt_path, 'r', encoding='utf-8') as stream:
-            if json.load(stream).get('sealed_manifest_sha256') != manifest_sha:
-                raise IntegrityError("%s: unseal receipt is not bound to the current seal" % run_dir)
-        # The (unhashed) results.json must agree with the identity and files under the seal.
-        sealed_ident = dict(manifest.get('identity') or {})
-        sealed_ident['arm'] = norm_arm(sealed_ident.get('arm'))
-        diff = [k for k in IDENTITY_KEYS if sealed_ident.get(k) != ident.get(k)]
-        if diff:
-            raise IntegrityError("%s: results.json identity contradicts the seal on %s"
-                                 % (run_dir, diff))
-        listed = set((v, int(r['head_seed']), os.path.normpath(r['test_predictions']),
-                      r['test_predictions_sha256'])
-                     for v, s in res['variants'].items() for r in s['per_seed'])
-        sealed = set((v, s, os.path.normpath(p['rel_path']), p['sha256'])
-                     for (v, s), p in preds.items())
-        if listed != sealed:
-            raise IntegrityError("%s: results.json predictions differ from the sealed files"
-                                 % run_dir)
+        check_seal_coverage(run_dir, res, preds)
         for variant in set(v for v, _ in preds):
             if sorted(s for v, s in preds if v == variant) != sorted(head_seeds):
                 raise IntegrityError("%s: %s head seeds are not %s"
@@ -549,7 +624,8 @@ def _collect_final_inputs(run_dirs, allow_before_freeze, head_seeds=REGISTERED_H
             subjects = manifest['test_label_identity']['subject_ids_sha256']
         elif subjects != manifest['test_label_identity']['subject_ids_sha256']:
             raise IntegrityError("test case order differs across runs (%s)" % run_dir)
-        runs[run_dir] = {'identity': ident, 'results': res, 'preds': preds}
+        runs[run_dir] = {'identity': ident, 'results': res, 'preds': preds,
+                         'eligibility': completion_eligibility(run_dir, res, manifest)}
     return runs, labels
 
 
@@ -608,36 +684,58 @@ def cmd_final(run_dirs, n_boot=N_BOOT, boot_seed=BOOT_SEED, out=None,
         def has(run_dir):
             return run_dir is not None and (run_dir, variant) in point
 
-        primary_contrasts, matched = [], []
+        def ok(run_dir):
+            return has(run_dir) and runs[run_dir]['eligibility']['eligible']
+
+        # Amendment 1: a seed index enters the primary analysis only if RANDOM, CENTROID
+        # and ENVELOPE all finished before the freeze; other indices are descriptive.
+        complete = [s for s in seeds_new if all(ok(new.get((arm, s))) for arm in PRIMARY_ARMS)]
+        primary_contrasts, matched, descriptive = [], [], []
         for seed in seeds_new:
             r = new.get(('random', seed))
             for arm in GUIDED:
                 if has(r) and has(new.get((arm, seed))):
-                    primary_contrasts.append(dict(contrast(new[(arm, seed)], r, variant,
-                                                           '%s-random' % arm, seed), arm=arm))
+                    c = dict(contrast(new[(arm, seed)], r, variant, '%s-random' % arm, seed),
+                             arm=arm)
+                    if seed in complete:
+                        primary_contrasts.append(c)
+                    else:
+                        late = not (ok(r) and ok(new[(arm, seed)]))
+                        descriptive.append(dict(c, descriptive_only=True, reason=(
+                            'run not finished before the freeze' if late
+                            else 'seed index incomplete')))
             cb = new.get(('random_cb', seed))
-            if has(cb) and has(new.get(('centroid', seed))):
-                matched.append(contrast(new[('centroid', seed)], cb, variant,
-                                        'centroid-random_cb', seed))
-            if has(cb) and has(r):
-                matched.append(contrast(cb, r, variant, 'random_cb-random', seed))
-        random_runs = [anchors.get('random')] + [new.get(('random', s)) for s in seeds_new]
-        random_values = [point[(run_dir, variant)] for run_dir in random_runs if has(run_dir)]
+            for a, b, kind in ((new.get(('centroid', seed)), cb, 'centroid-random_cb'),
+                               (cb, r, 'random_cb-random')):
+                if has(a) and has(b):
+                    c = contrast(a, b, variant, kind, seed)
+                    if ok(a) and ok(b):
+                        matched.append(c)
+                    else:
+                        descriptive.append(dict(c, descriptive_only=True,
+                                                reason='run not finished before the freeze'))
+        random_runs = [anchors.get('random')] + [new.get(('random', s)) for s in complete]
+        random_values = [point[(run_dir, variant)] for run_dir in random_runs if ok(run_dir)]
         spread = (max(random_values) - min(random_values)) if len(random_values) >= 2 else None
+        all_random = [point[(d, variant)] for d in [anchors.get('random')] +
+                      [new.get(('random', s)) for s in seeds_new] if has(d)]
         outcomes = {}
         for arm in GUIDED:
             deltas = [c['delta'] for c in primary_contrasts if c['arm'] == arm]
             sens = list(deltas)
             original = None
-            if has(anchors.get(arm)) and has(anchors.get('random')):
+            if ok(anchors.get(arm)) and ok(anchors.get('random')):
                 original = point[(anchors[arm], variant)] - point[(anchors['random'], variant)]
                 sens.append(original)
             outcomes[arm] = {
                 'new_seed_deltas': deltas, 'n_new_seeds': len(deltas),
+                'complete_seed_indices': complete,
                 'mean_delta': float(np.mean(deltas)) if deltas else None,
                 'random_realizations': random_values, 'random_range': spread,
+                'random_range_all_completed_runs': (max(all_random) - min(all_random)
+                                                    if len(all_random) >= 2 else None),
                 'label': outcome_label(deltas, random_values),
-                'design_complete': len(deltas) == 2 and len(random_values) == 3,
+                'design_complete': len(deltas) >= 2 and len(random_values) == 1 + len(deltas),
                 'sensitivity_with_original': {
                     'original_delta': original,
                     'pooled_mean_delta': float(np.mean(sens)) if sens else None,
@@ -646,6 +744,10 @@ def cmd_final(run_dirs, n_boot=N_BOOT, boot_seed=BOOT_SEED, out=None,
             c['abs_delta_exceeds_random_range'] = (abs(c['delta']) > spread
                                                    if spread is not None else None)
         analysis[variant] = {'primary_contrasts': primary_contrasts, 'outcomes': outcomes,
+                             'complete_seed_indices': complete,
+                             'incomplete_seed_indices': [s for s in seeds_new
+                                                         if s not in complete],
+                             'descriptive_incomplete_contrasts': descriptive,
                              'matched_control': matched,
                              'per_run_test_auc': {os.path.basename(k[0]): v for k, v in
                                                   point.items() if k[1] == variant},
@@ -656,10 +758,12 @@ def cmd_final(run_dirs, n_boot=N_BOOT, boot_seed=BOOT_SEED, out=None,
         'freeze': FREEZE, 'n_test': int(labels.size), 'n_boot': n_boot, 'boot_seed': boot_seed,
         'bootstrap': 'paired, label-stratified test-case resampling; same draw for every model; '
                      'per-encoder AUC = mean over head seeds within each draw',
-        'seed_level_inference': 'none (n = 2 seeds per arm); per-seed CIs only',
+        'seed_level_inference': 'none (2-3 seed indices); per-seed CIs only',
         'primary_variant': PRIMARY_VARIANT, 'secondary_variants': [v for v in variants
                                                                    if v != PRIMARY_VARIANT],
-        'runs': {os.path.basename(k): {'identity': v['identity']} for k, v in runs.items()},
+        'runs': {os.path.basename(k): {'identity': v['identity'],
+                                       'eligibility': v['eligibility']}
+                 for k, v in runs.items()},
         'analysis': analysis}
     if out:
         _write_json(out, payload)
@@ -668,10 +772,12 @@ def cmd_final(run_dirs, n_boot=N_BOOT, boot_seed=BOOT_SEED, out=None,
         print('\n[%s]%s' % (variant, ' (primary)' if variant == PRIMARY_VARIANT else ''))
         print('  %-20s %-5s %-8s %-8s %-8s %-20s %s' % ('contrast', 'seed', 'AUC_a', 'AUC_b',
                                                         'delta', '95% CI', 'val_delta'))
-        for c in block['primary_contrasts'] + block['matched_control']:
-            print('  %-20s %-5s %.4f   %.4f   %+.4f  [%+.4f, %+.4f]  %+.4f' % (
+        for c in block['primary_contrasts'] + block['matched_control'] + \
+                block['descriptive_incomplete_contrasts']:
+            print('  %-20s %-5s %.4f   %.4f   %+.4f  [%+.4f, %+.4f]  %+.4f%s' % (
                 c['kind'], c['train_seed'], c['auc_a'], c['auc_b'], c['delta'], c['ci95'][0],
-                c['ci95'][1], c['val_delta']))
+                c['ci95'][1], c['val_delta'],
+                '  (descriptive: incomplete index)' if c.get('descriptive_only') else ''))
         for arm, o in block['outcomes'].items():
             print('  outcome %-9s %-28s mean delta %s, RANDOM range %s' % (
                 arm, o['label'], '%+.4f' % o['mean_delta'] if o['mean_delta'] is not None

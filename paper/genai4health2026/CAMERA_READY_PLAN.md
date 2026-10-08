@@ -51,11 +51,12 @@ Labels: [M] measured, [I] inferred, [A] assumption/estimate.
 5. **Keep `epochs: 100` and stop after the saved ep50 [M].** A 50-epoch config changes LR/WD/EMA from the first step.
 6. **Effective batch 512 everywhere [M]** (RANDOM accum 2 from ancestor Adam step 29,292).
 7. **Existing chain is unsafe [M]**, and `runs\rep_random_s1234` still holds a stale Aug-26 epoch-26 checkpoint the supervisor would resume. Use a new namespace.
-8. **Probe RNG depends on cache state [M];** existing fp32 caches predate `73e0b55` and are rejected by the current evaluator by default. Original anchors must be re-extracted on the GPU under the frozen new evaluator.
-9. **All nine headline probes were fp16 [M];** fp32 re-probes of 8/9 match within 2e-4. New tables are fp32 only.
-10. **Table 2 delivered-context used non-production settings and an unpaired protocol [M].** CENTROID lateral 0.8 (trained 0.6), ENVELOPE soft guides + new sampler. Current-code replay (3 audit seeds, small number of budget draws): RANDOM 27.8 / CENTROID 31.4 / ENVELOPE 27.0 (HEAD sampler) or 28.9 (legacy sampler) % of grid; published 24.7 / 32.9 / 30.7. Part of the change (RANDOM 24.7 -> 27.8) is protocol and Monte-Carlo noise, not settings. Re-measure with >= 100 budget draws per seed and report the paired gap; show old and new with a one-line reason. Figures 1-2 generators also use 0.8.
-11. **RANDOM ep50/75/100 weights are not on disk [M];** HF returns 401 without a token. Needed for the RANDOM anchor re-extraction: the token is a blocking input by Fri Oct 9.
-12. **Machine [M]:** RTX 3090 24 GB, 315 W cap (logon task), game client on the GPU, RAM 31.9 GB with 0.6 GB free during training at 6 workers, C: 24 GB free (slice cache + pagefile; past error 1455), D: 583 GB free.
+8. **Teacher targets were fp32 in all three originals [M]** (source for every candidate revision; runtime log for ENVELOPE), matching new runs with `amp_target: false`.
+9. **Probe RNG depends on cache state [M];** existing fp32 caches predate `73e0b55` and are rejected by the current evaluator by default. Original anchors must be re-extracted on the GPU under the frozen new evaluator.
+10. **All nine headline probes were fp16 [M];** fp32 re-probes of 8/9 match within 2e-4. New tables are fp32 only.
+11. **Table 2 delivered-context used non-production settings and an unpaired protocol [M].** CENTROID lateral 0.8 (trained 0.6), ENVELOPE soft guides + new sampler. Current-code replay (3 audit seeds, small number of budget draws): RANDOM 27.8 / CENTROID 31.4 / ENVELOPE 28.9 (trained, pre-fix sampler; 27.0 with HEAD) % of grid, audit-seed SD 1.9 / 2.7 / 1.5; published 24.7 / 32.9 / 30.7. Part of the change (RANDOM 24.7 -> 27.8) is protocol and Monte-Carlo noise, not settings. Re-measure with >= 100 budget draws per seed and report the paired gap; show old and new with a one-line reason. Figures 1-2 generators also use 0.8.
+12. **RANDOM ep50/75/100 weights are not on disk [M];** HF returns 401 without a token. Needed for the RANDOM anchor re-extraction: the token is a blocking input by Fri Oct 9.
+13. **Machine [M]:** RTX 3090 24 GB, 315 W cap (logon task), game client on the GPU, RAM 31.9 GB with 0.6 GB free during training at 6 workers, C: 24 GB free (slice cache + pagefile; past error 1455), D: 583 GB free.
 
 ---
 
@@ -68,7 +69,7 @@ Labels: [M] measured, [I] inferred, [A] assumption/estimate.
 | RANDOM | ~69 [M, n=1 epoch, cap unknown] | 28.8 h | 1.25 h | ~30 h | +-10% throughput = +-3 h |
 | CENTROID | 69-85 [I] | ~32 h | 1.25 h | ~33 h | up to ~37 h |
 | ENVELOPE | 80.5 [M] | 33.5 h | 1.25 h | ~35 h | |
-| RANDOM-CB | 80-115 [I] (shadow CENTROID pass + rejection sampling) | 33-48 h | 1.25 h | ~35 h if sampler runs in workers | measure in smoke test; fallback = basic (U/L/C) variant |
+| RANDOM-CB | basic matcher in main process ~94 min [I]; strict (H-matched) ~123 min [I]; in workers 72-86 min only if verified | 39 h basic / 51 h strict / 30-36 h workers | 1.25 h | plan ~40 h (basic) | time end to end in the smoke test; use strict only if worker delivery is verified |
 
 Probe: ~60 min solo [M]; never run two probes concurrently (each ~2.6 h). Disk ~14 GB per run on D:.
 
@@ -83,12 +84,12 @@ Pre-launch GPU work on Fri Oct 9 (after Stage 1 fixes pass): smoke tests ~3 h (a
 | 3 | ENVELOPE (certified legacy sampler) | 1234 | 35 | Wed Oct 14 02:00 | seed set 1 done |
 | 4 | RANDOM | 5678 | 30 | Thu Oct 15 08:00 | within-protocol RANDOM spread available |
 | 5 | CENTROID | 5678 | 33 | Fri Oct 16 17:00 | primary contrast at 2 seeds |
-| 6 | RANDOM-CB (CENTROID s1234 budgets) | 1234 | 35 (33-48) | Sun Oct 18 04:00 | matched control done |
-| 7 | ENVELOPE (legacy) | 5678 | 35 | Mon Oct 19 15:00 | seed set 2 done |
-| 8 | Optional RETFound frozen probe | - | ~4 | Mon Oct 19 19:00 | GPU campaign done |
+| 6 | RANDOM-CB (CENTROID s1234 budgets, basic U/L/C matcher unless strict is verified fast) | 1234 | 40 (31-52) | Sun Oct 18 09:00 | matched control done |
+| 7 | ENVELOPE (legacy) | 5678 | 35 | Mon Oct 19 20:00 | seed set 2 done |
+| 8 | Optional RETFound frozen probe | - | ~4 | Tue Oct 20 00:00 | GPU campaign done |
 
-- **GPU total ~242 h** (smoke 3 + anchors 4 + runs ~231 + RETFound 4) of ~310 h between Fri Oct 9 noon and the Oct 22 08:00 freeze (~80% duty).
-- **Nominal slack ~61 h; realistic 20-45 h** after throughput uncertainty (+-24 h over the campaign) and RANDOM-CB risk (+13 h). Re-project the end date after every epoch.
+- **GPU total ~247 h** (smoke 3 + anchors 4 + runs ~236 + RETFound 4) of ~310 h between Fri Oct 9 noon and the Oct 22 08:00 freeze (~80% duty).
+- **Nominal slack ~56 h; realistic 20-40 h** after throughput uncertainty (+-24 h over the campaign) and RANDOM-CB risk (+12 h if strict). Re-project the end date after every epoch.
 - **Fallback order:** drop E2 first, then RANDOM-CB. Decision points: R1 ep27 and C1 ep28 (throughput known), then each run end. Runs 1-5 are the protected core (R and C at two new seeds each, E at one).
 - **Not feasible locally:** a third seed per arm (R3+C3 ~63 h), or ep100 horizons.
 
@@ -226,4 +227,5 @@ Wording rules: "repeated continuations from a shared epoch-25 checkpoint" (not "
 | 2026-10-08 00:20 | v9 merged to main (PR #4); `poster-ready` created |
 | 2026-10-08 00:30-01:10 | Six investigation agents (A1-A6) reported |
 | 2026-10-08 01:20 | Plan v1 drafted |
+| 2026-10-08 02:10 | A1 final: originals used fp32 teacher targets; trained ENVELOPE pinned to pre-fix sampler behaviour; RANDOM-CB cost revised to ~39 h (basic) / ~51 h (strict); schedule shifted ~5 h |
 | 2026-10-08 01:45 | Plan v2 after critique: smoke/anchors before R1, absolute G1 bands + identity check, validation-only G2 with decision tree, sealed test, new-seeds-primary stats, run order R1 C1 E1 R2 C2 CB E2 |

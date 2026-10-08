@@ -10,7 +10,7 @@ or a completed causal explanation.
 
 **Accepted** to the workshop. The latest release is v9 (v8 plus one Introduction
 sentence); `main_submission.pdf` here is the validated v9 PDF. Camera-ready and
-poster work continue on branch `poster-ready`.
+poster work continue on branch `poster-ready`; see `CAMERA_READY_PLAN.md`.
 
 Final PDF and validated source ZIP are in Downloads with stem
 `OCT_JEPA_GenAI4Health2026_20260910_v9` (v8 remains alongside). This compact version includes an annotated

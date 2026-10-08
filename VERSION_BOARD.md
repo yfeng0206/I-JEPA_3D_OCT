@@ -3,7 +3,8 @@
 > **Accepted (October 2026):** GenAI4Health NeurIPS 2026 workshop. Release v9
 > (v8 plus one Introduction sentence) is on `main`; see
 > `autopilot\investigations\submission_refresh_20260910\release_handoff_v9.json`.
-> Camera-ready and poster work continue on branch `poster-ready`.
+> Camera-ready and poster work continue on branch `poster-ready`; the staged plan
+> is `paper\genai4health2026\CAMERA_READY_PLAN.md` (not yet executed).
 
 > **September 10 submission revision:** the question-led manuscript, real
 > openly licensed OCT masking illustration, JEPA formulation and shorter main

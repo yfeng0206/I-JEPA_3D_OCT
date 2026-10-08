@@ -7,7 +7,10 @@ Introduction sentence on medical imaging foundation models) is merged to `main`;
 its evidence is `autopilot\investigations\submission_refresh_20260910\release_handoff_v9.json`.
 Overleaf still holds v8. Camera-ready/poster work continues on branch `poster-ready`:
 use the `genai4health_2026` template, restore authors, and address reviewer feedback.
-Camera-ready deadline: October 25, 2026, 11:59 PM AoE.
+Camera-ready deadline: October 25, 2026, 11:59 PM AoE (= Oct 26 04:59 PDT); internal
+upload target Oct 24. **The staged camera-ready plan (seed replication, matched-budget
+control, reproduction gates, GPU schedule, paper changes) is
+`paper\genai4health2026\CAMERA_READY_PLAN.md`.** Nothing in it has been executed yet.
 
 ## Current reviewed release
 
@@ -145,8 +148,10 @@ exists to prevent.
     # regenerate figures and generated tables from stored artifacts
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p8_make_assets.py
 
-    # resume the paused pretraining replication (about 6 days, 6 legs)
-    D:\jepa_phase0\.venv\Scripts\python.exe -u scripts\chain_replication.py
+    # DO NOT RUN the old replication chain: it would resume a stale epoch-26
+    # checkpoint under changed code and train ENVELOPE with a changed sampler.
+    # See CAMERA_READY_PLAN.md (fixes E1-E19 and gates G0-G2 come first).
+    # D:\jepa_phase0\.venv\Scripts\python.exe -u scripts\chain_replication.py
 
     # style and integrity checks added 2026-08-27
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\verify_citations.py --online
@@ -173,9 +178,9 @@ exists to prevent.
    sync itself works and the project is currently up to date; after rotating,
    update the user-scope variable with
    `setx OVERLEAF_TOKEN <new token>` and open a new shell.
-3. **Replication.** Paused at epoch 26, resumable in one command. Venue evidence
-   says it is not required: of 17 accepted 2025 research papers only one reported
-   multiple seeds, and two orals had no seed protocol at all.
+3. **Replication.** Now requested by the area chair and all three reviewers for the
+   camera-ready. The August chain must not be resumed as-is; follow
+   `paper\genai4health2026\CAMERA_READY_PLAN.md`.
 
 ## Hard-won conventions, do not relearn these
 

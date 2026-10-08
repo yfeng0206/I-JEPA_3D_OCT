@@ -112,3 +112,16 @@ are reported descriptively as incomplete. With three complete seed indices the o
 to exceed the range of RANDOM's realizations (original plus new seeds); the other labels are
 unchanged. With two complete indices, section 3 applies unchanged. No other part of the
 analysis changes.
+
+## 9. Amendment 2 (clarification, committed before any new probe result; 2026-10-08)
+
+Descriptive labels for the matched-budget control (section 4). With P = AUC(C1) - AUC(CB),
+B = AUC(CB) - AUC(R1) (same seed) and r = the range of RANDOM's realizations used in
+section 3:
+
+- **M0 (placement difference not detected):** |P| <= r.
+- **M- (placement difference reversed):** P < -r.
+- **M+ (placement accounts for most of the gap):** P > r and P >= (P + B) / 2.
+- **Both contribute:** P > r and P < (P + B) / 2.
+
+These labels are descriptive; the matched comparison is one continuation per arm.

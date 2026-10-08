@@ -11,4 +11,8 @@ paper/genai4health2026/numeric_reviews.json -text whitespace=cr-at-eol
 paper/genai4health2026/main_submission.docx.provenance.json -text whitespace=cr-at-eol
 # These generated/captured artifacts also retain their original whitespace.
 paper/genai4health2026/figures/fig_oct_*.svg -text -whitespace
+# Official camera-ready style files stay byte-identical to the NeurIPS/workshop kit.
+paper/genai4health2026/*.sty -text
+# Byte-exact v9 source snapshots pinned by numeric review receipts.
+autopilot/investigations/camera_ready_20261008/paper_i8/source_snapshots/** -text
 autopilot/investigations/submission_refresh_20260910/figure/octdl_primary_license.html -text -whitespace

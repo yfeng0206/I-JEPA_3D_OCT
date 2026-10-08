@@ -1,6 +1,10 @@
 \section{Probe precision control}
 \label{app:fp32}
 
+The original rectangle-policy probes use mixed precision, while the
+anatomy-shaped and coverage-policy probes use fp32. All primary differences in
+Table~\ref{tab:main} use a baseline matched in both epoch and probe precision.
+Probe precision is distinct from pretraining target-encoder precision.
 We repeated the recorded mixed-precision probes with autocast disabled in
 feature extraction, head fitting and evaluation. Each comparison uses the
 same frozen encoder. The recorded changes are smaller than the principal

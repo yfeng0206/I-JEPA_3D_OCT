@@ -2532,23 +2532,6 @@
   "literals": [
     {
       "file": "main_submission.tex",
-      "context_sha256": "fbe5b9bf82a8c905034f7713726b89cbb0a81ae375a5e2829bcbeda82222b34c",
-      "token_index": 4,
-      "value": "2",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "The 2 in capitalized Data2vec is part of the method name, not a measured quantity. The retained matched authority title identifies data2vec. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
-        "evidence": [
-          {
-            "source": "refresh_citation_authorities",
-            "pointer": "/items/2/resolved_title"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "be8cd6099684998e22ecaaa1aaf25db342b7cf33d394b48e0717e4ce53d63a05",
       "token_index": 1,
       "value": "6{,}000",
@@ -2694,40 +2677,6 @@
           {
             "source": "lr_cover_cfg",
             "excerpt": "cover_leave_frac: 0.21"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "68842f114eb20003f14df2011e9ad451c1aa2690c6f33fd8686a8f854d2742a5",
-      "token_index": 1,
-      "value": "-25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/5"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "68842f114eb20003f14df2011e9ad451c1aa2690c6f33fd8686a8f854d2742a5",
-      "token_index": 4,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for cover-f021, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/9"
           }
         ]
       }
@@ -3264,509 +3213,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 0,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/crop_size. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "crop_size:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 1,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/crop_size. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "crop_size:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 2,
-      "value": "16",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/patch_size. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 3,
-      "value": "6",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at meta/pred_depth. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 4,
-      "value": "384",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at meta/pred_emb_dim. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_emb_dim:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 5,
-      "value": "0.00025",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/lr. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "lr:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 6,
-      "value": "0.000001",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/final_lr. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "final_lr:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 7,
-      "value": "0.04",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/weight_decay. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "weight_decay:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 8,
-      "value": "0.4",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/final_weight_decay. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "final_weight_decay:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 9,
-      "value": "0.996",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/ema/0. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "ema:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 10,
-      "value": "1.0",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/ema/1. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "ema:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 12,
-      "value": "64",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/batch_size. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 13,
-      "value": "0.15",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/pred_mask_scale/0. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_mask_scale:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 14,
-      "value": "0.20",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/pred_mask_scale/1. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_mask_scale:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 15,
-      "value": "0.75",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/aspect_ratio/0. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "aspect_ratio:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 16,
-      "value": "1.5",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/aspect_ratio/1. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "aspect_ratio:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 17,
-      "value": "0.85",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/enc_mask_scale/0. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "enc_mask_scale:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 18,
-      "value": "1.0",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/enc_mask_scale/1. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "enc_mask_scale:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 19,
-      "value": "0.3",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/crop_scale/0. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "crop_scale:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 20,
-      "value": "1.0",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/crop_scale/1. No new run or estimated result.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "crop_scale:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 21,
-      "value": "-25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/curriculum/T_warm. No new run or estimated result. The leading hyphen is lexical, not a negative setting.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 22,
-      "value": "-30",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/curriculum/T_total. No new run or estimated result. The leading hyphen is lexical, not a negative setting.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total:"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 11,
-      "value": "512",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Effective batch is the existing nominal microbatch64 times accumulation8; no new batch-size experiment.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 23,
-      "value": "16",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "The fixed anatomy-target index count comes from its separate pinned anatomy configuration.",
-        "evidence": [
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "pred_target_k: 16"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 24,
-      "value": "0.0004",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Frozen-head protocol from the retained primary result configuration at config/training/lr_head; epochs denotes its budget, not selected stopping epoch.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config/training/lr_head"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 25,
-      "value": "0.05",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Frozen-head protocol from the retained primary result configuration at config/training/weight_decay; epochs denotes its budget, not selected stopping epoch.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config/training/weight_decay"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 26,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Frozen-head protocol from the retained primary result configuration at config/data/batch_size; epochs denotes its budget, not selected stopping epoch.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config/data/batch_size"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 27,
-      "value": "42",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Frozen-head protocol from the retained primary result configuration at config/training/seed; epochs denotes its budget, not selected stopping epoch.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config/training/seed"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
-      "token_index": 28,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "Frozen-head protocol from the retained primary result configuration at config/training/epochs; epochs denotes its budget, not selected stopping epoch.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config/training/epochs"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "2e82ea00806489b52a17b3311b1a22f63d500d859d2a92bd8278e9736c70e20a",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
       "token_index": 29,
       "value": "15",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
         "rationale": "Frozen-head protocol from the retained primary result configuration at config/training/patience; epochs denotes its budget, not selected stopping epoch.",
         "evidence": [
           {
@@ -3806,23 +3258,6 @@
           {
             "source": "external_oct_license",
             "excerpt": "creativecommons.org/licenses/by/4.0/"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "e0222397d025c5d5fe42ed35e4af4bfc23f805e3e24f6dca251da02c26eeb7bc",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
-        "rationale": "The shortened evaluation paragraph retains the same saved 50-epoch head budget.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config/training/epochs"
           }
         ]
       }
@@ -3869,153 +3304,6 @@
           {
             "source": "lr_training",
             "excerpt": "targets = apply_masks(h_full, masks_pred)"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "45882c3bd944e384498af179ade1123158608e180bcfb830346d33de01c0c3c3",
-      "token_index": 0,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
-        "rationale": "The 1 in Smooth-L1 identifies the loss family used by F.smooth_l1_loss. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
-        "evidence": [
-          {
-            "source": "lr_training",
-            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
-          },
-          {
-            "source": "refresh_mask_utils",
-            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "45882c3bd944e384498af179ade1123158608e180bcfb830346d33de01c0c3c3",
-      "token_index": 1,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
-        "rationale": "The numerator 1 denotes a mean over all delivered target-instance feature coordinates for the displayed single-image task; training additionally averages over the batch. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
-        "evidence": [
-          {
-            "source": "lr_training",
-            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
-          },
-          {
-            "source": "refresh_mask_utils",
-            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "45882c3bd944e384498af179ade1123158608e180bcfb830346d33de01c0c3c3",
-      "token_index": 2,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
-        "rationale": "The denominator sum starts at target group m=1 and counts every delivered K_m instance. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
-        "evidence": [
-          {
-            "source": "lr_training",
-            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
-          },
-          {
-            "source": "refresh_mask_utils",
-            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "45882c3bd944e384498af179ade1123158608e180bcfb830346d33de01c0c3c3",
-      "token_index": 3,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
-        "rationale": "The outer numerator sum starts at target group m=1, matching the concatenated target groups. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
-        "evidence": [
-          {
-            "source": "lr_training",
-            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
-          },
-          {
-            "source": "refresh_mask_utils",
-            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "45882c3bd944e384498af179ade1123158608e180bcfb830346d33de01c0c3c3",
-      "token_index": 4,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
-        "rationale": "The target-instance sum starts at k=1 and includes duplicate gathered indices. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
-        "evidence": [
-          {
-            "source": "lr_training",
-            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
-          },
-          {
-            "source": "refresh_mask_utils",
-            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "45882c3bd944e384498af179ade1123158608e180bcfb830346d33de01c0c3c3",
-      "token_index": 5,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
-        "rationale": "The feature-coordinate sum starts at d=1 and covers the final feature dimension. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
-        "evidence": [
-          {
-            "source": "lr_training",
-            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
-          },
-          {
-            "source": "refresh_mask_utils",
-            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "45882c3bd944e384498af179ade1123158608e180bcfb830346d33de01c0c3c3",
-      "token_index": 6,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
-        "rationale": "Smooth-L1 uses the default unit transition: direct inspection of installed torch.nn.functional.smooth_l1_loss confirms reduction='mean', beta=1.0; production passes neither override. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
-        "evidence": [
-          {
-            "source": "lr_training",
-            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
-          },
-          {
-            "source": "refresh_mask_utils",
-            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
           }
         ]
       }
@@ -4185,293 +3473,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
-      "token_index": 0,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
-      "token_index": 1,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
-      "token_index": 2,
-      "value": "16",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
-      "token_index": 3,
-      "value": "6",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
-      "token_index": 5,
-      "value": "512",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
-      "token_index": 6,
-      "value": "25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
-      "token_index": 7,
-      "value": "30",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "batch_size: 64"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "accum_steps: 8"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "patch_size: 16"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "pred_depth: 6"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_warm: 25"
-          },
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "T_total: 30"
-          },
-          {
-            "source": "lr_replication_code",
-            "excerpt": "64 x 4 T4s x 2"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
       "token_index": 0,
       "value": "100",
@@ -4535,7 +3536,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "575df217f87586e5fff7b691827cc02f9fb1591f7da0bdcc082412ac6fb02df7",
+      "context_sha256": "60ad6b8d28c7f88780870086b4db46619b764c03a79a72c239063960df7c2cb9",
       "token_index": 0,
       "value": "25",
       "review": {
@@ -4546,304 +3547,6 @@
           {
             "source": "lr_stats",
             "pointer": "/table/5"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "575df217f87586e5fff7b691827cc02f9fb1591f7da0bdcc082412ac6fb02df7",
-      "token_index": 6,
-      "value": "2",
-      "assertion": {
-        "expression": {
-          "op": "max",
-          "args": [
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/0/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/1/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/2/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/3/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/4/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/5/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/6/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/7/delta_fp32_minus_fp16"
-                }
-              ]
-            }
-          ]
-        },
-        "relation": "le",
-        "bound": "2\\times10^{-4}",
-        "component": 0
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "575df217f87586e5fff7b691827cc02f9fb1591f7da0bdcc082412ac6fb02df7",
-      "token_index": 7,
-      "value": "10",
-      "assertion": {
-        "expression": {
-          "op": "max",
-          "args": [
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/0/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/1/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/2/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/3/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/4/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/5/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/6/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/7/delta_fp32_minus_fp16"
-                }
-              ]
-            }
-          ]
-        },
-        "relation": "le",
-        "bound": "2\\times10^{-4}",
-        "component": 1
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "575df217f87586e5fff7b691827cc02f9fb1591f7da0bdcc082412ac6fb02df7",
-      "token_index": 8,
-      "value": "-4",
-      "assertion": {
-        "expression": {
-          "op": "max",
-          "args": [
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/0/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/1/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/2/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/3/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/4/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/5/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/6/delta_fp32_minus_fp16"
-                }
-              ]
-            },
-            {
-              "op": "abs",
-              "args": [
-                {
-                  "source": "lr_fp32",
-                  "pointer": "/rows/7/delta_fp32_minus_fp16"
-                }
-              ]
-            }
-          ]
-        },
-        "relation": "le",
-        "bound": "2\\times10^{-4}",
-        "component": 2
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "8eb58e1aa87334d243a42e101deb66532a2ba250f99382f8d61f281cd61664b5",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/14"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "8eb58e1aa87334d243a42e101deb66532a2ba250f99382f8d61f281cd61664b5",
-      "token_index": 1,
-      "value": "100",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 100. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/23"
           }
         ]
       }
@@ -4861,86 +3564,6 @@
           {
             "source": "lr_stats",
             "pointer": "/table/3"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d09c1c15daf77cc2b78db1510b0c0a8aa881498677e5162df093ed4d269cf480",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for cover-f021, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Historical COVER rises through epoch50; peak and subsequent decline are still separate source-bound macros. Current-context review: Historical COVER epoch50 is unchanged; the new adjacent sentence still distinguishes candidate coverage from final shortened targets.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/9"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "552bb16dd122bf9da0fea68c63cebbb035673aefc6040a3ae6af684ad19c2ca5",
-      "token_index": 2,
-      "value": "4",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
-        "evidence": [
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "pred_target_k: 16"
-          },
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "num_pred_masks: 4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "552bb16dd122bf9da0fea68c63cebbb035673aefc6040a3ae6af684ad19c2ca5",
-      "token_index": 3,
-      "value": "16",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
-        "evidence": [
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "pred_target_k: 16"
-          },
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "num_pred_masks: 4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "552bb16dd122bf9da0fea68c63cebbb035673aefc6040a3ae6af684ad19c2ca5",
-      "token_index": 4,
-      "value": "64",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "The displayed 64 is the arithmetic product of four target lists and K=16, not a newly measured statistic. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
-        "evidence": [
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "pred_target_k: 16"
-          },
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "num_pred_masks: 4"
           }
         ]
       }
@@ -4980,46 +3603,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "3e601f93641cd1b114f2a279a071c329cf40a8a6932ff6c64d1bbf3a999ec9ea",
-      "token_index": 0,
-      "value": "0.25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
-        "rationale": "Envelope reference of the guide-agreement analysis: patch occupancy >= 0.25, fixed in the analysis plan.",
-        "evidence": [
-          {
-            "source": "cr_guide_plan",
-            "excerpt": "`E = occupancy >= 0.25`"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "3e601f93641cd1b114f2a279a071c329cf40a8a6932ff6c64d1bbf3a999ec9ea",
-      "token_index": 1,
-      "value": "0.2",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
-        "rationale": "Primary gross-disagreement rule F1 uses IoU < 0.20 (printed 0.2), fixed before computing any rate.",
-        "evidence": [
-          {
-            "source": "cr_guide_plan",
-            "excerpt": "`iou < 0.20` OR `ribbon_zero_env_frac > 0.50`"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "3e601f93641cd1b114f2a279a071c329cf40a8a6932ff6c64d1bbf3a999ec9ea",
+      "context_sha256": "3edd4b6edc52a1e18402874f1408b4a160ada21aa86325d71b1d0b4ff84e6560",
       "token_index": 2,
       "value": "95",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
         "rationale": "Interval convention of the guide-agreement analysis: 95% volume-cluster bootstrap.",
         "evidence": [
           {
@@ -5046,23 +3635,6 @@
           {
             "source": "lr_v1_cfg",
             "excerpt": "pred_target_k: 16"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "d0e7a7b3e618e34e8f5f43e88f42cd289b33c22ff4ca6e517c289fcb2718c636",
-      "token_index": 4,
-      "value": "-25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
-        "rationale": "Shared epoch-25 ancestor of the original continuations; the hyphen is lexical. Template evidence: Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/5"
           }
         ]
       }
@@ -5175,27 +3747,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "552bb16dd122bf9da0fea68c63cebbb035673aefc6040a3ae6af684ad19c2ca5",
-      "token_index": 1,
-      "value": "16",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
-        "rationale": "Fixed K=16 and M=4 give 4x16=64 prediction instances by construction; the rectangle comparison is now the bound macro.",
-        "evidence": [
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "pred_target_k: 16"
-          },
-          {
-            "source": "lr_anatomy_cfg",
-            "excerpt": "num_pred_masks: 4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "62a38b99b3539eec66f0abc93f511459c6a394e1698f0e5574c65c33523d522b",
       "token_index": 1,
       "value": "-25",
@@ -5301,40 +3852,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "48072c5c27cd729d8dd4a515ff63e471356a6c180c31341d348de1bfd0949a66",
-      "token_index": 0,
-      "value": "-25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Registered continuations start from the same epoch-25 checkpoint; the hyphen is lexical.",
-        "evidence": [
-          {
-            "source": "cr_prereg",
-            "excerpt": "continuation from the shared RANDOM epoch-25 checkpoint"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "48072c5c27cd729d8dd4a515ff63e471356a6c180c31341d348de1bfd0949a66",
-      "token_index": 1,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Registered runs stop at epoch 50 (fixed endpoint).",
-        "evidence": [
-          {
-            "source": "cr_prereg",
-            "excerpt": "stop after the saved epoch-50 checkpoint"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "0951569dd3ecf82e0fb289b97a7f3368c28c3ff9c539f05a12e64f535358ee8e",
       "token_index": 0,
       "value": "-100",
@@ -5386,23 +3903,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "7ff029a7ef39f4f337998f0efdd034da7117ac761588b6d4285b0f2d842a1635",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Geometry-table AUC column is quoted at the matched epoch 50. Template evidence: Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Revised geometry caption retains the same matched epoch50 AUC, not a new geometry measurement. Updated-context review: The same epoch50 AUC is retained. Added caption text correctly identifies a MIRAGE-derived tissue proxy, not ground truth; no geometry values changed.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/14"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "62a38b99b3539eec66f0abc93f511459c6a394e1698f0e5574c65c33523d522b",
       "token_index": 3,
       "value": "-75",
@@ -5414,57 +3914,6 @@
           {
             "source": "lr_stats",
             "pointer": "/table/4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "f609a3b1da3d09f5bc09b86e3b12d5e5beac1c3f81dfc2dc9e468a6e017c827b",
-      "token_index": 0,
-      "value": "0.25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Tissue proxy of the camera-ready mask audit: patch occupancy of at least 0.25 on the soft MIRAGE envelope.",
-        "evidence": [
-          {
-            "source": "cr_mask_bs64",
-            "pointer": "/protocol/tissue_proxies/soft"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "f609a3b1da3d09f5bc09b86e3b12d5e5beac1c3f81dfc2dc9e468a6e017c827b",
-      "token_index": 1,
-      "value": "16",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Patch-grid dimension (16 x 16) of the same model input, unchanged in the camera-ready audit. Template evidence: The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
-        "evidence": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/grid"
-          }
-        ]
-      }
-    },
-    {
-      "file": "compact_protocol.tex",
-      "context_sha256": "f609a3b1da3d09f5bc09b86e3b12d5e5beac1c3f81dfc2dc9e468a6e017c827b",
-      "token_index": 2,
-      "value": "16",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Patch-grid dimension (16 x 16) of the same model input, unchanged in the camera-ready audit. Template evidence: The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
-        "evidence": [
-          {
-            "source": "lr_geom",
-            "pointer": "/_meta/grid"
           }
         ]
       }
@@ -5499,6 +3948,1523 @@
           {
             "source": "cr_prereg",
             "excerpt": "stop after the saved epoch-50 checkpoint"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 0,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/crop_size. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "crop_size:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 1,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/crop_size. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "crop_size:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 2,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/patch_size. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 3,
+      "value": "6",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at meta/pred_depth. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 4,
+      "value": "384",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at meta/pred_emb_dim. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_emb_dim:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 5,
+      "value": "0.00025",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/lr. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "lr:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 6,
+      "value": "0.000001",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/final_lr. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "final_lr:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 7,
+      "value": "0.04",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/weight_decay. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "weight_decay:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 8,
+      "value": "0.4",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/final_weight_decay. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "final_weight_decay:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 9,
+      "value": "0.996",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/ema/0. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "ema:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 10,
+      "value": "1.0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at optimization/ema/1. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "ema:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 11,
+      "value": "512",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Effective batch is the existing nominal microbatch64 times accumulation8; no new batch-size experiment.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 12,
+      "value": "64",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/batch_size. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 13,
+      "value": "0.15",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/pred_mask_scale/0. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_mask_scale:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 14,
+      "value": "0.20",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/pred_mask_scale/1. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_mask_scale:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 15,
+      "value": "0.75",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/aspect_ratio/0. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "aspect_ratio:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 16,
+      "value": "1.5",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/aspect_ratio/1. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "aspect_ratio:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 17,
+      "value": "0.85",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/enc_mask_scale/0. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "enc_mask_scale:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 18,
+      "value": "1.0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/enc_mask_scale/1. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "enc_mask_scale:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 19,
+      "value": "0.3",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/crop_scale/0. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "crop_scale:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 20,
+      "value": "1.0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at data/crop_scale/1. No new run or estimated result.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "crop_scale:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 21,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/curriculum/T_warm. No new run or estimated result. The leading hyphen is lexical, not a negative setting.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 22,
+      "value": "-30",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Nominal pretraining setting independently parsed from the pinned configuration at mask/curriculum/T_total. No new run or estimated result. The leading hyphen is lexical, not a negative setting.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total:"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 23,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The fixed anatomy-target index count comes from its separate pinned anatomy configuration.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 24,
+      "value": "0.0004",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Frozen-head protocol from the retained primary result configuration at config/training/lr_head; epochs denotes its budget, not selected stopping epoch.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/training/lr_head"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 25,
+      "value": "0.05",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Frozen-head protocol from the retained primary result configuration at config/training/weight_decay; epochs denotes its budget, not selected stopping epoch.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/training/weight_decay"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 26,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Frozen-head protocol from the retained primary result configuration at config/data/batch_size; epochs denotes its budget, not selected stopping epoch.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/batch_size"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 27,
+      "value": "42",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Frozen-head protocol from the retained primary result configuration at config/training/seed; epochs denotes its budget, not selected stopping epoch.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/training/seed"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "40b6de492d37511c0372045e5cf0f57763e2de04c7c8122ef7f765ed7fbb98da",
+      "token_index": 28,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Frozen-head protocol from the retained primary result configuration at config/training/epochs; epochs denotes its budget, not selected stopping epoch.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/training/epochs"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "c02ae7e8096aac00979f7a26090d25cb359fb53ed96af65bb9c14a3108257577",
+      "token_index": 0,
+      "value": "0.25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Tissue proxy of the camera-ready mask audit: patch occupancy of at least 0.25 on the soft MIRAGE envelope.",
+        "evidence": [
+          {
+            "source": "cr_mask_bs64",
+            "pointer": "/protocol/tissue_proxies/soft"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "c02ae7e8096aac00979f7a26090d25cb359fb53ed96af65bb9c14a3108257577",
+      "token_index": 1,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Patch-grid dimension (16 x 16) of the same model input, unchanged in the camera-ready audit. Template evidence: The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
+        "evidence": [
+          {
+            "source": "lr_geom",
+            "pointer": "/_meta/grid"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "c02ae7e8096aac00979f7a26090d25cb359fb53ed96af65bb9c14a3108257577",
+      "token_index": 2,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Patch-grid dimension (16 x 16) of the same model input, unchanged in the camera-ready audit. Template evidence: The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
+        "evidence": [
+          {
+            "source": "lr_geom",
+            "pointer": "/_meta/grid"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "3edd4b6edc52a1e18402874f1408b4a160ada21aa86325d71b1d0b4ff84e6560",
+      "token_index": 0,
+      "value": "0.25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Envelope reference of the guide-agreement analysis: patch occupancy >= 0.25, fixed in the analysis plan.",
+        "evidence": [
+          {
+            "source": "cr_guide_plan",
+            "excerpt": "`E = occupancy >= 0.25`"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "3edd4b6edc52a1e18402874f1408b4a160ada21aa86325d71b1d0b4ff84e6560",
+      "token_index": 1,
+      "value": "0.2",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Primary gross-disagreement rule F1 uses IoU < 0.20 (printed 0.2), fixed before computing any rate.",
+        "evidence": [
+          {
+            "source": "cr_guide_plan",
+            "excerpt": "`iou < 0.20` OR `ribbon_zero_env_frac > 0.50`"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "token_index": 0,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The 1 in Smooth-L1 identifies the loss family used by F.smooth_l1_loss. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
+        "evidence": [
+          {
+            "source": "lr_training",
+            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
+          },
+          {
+            "source": "refresh_mask_utils",
+            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "token_index": 1,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The numerator 1 denotes a mean over all delivered target-instance feature coordinates for the displayed single-image task; training additionally averages over the batch. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
+        "evidence": [
+          {
+            "source": "lr_training",
+            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
+          },
+          {
+            "source": "refresh_mask_utils",
+            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "token_index": 2,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The denominator sum starts at target group m=1 and counts every delivered K_m instance. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
+        "evidence": [
+          {
+            "source": "lr_training",
+            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
+          },
+          {
+            "source": "refresh_mask_utils",
+            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "token_index": 3,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The outer numerator sum starts at target group m=1, matching the concatenated target groups. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
+        "evidence": [
+          {
+            "source": "lr_training",
+            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
+          },
+          {
+            "source": "refresh_mask_utils",
+            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "token_index": 4,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The target-instance sum starts at k=1 and includes duplicate gathered indices. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
+        "evidence": [
+          {
+            "source": "lr_training",
+            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
+          },
+          {
+            "source": "refresh_mask_utils",
+            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "token_index": 5,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The feature-coordinate sum starts at d=1 and covers the final feature dimension. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
+        "evidence": [
+          {
+            "source": "lr_training",
+            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
+          },
+          {
+            "source": "refresh_mask_utils",
+            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "token_index": 6,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Smooth-L1 uses the default unit transition: direct inspection of installed torch.nn.functional.smooth_l1_loss confirms reduction='mean', beta=1.0; production passes neither override. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
+        "evidence": [
+          {
+            "source": "lr_training",
+            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
+          },
+          {
+            "source": "refresh_mask_utils",
+            "excerpt": "all_x.append(torch.gather(x, dim=1, index=mask_keep))"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "token_index": 0,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "token_index": 1,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "token_index": 2,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "token_index": 3,
+      "value": "6",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "token_index": 4,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Shared epoch-25 ancestor of the original continuations; the hyphen is lexical. Template evidence: Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/5"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "token_index": 5,
+      "value": "512",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "token_index": 6,
+      "value": "25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "token_index": 7,
+      "value": "30",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "batch_size: 64"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "accum_steps: 8"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "patch_size: 16"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "pred_depth: 6"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_warm: 25"
+          },
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "T_total: 30"
+          },
+          {
+            "source": "lr_replication_code",
+            "excerpt": "64 x 4 T4s x 2"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "c970577a933b9767c53481aec425e7e819e6a95637c2ad3a8b6293b84c183404",
+      "token_index": 0,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Registered continuations start from the same epoch-25 checkpoint; the hyphen is lexical.",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "continuation from the shared RANDOM epoch-25 checkpoint"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "c970577a933b9767c53481aec425e7e819e6a95637c2ad3a8b6293b84c183404",
+      "token_index": 1,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Registered runs stop at epoch 50 (fixed endpoint).",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "stop after the saved epoch-50 checkpoint"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "bfb8099a8747532cb5788a02fac3d4760e1033d58e39769b8e7bc5a3977fd346",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The shortened evaluation paragraph retains the same saved 50-epoch head budget.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/training/epochs"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "60ad6b8d28c7f88780870086b4db46619b764c03a79a72c239063960df7c2cb9",
+      "token_index": 6,
+      "value": "2",
+      "assertion": {
+        "expression": {
+          "op": "max",
+          "args": [
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/0/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/1/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/2/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/3/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/4/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/5/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/6/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/7/delta_fp32_minus_fp16"
+                }
+              ]
+            }
+          ]
+        },
+        "relation": "le",
+        "bound": "2\\times10^{-4}",
+        "component": 0
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "60ad6b8d28c7f88780870086b4db46619b764c03a79a72c239063960df7c2cb9",
+      "token_index": 7,
+      "value": "10",
+      "assertion": {
+        "expression": {
+          "op": "max",
+          "args": [
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/0/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/1/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/2/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/3/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/4/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/5/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/6/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/7/delta_fp32_minus_fp16"
+                }
+              ]
+            }
+          ]
+        },
+        "relation": "le",
+        "bound": "2\\times10^{-4}",
+        "component": 1
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "60ad6b8d28c7f88780870086b4db46619b764c03a79a72c239063960df7c2cb9",
+      "token_index": 8,
+      "value": "-4",
+      "assertion": {
+        "expression": {
+          "op": "max",
+          "args": [
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/0/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/1/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/2/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/3/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/4/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/5/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/6/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/7/delta_fp32_minus_fp16"
+                }
+              ]
+            }
+          ]
+        },
+        "relation": "le",
+        "bound": "2\\times10^{-4}",
+        "component": 2
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "549a190fb12cd71815d1747fb02306a38437784cf6928a4bddb41f94388b615b",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/14"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "549a190fb12cd71815d1747fb02306a38437784cf6928a4bddb41f94388b615b",
+      "token_index": 1,
+      "value": "100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 100. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/23"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "56b70901b9bee988162a8b71978652117a071662ad95140d696d5a91cffbb20d",
+      "token_index": 1,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/5"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "56b70901b9bee988162a8b71978652117a071662ad95140d696d5a91cffbb20d",
+      "token_index": 4,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for cover-f021, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/9"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "3aa303657401dc1934d62215bf9a7a02cf70818dc619a45979db46d36ff73f4b",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Geometry-table AUC column is quoted at the matched epoch 50. Template evidence: Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Revised geometry caption retains the same matched epoch50 AUC, not a new geometry measurement. Updated-context review: The same epoch50 AUC is retained. Added caption text correctly identifies a MIRAGE-derived tissue proxy, not ground truth; no geometry values changed.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/14"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "4753889ca6b31c2c8574d00ce964606db2a307de4d81249a71758026c5d1d49d",
+      "token_index": 1,
+      "value": "16",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Fixed K=16 and M=4 give 4x16=64 prediction instances by construction; the rectangle comparison is now the bound macro.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          },
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "num_pred_masks: 4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "4753889ca6b31c2c8574d00ce964606db2a307de4d81249a71758026c5d1d49d",
+      "token_index": 2,
+      "value": "4",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          },
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "num_pred_masks: 4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "4753889ca6b31c2c8574d00ce964606db2a307de4d81249a71758026c5d1d49d",
+      "token_index": 3,
+      "value": "16",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          },
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "num_pred_masks: 4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "4753889ca6b31c2c8574d00ce964606db2a307de4d81249a71758026c5d1d49d",
+      "token_index": 4,
+      "value": "64",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "rationale": "The displayed 64 is the arithmetic product of four target lists and K=16, not a newly measured statistic. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
+        "evidence": [
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "pred_target_k: 16"
+          },
+          {
+            "source": "lr_anatomy_cfg",
+            "excerpt": "num_pred_masks: 4"
           }
         ]
       }

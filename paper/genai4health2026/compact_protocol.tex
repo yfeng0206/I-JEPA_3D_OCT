@@ -15,7 +15,9 @@ The guidance probability increases over the epoch-25 to epoch-30
 continuation window; fixed-length anatomy targets use $K=16$ throughout.
 The frozen linear head uses AdamW, learning rate $0.0004$, weight decay
 $0.05$, batch size 256, seed 42, and a 50-epoch budget with validation-AUC
-selection and patience 15.
+selection and patience 15. Paired analyses rely on the documented shared split
+and deterministic loader ordering; historical prediction files lack
+independent case-ID manifests.
 
 \paragraph{Guide sources.}
 \textsc{envelope} uses the MIRAGE-derived repaired hard retinal envelope,
@@ -62,7 +64,14 @@ $0.25$ on the soft MIRAGE envelope, on the $16\times16$ patch grid. The
 submitted tables used $\CROldSlices$ slices from $\CROldVolumes$ volumes with
 seed $\CROldSeed$, sizes drawn separately for each strategy, the code-default
 \ArmBest{} band width and \textsc{envelope} placed on the soft guide.
-Table~\ref{tab:delivered} compares both. The band width has little effect on
+Table~\ref{tab:delivered} compares both. In Table~\ref{tab:geometry},
+``tissue hidden'' is the share of tissue cells in the target union, ``purity''
+the share of target cells on tissue, ``targets'' the number of unique target
+cells, ``loss slots'' the supervised target-token instances including
+duplicates, and ``context'' the share of the grid supplied to the context
+encoder. Repeated target indices add loss terms, and the anatomy-shaped and
+coverage strategies use different guide products from the \textsc{envelope}
+run. The band width has little effect on
 delivered context; most of the difference comes from replay noise and
 pairing, and for \textsc{envelope} also from the guide product and fallback
 rule.
@@ -140,8 +149,10 @@ $\CRGuidePerStratum$ from each combination of glaucoma label and tertile of a
 signal-to-noise proxy, with ten B-scans per volume ($\CRGuideBscans$ B-scans).
 The computation was repeated on all $\CRCensusVolumes$ training volumes. A
 B-scan counts as a gross disagreement when the band--envelope IoU is below
-$0.2$ or more than half of the band cells contain no envelope. Rates are
-population-weighted, with 95\% volume-cluster bootstrap intervals.
+$0.2$ or more than half of the band cells contain no envelope. Overall rates
+are population-weighted. Subgroup rates are unweighted proportions within the
+stratified sample. Disagreement rates use B-scans with a usable envelope, and
+intervals are 95\% volume-cluster bootstrap intervals.
 
 The band disagreed grossly with the envelope in $\CRFOne\%$ of B-scans
 (\CRFOneCI, all training volumes $\CRFOneCensus\%$) and was off-centre in at
@@ -151,9 +162,9 @@ in the lowest than in the highest signal tertile ($\CRFOneLowSNR\%$ versus
 $\CRFOneHighSNR\%$). The median IoU was $\CRIoUMedian$. Because the envelope is
 typically about half as thick as the $\CRBandRows$-row band, an IoU of this
 size is expected even for a centred band. Of the envelopes, $\CREnvAnyFlag\%$
-(\CREnvAnyFlagCI) raised at least one plausibility flag: three or more
-components ($\CREnvFragmented\%$), irregular thickness ($\CREnvThickness\%$) or
-implausible position ($\CREnvPosition\%$). These are agreement and plausibility
+(\CREnvAnyFlagCI) raised at least one plausibility flag: an empty or invalid
+envelope, three or more components ($\CREnvFragmented\%$), irregular thickness
+($\CREnvThickness\%$) or implausible position ($\CREnvPosition\%$). These are agreement and plausibility
 statistics between two automatic guides, not anatomical accuracy. The envelope
 model's only quantitative validation is in-domain on GOALS (foreground Dice
 $\CRMirageDice$).

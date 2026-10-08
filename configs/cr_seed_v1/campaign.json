@@ -139,7 +139,7 @@
       "seed": 1234,
       "config": "configs/cr_seed_v1/cr_seed_v1_random_s1234.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
+      "git_commit": "0317cc17f87e0742484c3b1825e8d198f82319cc",
       "enabled": true,
       "probe": {
         "enabled": true
@@ -151,7 +151,7 @@
       "seed": 1234,
       "config": "configs/cr_seed_v1/cr_seed_v1_centroid_s1234.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
+      "git_commit": "0317cc17f87e0742484c3b1825e8d198f82319cc",
       "enabled": true,
       "probe": {
         "enabled": true
@@ -163,7 +163,7 @@
       "seed": 1234,
       "config": "configs/cr_seed_v1/cr_seed_v1_envelope_s1234.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
+      "git_commit": "0317cc17f87e0742484c3b1825e8d198f82319cc",
       "enabled": true,
       "probe": {
         "enabled": true
@@ -175,7 +175,7 @@
       "seed": 5678,
       "config": "configs/cr_seed_v1/cr_seed_v1_random_s5678.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
+      "git_commit": "0317cc17f87e0742484c3b1825e8d198f82319cc",
       "enabled": true,
       "probe": {
         "enabled": true
@@ -187,7 +187,7 @@
       "seed": 5678,
       "config": "configs/cr_seed_v1/cr_seed_v1_centroid_s5678.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
+      "git_commit": "0317cc17f87e0742484c3b1825e8d198f82319cc",
       "enabled": true,
       "probe": {
         "enabled": true
@@ -212,7 +212,7 @@
       "seed": 5678,
       "config": "configs/cr_seed_v1/cr_seed_v1_envelope_s5678.yaml",
       "stop_epoch": 50,
-      "git_commit": null,
+      "git_commit": "0317cc17f87e0742484c3b1825e8d198f82319cc",
       "enabled": true,
       "probe": {
         "enabled": true
@@ -222,7 +222,7 @@
   "anchors": {
     "id": "ANCHORS",
     "enabled": true,
-    "git_commit": null,
+    "git_commit": "0317cc17f87e0742484c3b1825e8d198f82319cc",
     "note": "Original ep50 encoders re-probed under the frozen new evaluator; runs after R1 training, before R1's probe.",
     "items": [
       {

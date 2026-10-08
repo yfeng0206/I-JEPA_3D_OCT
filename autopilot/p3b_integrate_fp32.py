@@ -59,6 +59,38 @@ def fast_auc(y, s):
     return (r[y == 1].sum() - n1 * (n1 + 1) / 2.0) / (n1 * n0)
 
 
+def format_p(p):
+    """LaTeX p-value cell: three decimals, and never ``0.000`` for a real p < 0.001."""
+    if p is None or not np.isfinite(p):
+        return "---"
+    if p < 0.001:
+        return r"$<$0.001"
+    return "%.3f" % p
+
+
+def render_fp32_table(rows):
+    """LaTeX table of fp16 vs fp32 AUCs (auto/table_fp32.tex)."""
+    # The artifact stores the historical arm key; the paper's display name lives
+    # in the \ArmBest macro so a rename is one line. Never emit the raw key.
+    DISP = {"oracle": r"\ArmBest{}"}
+
+    def armtex(a):
+        return DISP.get(a, r"\textsc{%s}" % a)
+
+    tl = [r"\begin{tabular}{lccccc}", r"\toprule",
+          r"policy & epoch & fp16 AUC & fp32 AUC & $\Delta$ & $p$ \\", r"\midrule"]
+    for r in sorted(rows, key=lambda r: (r["arm"], r["epoch"])):
+        if "auc_fp16" in r:
+            tl.append("%s & %d & %.6f & %.6f & %+.6f & %s \\\\" % (
+                armtex(r["arm"]), r["epoch"], r["auc_fp16"], r["auc_fp32"],
+                r["delta_fp32_minus_fp16"], format_p(r["delong_p"])))
+        else:
+            tl.append("%s & %d & --- & %.6f & --- & --- \\\\" % (
+                armtex(r["arm"]), r["epoch"], r["auc_fp32"]))
+    tl += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(tl) + "\n"
+
+
 def main():
     have32, missing = {}, []
     for d, (arm, ep) in FP32.items():
@@ -134,26 +166,8 @@ def main():
         json.dump(out, f, indent=1)
 
     # ---- LaTeX table
-    # The artifact stores the historical arm key; the paper's display name lives
-    # in the \ArmBest macro so a rename is one line. Never emit the raw key.
-    DISP = {"oracle": r"\ArmBest{}"}
-
-    def armtex(a):
-        return DISP.get(a, r"\textsc{%s}" % a)
-
-    tl = [r"\begin{tabular}{lccccc}", r"\toprule",
-          r"policy & epoch & fp16 AUC & fp32 AUC & $\Delta$ & $p$ \\", r"\midrule"]
-    for r in sorted(rows, key=lambda r: (r["arm"], r["epoch"])):
-        if "auc_fp16" in r:
-            tl.append("%s & %d & %.6f & %.6f & %+.6f & %.3f \\\\" % (
-                armtex(r["arm"]), r["epoch"], r["auc_fp16"], r["auc_fp32"],
-                r["delta_fp32_minus_fp16"], r["delong_p"]))
-        else:
-            tl.append("%s & %d & --- & %.6f & --- & --- \\\\" % (
-                armtex(r["arm"]), r["epoch"], r["auc_fp32"]))
-    tl += [r"\bottomrule", r"\end{tabular}"]
     with open(os.path.join(AUTO, "table_fp32.tex"), "w", encoding="utf-8") as f:
-        f.write("\n".join(tl) + "\n")
+        f.write(render_fp32_table(rows))
 
     print("\n%-10s %-5s %-11s %-11s %-11s %s" % ("arm", "ep", "fp16", "fp32", "delta", "p"))
     for r in sorted(rows, key=lambda r: (r["arm"], r["epoch"])):

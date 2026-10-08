@@ -1,0 +1,932 @@
+{
+ "protocol": {
+  "name": "camera_ready_delivered_mask_audit_v1",
+  "split": "Training",
+  "volumes": 24,
+  "slices_per_volume": 25,
+  "views": 600,
+  "volume_selection": "sorted(random.Random(42).sample(range(6000), volumes))",
+  "view_rule": "slices 0,4,...,96 of each selected volume (num_slices=100 grid)",
+  "batch_size": 64,
+  "budget_draws_per_seed": null,
+  "batch_order": "sequential",
+  "audit_seeds": [
+   42
+  ],
+  "pairing": "Within each audit seed, every arm sees the identical crop of every view (seed_all(seed + view) before each loader call; soft and hard loaders asserted equal), the identical batch composition, the identical 4 target + 1 context rectangle sizes per batch (torch.Generator(seed)), and the identical placement seed (seed_all(seed + batch_start)) before each arm.",
+  "guidance": "set_epoch(50, 100): r_t = 1 for every guided arm",
+  "tissue_proxies": {
+   "soft": "PRIMARY common scoring proxy: patch occupancy >= 0.25 of the schema-2 MIRAGE soft-guide envelope (summed P_inner+P_choroid >= 0.5), same proxy as the published tables: D:\\jepa_phase0\\fairvision-glaucoma\\mirage_soft_guides\\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8_npy",
+   "hard": "secondary: patch occupancy >= 0.25 of the repaired hard MIRAGE envelope (ENVELOPE's placement product): D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides"
+  },
+  "definitions": {
+   "context_pct_grid": "delivered encoder context tokens C_b / 256 (after batch equalisation), image mean",
+   "unique_targets_U": "distinct delivered target cells per image",
+   "loss_slots_L": "delivered target index slots per image (npred x K_b), duplicates included",
+   "duplicate_slots_D": "L - U",
+   "mask_ratio_pct": "U / 256",
+   "purity_pct": "tissue-proxy cells among the U unique delivered targets (ratio of means)",
+   "anatomy_hidden_pct": "tissue-proxy cells hidden as targets / all tissue-proxy cells",
+   "context_tissue_share_pct": "tissue-proxy cells in delivered context / all tissue-proxy cells"
+  },
+  "warning": "Mask-audit seeds are sampler replays, not pretraining seeds; the historical training masks were not recorded."
+ },
+ "samplers": {
+  "requested": "worktree",
+  "commit": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "head": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "origin": "worktree",
+  "worktree_masks_dirty": true,
+  "files": {
+   "src/masks/utils.py": {
+    "sha256_exact_bytes": "5d92f57981a72e9c0abc5be18c56a5255ff5c8c3b82c0a13b8e027e82f4bbb7a",
+    "sha256_lf": "8ae3cfc055ce7340e786508a8792e70d4ce2fbb0bf60d55edc17bd3519e068dc",
+    "sha256_crlf_checkout": "5d92f57981a72e9c0abc5be18c56a5255ff5c8c3b82c0a13b8e027e82f4bbb7a",
+    "bytes": 2893
+   },
+   "src/masks/multiblock.py": {
+    "sha256_exact_bytes": "d8985698cba486625bbc5fa0e5cc34dc468ff0cc1346eae6f9e5db409cc9fa98",
+    "sha256_lf": "0175b60aa56b95a889f3ce2e79a1a6e562f1392789592830e2435d537124701a",
+    "sha256_crlf_checkout": "d8985698cba486625bbc5fa0e5cc34dc468ff0cc1346eae6f9e5db409cc9fa98",
+    "bytes": 10675
+   },
+   "src/masks/anatomy.py": {
+    "sha256_exact_bytes": "2ab33b86b9d9830acf4efe0eb2d3414b4d353b5fba0864badd1572a193abb4a7",
+    "sha256_lf": "968114c2f3190c64e8f95bf361dbadf61baadc408867b9745dc4bafd29028c78",
+    "sha256_crlf_checkout": "2ab33b86b9d9830acf4efe0eb2d3414b4d353b5fba0864badd1572a193abb4a7",
+    "bytes": 44194
+   },
+   "src/masks/cover.py": {
+    "sha256_exact_bytes": "8decf18ba0048cb7de33b127d35262e8bd8258c73f0565fee533f48606b82fab",
+    "sha256_lf": "65e0efdc8cceff85c960099b39a27f1a9f247f9ecdc00540543afa7f4b51ae94",
+    "sha256_crlf_checkout": "8decf18ba0048cb7de33b127d35262e8bd8258c73f0565fee533f48606b82fab",
+    "bytes": 25878
+   },
+   "src/masks/curriculum.py": {
+    "sha256_exact_bytes": "2bf0dca7c44a1ee0aa7bc167ce90840256b53d55df13bb52321bceb1003ea538",
+    "sha256_lf": "2723cb750e300d27c89d266cd485e131181ae39d68e49045f7ce15f972cb4a08",
+    "sha256_crlf_checkout": "2bf0dca7c44a1ee0aa7bc167ce90840256b53d55df13bb52321bceb1003ea538",
+    "bytes": 130509
+   }
+  },
+  "legacy_envelope": {
+   "method": "native config key mirage_overlap_fallback=legacy_uniform_v1"
+  }
+ },
+ "arms": {
+  "random": {
+   "kind": "random",
+   "label": "RANDOM",
+   "role": "trained",
+   "sampler": "src.masks.multiblock.MaskCollator",
+   "config": null
+  },
+  "envelope": {
+   "kind": "guided",
+   "config": "configs/patch_mirage_envelope.yaml",
+   "guide": "hard",
+   "fallback": "legacy_uniform_v1",
+   "label": "ENVELOPE",
+   "role": "trained",
+   "sampler": "src.masks.curriculum.CurriculumMaskGenerator",
+   "config_sha256_lf": "1026e3a5cd34332b1d4249f96639289ab00d8e0875f77bb008da80c666858ffb",
+   "config_mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides",
+   "curriculum_cfg": {
+    "enabled": true,
+    "mode": "mirage_envelope",
+    "T_warm": 25,
+    "T_total": 30,
+    "r_max": 1.0,
+    "ramp_shape": "linear",
+    "mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides",
+    "mirage_dilate_patches": 0,
+    "mirage_min_block_fill": 0.4,
+    "mirage_min_retina_visible": 0.25,
+    "mirage_max_attempts": 30,
+    "mirage_occupancy_threshold": 0.25,
+    "mirage_spread": true,
+    "mirage_overlap_tolerance": 0.25,
+    "mirage_overlap_fallback": "legacy_uniform_v1"
+   },
+   "pred_target_k": null,
+   "oracle_lateral_frac": null
+  },
+  "envelope_hard_leastoverlap": {
+   "kind": "guided",
+   "config": "configs/patch_mirage_envelope.yaml",
+   "guide": "hard",
+   "fallback": "least_overlap_v2",
+   "label": "ENVELOPE, hard guide, least-overlap HEAD fallback",
+   "role": "decomposition",
+   "sampler": "src.masks.curriculum.CurriculumMaskGenerator",
+   "config_sha256_lf": "1026e3a5cd34332b1d4249f96639289ab00d8e0875f77bb008da80c666858ffb",
+   "config_mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides",
+   "curriculum_cfg": {
+    "enabled": true,
+    "mode": "mirage_envelope",
+    "T_warm": 25,
+    "T_total": 30,
+    "r_max": 1.0,
+    "ramp_shape": "linear",
+    "mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides",
+    "mirage_dilate_patches": 0,
+    "mirage_min_block_fill": 0.4,
+    "mirage_min_retina_visible": 0.25,
+    "mirage_max_attempts": 30,
+    "mirage_occupancy_threshold": 0.25,
+    "mirage_spread": true,
+    "mirage_overlap_tolerance": 0.25,
+    "mirage_overlap_fallback": "least_overlap_v2"
+   },
+   "pred_target_k": null,
+   "oracle_lateral_frac": null
+  }
+ },
+ "soft_guide_cache_meta": {
+  "schema_version": 2,
+  "split": "Training",
+  "mirage_ckpt": "D:\\jepa_phase0\\mirage-goals\\outputs\\mergedv3-base-512\\MergedV3\\MIRAGE-Base_frozen_convnext_CEGDice-ignore\\checkpoint-best.pth",
+  "mirage_sha": "31a932eef403c3e8",
+  "adapter_ckpt": "results\\masking\\structural_loss\\adapter_ep100_structl100_a010_e3_lr0.001_n4800.pt",
+  "adapter_sha": "d4f09adfa9f05f0b",
+  "adapter_tap": "enc",
+  "num_slices": 100,
+  "native_size": 200,
+  "mirage_input_res": 512,
+  "dtype": "uint8",
+  "channels": [
+   "P_inner",
+   "P_choroid"
+  ],
+  "ordering": "softmax BEFORE any pooling or cropping",
+  "amp": true,
+  "n_volumes": 6000,
+  "n_slices_total": 600000,
+  "created": "2026-08-09T23:05:57",
+  "seconds": 2451.4396349000162,
+  "reused_from_previous_run": 1800,
+  "storage": "uncompressed .npy, memmap-friendly",
+  "converted_from": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_soft_guides\\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8"
+ },
+ "environment": {
+  "git_head": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "git_status_short": "M autopilot/investigations/submission_refresh_20260910/comparison/generate_comparison.py\n M autopilot/investigations/submission_refresh_20260910/comparison_final/generate_comparison_final.py\n M autopilot/investigations/submission_refresh_20260910/figure/generate_external_target_selection.py\n M autopilot/p3b_integrate_fp32.py\n M paper/genai4health2026/auto/table_fp32.tex\n M scripts/delivered_mask_audit.py\n M scripts/mask_composition_probe.py\n M src/eval_downstream.py\n M src/helper.py\n M src/masks/curriculum.py\n M src/train_patch.py",
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "numpy": "2.4.4",
+  "torch": "2.7.1+cu128",
+  "torch_threads": 2,
+  "cuda_visible_devices": "",
+  "worktree_file_sha256": {
+   "scripts\\mask_composition_probe.py": "9163742110daab12621396d4512d172e359fd994249c846d290436c40b52e342",
+   "src\\datasets\\oct_slices_guided.py": "231145343f6fbfed3462481430a18a824670afc8fbd59c1b10217e7d5e17eaf2",
+   "src\\datasets\\oct_slices.py": "6397ed9f634473b77683b4fd9c8b5824fae8f6a54ad844ad76a0d320d367f9de",
+   "src\\transforms.py": "fabc7e08b67ef2f9f6d6e96602413f2ab997a584b9b4b9d2735790064d408c80",
+   "src\\guides\\mirage_envelope.py": "e46d5a0c75b0b613c1adb638b877351c3a213b502705a6c082a1e051c07bc7e0",
+   "configs\\patch_oracle_anatomical.yaml": "cdb7f8227ff27206dad9dfc3af3cfe23b7296515988fdf7359141a8a3cf6b951",
+   "configs\\patch_mirage_envelope.yaml": "15b8fcfca8951b8695d898d83d069b296895262eabf8540fa8c1bde80bdd9e0a",
+   "configs\\patch_anatomy_v2.yaml": "7a8167f806017d2dd1cf825dae25c3f5c12a37c2260971c75d3e433e7a087059",
+   "configs\\patch_cover_f021_ep25.yaml": "4119c33f35a5c2ba3bc7ff240a7e4172de6f8d2d31187967b3f89e771ff1463a"
+  }
+ },
+ "seeds": [
+  {
+   "seed": 42,
+   "n_batches": 10,
+   "crop_identity_assertions": 600,
+   "hard_guide_valid": 596,
+   "soft_guide_valid": 597,
+   "size_draws": [
+    [
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      5
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      15,
+      16
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      16,
+      14
+     ]
+    ],
+    [
+     [
+      7,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      13,
+      16
+     ]
+    ],
+    [
+     [
+      6,
+      8
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      15,
+      15
+     ]
+    ],
+    [
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      15,
+      16
+     ]
+    ],
+    [
+     [
+      6,
+      6
+     ],
+     [
+      7,
+      5
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      15,
+      16
+     ]
+    ],
+    [
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      14,
+      16
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      16,
+      13
+     ]
+    ],
+    [
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      16,
+      14
+     ]
+    ],
+    [
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      13,
+      16
+     ]
+    ]
+   ],
+   "metrics": {
+    "random": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 72.72,
+     "context_pct_grid": 28.40625,
+     "context_pct_grid_batch_se": 1.7593068493806807,
+     "unique_targets_U": 116.34333333333333,
+     "loss_slots_L": 169.28,
+     "duplicate_slots_D": 52.93666666666667,
+     "mask_ratio_pct": 45.446614583333336,
+     "purity_soft_pct": 31.8640231498725,
+     "purity_hard_pct": 36.115806664183594,
+     "anatomy_hidden_soft_pct": 56.08562999571346,
+     "context_tissue_share_soft_pct": 29.032502080234,
+     "context_on_tissue_soft_pct": 26.388888888888893,
+     "tissue_cells_soft": 66.09833333333333,
+     "tissue_cells_hard": 74.38333333333334,
+     "delivered_context_C_quantiles": [
+      57.0,
+      57.45,
+      67.0,
+      95.0,
+      95.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      42.0,
+      48.0,
+      48.0
+     ]
+    },
+    "envelope": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 74.48,
+     "context_pct_grid": 29.09375,
+     "context_pct_grid_batch_se": 1.404862838210203,
+     "unique_targets_U": 115.165,
+     "loss_slots_L": 169.28,
+     "duplicate_slots_D": 54.115,
+     "mask_ratio_pct": 44.986328125,
+     "purity_soft_pct": 41.75603120160928,
+     "purity_hard_pct": 48.38999117208642,
+     "anatomy_hidden_soft_pct": 72.75271691167201,
+     "context_tissue_share_soft_pct": 17.660556241962734,
+     "context_on_tissue_soft_pct": 15.673111349803081,
+     "tissue_cells_soft": 66.09833333333333,
+     "tissue_cells_hard": 74.38333333333334,
+     "delivered_context_C_quantiles": [
+      58.0,
+      59.8,
+      75.5,
+      89.79999999999998,
+      97.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      42.0,
+      48.0,
+      48.0
+     ]
+    },
+    "envelope_hard_leastoverlap": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 67.84,
+     "context_pct_grid": 26.5,
+     "context_pct_grid_batch_se": 1.5951982288489779,
+     "unique_targets_U": 129.54166666666666,
+     "loss_slots_L": 169.28,
+     "duplicate_slots_D": 39.73833333333334,
+     "mask_ratio_pct": 50.602213541666664,
+     "purity_soft_pct": 39.61659697651979,
+     "purity_hard_pct": 44.95207462206498,
+     "anatomy_hidden_soft_pct": 77.64189717340327,
+     "context_tissue_share_soft_pct": 14.755793136488567,
+     "context_on_tissue_soft_pct": 14.376965408805031,
+     "tissue_cells_soft": 66.09833333333333,
+     "tissue_cells_hard": 74.38333333333334,
+     "delivered_context_C_quantiles": [
+      56.0,
+      56.9,
+      61.5,
+      90.04999999999998,
+      95.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      42.0,
+      48.0,
+      48.0
+     ]
+    }
+   },
+   "per_batch_context_C": {
+    "random": [
+     95,
+     67,
+     58,
+     57,
+     76,
+     95,
+     67,
+     66,
+     79,
+     58
+    ],
+    "envelope": [
+     81,
+     74,
+     58,
+     77,
+     78,
+     97,
+     63,
+     78,
+     69,
+     62
+    ],
+    "envelope_hard_leastoverlap": [
+     84,
+     59,
+     58,
+     69,
+     69,
+     95,
+     59,
+     58,
+     64,
+     56
+    ]
+   },
+   "per_batch_target_K": {
+    "random": [
+     40,
+     48,
+     36,
+     48,
+     48,
+     35,
+     42,
+     42,
+     42,
+     42
+    ],
+    "envelope": [
+     40,
+     48,
+     36,
+     48,
+     48,
+     35,
+     42,
+     42,
+     42,
+     42
+    ],
+    "envelope_hard_leastoverlap": [
+     40,
+     48,
+     36,
+     48,
+     48,
+     35,
+     42,
+     42,
+     42,
+     42
+    ]
+   },
+   "per_batch_n": [
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    24
+   ],
+   "elapsed_seconds": 16.902820000075735,
+   "paired_context_gaps_vs_random": {
+    "envelope": {
+     "gap_pct_grid": 0.6875,
+     "batch_se": 1.2303826303636989,
+     "batches_arm_greater": 6,
+     "batches_equal": 1,
+     "batches_arm_smaller": 3,
+     "n_batches": 10,
+     "per_batch": [
+      -5.46875,
+      2.734375,
+      0.0,
+      7.8125,
+      0.78125,
+      0.78125,
+      -1.5625,
+      4.6875,
+      -3.90625,
+      1.5625
+     ]
+    },
+    "envelope_hard_leastoverlap": {
+     "gap_pct_grid": -1.90625,
+     "batch_se": 0.9336037380335079,
+     "batches_arm_greater": 1,
+     "batches_equal": 2,
+     "batches_arm_smaller": 7,
+     "n_batches": 10,
+     "per_batch": [
+      -4.296875,
+      -3.125,
+      0.0,
+      4.6875,
+      -2.734375,
+      0.0,
+      -3.125,
+      -3.125,
+      -5.859375,
+      -0.78125
+     ]
+    }
+   },
+   "saved_masks": {
+    "file": "autopilot\\investigations\\camera_ready_20261008\\mask_audit\\saved_masks\\worktree_check\\delivered_masks_seed42.npz",
+    "sha256": "e108c79bd72c12959e93c4ab0be9889feac27457bb8d4746ab2c67736e48a241",
+    "layout": "per arm: <arm>__enc uint8 = concatenated batch contexts [n_b, C_b] (row-major); <arm>__pred uint8 = concatenated batch targets [npred, n_b, K_b]; <arm>__C/K per batch"
+   }
+  }
+ ],
+ "summary": {
+  "random": {
+   "context_pct_grid": {
+    "mean": 28.40625,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 28.40625
+    }
+   },
+   "context_tokens": {
+    "mean": 72.72,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 72.72
+    }
+   },
+   "unique_targets_U": {
+    "mean": 116.34333333333333,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 116.34333333333333
+    }
+   },
+   "loss_slots_L": {
+    "mean": 169.28,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 169.28
+    }
+   },
+   "duplicate_slots_D": {
+    "mean": 52.93666666666667,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 52.93666666666667
+    }
+   },
+   "mask_ratio_pct": {
+    "mean": 45.446614583333336,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 45.446614583333336
+    }
+   },
+   "purity_soft_pct": {
+    "mean": 31.8640231498725,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 31.8640231498725
+    }
+   },
+   "purity_hard_pct": {
+    "mean": 36.115806664183594,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 36.115806664183594
+    }
+   },
+   "anatomy_hidden_soft_pct": {
+    "mean": 56.08562999571346,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 56.08562999571346
+    }
+   },
+   "context_tissue_share_soft_pct": {
+    "mean": 29.032502080234,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 29.032502080234
+    }
+   },
+   "context_on_tissue_soft_pct": {
+    "mean": 26.388888888888893,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 26.388888888888893
+    }
+   }
+  },
+  "envelope": {
+   "context_pct_grid": {
+    "mean": 29.09375,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 29.09375
+    }
+   },
+   "context_tokens": {
+    "mean": 74.48,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 74.48
+    }
+   },
+   "unique_targets_U": {
+    "mean": 115.165,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 115.165
+    }
+   },
+   "loss_slots_L": {
+    "mean": 169.28,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 169.28
+    }
+   },
+   "duplicate_slots_D": {
+    "mean": 54.115,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 54.115
+    }
+   },
+   "mask_ratio_pct": {
+    "mean": 44.986328125,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 44.986328125
+    }
+   },
+   "purity_soft_pct": {
+    "mean": 41.75603120160928,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 41.75603120160928
+    }
+   },
+   "purity_hard_pct": {
+    "mean": 48.38999117208642,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 48.38999117208642
+    }
+   },
+   "anatomy_hidden_soft_pct": {
+    "mean": 72.75271691167201,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 72.75271691167201
+    }
+   },
+   "context_tissue_share_soft_pct": {
+    "mean": 17.660556241962734,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 17.660556241962734
+    }
+   },
+   "context_on_tissue_soft_pct": {
+    "mean": 15.673111349803081,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 15.673111349803081
+    }
+   }
+  },
+  "envelope_hard_leastoverlap": {
+   "context_pct_grid": {
+    "mean": 26.5,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 26.5
+    }
+   },
+   "context_tokens": {
+    "mean": 67.84,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 67.84
+    }
+   },
+   "unique_targets_U": {
+    "mean": 129.54166666666666,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 129.54166666666666
+    }
+   },
+   "loss_slots_L": {
+    "mean": 169.28,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 169.28
+    }
+   },
+   "duplicate_slots_D": {
+    "mean": 39.73833333333334,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 39.73833333333334
+    }
+   },
+   "mask_ratio_pct": {
+    "mean": 50.602213541666664,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 50.602213541666664
+    }
+   },
+   "purity_soft_pct": {
+    "mean": 39.61659697651979,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 39.61659697651979
+    }
+   },
+   "purity_hard_pct": {
+    "mean": 44.95207462206498,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 44.95207462206498
+    }
+   },
+   "anatomy_hidden_soft_pct": {
+    "mean": 77.64189717340327,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 77.64189717340327
+    }
+   },
+   "context_tissue_share_soft_pct": {
+    "mean": 14.755793136488567,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 14.755793136488567
+    }
+   },
+   "context_on_tissue_soft_pct": {
+    "mean": 14.376965408805031,
+    "seed_sd": null,
+    "per_seed": {
+     "42": 14.376965408805031
+    }
+   }
+  }
+ },
+ "paired_context_gaps_vs_random": {
+  "envelope": {
+   "per_seed": {
+    "42": 0.6875
+   },
+   "mean_of_seeds": 0.6875,
+   "seed_sd": null,
+   "pooled_batches": 10,
+   "pooled_mean": 0.6875,
+   "pooled_batch_se": 1.2303826303636989,
+   "pooled_normal_95ci": [
+    -1.7240499555128497,
+    3.0990499555128497
+   ],
+   "batches_arm_greater": 6,
+   "batches_arm_smaller": 3,
+   "batches_equal": 1
+  },
+  "envelope_hard_leastoverlap": {
+   "per_seed": {
+    "42": -1.90625
+   },
+   "mean_of_seeds": -1.90625,
+   "seed_sd": null,
+   "pooled_batches": 10,
+   "pooled_mean": -1.90625,
+   "pooled_batch_se": 0.9336037380335079,
+   "pooled_normal_95ci": [
+    -3.7361133265456754,
+    -0.07638667345432437
+   ],
+   "batches_arm_greater": 1,
+   "batches_arm_smaller": 7,
+   "batches_equal": 2
+  }
+ }
+}

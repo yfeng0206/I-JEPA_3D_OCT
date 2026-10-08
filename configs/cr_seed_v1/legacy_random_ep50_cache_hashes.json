@@ -1,0 +1,21 @@
+{
+  "schema": "cr_legacy_cache_hashes_v1",
+  "pinned": "2026-10-08",
+  "pinned_at": "2026-10-08T04:46:49-07:00",
+  "integrity": "tofu_pinned_2026-10-08; historical integrity supported by timestamps and head replay, not cryptographic",
+  "anchor": "original RANDOM ep50 (checkpoint sha256 4dc3657ad908469fde37bfbdc83733cd8e3a168e8da0e66fc3101132370695f5, weights not on disk)",
+  "note": "Trust on first use: no historical hash of these files exists. Pinned after the stricter verification (mtime before guard finish, Val/Test per-case replay, Training best-epoch replay) passed on 2026-10-08. Protects only against changes after pinning.",
+  "run_dir": "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32",
+  "files": {
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32\\feature_cache\\Test_s100_r256_fp32_967c4b4373ce.pt": "4cce01c290e6435e6addd9f382a962fcf21ef207ecfb41641ddcc980d7ea83c1",
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32\\feature_cache\\Training_s100_r256_fp32_967c4b4373ce.pt": "b1b8df8d5dfdb3a8e70f5b412d95cb9347b07b0dc42355deab023b09861fed1a",
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32\\feature_cache\\Validation_s100_r256_fp32_967c4b4373ce.pt": "4daeab2d786d7569b95418fd22c62230db2bb6a7aaf04476398d186012c2de21",
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32\\results.json": "9c17de9b2587febdcd4410188ac620f33b4da78212392b14aaa9a0c49505d88a",
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32\\eval.log": "0ecd1417f76dad53e35b5e246f14ebcb73d4e717e64885e42ebbff4fe312640d",
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32\\best_model.pt": "78ff20fef90a9dc40cf3c8456b7df4d3f670ebfb56b03b924abe79f56ca931a5",
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32\\val_predictions.npz": "787d6431ba4d726039f4ead1b38fd5b89bda7708a08b3da98ab8ec4a06c9ac00",
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32\\test_predictions.npz": "0c5c12e6736cf315bac911f5451e5efdc0ee88f89eee1de4a3c5e032d3156f06",
+    "D:\\jepa_phase0\\runs\\frozen_meanpool_random_ep50_fp32\\train_log.csv": "8acf80d000cfcde75969c7e5fe87c50f8d024848b5b6f6c5da0f672425002d86",
+    "D:\\jepa_phase0\\autopilot_out\\probe_guards\\guard_meanpool_random_ep50_fp32.json": "5bd86be6f20dba6da131216010210a61c937be68f5f4be552c3acc8c45fd183e"
+  }
+}

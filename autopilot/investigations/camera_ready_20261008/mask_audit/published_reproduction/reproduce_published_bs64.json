@@ -1,0 +1,206 @@
+{
+ "samplers": {
+  "requested": "HEAD",
+  "commit": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "head": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "origin": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "worktree_masks_dirty": null,
+  "files": {
+   "src/masks/utils.py": {
+    "sha256_exact_bytes": "8ae3cfc055ce7340e786508a8792e70d4ce2fbb0bf60d55edc17bd3519e068dc",
+    "sha256_lf": "8ae3cfc055ce7340e786508a8792e70d4ce2fbb0bf60d55edc17bd3519e068dc",
+    "sha256_crlf_checkout": "5d92f57981a72e9c0abc5be18c56a5255ff5c8c3b82c0a13b8e027e82f4bbb7a",
+    "bytes": 2824
+   },
+   "src/masks/multiblock.py": {
+    "sha256_exact_bytes": "0175b60aa56b95a889f3ce2e79a1a6e562f1392789592830e2435d537124701a",
+    "sha256_lf": "0175b60aa56b95a889f3ce2e79a1a6e562f1392789592830e2435d537124701a",
+    "sha256_crlf_checkout": "d8985698cba486625bbc5fa0e5cc34dc468ff0cc1346eae6f9e5db409cc9fa98",
+    "bytes": 10424
+   },
+   "src/masks/anatomy.py": {
+    "sha256_exact_bytes": "968114c2f3190c64e8f95bf361dbadf61baadc408867b9745dc4bafd29028c78",
+    "sha256_lf": "968114c2f3190c64e8f95bf361dbadf61baadc408867b9745dc4bafd29028c78",
+    "sha256_crlf_checkout": "2ab33b86b9d9830acf4efe0eb2d3414b4d353b5fba0864badd1572a193abb4a7",
+    "bytes": 43170
+   },
+   "src/masks/cover.py": {
+    "sha256_exact_bytes": "65e0efdc8cceff85c960099b39a27f1a9f247f9ecdc00540543afa7f4b51ae94",
+    "sha256_lf": "65e0efdc8cceff85c960099b39a27f1a9f247f9ecdc00540543afa7f4b51ae94",
+    "sha256_crlf_checkout": "8decf18ba0048cb7de33b127d35262e8bd8258c73f0565fee533f48606b82fab",
+    "bytes": 25342
+   },
+   "src/masks/curriculum.py": {
+    "sha256_exact_bytes": "1cad91c8cea80e4837b8e1d2e76f6d474e25e08ea7df3cf5d19a978185f140a7",
+    "sha256_lf": "1cad91c8cea80e4837b8e1d2e76f6d474e25e08ea7df3cf5d19a978185f140a7",
+    "sha256_crlf_checkout": "6a0564e87170f36e241b07d597345680a837fa35cff524d6aaa6ae5e2ad23b66",
+    "bytes": 125714
+   }
+  },
+  "legacy_envelope": {
+   "method": "in-memory copy of the pinned curriculum.py with the single fc49f61 least-overlap line disabled: `if least.any():` -> `if False and least.any():`",
+   "patched_sha256_lf": "052b20ddb2d6bfd98e552e7f0b9f2a93a8ab45b7054c48efd7d728a7c0906ba0",
+   "patched_sha256_crlf_checkout": "e51cee23d5ea26df62d7c20420679c454461b2d692b25c85bae21739e5ca2e50",
+   "a1_noFixA_reference_sha256_crlf": "e51cee23d5ea26df62d7c20420679c454461b2d692b25c85bae21739e5ca2e50",
+   "equals_a1_noFixA_reference": true
+  }
+ },
+ "environment": {
+  "git_head": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "git_status_short": "M scripts/mask_composition_probe.py\n M src/eval_downstream.py\n M src/helper.py\n M src/masks/curriculum.py\n M src/train_patch.py",
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "numpy": "2.4.4",
+  "torch": "2.7.1+cu128",
+  "torch_threads": 2,
+  "cuda_visible_devices": null,
+  "worktree_file_sha256": {
+   "scripts\\mask_composition_probe.py": "380d5e9700f1b0b0f74552e809cefa26d14f9a08e40a6e7bc4a8503f0337be06",
+   "src\\datasets\\oct_slices_guided.py": "231145343f6fbfed3462481430a18a824670afc8fbd59c1b10217e7d5e17eaf2",
+   "src\\datasets\\oct_slices.py": "6397ed9f634473b77683b4fd9c8b5824fae8f6a54ad844ad76a0d320d367f9de",
+   "src\\transforms.py": "fabc7e08b67ef2f9f6d6e96602413f2ab997a584b9b4b9d2735790064d408c80",
+   "src\\guides\\mirage_envelope.py": "e46d5a0c75b0b613c1adb638b877351c3a213b502705a6c082a1e051c07bc7e0"
+  }
+ },
+ "runs": {
+  "published_v9_probe_548f4d6": {
+   "script_rev": "548f4d6",
+   "script_sha256_lf": "e18327213fcad9231f096470484c4fe70bd557875ee6273bf994a3e490821a18",
+   "output": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\camera_ready_20261008\\mask_audit\\published_reproduction\\published_v9_probe_548f4d6_bs64.json",
+   "output_sha256": "b719ca2092da00fb459258070f53c48e143b721b7b8c7d70d55ce4bbacdd5bc0",
+   "elapsed_seconds": 35.869351000059396,
+   "settings": "CENTROID code-default lateral 0.8; ENVELOPE/ANATOMY/COVER on the common soft guide; ENVELOPE least-overlap HEAD fallback; 600 views from 24 volumes, seed 42",
+   "protocol": "unpaired: sequential shared RNG, crops depend on mask draws",
+   "metrics": {
+    "random": {
+     "n_ctx_mean": 63.28,
+     "ctx_frac_of_grid": 0.2471875,
+     "n_hidden_mean": 112.55666666666667,
+     "n_slots_mean": 161.76,
+     "slot_dupes_mean": 49.20333333333333,
+     "hidden_frac_of_grid": 0.4396744791666667,
+     "hidden_pct_on_anat": 32.04015755027097,
+     "hidden_share_of_all_anat": 53.53820269200317,
+     "ctx_share_of_all_anat": 24.477929532858276
+    },
+    "oracle": {
+     "n_ctx_mean": 84.32,
+     "ctx_frac_of_grid": 0.329375,
+     "n_hidden_mean": 104.895,
+     "n_slots_mean": 162.13333333333333,
+     "slot_dupes_mean": 57.23833333333334,
+     "hidden_frac_of_grid": 0.40974609375,
+     "hidden_pct_on_anat": 40.43885154996267,
+     "hidden_share_of_all_anat": 62.97258511480602,
+     "ctx_share_of_all_anat": 24.819378463974665
+    },
+    "envelope": {
+     "n_ctx_mean": 78.48,
+     "ctx_frac_of_grid": 0.3065625,
+     "n_hidden_mean": 122.13833333333334,
+     "n_slots_mean": 164.16,
+     "slot_dupes_mean": 42.02166666666667,
+     "hidden_frac_of_grid": 0.47710286458333334,
+     "hidden_pct_on_anat": 43.1259637296508,
+     "hidden_share_of_all_anat": 78.19675376088678,
+     "ctx_share_of_all_anat": 13.44764449722882
+    },
+    "anatomy": {
+     "n_ctx_mean": 162.46666666666667,
+     "ctx_frac_of_grid": 0.6346354166666667,
+     "n_hidden_mean": 54.925,
+     "n_slots_mean": 64.0,
+     "slot_dupes_mean": 9.075,
+     "hidden_frac_of_grid": 0.21455078125,
+     "hidden_pct_on_anat": 97.89106357153695,
+     "hidden_share_of_all_anat": 79.81987331749802,
+     "ctx_share_of_all_anat": 17.582145684877275
+    },
+    "cover": {
+     "n_ctx_mean": 76.94666666666667,
+     "ctx_frac_of_grid": 0.3005729166666667,
+     "n_hidden_mean": 110.69833333333334,
+     "n_slots_mean": 159.04,
+     "slot_dupes_mean": 48.34166666666667,
+     "hidden_frac_of_grid": 0.43241536458333335,
+     "hidden_pct_on_anat": 44.679986148541836,
+     "hidden_share_of_all_anat": 73.42636579572446,
+     "ctx_share_of_all_anat": 14.360649247822646
+    }
+   },
+   "archived_table": {
+    "file": "results\\masking\\table2_geometry\\mask_geometry_600slices_bs64_coverf021_seed42.json",
+    "sha256": "3fd445f6c26763b4cc50eff2d11636613ff8881ffe54dfe07bb9b2bb48890f3e",
+    "numeric_fields_compared": 185,
+    "max_abs_difference": 0,
+    "exact": true
+   }
+  },
+  "pre_camera_ready_probe_HEAD": {
+   "script_rev": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+   "script_sha256_lf": "fed0b715a046b30c6c649bab48f4d238fa2149c3fc74e3b0eabf58c33185a966",
+   "output": "C:\\Users\\Gary\\Desktop\\jepa\\autopilot\\investigations\\camera_ready_20261008\\mask_audit\\published_reproduction\\pre_camera_ready_probe_HEAD_bs64.json",
+   "output_sha256": "5fa94db8d149827a44e10cfc66b122158da8d02948a6c217a34ab472d7536f79",
+   "elapsed_seconds": 39.24915300006978,
+   "settings": "CENTROID code-default lateral 0.8; ENVELOPE/ANATOMY/COVER on the common soft guide; ENVELOPE least-overlap HEAD fallback; 600 views from 24 volumes, seed 42",
+   "protocol": "fixed crops + shared sizes; torch/random reseeded per arm (numpy not reseeded)",
+   "metrics": {
+    "random": {
+     "n_ctx_mean": 72.72,
+     "ctx_frac_of_grid": 0.2840625,
+     "n_hidden_mean": 116.34333333333333,
+     "n_slots_mean": 169.28,
+     "slot_dupes_mean": 52.93666666666667,
+     "hidden_frac_of_grid": 0.45446614583333333,
+     "hidden_pct_on_anat": 31.8640231498725,
+     "hidden_share_of_all_anat": 56.08562999571346,
+     "ctx_share_of_all_anat": 29.032502080233996
+    },
+    "oracle": {
+     "n_ctx_mean": 78.74666666666667,
+     "ctx_frac_of_grid": 0.3076041666666667,
+     "n_hidden_mean": 107.72166666666666,
+     "n_slots_mean": 169.28,
+     "slot_dupes_mean": 61.55833333333333,
+     "hidden_frac_of_grid": 0.42078776041666666,
+     "hidden_pct_on_anat": 39.58968328872248,
+     "hidden_share_of_all_anat": 64.52003328374393,
+     "ctx_share_of_all_anat": 23.364179631357324
+    },
+    "envelope": {
+     "n_ctx_mean": 72.69333333333333,
+     "ctx_frac_of_grid": 0.2839583333333333,
+     "n_hidden_mean": 121.805,
+     "n_slots_mean": 169.28,
+     "slot_dupes_mean": 47.475,
+     "hidden_frac_of_grid": 0.47580078125,
+     "hidden_pct_on_anat": 42.470889262892875,
+     "hidden_share_of_all_anat": 78.26470662396935,
+     "ctx_share_of_all_anat": 13.792581759499736
+    },
+    "anatomy": {
+     "n_ctx_mean": 162.94666666666666,
+     "ctx_frac_of_grid": 0.6365104166666666,
+     "n_hidden_mean": 54.663333333333334,
+     "n_slots_mean": 64.0,
+     "slot_dupes_mean": 9.336666666666666,
+     "hidden_frac_of_grid": 0.21352864583333334,
+     "hidden_pct_on_anat": 97.04555155802183,
+     "hidden_share_of_all_anat": 80.25668826748027,
+     "ctx_share_of_all_anat": 17.297460853778464
+    },
+    "cover": {
+     "n_ctx_mean": 75.34666666666666,
+     "ctx_frac_of_grid": 0.29432291666666666,
+     "n_hidden_mean": 115.44333333333333,
+     "n_slots_mean": 169.28,
+     "slot_dupes_mean": 53.836666666666666,
+     "hidden_frac_of_grid": 0.4509505208333333,
+     "hidden_pct_on_anat": 42.91282880489706,
+     "hidden_share_of_all_anat": 74.94893971103659,
+     "ctx_share_of_all_anat": 15.819864343528584
+    }
+   }
+  }
+ }
+}

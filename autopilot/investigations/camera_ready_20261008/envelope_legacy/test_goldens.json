@@ -1,0 +1,41 @@
+{
+ "command": "python make_test_goldens.py test_goldens.json",
+ "refs": {
+  "legacy_uniform_v1": {
+   "path": "refs\\curriculum_804c639.py",
+   "sha256": "0ed3a47050fe9ef3bc7900bd22d58aeadb648a398abc14bb2a01354e0eb62ef0"
+  },
+  "least_overlap_v2": {
+   "path": "refs\\curriculum_86ae882.py",
+   "sha256": "1cad91c8cea80e4837b8e1d2e76f6d474e25e08ea7df3cf5d19a978185f140a7"
+  }
+ },
+ "golden": {
+  "legacy_uniform_v1": {
+   "0:27": "842d70e43a554f178bbe0278db63da1322bdb055544817e5df026ce872635710",
+   "0:40": "56e5445aff62b18c19ae1a9940866ac6f6fd8ffa1b8227294d1a1032661af902",
+   "1234:27": "a2b4fff7f1e04415cd83ead6e6fb3c5805560c8593ec00ad5eb4793cd70c5b3b",
+   "1234:40": "e42b4c4c5fc9bf73472598f3d6aef36cb1477e07610728deb36ce5ad7f26d46e"
+  },
+  "least_overlap_v2": {
+   "0:27": "4669c675fbc22f568d4a5809981d600ac07aeed1596c28cea5f68dc4e26517bd",
+   "0:40": "54ec7b849c9a89205820ecb6439b38f34318e0894240efa8bcd4bcc0ec5ca4a7",
+   "1234:27": "22531b1530e929441bfa8a0605badb7d5f7445a2e30029e175af2487d9e2062d",
+   "1234:40": "3fc2d443d9c83b3f9a69dcf9a5c612fad01e9fd71663afabeab481e06c4ed973"
+  }
+ },
+ "working_tree_matches": {
+  "legacy_uniform_v1": {
+   "0:27": true,
+   "0:40": true,
+   "1234:27": true,
+   "1234:40": true
+  },
+  "least_overlap_v2": {
+   "0:27": true,
+   "0:40": true,
+   "1234:27": true,
+   "1234:40": true
+  }
+ }
+}

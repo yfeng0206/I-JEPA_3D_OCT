@@ -1,0 +1,92 @@
+[
+  {
+    "arm": "random",
+    "seed": 0,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "random",
+    "seed": 7,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "random",
+    "seed": 42,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "oracle",
+    "seed": 0,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "oracle",
+    "seed": 7,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "oracle",
+    "seed": 42,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "envelope",
+    "seed": 0,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "envelope",
+    "seed": 7,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "envelope",
+    "seed": 42,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "anatomy",
+    "seed": 0,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "anatomy",
+    "seed": 7,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "anatomy",
+    "seed": 42,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "cover_legacy",
+    "seed": 0,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "cover_legacy",
+    "seed": 7,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  },
+  {
+    "arm": "cover_legacy",
+    "seed": 42,
+    "tensors_bitwise_equal": true,
+    "baseline_mask_dependencies_isolated": true
+  }
+]

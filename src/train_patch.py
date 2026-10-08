@@ -7,19 +7,34 @@ masking on the 16x16 patch grid.
 
 Usage:
     torchrun --nproc_per_node=4 train_patch.py --config configs/patch_vitb16_ep100.yaml
+    python -u src/train_patch.py --config CFG.yaml --stop-after-epoch 50
+
+``--stop-after-epoch N`` exits 0 only after epoch N's checkpoints are written
+atomically, re-read, hashed and recorded in ``<logging.folder>/stop_epoch_NNN.json``;
+it returns 3 if training ends before epoch N, returns 4 (nothing saved for that epoch)
+when an epoch's train or validation loss is non-finite, and fails nonzero on any save or
+verification error. ``--allow-source-change`` permits exact resume when the
+``src/`` source hash differs from the checkpoint's. Each launch writes
+``<logging.folder>/run_manifest.json`` (code/config/data/runtime provenance).
 
 Compatible with PyTorch 1.13.1 and Python 3.8.
 """
 
 import argparse
 import copy
+import datetime
 import hashlib
+import itertools
 import json
 import math
 import os
+import platform
 import random
+import socket
+import subprocess
 import sys
 import time
+import uuid
 
 import numpy as np
 import torch
@@ -41,11 +56,14 @@ if _project_root not in sys.path:
 from src.helper import (
     init_patch_model, init_opt, load_checkpoint, save_checkpoint,
     capture_rng_state, optimizer_step, update_ema,
+    atomic_write_json, file_sha256, file_sha256_cached, verify_checkpoint_file,
+    collect_source_identity, collect_git_identity, CheckpointVerificationError,
+    models_state_digest, read_checkpoint_epoch,
 )
 from src.masks.multiblock import MaskCollator
 from src.masks.curriculum import CurriculumMaskGenerator, MirageMaskCollator
 from src.masks.utils import apply_masks
-from src.datasets.oct_slices import OCTSliceDataset
+from src.datasets.oct_slices import OCTSliceDataset, SLICE_CACHE_MANIFEST, SLICE_CACHE_ARRAY
 from src.datasets.oct_slices_guided import GuidedOCTSliceDataset
 from src.transforms import make_transforms, make_paired_transforms
 from src.utils.distributed import init_distributed
@@ -165,6 +183,194 @@ def format_cover_stats(stats):
 
 
 # ---------------------------------------------------------------------------
+# Run control and provenance (stop-after-epoch, run manifest, sampler seed)
+# ---------------------------------------------------------------------------
+
+EXIT_STOP_NOT_REACHED = 3
+EXIT_NONFINITE_LOSS = 4
+STOP_FILE_SCHEMA = 'jepa_stop_epoch_v1'
+RUN_MANIFEST_SCHEMA = 'jepa_run_manifest_v1'
+
+
+def _utc_now():
+    return datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
+def stop_file_path(output_dir, epoch):
+    return os.path.join(output_dir, 'stop_epoch_%03d.json' % int(epoch))
+
+
+def existing_checkpoint_files(folder):
+    """Checkpoint files (complete or interrupted temp writes) already in ``folder``."""
+    if not os.path.isdir(folder):
+        return []
+    return sorted(name for name in os.listdir(folder)
+                  if name.endswith('.pth.tar') or name.endswith('.pth.tar.tmp'))
+
+
+def make_train_sampler(dataset, world_size, rank, seed):
+    """Training-order sampler keyed to the run seed.
+
+    ``seed`` must be identical on every rank: DistributedSampler permutes with
+    ``seed + epoch`` and then shards, so a shared value keeps the rank shards
+    complementary. Seed 0 reproduces the previous (unseeded) default order.
+    """
+    return DistributedSampler(dataset, num_replicas=world_size, rank=rank,
+                              shuffle=True, seed=int(seed))
+
+
+def config_sha256(config):
+    return hashlib.sha256(json.dumps(config, sort_keys=True, default=str)
+                          .encode('utf-8')).hexdigest()
+
+
+def adam_step_max(optimizer):
+    steps = [float(state['step']) for state in optimizer.state.values() if 'step' in state]
+    return int(max(steps)) if steps else 0
+
+
+def grad_scaler_scale(scaler):
+    if scaler is None:
+        return None
+    scale = float(scaler.get_scale())
+    return int(scale) if scale.is_integer() else scale
+
+
+def momentum_at(ema_start, ema_end, total_steps, index):
+    """EMA momentum the training loop will use for update number ``index`` (0-based)."""
+    value = ema_start
+    for value in itertools.islice(momentum_schedule(ema_start, ema_end, total_steps),
+                                  min(index + 1, total_steps)):
+        pass
+    return value
+
+
+def _nvidia_smi_query():
+    fields = ('index,name,driver_version,power.limit,power.default_limit,'
+              'power.max_limit,memory.total,pstate')
+    try:
+        result = subprocess.run(
+            ['nvidia-smi', '--query-gpu=%s' % fields, '--format=csv,noheader'],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=20)
+        if result.returncode != 0:
+            return {'error': result.stderr.decode('utf-8', 'replace').strip()}
+        names = fields.split(',')
+        rows = [dict(zip(names, [cell.strip() for cell in line.split(',')]))
+                for line in result.stdout.decode('utf-8', 'replace').splitlines() if line.strip()]
+        return {'gpus': rows, 'error': None}
+    except Exception as error:
+        return {'error': repr(error)}
+
+
+def runtime_identity(device):
+    info = {
+        'hostname': socket.gethostname(), 'platform': platform.platform(),
+        'python': sys.version.split()[0], 'executable': sys.executable, 'pid': os.getpid(),
+        'torch': str(torch.__version__), 'cuda_runtime': torch.version.cuda,
+        'cuda_available': torch.cuda.is_available(), 'device': str(device),
+        'cuda_visible_devices': os.environ.get('CUDA_VISIBLE_DEVICES'),
+        'cudnn_enabled': torch.backends.cudnn.enabled,
+        'cudnn_benchmark': torch.backends.cudnn.benchmark,
+        'cudnn_deterministic': torch.backends.cudnn.deterministic,
+        'cudnn_allow_tf32': torch.backends.cudnn.allow_tf32,
+        'cuda_matmul_allow_tf32': torch.backends.cuda.matmul.allow_tf32,
+        'float32_matmul_precision': torch.get_float32_matmul_precision(),
+        'deterministic_algorithms': torch.are_deterministic_algorithms_enabled(),
+    }
+    try:
+        info['cudnn_version'] = torch.backends.cudnn.version()
+    except Exception as error:
+        info['cudnn_version'] = repr(error)
+    if device.type == 'cuda':
+        props = torch.cuda.get_device_properties(device)
+        info.update({'gpu_name': torch.cuda.get_device_name(device),
+                     'gpu_capability': '%d.%d' % (props.major, props.minor),
+                     'gpu_total_memory_bytes': props.total_memory})
+    else:
+        info['gpu_name'] = None
+    info['nvidia_smi'] = _nvidia_smi_query()
+    return info
+
+
+def _volume_list_identity(dataset):
+    if dataset is None:
+        return None
+    names = [os.path.basename(path) for path in dataset.file_paths]
+    return {'volumes': len(names), 'slices': len(dataset),
+            'volume_names_sha256': hashlib.sha256('\n'.join(names).encode('utf-8')).hexdigest()}
+
+
+def data_identity(data_cfg, guide_dir, train_dataset, val_dataset):
+    """Identity of the data inputs from their manifests and listings, not their bytes."""
+    info = {'data_dir': os.path.realpath(data_cfg['data_dir']),
+            'num_slices': data_cfg.get('num_slices', 32),
+            'train_volumes': _volume_list_identity(train_dataset),
+            'val_volumes': _volume_list_identity(val_dataset),
+            'slice_cache_dir': data_cfg.get('slice_cache_dir'), 'slice_cache': None,
+            'guide_dir': guide_dir, 'guides': None}
+    cache_dir = data_cfg.get('slice_cache_dir')
+    if cache_dir:
+        info['slice_cache'] = {}
+        for split in ('Training', 'Validation'):
+            manifest = os.path.join(cache_dir, split, SLICE_CACHE_MANIFEST)
+            array = os.path.join(cache_dir, split, SLICE_CACHE_ARRAY)
+            if os.path.isfile(manifest):
+                info['slice_cache'][split] = {
+                    'manifest': os.path.realpath(manifest),
+                    'manifest_sha256': file_sha256(manifest),
+                    'manifest_bytes': os.path.getsize(manifest),
+                    'array_bytes': os.path.getsize(array) if os.path.isfile(array) else None,
+                }
+    if guide_dir:
+        split_dir = os.path.join(guide_dir, 'Training')
+        entries = sorted((entry.name, entry.stat().st_size) for entry in os.scandir(split_dir)
+                         if entry.is_file()) if os.path.isdir(split_dir) else []
+        listing = ''.join('%s\0%d\n' % item for item in entries)
+        sibling = os.path.join(os.path.dirname(os.path.normpath(guide_dir)), 'manifests')
+        manifests = {}
+        if os.path.isdir(sibling):
+            for name in sorted(os.listdir(sibling)):
+                path = os.path.join(sibling, name)
+                if name.startswith('mirage-guides') and name.endswith('.json') and os.path.isfile(path):
+                    manifests[os.path.realpath(path)] = file_sha256(path)
+        info['guides'] = {
+            'split_dir': os.path.realpath(split_dir), 'files': len(entries),
+            'total_bytes': sum(size for _, size in entries),
+            'listing_sha256': hashlib.sha256(listing.encode('utf-8')).hexdigest(),
+            'manifest_sha256': manifests,
+        }
+    return info
+
+
+def finalize_stop_epoch(output_dir, epoch, saved_checkpoints, successful_updates, identity,
+                        expected_identity=None, expected_model_digest=None):
+    """Verify every checkpoint written for ``epoch`` and only then record the stop file.
+
+    Each file must hold ``epoch``, the expected update count, the run's
+    ``expected_identity`` (training_state values) and the model weights whose
+    digest is ``expected_model_digest``. Any failure raises (the process exits
+    nonzero) before the stop file exists.
+    """
+    path = stop_file_path(output_dir, epoch)
+    if not any(role == 'periodic' for role, _ in saved_checkpoints):
+        raise CheckpointVerificationError("No periodic checkpoint was written for epoch %d" % epoch)
+    records = []
+    for role, checkpoint_path in saved_checkpoints:
+        record = verify_checkpoint_file(checkpoint_path, epoch,
+                                        expected_successful_updates=successful_updates,
+                                        expected_identity=expected_identity,
+                                        expected_model_digest=expected_model_digest)
+        record['role'] = role
+        records.append(record)
+    payload = dict(identity)
+    payload.update({'schema': STOP_FILE_SCHEMA, 'epoch': int(epoch), 'status': 'verified',
+                    'successful_updates': int(successful_updates), 'checkpoints': records,
+                    'timestamp_utc': _utc_now()})
+    atomic_write_json(path, payload)
+    return path, payload
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -186,6 +392,36 @@ def main(args):
         raise ValueError("meta.resume_policy='fork' requires load_checkpoint and read_checkpoint")
     if 'fork_start_epoch' in meta_cfg and resume_policy != 'fork':
         raise ValueError("meta.fork_start_epoch requires meta.resume_policy='fork'")
+
+    # Run-control flags live on the CLI, outside the config and its run
+    # contract, so changing a stop milestone never invalidates exact resume.
+    stop_after_epoch = getattr(args, 'stop_after_epoch', None)
+    allow_source_change = bool(getattr(args, 'allow_source_change', False))
+    if stop_after_epoch is not None:
+        stop_after_epoch = int(stop_after_epoch)
+        if not 1 <= stop_after_epoch <= int(opt_cfg['epochs']):
+            raise ValueError("--stop-after-epoch must be within 1..optimization.epochs (%d)"
+                             % opt_cfg['epochs'])
+        if os.path.exists(stop_file_path(log_cfg['folder'], stop_after_epoch)):
+            raise ValueError("%s already exists; refusing to train toward a stop epoch that "
+                             "is already recorded" % stop_file_path(log_cfg['folder'], stop_after_epoch))
+    if resume_policy == 'fork':
+        # A fork starts a NEW run; a folder that already holds checkpoints
+        # belongs to another (possibly stale) run whose files would be mixed
+        # with or overwritten by this one.
+        stale = existing_checkpoint_files(log_cfg['folder'])
+        if stale:
+            raise ValueError(
+                "meta.resume_policy='fork' refuses to start: logging.folder %s already "
+                "contains checkpoint files %s. Use a new empty folder, or "
+                "resume_policy='exact' to continue that run." % (log_cfg['folder'], stale[:5]))
+
+    # Identity of the code actually executing (may be a git worktree).
+    source_identity = collect_source_identity(_project_root)
+    git_identity = collect_git_identity(_project_root)
+    current_source = {'source_hash': source_identity['source_hash'],
+                      'git_commit': git_identity['git_commit'],
+                      'git_dirty': git_identity['git_dirty']}
 
     # ---- Distributed setup -------------------------------------------------
     world_size, rank = init_distributed()
@@ -395,6 +631,8 @@ def main(args):
         log('  MIRAGE guides: %s (dilate=%d patches, occupancy_threshold=%.2f)'
             % (guide_dir, int(curr_cfg.get('mirage_dilate_patches', 1)),
                float(curr_cfg.get('mirage_occupancy_threshold', 0.5))))
+        log('  Envelope overlap_fallback=%s'
+            % curr_cfg.get('mirage_overlap_fallback', 'least_overlap_v2'))
 
     # Training set
     train_dir = os.path.join(data_dir, 'Training')
@@ -477,9 +715,7 @@ def main(args):
             curriculum_cfg=curr_cfg,
         )
 
-    train_sampler = DistributedSampler(
-        train_dataset, num_replicas=world_size, rank=rank, shuffle=True,
-    )
+    train_sampler = make_train_sampler(train_dataset, world_size, rank, seed)
     train_loader = DataLoader(
         train_dataset,
         batch_size=data_cfg['batch_size'],
@@ -591,15 +827,29 @@ def main(args):
                                      'resume_policy', 'fork_start_epoch')},
         }, sort_keys=True).encode('utf-8')).hexdigest(),
     }
+    read_checkpoint_info = None
+    loaded_epoch = None
     if meta_cfg.get('load_checkpoint', False) and meta_cfg.get('read_checkpoint'):
         r_path = meta_cfg['read_checkpoint']
+        r_sha, r_sha_source = file_sha256_cached(r_path)
+        r_stat = os.stat(r_path)
+        read_checkpoint_info = {
+            'path': r_path, 'realpath': os.path.realpath(r_path), 'bytes': r_stat.st_size,
+            'mtime_utc': datetime.datetime.fromtimestamp(
+                r_stat.st_mtime, datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+            'sha256': r_sha, 'sha256_source': r_sha_source,
+        }
         enc_unwrap = encoder.module if hasattr(encoder, 'module') else encoder
         pred_unwrap = predictor.module if hasattr(predictor, 'module') else predictor
         enc_unwrap, pred_unwrap, target_encoder, optimizer, scaler, start_epoch = \
             load_checkpoint(device, r_path, enc_unwrap, pred_unwrap,
                             target_encoder, optimizer, scaler,
                             mask_gen=mask_gen, training_state=resume_state,
-                            rank=rank, topology=topology, resume_policy=resume_policy)
+                            rank=rank, topology=topology, resume_policy=resume_policy,
+                            source_hash=current_source['source_hash'],
+                            allow_source_change=allow_source_change,
+                            checkpoint_sha256=r_sha)
+        loaded_epoch = start_epoch
         if resume_policy == 'fork':
             start_epoch = int(meta_cfg.get('fork_start_epoch', start_epoch))
             if not 0 <= start_epoch <= opt_cfg['epochs']:
@@ -624,6 +874,29 @@ def main(args):
                 % (start_epoch, seed))
     exact_state = resume_state if resume_policy == 'exact' else {}
 
+    # Training order follows meta.seed. A new-format checkpoint written before
+    # the sampler was seeded used DistributedSampler's default seed 0; exact
+    # continuation of such a run keeps that order.
+    sampler_seed, sampler_seed_source = seed, 'meta.seed'
+    if exact_state and 'sampler_seed' not in exact_state:
+        sampler_seed, sampler_seed_source = 0, 'legacy_checkpoint_default_0'
+        log('  WARNING: checkpoint predates seeded sampling; exact resume keeps '
+            'DistributedSampler seed 0.')
+    elif exact_state:
+        sampler_seed, sampler_seed_source = int(exact_state['sampler_seed']), 'checkpoint'
+    train_sampler.seed = sampler_seed
+    source_history = list(exact_state.get('source_history') or [])
+    # One identity per training run: kept across exact resumes, new for a fork
+    # or a fresh start. Rank 0's value is shared so all ranks save the same one.
+    run_uuid = exact_state.get('run_uuid') or uuid.uuid4().hex
+    if dist.is_initialized() and world_size > 1:
+        shared = [run_uuid]
+        dist.broadcast_object_list(shared, src=0)
+        run_uuid = shared[0]
+    mask_policy = curr_cfg.get('mode') if use_curriculum else 'uniform_multiblock'
+    if not source_history or source_history[-1]['source_hash'] != current_source['source_hash']:
+        source_history.append(dict(current_source, from_epoch=start_epoch))
+
     # ---- Momentum schedule for EMA -----------------------------------------
     ema_start, ema_end = opt_cfg['ema']
     total_steps = opt_cfg['epochs'] * iterations_per_epoch
@@ -642,6 +915,101 @@ def main(args):
         if not exact_state:
             lr_scheduler.step()
             wd_scheduler.step()
+
+    # ---- Start-state record (gate G0) ---------------------------------------
+    wd_index = wd_scheduler._wd_group_indices[0] if wd_scheduler._wd_group_indices else 0
+    resume_summary = {
+        'policy': resume_policy if loaded_epoch is not None else 'none',
+        'loaded_epoch': loaded_epoch, 'start_epoch': start_epoch,
+        'adam_step_max': adam_step_max(optimizer),
+        'grad_scaler_scale': grad_scaler_scale(scaler),
+        'first_update_lr': optimizer.param_groups[0]['lr'],
+        'first_update_wd': optimizer.param_groups[wd_index]['weight_decay'],
+        'first_update_ema': (momentum_at(ema_start, ema_end, total_steps, successful_updates)
+                             if successful_updates < total_steps
+                             else exact_state.get('ema', last_momentum)),
+        'successful_updates_offset': successful_updates,
+        'iterations_per_epoch': iterations_per_epoch, 'accum_steps': accum_steps,
+    }
+    if loaded_epoch is not None:
+        log('  [RESUME-STATE] policy=%s loaded_epoch=%d start_epoch=%d adam_step=%d '
+            'grad_scaler_scale=%s first_update_lr=%.10g first_update_wd=%.10g '
+            'first_update_ema=%.10g successful_updates_offset=%d iterations_per_epoch=%d '
+            'accum_steps=%d'
+            % (resume_policy, loaded_epoch, start_epoch, resume_summary['adam_step_max'],
+               resume_summary['grad_scaler_scale'], resume_summary['first_update_lr'],
+               resume_summary['first_update_wd'], resume_summary['first_update_ema'],
+               successful_updates, iterations_per_epoch, accum_steps))
+    # A crash after epoch N's checkpoints were written but before the stop file
+    # existed is recovered by rerunning the same exact-resume command: the
+    # epoch-N checkpoints are re-verified and recorded without training.
+    verify_only = (stop_after_epoch is not None and stop_after_epoch == start_epoch
+                   and resume_policy == 'exact' and bool(exact_state)
+                   and loaded_epoch == stop_after_epoch)
+    if stop_after_epoch is not None and stop_after_epoch <= start_epoch and not verify_only:
+        raise ValueError("--stop-after-epoch %d is not after the start epoch %d"
+                         % (stop_after_epoch, start_epoch))
+    if verify_only:
+        # No update will run under the current source, so it is not history.
+        source_history = list(exact_state.get('source_history') or [])
+
+    run_identity = {
+        'source_hash': current_source['source_hash'],
+        'git_commit': current_source['git_commit'], 'git_dirty': current_source['git_dirty'],
+        'config_hash': config_sha256(config),
+        'run_contract_sha256': topology['run_contract_sha256'],
+        'seed': seed, 'sampler_seed': sampler_seed, 'resume_policy': resume_policy,
+        'run_uuid': run_uuid, 'mask_policy': mask_policy,
+        'write_tag': write_tag, 'output_dir': os.path.abspath(output_dir),
+    }
+    if is_main:
+        manifest = dict(run_identity)
+        manifest.update({
+            'schema': RUN_MANIFEST_SCHEMA, 'timestamp_utc': _utc_now(),
+            'invocation': {'argv': list(sys.argv), 'cwd': os.getcwd(),
+                           'config_path': os.path.abspath(args.config),
+                           'config_file_sha256': file_sha256(args.config),
+                           'stop_after_epoch': stop_after_epoch,
+                           'allow_source_change': allow_source_change},
+            'config': config,
+            'code': dict(source_identity, **git_identity),
+            'fork_start_epoch': meta_cfg.get('fork_start_epoch'),
+            'read_checkpoint': read_checkpoint_info,
+            'resume_state_at_start': resume_summary,
+            'lineage': resume_state.get('lineage'),
+            'source_history': source_history,
+            'seeding': {'meta_seed': seed, 'run_seed_rank0': seed,
+                        'run_seed_policy': 'meta.seed + rank (python/numpy/torch/cuda)'},
+            'train_sampler': {'class': type(train_sampler).__name__, 'shuffle': True,
+                              'seed': sampler_seed, 'seed_source': sampler_seed_source,
+                              'num_replicas': world_size, 'loader_drop_last': True},
+            'val_sampler': {'class': 'DistributedSampler', 'shuffle': False, 'seed': 0},
+            'amp': {'use_bfloat16': bool(meta_cfg.get('use_bfloat16', False)),
+                    'amp_target': amp_target, 'grad_scaler': scaler is not None},
+            'loader': {'num_workers': data_cfg['num_workers'],
+                       'val_num_workers': data_cfg.get('val_num_workers', 2),
+                       'prefetch_factor': (int(data_cfg.get('prefetch_factor', 4))
+                                           if data_cfg['num_workers'] > 0 else None),
+                       'pin_mem': data_cfg.get('pin_mem', True), 'persistent_workers': False},
+            'batch': {'batch_size': data_cfg['batch_size'], 'accum_steps': accum_steps,
+                      'world_size': world_size,
+                      'effective_batch': data_cfg['batch_size'] * world_size * accum_steps,
+                      'train_batches': len(train_loader),
+                      'iterations_per_epoch': iterations_per_epoch,
+                      'epochs': opt_cfg['epochs']},
+            'data': data_identity(data_cfg, guide_dir if use_mirage else None,
+                                  train_dataset, val_dataset),
+            'runtime': runtime_identity(device),
+        })
+        manifest_path = os.path.join(output_dir, 'run_manifest.json')
+        atomic_write_json(os.path.join(
+            output_dir, 'run_manifests', '%s_pid%d.json'
+            % (manifest['timestamp_utc'].replace(':', '').replace('-', ''), os.getpid())),
+            manifest)
+        atomic_write_json(manifest_path, manifest)
+        log('  Run manifest: %s (source_hash=%s git=%s dirty=%s)'
+            % (manifest_path, current_source['source_hash'][:12],
+               (current_source['git_commit'] or 'unknown')[:12], current_source['git_dirty']))
 
     # ---- Val loss evaluation function --------------------------------------
     @torch.no_grad()
@@ -701,6 +1069,54 @@ def main(args):
         log('Checkpoint already exhausted early-stopping patience; no new updates.')
         stop_epoch = start_epoch
 
+    stop_reached = False
+    nonfinite_abort = False
+    if verify_only:
+        stop_epoch = start_epoch
+        if is_main:
+            paths = {'best': os.path.join(output_dir, '%s-best.pth.tar' % write_tag),
+                     'last': os.path.join(output_dir, '%s-last.pth.tar' % write_tag),
+                     'periodic': os.path.join(output_dir, '%s-ep%d.pth.tar'
+                                              % (write_tag, start_epoch))}
+            roles = exact_state.get('epoch_save_roles')
+            if roles is None:
+                # Checkpoint predates recorded save roles: require periodic and
+                # last, and certify a best file only if it is from this epoch
+                # (an unreadable best fails closed).
+                roles = ['last', 'periodic']
+                if (os.path.isfile(paths['best'])
+                        and read_checkpoint_epoch(paths['best']) == start_epoch):
+                    roles.insert(0, 'best')
+            missing = [role for role in roles if not os.path.isfile(paths[role])]
+            if missing:
+                raise CheckpointVerificationError(
+                    "Recovery of epoch %d: %s checkpoint(s) missing from %s"
+                    % (start_epoch, missing, output_dir))
+            recovered = [(role, paths[role]) for role in ('best', 'last', 'periodic')
+                         if role in roles]
+            # Certify the run that PRODUCED these files (the resumed checkpoint),
+            # not the code doing the verification.
+            producing = exact_state.get('source_identity') or {}
+            receipt = dict(run_identity,
+                           source_hash=producing.get('source_hash'),
+                           git_commit=producing.get('git_commit'),
+                           git_dirty=producing.get('git_dirty'),
+                           run_uuid=exact_state.get('run_uuid'),
+                           recovered_without_training=True,
+                           verifier_source=current_source)
+            expected_identity = {key: exact_state.get(key) for key in
+                                 ('run_uuid', 'topology', 'source_identity')}
+            if 'epoch_save_roles' in exact_state:
+                expected_identity['epoch_save_roles'] = exact_state['epoch_save_roles']
+            log('  Epoch %d is already saved; verifying %s without training.'
+                % (start_epoch, [role for role, _ in recovered]))
+            stop_path, _ = finalize_stop_epoch(
+                output_dir, start_epoch, recovered, successful_updates, receipt,
+                expected_identity=expected_identity,
+                expected_model_digest=models_state_digest(encoder, predictor, target_encoder))
+            log('STOP: epoch %d checkpoints verified; wrote %s (--stop-after-epoch, '
+                'recovered without training)' % (start_epoch, stop_path))
+        stop_reached = True
     for epoch in range(start_epoch, stop_epoch):
         train_sampler.set_epoch(epoch)
         if use_curriculum:
@@ -1020,6 +1436,21 @@ def main(args):
             % (epoch + 1, opt_cfg['epochs'], epoch_time, loss_meter.avg,
                val_str, improved))
 
+        # A non-finite epoch loss means the run is broken: stop before this
+        # epoch's state can overwrite the last good checkpoint.
+        nonfinite = (not math.isfinite(loss_meter.avg)
+                     or (val_loss is not None and not math.isfinite(val_loss)))
+        if dist.is_initialized() and world_size > 1:
+            flag = torch.tensor([float(nonfinite)], device=device)
+            dist.all_reduce(flag)
+            nonfinite = flag.item() > 0
+        if nonfinite:
+            log('ERROR: non-finite loss at epoch %d (train_loss=%s val_loss=%s); aborting '
+                'without saving this epoch (exit %d).'
+                % (epoch + 1, loss_meter.avg, val_loss, EXIT_NONFINITE_LOSS))
+            nonfinite_abort = True
+            break
+
         local_state = {
             'rng': capture_rng_state(),
             'curriculum': mask_gen.state_dict() if mask_gen is not None else None,
@@ -1028,6 +1459,12 @@ def main(args):
         if dist.is_initialized() and world_size > 1:
             rank_states = [None] * world_size
             dist.all_gather_object(rank_states, local_state)
+        stop_now = stop_after_epoch is not None and (epoch + 1) == stop_after_epoch
+        save_every = int(opt_cfg.get('save_every', 25))
+        # The stop epoch always gets a non-rolling milestone file.
+        save_periodic = (epoch + 1) % save_every == 0 or stop_now
+        epoch_save_roles = ((['best'] if improved else []) + ['last']
+                            + (['periodic'] if save_periodic else []))
         training_state = {
             'version': 1, 'successful_updates': successful_updates,
             'lr_scheduler': lr_scheduler.state_dict(),
@@ -1037,9 +1474,17 @@ def main(args):
             'topology': topology, 'rank_states': rank_states,
             'resume_boundary': 'completed_epoch_nonpersistent_workers',
             'lineage': resume_state.get('lineage'),
+            'sampler_seed': sampler_seed,
+            'source_identity': current_source,
+            'source_history': source_history,
+            'run_uuid': run_uuid,
+            # Lets a crash-recovery rerun require exactly this epoch's file set.
+            'epoch_save_roles': epoch_save_roles,
         }
 
-        # Save periodic + best checkpoints (main process only)
+        # Save periodic + best checkpoints (main process only). Every write is
+        # atomic (temp file + fsync + rename inside save_checkpoint).
+        saved_checkpoints = []
         if is_main:
             if improved:
                 best_path = os.path.join(output_dir, '%s-best.pth.tar' % write_tag)
@@ -1047,6 +1492,7 @@ def main(args):
                     best_path, encoder, predictor, target_encoder, optimizer,
                     scaler, epoch + 1, val_loss, data_cfg['batch_size'],
                     world_size, lr_val, mask_gen=mask_gen, training_state=training_state)
+                saved_checkpoints.append(('best', best_path))
                 upload_to_blob(best_path, blob_prefix, log)
             # Rolling resume point, written EVERY epoch.
             #
@@ -1060,17 +1506,15 @@ def main(args):
             # insurance. Written to a temp file and moved into place so a crash
             # mid-write cannot corrupt the only good resume point.
             last_path = os.path.join(output_dir, '%s-last.pth.tar' % write_tag)
-            tmp_path = last_path + '.tmp'
             save_checkpoint(
-                tmp_path, encoder, predictor, target_encoder, optimizer,
+                last_path, encoder, predictor, target_encoder, optimizer,
                 scaler, epoch + 1, loss_meter.avg, data_cfg['batch_size'],
                 world_size, lr_val,
                 mask_gen=mask_gen, training_state=training_state,
             )
-            os.replace(tmp_path, last_path)
+            saved_checkpoints.append(('last', last_path))
 
-            save_every = int(opt_cfg.get('save_every', 25))
-            if (epoch + 1) % save_every == 0:
+            if save_periodic:
                 ep_path = os.path.join(output_dir, '%s-ep%d.pth.tar' % (write_tag, epoch + 1))
                 save_checkpoint(
                     ep_path, encoder, predictor, target_encoder, optimizer,
@@ -1078,12 +1522,29 @@ def main(args):
                     world_size, lr_val,
                     mask_gen=mask_gen, training_state=training_state,
                 )
+                saved_checkpoints.append(('periodic', ep_path))
                 upload_to_blob(ep_path, blob_prefix, log)
+            log('  [CKPT] epoch=%d saved: %s'
+                % (epoch + 1, ', '.join(os.path.basename(path) for _, path in saved_checkpoints)))
             # Upload log CSV every 5 epochs
             if (epoch + 1) % 5 == 0:
                 csv_file = os.path.join(output_dir, '%s-log.csv' % write_tag)
                 if os.path.exists(csv_file):
                     upload_to_blob(csv_file, blob_prefix, log)
+
+        if stop_now:
+            if is_main:
+                stop_path, _ = finalize_stop_epoch(
+                    output_dir, epoch + 1, saved_checkpoints, successful_updates, run_identity,
+                    expected_identity={'run_uuid': run_uuid, 'topology': topology,
+                                       'source_identity': current_source,
+                                       'epoch_save_roles': epoch_save_roles},
+                    expected_model_digest=models_state_digest(encoder, predictor,
+                                                              target_encoder))
+                log('STOP: epoch %d checkpoints verified; wrote %s (--stop-after-epoch)'
+                    % (epoch + 1, stop_path))
+            stop_reached = True
+            break
 
         # Early stopping (only active after warmup)
         if val_loss is not None and past_warmup and epochs_no_improve >= patience:
@@ -1092,6 +1553,8 @@ def main(args):
             break
 
     log('=' * 70)
+    if stop_reached:
+        log('Stopped after verified epoch %d (--stop-after-epoch).' % stop_after_epoch)
     log('Training complete. Best val loss: %.4f' % best_val_loss)
     log('=' * 70)
 
@@ -1109,14 +1572,38 @@ def main(args):
         dist.barrier()
         dist.destroy_process_group()
 
+    if nonfinite_abort:
+        return EXIT_NONFINITE_LOSS
+    if stop_after_epoch is not None and not stop_reached:
+        log('ERROR: --stop-after-epoch %d was requested but training ended without reaching '
+            'it; no stop file written (exit %d).' % (stop_after_epoch, EXIT_STOP_NOT_REACHED))
+        return EXIT_STOP_NOT_REACHED
+    return 0
+
 
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
-if __name__ == '__main__':
+def build_arg_parser():
     parser = argparse.ArgumentParser(description='Patch-level I-JEPA pretraining')
     parser.add_argument('--config', type=str, required=True,
                         help='Path to YAML config file')
-    args = parser.parse_args()
-    main(args)
+    parser.add_argument('--stop-after-epoch', type=int, default=None, metavar='N',
+                        help='After epoch N (the 1-based epoch stored in checkpoints) is '
+                             'saved and its checkpoints re-read and hashed, write '
+                             '<logging.folder>/stop_epoch_NNN.json and exit 0. Not part of '
+                             'the run contract. Exit 3 if training ends before epoch N; '
+                             'exit 4 on a non-finite epoch loss.')
+    parser.add_argument('--allow-source-change', action='store_true',
+                        help='Allow exact resume although the src/ source hash differs '
+                             'from the one recorded in the checkpoint.')
+    return parser
+
+
+def cli(argv=None):
+    return main(build_arg_parser().parse_args(argv))
+
+
+if __name__ == '__main__':
+    sys.exit(cli())

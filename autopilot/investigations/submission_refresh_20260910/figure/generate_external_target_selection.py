@@ -1,5 +1,13 @@
-"""Real, CC-BY external OCT example with exact production-sampler targets."""
+"""Real, CC-BY external OCT example with exact production-sampler targets.
+
+Camera-ready (E13): CENTROID uses the TRAINED band, lateral fraction 0.6
+(configs/patch_oracle_anatomical.yaml; v9 used the code default 0.8), with
+everything else unchanged.  Samplers run from a pinned git revision.  Outputs
+go to the camera-ready staging folder by default, never over the paper's
+figures unless ``--out-dir`` names it explicitly.
+"""
 from pathlib import Path
+import argparse
 import hashlib
 import json
 import random
@@ -16,10 +24,15 @@ import torch
 ROOT = Path(__file__).resolve().parents[4]
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
-from src.masks.multiblock import MaskCollator
-from src.masks.curriculum import CurriculumMaskGenerator
+from scripts.mask_composition_probe import (  # noqa: E402
+    install_sampler_sources, load_trained_config, sampler_record)
 
-DEST = ROOT / "paper" / "genai4health2026" / "figures"
+SAMPLERS = install_sampler_sources("HEAD")
+MaskCollator = SAMPLERS["MaskCollator"]
+CurriculumMaskGenerator = SAMPLERS["CurriculumMaskGenerator"]
+
+PAPER_FIGURES = ROOT / "paper" / "genai4health2026" / "figures"
+STAGING = ROOT / "autopilot" / "investigations" / "camera_ready_20261008" / "figures_staging"
 STEM = "fig_oct_target_selection"
 SOURCE = HERE / "octdl_figure1_original.png"
 LICENSE = HERE / "octdl_primary_license.html"
@@ -27,8 +40,9 @@ CROP = (3200, 245, 4480, 1525)
 BASE = dict(input_size=(256, 256), patch_size=16, enc_mask_scale=(.85, 1.),
             pred_mask_scale=(.15, .2), aspect_ratio=(.75, 1.5),
             nenc=1, npred=4, min_keep=10, allow_overlap=False)
+# Trained CENTROID band (configs/patch_oracle_anatomical.yaml); v9 used .8.
 CFG = dict(mode="anatomical_prior", T_warm=0, T_total=1, r_max=1.,
-           oracle_region_frac=.28, oracle_lateral_frac=.8,
+           oracle_region_frac=.28, oracle_lateral_frac=.6,
            oracle_row_offset=0., oracle_min_band_rows=3, audit_masks=True)
 CAPTION = (
     "Target-selection intuition on an external OCT example, not FairVision data. "
@@ -56,6 +70,14 @@ def seed():
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out-dir", type=Path, default=STAGING)
+    args = parser.parse_args()
+    DEST = args.out_dir.resolve()
+    DEST.mkdir(parents=True, exist_ok=True)
+    trained = {k: v for k, v in load_trained_config("centroid")["curriculum"].items()
+               if k.startswith("oracle_")}
+    assert trained == {k: v for k, v in CFG.items() if k.startswith("oracle_")}, trained
     assert "creativecommons.org/licenses/by/4.0" in LICENSE.read_text(encoding="utf-8")
     original = Image.open(SOURCE)
     assert original.size == (4768, 1764)
@@ -146,10 +168,13 @@ def main():
                             "whole-crop bilinear downsample 1280x1280 to 256x256",
                             "no contrast enhancement", "semi-transparent categorical overlays"],
         "sampler_config": BASE, "curriculum_config": CFG,
+        "centroid_setting": ("trained configuration: configs/patch_oracle_anatomical.yaml "
+                             "oracle_* keys (region 0.28, lateral 0.6, offset 0, min rows 3); "
+                             "the v9 figure used the code-default lateral 0.8"),
         "seed": 42, "block_size_seed": 3107, "block_sizes": sizes, "batch_size": 1,
-        "source_code_sha256": {str(p.relative_to(ROOT)): sha(p) for p in
-                               [ROOT / "src" / "masks" / f"{n}.py"
-                                for n in ("multiblock", "curriculum", "utils", "anatomy", "cover")]},
+        "samplers": sampler_record(),
+        "source_code_sha256": {f"src\\masks\\{Path(k).name}": v["sha256_crlf_checkout"]
+                               for k, v in sampler_record()["files"].items()},
         "masks": masks, "guide": guide.astype(int).tolist(),
         "input_tensor_sha256": hashlib.sha256(tensor.numpy().tobytes()).hexdigest(),
         "guide_sha256": hashlib.sha256(guide.tobytes()).hexdigest(),
@@ -165,13 +190,28 @@ def main():
                     "The example does not come from FairVision and shows no performance results.",
         "outputs": {s: {"file": f"{STEM}.{s}", "sha256": sha(DEST / f"{STEM}.{s}")}
                     for s in ("png", "pdf", "svg")},
+        "out_dir": str(DEST.relative_to(ROOT)) if DEST.is_relative_to(ROOT) else str(DEST),
         "validation": {"indices_bounded": True, "context_target_disjoint": True,
                        "same_crop_and_matched_block_draws": True,
                        "source_license_primary_verified": True,
                        "source_original_visually_reviewed": True,
                        "source_crop_excludes_author_annotation": True},
     }
-    (HERE / "evidence.json").write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+    published = json.loads((HERE / "evidence.json").read_text())
+    if published["input_tensor_sha256"] == evidence["input_tensor_sha256"]:
+        old_guide = np.asarray(published["guide"], dtype=bool)
+        evidence["change_vs_published_v9"] = {
+            "published_evidence_sha256": sha(HERE / "evidence.json"),
+            "published_lateral_frac": published["curriculum_config"]["oracle_lateral_frac"],
+            "guide_cells": {"published": int(old_guide.sum()), "camera_ready": int(guide.sum())},
+            "random_masks_identical": published["masks"]["RANDOM"] == masks["RANDOM"],
+            "centroid_target_union_cells": {
+                "published": len({i for g in published["masks"]["CENTROID"]["targets"] for i in g}),
+                "camera_ready": len({i for g in masks["CENTROID"]["targets"] for i in g})},
+            "centroid_masks_identical": published["masks"]["CENTROID"] == masks["CENTROID"],
+        }
+    target = HERE / "evidence.json" if DEST == PAPER_FIGURES.resolve() else DEST / f"{STEM}.evidence.json"
+    target.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: evidence[k] for k in ["generator_sha256", "source_image_sha256",
                       "primary_license_sha256", "outputs"]}, indent=2))
 

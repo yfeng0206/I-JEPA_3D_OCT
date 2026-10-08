@@ -1,0 +1,12 @@
+{
+ "compared_against": [
+  "a3_scratch\\production_geometry_historical_multiseed.json",
+  "a3_scratch\\production_geometry_multiseed.json"
+ ],
+ "fields": 96,
+ "max_abs_difference": 7.105427357601002e-15,
+ "sha256": {
+  "hist": "1992cef367501f2c2135dcfcb8927e79c051c0f0fee84bd493640d3a72323b09",
+  "head": "726eb9f823fd67f5ff57c887ad1c47f1de5f439ad74cdd335af4f0899cc24fc8"
+ }
+}

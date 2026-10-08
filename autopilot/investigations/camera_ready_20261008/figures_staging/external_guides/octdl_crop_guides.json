@@ -1,0 +1,87 @@
+{
+  "source_image": "octdl_figure1_original.png",
+  "source_image_sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5",
+  "crop_xyxy": [
+    3200,
+    245,
+    4480,
+    1525
+  ],
+  "native_crop_pixels": [
+    1280,
+    1280
+  ],
+  "native_crop_sha256": "db1a30e7e29f5c23aa0ed8793dda93761ad34c79a94b105e4c69534e4e146755",
+  "hard": {
+    "pipeline": "min-max -> cv2 INTER_LINEAR 1024 -> MIRAGE-Large semseg softmax argmax -> nearest-exact 200 -> build_union -> repair_union(DEFAULT_REPAIR)",
+    "checkpoint": "D:\\jepa_phase0\\mirage-goals\\outputs\\official-vitlarge\\GOALS\\MIRAGE-Large_frozen_convnext_CEGDice\\checkpoint-best.pth",
+    "checkpoint_sha256": "589b0ef236cf1c8f62c978ce09c0b029915d33ba2c310bba21e13121908a0a83",
+    "repair_params_fingerprint": "9a25a2cdb36f9cba",
+    "envelope_valid": true,
+    "repair_stats": {
+      "raw_area_frac": 0.2009,
+      "repaired_area_frac": 0.346775,
+      "added_area_frac": 0.145875,
+      "span_frac": 1.0,
+      "components_kept": 8.0,
+      "components_dropped": 10.0,
+      "gaps_bridged": 0.0,
+      "gaps_skipped": 0.0,
+      "column_gaps_skipped": 0.0,
+      "spike_pixels_removed": 0.0,
+      "valid": 1.0
+    },
+    "class_fraction_elsewhere_rnfl_gcipl_choroid": [
+      0.7974704504013062,
+      0.0838661938905716,
+      0.03351055830717087,
+      0.0851527526974678
+    ],
+    "label_fraction": {
+      "0": 0.7991,
+      "1": 0.08535,
+      "2": 0.03235,
+      "3": 0.0832
+    },
+    "envelope_area_frac": 0.346775,
+    "seconds": 40.64792219991796
+  },
+  "soft": {
+    "pipeline": "min-max -> cv2 INTER_LINEAR 512 -> MIRAGE-Base MergedV3 + adapter (encoder tap) -> softmax -> P_inner, P_choroid -> bilinear 200 -> uint8",
+    "mirage_checkpoint": "D:\\jepa_phase0\\mirage-goals\\outputs\\mergedv3-base-512\\MergedV3\\MIRAGE-Base_frozen_convnext_CEGDice-ignore\\checkpoint-best.pth",
+    "mirage_sha256": "31a932eef403c3e83165518dff3cf0b453ecb80939f0c0e7bc9d2f831d4c62ae",
+    "adapter": "results\\masking\\structural_loss\\adapter_ep100_structl100_a010_e3_lr0.001_n4800.pt",
+    "adapter_sha256": "d4f09adfa9f05f0b59cc765afea3194d76c4a5f2406fd2b48dc98f8872dd7fdd",
+    "adapter_tap": "enc",
+    "adapter_cfg": {
+      "ch": 768,
+      "depth": 2,
+      "width": 128,
+      "alpha": 0.1
+    },
+    "mean_scores": [
+      0.10593558823529411,
+      0.12193323529411765
+    ],
+    "soft_envelope_area_frac": 0.2316,
+    "seconds": 6.035741199972108
+  },
+  "checkpoint_checks": {
+    "large_checkpoint_matches_training_preprocess_manifest": true,
+    "soft_mirage_matches_cache_tag": true,
+    "adapter_matches_cache_tag": true
+  },
+  "differences_from_training_caches": [
+    "CPU fp32 inference; the training caches used CUDA fp16 autocast",
+    "input is a 1280x1280 crop of a published OCTDL figure, not a 200x200 FairVision B-scan",
+    "MIRAGE was not trained on OCTDL: an illustration of the pipeline, not a validated segmentation"
+  ],
+  "output": {
+    "file": "octdl_crop_guides.npz",
+    "sha256": "2dccb3c7ac3cd2b8c9a5b952922f0dc8d8e7ba3fdc50ef096d97c1630dd1f9b0"
+  },
+  "generator": "produce_external_guides.py",
+  "generator_sha256": "d845a62680fc079082802ef503ea4fc35359f1d9f5374b65359aca6606c819b0",
+  "torch": "2.7.1+cu128",
+  "threads": 4
+}

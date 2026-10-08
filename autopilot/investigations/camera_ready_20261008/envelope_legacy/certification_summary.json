@@ -1,0 +1,439 @@
+{
+ "task": "E2 mask.curriculum.mirage_overlap_fallback (legacy_uniform_v1 | least_overlap_v2, default least_overlap_v2)",
+ "yaml_for_envelope_replicate": {
+  "mask.curriculum.mirage_overlap_fallback": "legacy_uniform_v1"
+ },
+ "environment": {
+  "python": "D:\\jepa_phase0\\.venv\\Scripts\\python.exe",
+  "env": {
+   "CUDA_VISIBLE_DEVICES": "",
+   "MPLBACKEND": "Agg"
+  },
+  "cwd": "autopilot\\investigations\\camera_ready_20261008\\envelope_legacy"
+ },
+ "working_tree_curriculum_sha256": "2bf0dca7c44a1ee0aa7bc167ce90840256b53d55df13bb52321bceb1003ea538",
+ "commands": [
+  "python parse_train_log.py D:\\jepa_phase0\\runs\\patch_mirage_envelope\\train.log hist_train_log_mirage.json",
+  "python build_real_guides.py 7680 real_guides_head_n7680.npz 20261008 11",
+  "python build_real_guides.py 1280 real_guides_head_a1selection_n1280.npz 2026 11",
+  "copy files\\camera_ready\\a1_scratch\\real_guides_804c639.npz real_guides_a1_804c639_dataset_n1280.npz",
+  "python golden_masks.py golden_synthetic_smoke.json   (output renamed to golden_masks_synthetic.json)",
+  "python golden_masks.py golden_masks_real.json --skip-synthetic real_guides_head_n7680.npz real_guides_a1_804c639_dataset_n1280.npz",
+  "python fingerprint_replay.py real_guides_head_n7680.npz hist_train_log_mirage.json fingerprint.json",
+  "python fingerprint_replay.py real_guides_head_a1selection_n1280.npz hist_train_log_mirage.json fingerprint_a1selection_n1280.json",
+  "python make_test_goldens.py test_goldens.json"
+ ],
+ "hist_log_crosscheck": "parse of train.log reproduces A1 envelope_mirage_stats_by_epoch.json per-epoch means to 1.4e-13 (73 epochs, 187 [MIRAGE] lines each)",
+ "dataset_equivalence": {
+  "head_dataset_vs_804c639_dataset_same_selection_and_crop_seed": {
+   "idx_equal": true,
+   "guides_bit_equal": true,
+   "valid_equal": true,
+   "views": 1280
+  }
+ },
+ "golden": {
+  "synthetic": {
+   "verdict": {
+    "legacy_uniform_v1_equals_804c639": true,
+    "least_overlap_v2_equals_HEAD": true,
+    "default_equals_HEAD": true,
+    "instrumentation_is_inert": true,
+    "fixtures_exercise_fallback": true,
+    "804c639_differs_from_HEAD_tensors": 473
+   },
+   "totals": {
+    "ref_804c639|new_v1": {
+     "hash_groups": 576,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "new_v1|instr_v1": {
+     "hash_groups": 576,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "ref_head|new_v2": {
+     "hash_groups": 576,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "ref_head|new_default": {
+     "hash_groups": 576,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "new_v2|instr_v2": {
+     "hash_groups": 576,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "ref_804c639|ref_head": {
+     "hash_groups": 576,
+     "differ": 473,
+     "stats_batches_differ": 236
+    },
+    "new_v1|new_v2": {
+     "hash_groups": 576,
+     "differ": 473,
+     "stats_batches_differ": 236
+    }
+   },
+   "overlap_events": {
+    "instr_v1": {
+     "overlap_infeasible": 155171,
+     "least_strict_subset": 154809
+    },
+    "instr_v2": {
+     "overlap_infeasible": 177448,
+     "least_strict_subset": 177063
+    }
+   },
+   "cases": 72
+  },
+  "real:real_guides_head_n7680.npz": {
+   "verdict": {
+    "legacy_uniform_v1_equals_804c639": true,
+    "least_overlap_v2_equals_HEAD": true,
+    "default_equals_HEAD": true,
+    "instrumentation_is_inert": true,
+    "fixtures_exercise_fallback": true,
+    "804c639_differs_from_HEAD_tensors": 480
+   },
+   "totals": {
+    "ref_804c639|new_v1": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "new_v1|instr_v1": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "ref_head|new_v2": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "ref_head|new_default": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "new_v2|instr_v2": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "ref_804c639|ref_head": {
+     "hash_groups": 480,
+     "differ": 480,
+     "stats_batches_differ": 240
+    },
+    "new_v1|new_v2": {
+     "hash_groups": 480,
+     "differ": 480,
+     "stats_batches_differ": 240
+    }
+   },
+   "overlap_events": {
+    "instr_v1": {
+     "overlap_infeasible": 225926,
+     "least_strict_subset": 215995
+    },
+    "instr_v2": {
+     "overlap_infeasible": 292834,
+     "least_strict_subset": 278852
+    }
+   },
+   "input": {
+    "path": "real_guides_head_n7680.npz",
+    "sha256": "8181e511c57f78d351ad74f9093a601cb7fb1b6f9deb8a188349a080fe32a90c",
+    "views_used": 1280,
+    "valid": 1264
+   },
+   "cases": 12
+  },
+  "real:real_guides_a1_804c639_dataset_n1280.npz": {
+   "verdict": {
+    "legacy_uniform_v1_equals_804c639": true,
+    "least_overlap_v2_equals_HEAD": true,
+    "default_equals_HEAD": true,
+    "instrumentation_is_inert": true,
+    "fixtures_exercise_fallback": true,
+    "804c639_differs_from_HEAD_tensors": 480
+   },
+   "totals": {
+    "ref_804c639|new_v1": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "new_v1|instr_v1": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "ref_head|new_v2": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "ref_head|new_default": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "new_v2|instr_v2": {
+     "hash_groups": 480,
+     "differ": 0,
+     "stats_batches_differ": 0
+    },
+    "ref_804c639|ref_head": {
+     "hash_groups": 480,
+     "differ": 480,
+     "stats_batches_differ": 240
+    },
+    "new_v1|new_v2": {
+     "hash_groups": 480,
+     "differ": 480,
+     "stats_batches_differ": 240
+    }
+   },
+   "overlap_events": {
+    "instr_v1": {
+     "overlap_infeasible": 217215,
+     "least_strict_subset": 209275
+    },
+    "instr_v2": {
+     "overlap_infeasible": 287722,
+     "least_strict_subset": 275765
+    }
+   },
+   "input": {
+    "path": "real_guides_a1_804c639_dataset_n1280.npz",
+    "sha256": "8efb1fcddbfad67d82a0b79302d5358add1153e803949d3ac50bd518a5857663",
+    "views_used": 1280,
+    "valid": 1270
+   },
+   "cases": 12
+  },
+  "refs": {
+   "804c639": {
+    "path": "refs\\curriculum_804c639.py",
+    "sha256": "0ed3a47050fe9ef3bc7900bd22d58aeadb648a398abc14bb2a01354e0eb62ef0"
+   },
+   "86ae882": {
+    "path": "refs\\curriculum_86ae882.py",
+    "sha256": "1cad91c8cea80e4837b8e1d2e76f6d474e25e08ea7df3cf5d19a978185f140a7"
+   },
+   "working_tree": {
+    "path": "src\\masks\\curriculum.py",
+    "sha256": "2bf0dca7c44a1ee0aa7bc167ce90840256b53d55df13bb52321bceb1003ea538"
+   }
+  }
+ },
+ "fingerprint_full_guidance": {
+  "primary_7680_views_3_seeds": {
+   "verdict": {
+    "legacy_uniform_v1_inside_all_placement_ranges": true,
+    "least_overlap_v2_outside_ranges": [
+     "unique_targets",
+     "context",
+     "on_region",
+     "accept",
+     "fill",
+     "retina_visible",
+     "tries"
+    ],
+    "legacy_uniform_v1_outside_ranges": [],
+    "ref_804c639_stats_identical_to_legacy_uniform_v1": true
+   },
+   "table": {
+    "unique_targets": {
+     "hist_mean": 120.25820473644004,
+     "hist_min": 119.26844919786096,
+     "hist_max": 121.13957219251338,
+     "legacy_uniform_v1": 120.67868923611111,
+     "least_overlap_v2": 133.95594618055554,
+     "ref_804c639": 120.67868923611111
+    },
+    "context": {
+     "hist_mean": 111.46030557677618,
+     "hist_min": 109.7048128342246,
+     "hist_max": 113.11016042780749,
+     "legacy_uniform_v1": 110.09743923611111,
+     "least_overlap_v2": 98.37534722222222,
+     "ref_804c639": 110.09743923611111
+    },
+    "on_region": {
+     "hist_mean": 0.46364110007639414,
+     "hist_min": 0.46102673796791444,
+     "hist_max": 0.4660802139037434,
+     "legacy_uniform_v1": 0.4622418622609586,
+     "least_overlap_v2": 0.433014202773222,
+     "ref_804c639": 0.4622418622609586
+    },
+    "accept": {
+     "hist_mean": 0.4784064171122994,
+     "hist_min": 0.455668449197861,
+     "hist_max": 0.4994117647058823,
+     "legacy_uniform_v1": 0.4792543458109034,
+     "least_overlap_v2": 0.23184027913379676,
+     "ref_804c639": 0.4792543458109034
+    },
+    "fill": {
+     "hist_mean": 0.519312910618793,
+     "hist_min": 0.5169411764705882,
+     "hist_max": 0.5219679144385027,
+     "legacy_uniform_v1": 0.5175335295390839,
+     "least_overlap_v2": 0.5008541102614349,
+     "ref_804c639": 0.5175335295390839
+    },
+    "retina_visible": {
+     "hist_mean": 0.24455691367456076,
+     "hist_min": 0.24132085561497327,
+     "hist_max": 0.24785026737967913,
+     "legacy_uniform_v1": 0.2461706127666271,
+     "least_overlap_v2": 0.21212336020802344,
+     "ref_804c639": 0.2461706127666271
+    },
+    "tries": {
+     "hist_mean": 11.857417876241405,
+     "hist_min": 11.648128342245988,
+     "hist_max": 12.045989304812833,
+     "legacy_uniform_v1": 11.784071281849432,
+     "least_overlap_v2": 12.874184682296526,
+     "ref_804c639": 11.784071281849432
+    },
+    "infeasible": {
+     "hist_mean": 1.1844155844155844,
+     "hist_min": 1.0588235294117647,
+     "hist_max": 1.4491978609625669,
+     "legacy_uniform_v1": 1.3444444444444446,
+     "least_overlap_v2": 1.3444444444444446,
+     "ref_804c639": 1.3444444444444446
+    },
+    "fallbacks": {
+     "hist_mean": 0.877998472116119,
+     "hist_min": 0.7058823529411765,
+     "hist_max": 1.0748663101604279,
+     "legacy_uniform_v1": 0.8583333333333333,
+     "least_overlap_v2": 0.8583333333333333,
+     "ref_804c639": 0.8583333333333333
+    },
+    "patches/block": {
+     "hist_mean": 44.31902979373567,
+     "hist_min": 43.96363636363637,
+     "hist_max": 44.78288770053476,
+     "legacy_uniform_v1": 44.30902777777778,
+     "least_overlap_v2": 44.30902777777778,
+     "ref_804c639": 44.30902777777778
+    }
+   }
+  },
+  "crosscheck_A1_selection_1280_views": {
+   "verdict": {
+    "legacy_uniform_v1_inside_all_placement_ranges": false,
+    "least_overlap_v2_outside_ranges": [
+     "unique_targets",
+     "context",
+     "on_region",
+     "accept",
+     "fill",
+     "retina_visible",
+     "tries"
+    ],
+    "legacy_uniform_v1_outside_ranges": [
+     "on_region",
+     "background",
+     "fallbacks"
+    ],
+    "ref_804c639_stats_identical_to_legacy_uniform_v1": true
+   },
+   "table": {
+    "unique_targets": {
+     "hist_mean": 120.25820473644004,
+     "hist_min": 119.26844919786096,
+     "hist_max": 121.13957219251338,
+     "legacy_uniform_v1": 119.7453125,
+     "least_overlap_v2": 132.81692708333333,
+     "ref_804c639": 119.7453125
+    },
+    "context": {
+     "hist_mean": 111.46030557677618,
+     "hist_min": 109.7048128342246,
+     "hist_max": 113.11016042780749,
+     "legacy_uniform_v1": 111.36145833333333,
+     "least_overlap_v2": 99.80807291666666,
+     "ref_804c639": 111.36145833333333
+    },
+    "on_region": {
+     "hist_mean": 0.46364110007639414,
+     "hist_min": 0.46102673796791444,
+     "hist_max": 0.4660802139037434,
+     "legacy_uniform_v1": 0.46636400808643663,
+     "least_overlap_v2": 0.43699480902944837,
+     "ref_804c639": 0.46636400808643663
+    },
+    "accept": {
+     "hist_mean": 0.4784064171122994,
+     "hist_min": 0.455668449197861,
+     "hist_max": 0.4994117647058823,
+     "legacy_uniform_v1": 0.4778432486345792,
+     "least_overlap_v2": 0.24443111025772313,
+     "ref_804c639": 0.4778432486345792
+    },
+    "fill": {
+     "hist_mean": 0.519312910618793,
+     "hist_min": 0.5169411764705882,
+     "hist_max": 0.5219679144385027,
+     "legacy_uniform_v1": 0.5188656462316688,
+     "least_overlap_v2": 0.5036741015861901,
+     "ref_804c639": 0.5188656462316688
+    },
+    "retina_visible": {
+     "hist_mean": 0.24455691367456076,
+     "hist_min": 0.24132085561497327,
+     "hist_max": 0.24785026737967913,
+     "legacy_uniform_v1": 0.24409711050793434,
+     "least_overlap_v2": 0.21131897819824524,
+     "ref_804c639": 0.24409711050793434
+    },
+    "tries": {
+     "hist_mean": 11.857417876241405,
+     "hist_min": 11.648128342245988,
+     "hist_max": 12.045989304812833,
+     "legacy_uniform_v1": 11.761298723118278,
+     "least_overlap_v2": 12.811657679424817,
+     "ref_804c639": 11.761298723118278
+    },
+    "infeasible": {
+     "hist_mean": 1.1844155844155844,
+     "hist_min": 1.0588235294117647,
+     "hist_max": 1.4491978609625669,
+     "legacy_uniform_v1": 1.1666666666666667,
+     "least_overlap_v2": 1.1666666666666667,
+     "ref_804c639": 1.1666666666666667
+    },
+    "fallbacks": {
+     "hist_mean": 0.877998472116119,
+     "hist_min": 0.7058823529411765,
+     "hist_max": 1.0748663101604279,
+     "legacy_uniform_v1": 0.5,
+     "least_overlap_v2": 0.5,
+     "ref_804c639": 0.5
+    },
+    "patches/block": {
+     "hist_mean": 44.31902979373567,
+     "hist_min": 43.96363636363637,
+     "hist_max": 44.78288770053476,
+     "legacy_uniform_v1": 44.3125,
+     "least_overlap_v2": 44.3125,
+     "ref_804c639": 44.3125
+    }
+   }
+  }
+ }
+}

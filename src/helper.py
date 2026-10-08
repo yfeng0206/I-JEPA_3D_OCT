@@ -10,9 +10,13 @@ Compatible with PyTorch 1.13.1 and Python 3.8.
 """
 
 import copy
+import gc
 import hashlib
+import json
 import os
 import random
+import subprocess
+import time
 import warnings
 
 import numpy as np
@@ -271,7 +275,8 @@ def restore_rng_state(state):
 
 def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, scaler,
                     mask_gen=None, training_state=None, rank=0, topology=None,
-                    resume_policy='exact'):
+                    resume_policy='exact', source_hash=None, allow_source_change=False,
+                    checkpoint_sha256=None):
     """Load a training checkpoint.
 
     Args:
@@ -296,6 +301,12 @@ def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, sca
             changed contracts. ``fork`` retains all three models and optimizer/
             scaler, but does not restore RNG/curriculum/scheduler/selection state.
             The caller deliberately reconstructs those from the new run config.
+        source_hash: Combined SHA-256 of the executing ``src/`` tree. On exact
+            resume of a checkpoint that recorded one, a different value is
+            refused unless ``allow_source_change`` is set.
+        allow_source_change: Permit exact resume across a source-hash change.
+        checkpoint_sha256: Precomputed digest of ``r_path`` for fork lineage
+            (computed here when omitted).
 
     Global RNG restoration does not restore persistent workers or an in-flight
     prefetched iterator. The trainer saves only completed-epoch boundaries with
@@ -314,6 +325,20 @@ def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, sca
         raise ValueError("Resume worker/rank/batch/config contract differs from checkpoint; "
                          "set meta.resume_policy='fork' for an intentional new run. "
                          "Exact continuation refuses this mismatch.")
+    if resume_policy == 'exact' and resume is not None and source_hash is not None:
+        stored = (resume.get('source_identity') or {}).get('source_hash')
+        if stored is None:
+            warnings.warn("Checkpoint %s predates source-hash tracking; the code that "
+                          "produced it cannot be compared with the current source." % r_path)
+        elif stored != source_hash:
+            if not allow_source_change:
+                raise ValueError(
+                    "Exact resume refused: src/ source hash changed since %s was written "
+                    "(checkpoint %s, current %s). Run the checkpoint's code, or pass "
+                    "--allow-source-change to continue deliberately under new code."
+                    % (r_path, stored, source_hash))
+            warnings.warn("Exact resume under CHANGED source (checkpoint %s, current %s); "
+                          "allowed by --allow-source-change." % (stored, source_hash))
 
     encoder.load_state_dict(checkpoint['encoder'])
     predictor.load_state_dict(checkpoint['predictor'])
@@ -324,15 +349,13 @@ def load_checkpoint(device, r_path, encoder, predictor, target_encoder, opt, sca
         scaler.load_state_dict(checkpoint['scaler'])
 
     if resume_policy == 'fork':
-        digest = hashlib.sha256()
-        with open(r_path, 'rb') as stream:
-            for block in iter(lambda: stream.read(8 << 20), b''):
-                digest.update(block)
+        if checkpoint_sha256 is None:
+            checkpoint_sha256 = file_sha256(r_path)
         if training_state is not None:
             training_state.clear()
             training_state['lineage'] = {
                 'resume_policy': 'fork', 'source_checkpoint': os.path.realpath(r_path),
-                'source_checkpoint_sha256': digest.hexdigest(),
+                'source_checkpoint_sha256': checkpoint_sha256,
                 'source_epoch': checkpoint.get('epoch', 0),
                 'source_topology': resume.get('topology') if resume is not None else None,
                 'retained': ['encoder', 'predictor', 'target_encoder', 'optimizer_state',
@@ -412,6 +435,9 @@ def save_checkpoint(path, encoder, predictor, target_encoder, optimizer,
         training_state: Optional complete epoch-boundary state assembled by the
             trainer on all ranks. Omitting it preserves the legacy file schema
             fields but cannot provide exact RNG/scheduler/selection continuation.
+
+    The file is written to ``path + '.tmp'``, fsynced and moved into place, so a
+    crash mid-write never leaves a truncated file under the final name.
     """
     enc_state = encoder.module.state_dict() if hasattr(encoder, 'module') else encoder.state_dict()
     pred_state = predictor.module.state_dict() if hasattr(predictor, 'module') else predictor.state_dict()
@@ -437,7 +463,268 @@ def save_checkpoint(path, encoder, predictor, target_encoder, optimizer,
     }
 
     os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
-    torch.save(state, path)
+    tmp_path = path + '.tmp'
+    try:
+        with open(tmp_path, 'wb') as stream:
+            torch.save(state, stream)
+            stream.flush()
+            os.fsync(stream.fileno())
+        replace_with_retry(tmp_path, path)
+    except BaseException:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise
+
+
+# ---------------------------------------------------------------------------
+# Provenance helpers: hashing, atomic writes, checkpoint verification
+# ---------------------------------------------------------------------------
+
+REQUIRED_CHECKPOINT_KEYS = ('encoder', 'predictor', 'target_encoder', 'opt', 'scaler',
+                            'epoch', 'training_state')
+REQUIRED_TRAINING_STATE_KEYS = ('successful_updates', 'lr_scheduler', 'wd_scheduler',
+                                'topology', 'rank_states')
+
+
+class CheckpointVerificationError(RuntimeError):
+    """A saved checkpoint failed its post-save re-read."""
+
+
+def replace_with_retry(src, dst, attempts=20, delay=0.5):
+    """os.replace, retried briefly: on Windows a reader (e.g. a virus scanner)
+    holding ``dst`` open makes the rename fail transiently."""
+    for attempt in range(attempts):
+        try:
+            os.replace(src, dst)
+            return
+        except PermissionError:
+            if attempt == attempts - 1:
+                raise
+            time.sleep(delay)
+
+
+def file_sha256(path, block=8 << 20):
+    digest = hashlib.sha256()
+    with open(path, 'rb') as stream:
+        for chunk in iter(lambda: stream.read(block), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _json_default(value):
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, torch.Tensor):
+        return value.tolist()
+    return str(value)
+
+
+def atomic_write_json(path, payload):
+    """Write JSON to a unique temp file, fsync it, then move it into place."""
+    os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+    tmp_path = '%s.tmp.%d' % (path, os.getpid())
+    try:
+        with open(tmp_path, 'w', encoding='utf-8') as stream:
+            json.dump(payload, stream, indent=2, sort_keys=True, default=_json_default)
+            stream.write('\n')
+            stream.flush()
+            os.fsync(stream.fileno())
+        replace_with_retry(tmp_path, path)
+    except BaseException:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise
+
+
+def default_sha256_cache_path():
+    return (os.environ.get('JEPA_SHA256_CACHE')
+            or os.path.join(os.path.expanduser('~'), '.cache', 'jepa', 'sha256_cache.json'))
+
+
+def file_sha256_cached(path, cache_path=None):
+    """SHA-256 of ``path``, reused from a cache keyed by realpath+size+mtime_ns.
+
+    Returns ``(sha256, source)`` with source ``'cache'`` or ``'computed'``.
+    Cache read/write failures only cost a re-hash.
+    """
+    cache_path = cache_path or default_sha256_cache_path()
+    key = os.path.realpath(path)
+    before = os.stat(path)
+    try:
+        with open(cache_path, 'r', encoding='utf-8') as stream:
+            cache = json.load(stream)
+        if not isinstance(cache, dict):
+            cache = {}
+    except (OSError, ValueError):
+        cache = {}
+    entry = cache.get(key)
+    if (isinstance(entry, dict) and entry.get('bytes') == before.st_size
+            and entry.get('mtime_ns') == before.st_mtime_ns and entry.get('sha256')):
+        return entry['sha256'], 'cache'
+    sha = file_sha256(path)
+    after = os.stat(path)
+    if (after.st_size, after.st_mtime_ns) == (before.st_size, before.st_mtime_ns):
+        cache[key] = {'bytes': after.st_size, 'mtime_ns': after.st_mtime_ns, 'sha256': sha}
+        try:
+            atomic_write_json(cache_path, cache)
+        except OSError:
+            pass
+    return sha, 'computed'
+
+
+def model_state_digest(encoder_state, predictor_state, target_state):
+    """SHA-256 over the three model state dicts (names, dtypes, shapes, bytes)."""
+    digest = hashlib.sha256()
+    for name, state in (('encoder', encoder_state), ('predictor', predictor_state),
+                        ('target_encoder', target_state)):
+        for key in sorted(state):
+            tensor = state[key].detach().cpu().contiguous()
+            digest.update(('%s.%s|%s|%s\n' % (name, key, tensor.dtype, tuple(tensor.shape)))
+                          .encode('utf-8'))
+            digest.update(tensor.reshape(-1).view(torch.uint8).numpy().tobytes())
+    return digest.hexdigest()
+
+
+def models_state_digest(encoder, predictor, target_encoder):
+    unwrap = lambda model: model.module if hasattr(model, 'module') else model
+    return model_state_digest(unwrap(encoder).state_dict(), unwrap(predictor).state_dict(),
+                              unwrap(target_encoder).state_dict())
+
+
+def verify_checkpoint_file(path, expected_epoch, expected_successful_updates=None,
+                           expected_identity=None, expected_model_digest=None):
+    """Hash ``path``, re-read it on CPU and check it is a complete epoch checkpoint.
+
+    ``expected_identity`` maps training_state keys (e.g. run_uuid, topology,
+    source_identity) to required values; ``expected_model_digest`` must equal the
+    file's ``model_state_digest``. Raises CheckpointVerificationError on any
+    mismatch; returns ``{'path', 'file', 'bytes', 'sha256', 'epoch', 'successful_updates'}``.
+    """
+    try:
+        size = os.path.getsize(path)
+        sha = file_sha256(path)
+        checkpoint = torch.load(path, map_location='cpu', weights_only=False)
+    except Exception as error:
+        raise CheckpointVerificationError("Cannot re-read checkpoint %s: %r" % (path, error))
+    try:
+        if not isinstance(checkpoint, dict):
+            raise CheckpointVerificationError("Checkpoint %s is not a dict" % path)
+        missing = [key for key in REQUIRED_CHECKPOINT_KEYS if key not in checkpoint]
+        if missing:
+            raise CheckpointVerificationError("Checkpoint %s lacks keys %s" % (path, missing))
+        empty = [key for key in ('encoder', 'predictor', 'target_encoder')
+                 if not checkpoint[key]]
+        if empty or not checkpoint['opt'].get('param_groups'):
+            raise CheckpointVerificationError("Checkpoint %s has empty model/optimizer state %s"
+                                              % (path, empty))
+        if int(checkpoint['epoch']) != int(expected_epoch):
+            raise CheckpointVerificationError(
+                "Checkpoint %s holds epoch %s, expected %d"
+                % (path, checkpoint['epoch'], expected_epoch))
+        state = checkpoint['training_state']
+        if not isinstance(state, dict):
+            raise CheckpointVerificationError("Checkpoint %s lacks training_state" % path)
+        missing = [key for key in REQUIRED_TRAINING_STATE_KEYS if key not in state]
+        if missing:
+            raise CheckpointVerificationError(
+                "Checkpoint %s training_state lacks %s" % (path, missing))
+        updates = int(state['successful_updates'])
+        if expected_successful_updates is not None and updates != int(expected_successful_updates):
+            raise CheckpointVerificationError(
+                "Checkpoint %s holds %d successful updates, expected %d"
+                % (path, updates, expected_successful_updates))
+        for key, value in (expected_identity or {}).items():
+            if state.get(key) != value:
+                raise CheckpointVerificationError(
+                    "Checkpoint %s training_state.%s differs from the run being certified "
+                    "(%r != %r)" % (path, key, state.get(key), value))
+        if expected_model_digest is not None:
+            digest = model_state_digest(checkpoint['encoder'], checkpoint['predictor'],
+                                        checkpoint['target_encoder'])
+            if digest != expected_model_digest:
+                raise CheckpointVerificationError(
+                    "Checkpoint %s model weights differ from the run's epoch-%d state"
+                    % (path, expected_epoch))
+    finally:
+        del checkpoint
+        gc.collect()
+    if os.path.getsize(path) != size:
+        raise CheckpointVerificationError("Checkpoint %s changed while being verified" % path)
+    return {'path': os.path.abspath(path), 'file': os.path.basename(path), 'bytes': size,
+            'sha256': sha, 'epoch': int(expected_epoch), 'successful_updates': updates}
+
+
+def read_checkpoint_epoch(path):
+    """Saved epoch of ``path``; CheckpointVerificationError if it cannot be read."""
+    try:
+        checkpoint = torch.load(path, map_location='cpu', weights_only=False)
+        return int(checkpoint['epoch'])
+    except Exception as error:
+        raise CheckpointVerificationError("Cannot re-read checkpoint %s: %r" % (path, error))
+    finally:
+        checkpoint = None
+        gc.collect()
+
+
+def _git(code_root, *args):
+    result = subprocess.run(['git', '--no-optional-locks', '-C', code_root] + list(args),
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60)
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.decode('utf-8', 'replace').strip())
+    return result.stdout.decode('utf-8', 'replace')
+
+
+def collect_source_identity(code_root, subdir='src'):
+    """Per-file and combined SHA-256 of the tracked ``*.py`` under ``code_root/subdir``.
+
+    Files are listed with ``git ls-files`` from ``code_root`` (which may be a git
+    worktree) and hashed as they are on disk, so uncommitted edits change the
+    hash. Without git, every ``*.py`` found on disk is hashed instead and the
+    listing method is recorded.
+    """
+    listing = 'git_ls_files'
+    try:
+        names = [name for name in _git(code_root, 'ls-files', '-z', '--', subdir).split('\0')
+                 if name.endswith('.py')]
+        if not names:
+            raise RuntimeError('no tracked files')
+    except Exception:
+        listing = 'filesystem_walk'
+        names = []
+        for root, dirs, files in os.walk(os.path.join(code_root, subdir)):
+            dirs[:] = sorted(d for d in dirs if d != '__pycache__')
+            names.extend(os.path.relpath(os.path.join(root, f), code_root).replace(os.sep, '/')
+                         for f in files if f.endswith('.py'))
+    files = {}
+    for name in sorted(set(names)):
+        path = os.path.join(code_root, *name.split('/'))
+        files[name] = file_sha256(path) if os.path.isfile(path) else 'MISSING'
+    combined = hashlib.sha256(''.join('%s\0%s\n' % item for item in sorted(files.items()))
+                              .encode('utf-8')).hexdigest()
+    return {'code_root': os.path.realpath(code_root), 'subdir': subdir, 'listing': listing,
+            'source_hash': combined, 'files': files}
+
+
+def collect_git_identity(code_root, subdir='src'):
+    """Commit, branch and dirty state of the checkout that holds ``code_root``."""
+    try:
+        commit = _git(code_root, 'rev-parse', 'HEAD').strip()
+        branch = _git(code_root, 'rev-parse', '--abbrev-ref', 'HEAD').strip()
+        dirty = [line for line in _git(code_root, 'status', '--porcelain',
+                                       '--untracked-files=no').splitlines() if line.strip()]
+        untracked = [name for name in _git(code_root, 'ls-files', '--others',
+                                           '--exclude-standard', '--', subdir).splitlines()
+                     if name.endswith('.py')]
+        return {'git_commit': commit, 'git_branch': branch, 'git_dirty': bool(dirty),
+                'git_dirty_paths': dirty[:200], 'untracked_src_py': untracked[:200],
+                'error': None}
+    except Exception as error:
+        return {'git_commit': None, 'git_branch': None, 'git_dirty': None,
+                'git_dirty_paths': [], 'untracked_src_py': [], 'error': repr(error)}
 
 
 # ---------------------------------------------------------------------------

@@ -74,6 +74,21 @@ from src.masks.cover import (
 # ----------------------------------------------------------------------
 
 
+# ``mask.curriculum.mirage_overlap_fallback`` -- see CurriculumMaskGenerator.
+MIRAGE_OVERLAP_FALLBACKS = ("least_overlap_v2", "legacy_uniform_v1")
+DEFAULT_MIRAGE_OVERLAP_FALLBACK = "least_overlap_v2"
+
+
+def validate_mirage_overlap_fallback(value) -> str:
+    """Return ``value`` if it names a known ENVELOPE overlap fallback, else raise."""
+    if value not in MIRAGE_OVERLAP_FALLBACKS:
+        raise ValueError(
+            "curriculum.mirage_overlap_fallback must be one of %s; got %r"
+            % (MIRAGE_OVERLAP_FALLBACKS, value)
+        )
+    return str(value)
+
+
 def _half_life_to_alpha(half_life_steps: float) -> float:
     """Convert a desired half-life (in optimizer steps) to an EMA decay.
 
@@ -149,6 +164,15 @@ class MirageMaskCollator:
         self._generator: Optional["CurriculumMaskGenerator"] = None
         self.epoch = 0
         self.total_epochs: Optional[int] = None
+        # The generator is only built inside each DataLoader worker, so check
+        # the sampler version here: a typo must fail at startup, not in a
+        # worker after the run has launched.
+        curriculum_cfg = generator_kwargs.get("curriculum_cfg") or {}
+        self.mirage_overlap_fallback = validate_mirage_overlap_fallback(
+            curriculum_cfg.get(
+                "mirage_overlap_fallback", DEFAULT_MIRAGE_OVERLAP_FALLBACK
+            )
+        )
 
     def set_epoch(self, epoch: int, total_epochs: Optional[int] = None) -> None:
         self.epoch = int(epoch)
@@ -382,6 +406,19 @@ class CurriculumMaskGenerator:
         self.mirage_spread = bool(cfg.get("mirage_spread", True))
         self.mirage_overlap_tolerance = float(
             cfg.get("mirage_overlap_tolerance", 0.25)
+        )
+        # What a guided block does when NO admissible window clears
+        # ``mirage_overlap_tolerance``.  Versioned because the choice changes
+        # the mask distribution at unchanged YAML:
+        #   least_overlap_v2  -- pick among the least-overlapping admissible
+        #                        windows (commit fc49f61, 2026-08-08; default).
+        #   legacy_uniform_v1 -- pick uniformly among ALL admissible windows,
+        #                        the pre-fc49f61 / 804c639 behaviour that
+        #                        trained the original ENVELOPE run (finished
+        #                        2026-08-04).  Bit-identical masks, same RNG
+        #                        consumption.
+        self.mirage_overlap_fallback = validate_mirage_overlap_fallback(
+            cfg.get("mirage_overlap_fallback", DEFAULT_MIRAGE_OVERLAP_FALLBACK)
         )
         # --- mirage_anatomy mode ---
         # mass_cap is how much of the guide's total anatomy score the targets
@@ -841,7 +878,10 @@ class CurriculumMaskGenerator:
                             )
                             if free.any():
                                 candidates = free
-                            else:
+                            elif (
+                                self.mirage_overlap_fallback
+                                == "least_overlap_v2"
+                            ):
                                 # No admissible window clears the tolerance --
                                 # common, because the retinal band is thinner
                                 # than the block and mirage_min_block_fill
@@ -852,6 +892,8 @@ class CurriculumMaskGenerator:
                                 # tolerance -- worse than unguided random's
                                 # 28.9%. Fall back to the LEAST-overlapping
                                 # admissible window instead of an arbitrary one.
+                                # ``legacy_uniform_v1`` skips this branch and
+                                # keeps that historical uniform pick.
                                 worst = np.where(candidates, overlap,
                                                  np.inf).min()
                                 least = candidates & (overlap <= worst)

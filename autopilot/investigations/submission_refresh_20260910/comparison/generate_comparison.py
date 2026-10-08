@@ -1,5 +1,10 @@
-"""Symmetric I-JEPA comparison; reuses licensed pixels and reviewed exact masks."""
+"""Symmetric I-JEPA comparison; reuses licensed pixels and reviewed exact masks.
+
+Camera-ready (E13): reads the masks from the regenerated Figure-1 evidence
+(trained CENTROID lateral 0.6) and writes to the staging folder by default.
+"""
 from pathlib import Path
+import argparse
 import hashlib
 import json
 import matplotlib
@@ -14,7 +19,9 @@ ROOT = Path(__file__).resolve().parents[4]
 HERE = Path(__file__).resolve().parent
 PRIOR = HERE.parent / "figure"
 FRAMEWORK = HERE.parent / "framework"
-OUT = ROOT / "paper" / "genai4health2026" / "figures"
+PAPER_FIGURES = ROOT / "paper" / "genai4health2026" / "figures"
+STAGING = ROOT / "autopilot" / "investigations" / "camera_ready_20261008" / "figures_staging"
+OUT = PAPER_FIGURES
 STEM = "fig_oct_jepa_comparison"
 COLORS = ["#F5AE46", "#51C8D4", "#DA8CCC", "#B6DB78"]
 CAPTION = (
@@ -38,13 +45,29 @@ def sha(p):
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
 
+def rel(p):
+    p = Path(p).resolve()
+    return str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else str(p)
+
+
 def main():
-    prior = json.loads((PRIOR / "evidence.json").read_text())
+    global OUT
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--figure-evidence", type=Path,
+                        default=STAGING / "fig_oct_target_selection.evidence.json")
+    parser.add_argument("--out-dir", type=Path, default=STAGING)
+    args = parser.parse_args()
+    OUT = args.out_dir.resolve()
+    OUT.mkdir(parents=True, exist_ok=True)
+    prior_evidence = args.figure_evidence.resolve()
+    prior = json.loads(prior_evidence.read_text())
+    prior_out = ROOT / prior["out_dir"] if "out_dir" in prior else PAPER_FIGURES
     old_framework = json.loads((FRAMEWORK / "evidence.json").read_text())
     preserved = {p: sha(p) for p in [
-        PRIOR / "evidence.json", PRIOR / "generate_external_target_selection.py",
+        prior_evidence, PRIOR / "generate_external_target_selection.py",
         FRAMEWORK / "evidence.json", FRAMEWORK / "generate_framework.py",
-        *[OUT / d["file"] for e in (prior, old_framework) for d in e["outputs"].values()]]}
+        *[prior_out / d["file"] for d in prior["outputs"].values()],
+        *[PAPER_FIGURES / d["file"] for d in old_framework["outputs"].values()]]}
     source = PRIOR / prior["source_image_file"]
     assert sha(source) == prior["source_image_sha256"]
     image = np.asarray(Image.open(source).crop(prior["crop_xyxy"]).convert("L").resize(
@@ -179,8 +202,8 @@ def main():
     assert all(sha(p) == expected for p, expected in preserved.items())
     evidence = {
         "generator": Path(__file__).name, "generator_sha256": sha(Path(__file__)),
-        "prior_evidence_sha256": sha(PRIOR / "evidence.json"),
-        "prior_evidence_path": str((PRIOR / "evidence.json").relative_to(ROOT)),
+        "prior_evidence_sha256": sha(prior_evidence),
+        "prior_evidence_path": rel(prior_evidence),
         "source_image_url": prior["source_image_url"],
         "source_image_sha256": prior["source_image_sha256"],
         "primary_license_url": prior["primary_license_url"],
@@ -207,7 +230,7 @@ def main():
         "privacy": {"identifiers": False, "FairVision_pixels": False,
                     "new_clinical_source": False, "numerical_results": False},
         "limits": "Illustrative external OCT example, not cohort evaluation, ranking, or sequential prediction.",
-        "preserved_v1_v2_files": {str(p.relative_to(ROOT)): h for p, h in preserved.items()},
+        "preserved_v1_v2_files": {rel(p): h for p, h in preserved.items()},
         "validation": {"preserved_files_unchanged": True,
                        "same_input_tensor_hash": True,
                        "exact_prior_context_and_target_indices": True,
@@ -217,10 +240,12 @@ def main():
                        "teacher_full_image_unoccluded": True},
         "outputs": {s: {"file": f"{STEM}.{s}", "sha256": sha(OUT / f"{STEM}.{s}")}
                     for s in ("png", "pdf", "svg")},
+        "out_dir": rel(OUT),
     }
-    (HERE / "evidence.json").write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+    target = HERE / "evidence.json" if OUT == PAPER_FIGURES.resolve() else OUT / f"{STEM}.evidence.json"
+    target.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"generator_sha256": evidence["generator_sha256"],
-                      "manifest_sha256": sha(HERE / "evidence.json"),
+                      "manifest_sha256": sha(target),
                       "outputs": evidence["outputs"]}, indent=2))
 
 

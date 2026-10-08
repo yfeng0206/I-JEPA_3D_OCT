@@ -1,0 +1,3054 @@
+{
+ "protocol": {
+  "name": "camera_ready_delivered_mask_audit_v1",
+  "split": "Training",
+  "volumes": 24,
+  "slices_per_volume": 25,
+  "views": 600,
+  "volume_selection": "sorted(random.Random(42).sample(range(6000), volumes))",
+  "view_rule": "slices 0,4,...,96 of each selected volume (num_slices=100 grid)",
+  "batch_size": 64,
+  "budget_draws_per_seed": null,
+  "batch_order": "sequential",
+  "audit_seeds": [
+   42,
+   1234,
+   5678
+  ],
+  "pairing": "Within each audit seed, every arm sees the identical crop of every view (seed_all(seed + view) before each loader call; soft and hard loaders asserted equal), the identical batch composition, the identical 4 target + 1 context rectangle sizes per batch (torch.Generator(seed)), and the identical placement seed (seed_all(seed + batch_start)) before each arm.",
+  "guidance": "set_epoch(50, 100): r_t = 1 for every guided arm",
+  "tissue_proxies": {
+   "soft": "PRIMARY common scoring proxy: patch occupancy >= 0.25 of the schema-2 MIRAGE soft-guide envelope (summed P_inner+P_choroid >= 0.5), same proxy as the published tables: D:\\jepa_phase0\\fairvision-glaucoma\\mirage_soft_guides\\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8_npy",
+   "hard": "secondary: patch occupancy >= 0.25 of the repaired hard MIRAGE envelope (ENVELOPE's placement product): D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides"
+  },
+  "definitions": {
+   "context_pct_grid": "delivered encoder context tokens C_b / 256 (after batch equalisation), image mean",
+   "unique_targets_U": "distinct delivered target cells per image",
+   "loss_slots_L": "delivered target index slots per image (npred x K_b), duplicates included",
+   "duplicate_slots_D": "L - U",
+   "mask_ratio_pct": "U / 256",
+   "purity_pct": "tissue-proxy cells among the U unique delivered targets (ratio of means)",
+   "anatomy_hidden_pct": "tissue-proxy cells hidden as targets / all tissue-proxy cells",
+   "context_tissue_share_pct": "tissue-proxy cells in delivered context / all tissue-proxy cells"
+  },
+  "warning": "Mask-audit seeds are sampler replays, not pretraining seeds; the historical training masks were not recorded."
+ },
+ "samplers": {
+  "requested": "HEAD",
+  "commit": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "head": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "origin": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "worktree_masks_dirty": null,
+  "files": {
+   "src/masks/utils.py": {
+    "sha256_exact_bytes": "8ae3cfc055ce7340e786508a8792e70d4ce2fbb0bf60d55edc17bd3519e068dc",
+    "sha256_lf": "8ae3cfc055ce7340e786508a8792e70d4ce2fbb0bf60d55edc17bd3519e068dc",
+    "sha256_crlf_checkout": "5d92f57981a72e9c0abc5be18c56a5255ff5c8c3b82c0a13b8e027e82f4bbb7a",
+    "bytes": 2824
+   },
+   "src/masks/multiblock.py": {
+    "sha256_exact_bytes": "0175b60aa56b95a889f3ce2e79a1a6e562f1392789592830e2435d537124701a",
+    "sha256_lf": "0175b60aa56b95a889f3ce2e79a1a6e562f1392789592830e2435d537124701a",
+    "sha256_crlf_checkout": "d8985698cba486625bbc5fa0e5cc34dc468ff0cc1346eae6f9e5db409cc9fa98",
+    "bytes": 10424
+   },
+   "src/masks/anatomy.py": {
+    "sha256_exact_bytes": "968114c2f3190c64e8f95bf361dbadf61baadc408867b9745dc4bafd29028c78",
+    "sha256_lf": "968114c2f3190c64e8f95bf361dbadf61baadc408867b9745dc4bafd29028c78",
+    "sha256_crlf_checkout": "2ab33b86b9d9830acf4efe0eb2d3414b4d353b5fba0864badd1572a193abb4a7",
+    "bytes": 43170
+   },
+   "src/masks/cover.py": {
+    "sha256_exact_bytes": "65e0efdc8cceff85c960099b39a27f1a9f247f9ecdc00540543afa7f4b51ae94",
+    "sha256_lf": "65e0efdc8cceff85c960099b39a27f1a9f247f9ecdc00540543afa7f4b51ae94",
+    "sha256_crlf_checkout": "8decf18ba0048cb7de33b127d35262e8bd8258c73f0565fee533f48606b82fab",
+    "bytes": 25342
+   },
+   "src/masks/curriculum.py": {
+    "sha256_exact_bytes": "1cad91c8cea80e4837b8e1d2e76f6d474e25e08ea7df3cf5d19a978185f140a7",
+    "sha256_lf": "1cad91c8cea80e4837b8e1d2e76f6d474e25e08ea7df3cf5d19a978185f140a7",
+    "sha256_crlf_checkout": "6a0564e87170f36e241b07d597345680a837fa35cff524d6aaa6ae5e2ad23b66",
+    "bytes": 125714
+   }
+  },
+  "legacy_envelope": {
+   "method": "in-memory copy of the pinned curriculum.py with the single fc49f61 least-overlap line disabled: `if least.any():` -> `if False and least.any():`",
+   "patched_sha256_lf": "052b20ddb2d6bfd98e552e7f0b9f2a93a8ab45b7054c48efd7d728a7c0906ba0",
+   "patched_sha256_crlf_checkout": "e51cee23d5ea26df62d7c20420679c454461b2d692b25c85bae21739e5ca2e50",
+   "a1_noFixA_reference_sha256_crlf": "e51cee23d5ea26df62d7c20420679c454461b2d692b25c85bae21739e5ca2e50",
+   "equals_a1_noFixA_reference": true
+  }
+ },
+ "arms": {
+  "random": {
+   "kind": "random",
+   "label": "RANDOM",
+   "role": "trained",
+   "sampler": "src.masks.multiblock.MaskCollator",
+   "config": null
+  },
+  "centroid": {
+   "kind": "centroid",
+   "config": "configs/patch_oracle_anatomical.yaml",
+   "label": "CENTROID",
+   "role": "trained",
+   "sampler": "src.masks.curriculum.CurriculumMaskGenerator",
+   "config_sha256_lf": "e5a894d1cdf1041771f454838fa85abdd74a354459bf99e9afcf3a5fee88d637",
+   "config_mirage_guide_dir": null,
+   "curriculum_cfg": {
+    "enabled": true,
+    "mode": "anatomical_prior",
+    "T_warm": 25,
+    "T_total": 30,
+    "r_max": 1.0,
+    "ramp_shape": "linear",
+    "oracle_region_frac": 0.28,
+    "oracle_lateral_frac": 0.6,
+    "oracle_row_offset": 0.0,
+    "oracle_min_band_rows": 3
+   },
+   "pred_target_k": null,
+   "oracle_lateral_frac": 0.6
+  },
+  "envelope": {
+   "kind": "guided",
+   "config": "configs/patch_mirage_envelope.yaml",
+   "guide": "hard",
+   "fallback": "legacy_uniform_v1",
+   "label": "ENVELOPE",
+   "role": "trained",
+   "sampler": "src.masks.curriculum_legacy_uniform_v1.CurriculumMaskGenerator",
+   "config_sha256_lf": "1026e3a5cd34332b1d4249f96639289ab00d8e0875f77bb008da80c666858ffb",
+   "config_mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides",
+   "curriculum_cfg": {
+    "enabled": true,
+    "mode": "mirage_envelope",
+    "T_warm": 25,
+    "T_total": 30,
+    "r_max": 1.0,
+    "ramp_shape": "linear",
+    "mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides",
+    "mirage_dilate_patches": 0,
+    "mirage_min_block_fill": 0.4,
+    "mirage_min_retina_visible": 0.25,
+    "mirage_max_attempts": 30,
+    "mirage_occupancy_threshold": 0.25,
+    "mirage_spread": true,
+    "mirage_overlap_tolerance": 0.25
+   },
+   "pred_target_k": null,
+   "oracle_lateral_frac": null
+  },
+  "envelope_hard_leastoverlap": {
+   "kind": "guided",
+   "config": "configs/patch_mirage_envelope.yaml",
+   "guide": "hard",
+   "fallback": "least_overlap_v2",
+   "label": "ENVELOPE, hard guide, least-overlap HEAD fallback",
+   "role": "decomposition",
+   "sampler": "src.masks.curriculum.CurriculumMaskGenerator",
+   "config_sha256_lf": "1026e3a5cd34332b1d4249f96639289ab00d8e0875f77bb008da80c666858ffb",
+   "config_mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides",
+   "curriculum_cfg": {
+    "enabled": true,
+    "mode": "mirage_envelope",
+    "T_warm": 25,
+    "T_total": 30,
+    "r_max": 1.0,
+    "ramp_shape": "linear",
+    "mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides",
+    "mirage_dilate_patches": 0,
+    "mirage_min_block_fill": 0.4,
+    "mirage_min_retina_visible": 0.25,
+    "mirage_max_attempts": 30,
+    "mirage_occupancy_threshold": 0.25,
+    "mirage_spread": true,
+    "mirage_overlap_tolerance": 0.25
+   },
+   "pred_target_k": null,
+   "oracle_lateral_frac": null
+  },
+  "centroid_lat08_published": {
+   "kind": "centroid",
+   "config": "configs/patch_oracle_anatomical.yaml",
+   "overrides": {
+    "oracle_lateral_frac": 0.8
+   },
+   "label": "CENTROID, published audit lateral 0.8 (code default)",
+   "role": "decomposition",
+   "sampler": "src.masks.curriculum.CurriculumMaskGenerator",
+   "config_sha256_lf": "e5a894d1cdf1041771f454838fa85abdd74a354459bf99e9afcf3a5fee88d637",
+   "config_mirage_guide_dir": null,
+   "curriculum_cfg": {
+    "enabled": true,
+    "mode": "anatomical_prior",
+    "T_warm": 25,
+    "T_total": 30,
+    "r_max": 1.0,
+    "ramp_shape": "linear",
+    "oracle_region_frac": 0.28,
+    "oracle_lateral_frac": 0.8,
+    "oracle_row_offset": 0.0,
+    "oracle_min_band_rows": 3
+   },
+   "pred_target_k": null,
+   "oracle_lateral_frac": 0.8
+  },
+  "envelope_soft_leastoverlap_published": {
+   "kind": "guided",
+   "config": "configs/patch_mirage_envelope.yaml",
+   "guide": "soft",
+   "fallback": "least_overlap_v2",
+   "label": "ENVELOPE, published audit (soft guide, least-overlap HEAD fallback)",
+   "role": "decomposition",
+   "sampler": "src.masks.curriculum.CurriculumMaskGenerator",
+   "config_sha256_lf": "1026e3a5cd34332b1d4249f96639289ab00d8e0875f77bb008da80c666858ffb",
+   "config_mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_guides",
+   "curriculum_cfg": {
+    "enabled": true,
+    "mode": "mirage_envelope",
+    "T_warm": 25,
+    "T_total": 30,
+    "r_max": 1.0,
+    "ramp_shape": "linear",
+    "mirage_guide_dir": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_soft_guides\\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8_npy",
+    "mirage_dilate_patches": 0,
+    "mirage_min_block_fill": 0.4,
+    "mirage_min_retina_visible": 0.25,
+    "mirage_max_attempts": 30,
+    "mirage_occupancy_threshold": 0.25,
+    "mirage_spread": true,
+    "mirage_overlap_tolerance": 0.25
+   },
+   "pred_target_k": null,
+   "oracle_lateral_frac": null
+  }
+ },
+ "soft_guide_cache_meta": {
+  "schema_version": 2,
+  "split": "Training",
+  "mirage_ckpt": "D:\\jepa_phase0\\mirage-goals\\outputs\\mergedv3-base-512\\MergedV3\\MIRAGE-Base_frozen_convnext_CEGDice-ignore\\checkpoint-best.pth",
+  "mirage_sha": "31a932eef403c3e8",
+  "adapter_ckpt": "results\\masking\\structural_loss\\adapter_ep100_structl100_a010_e3_lr0.001_n4800.pt",
+  "adapter_sha": "d4f09adfa9f05f0b",
+  "adapter_tap": "enc",
+  "num_slices": 100,
+  "native_size": 200,
+  "mirage_input_res": 512,
+  "dtype": "uint8",
+  "channels": [
+   "P_inner",
+   "P_choroid"
+  ],
+  "ordering": "softmax BEFORE any pooling or cropping",
+  "amp": true,
+  "n_volumes": 6000,
+  "n_slices_total": 600000,
+  "created": "2026-08-09T23:05:57",
+  "seconds": 2451.4396349000162,
+  "reused_from_previous_run": 1800,
+  "storage": "uncompressed .npy, memmap-friendly",
+  "converted_from": "D:\\jepa_phase0\\fairvision-glaucoma\\mirage_soft_guides\\base512_enc_ad4f09adfa9f05f0b_m31a932eef403c3e8"
+ },
+ "environment": {
+  "git_head": "86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5",
+  "git_status_short": "M autopilot/investigations/submission_refresh_20260910/comparison/generate_comparison.py\n M autopilot/investigations/submission_refresh_20260910/comparison_final/generate_comparison_final.py\n M autopilot/investigations/submission_refresh_20260910/figure/generate_external_target_selection.py\n M autopilot/p3b_integrate_fp32.py\n M paper/genai4health2026/auto/table_fp32.tex\n M scripts/delivered_mask_audit.py\n M scripts/mask_composition_probe.py\n M src/eval_downstream.py\n M src/helper.py\n M src/masks/curriculum.py\n M src/train_patch.py",
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "numpy": "2.4.4",
+  "torch": "2.7.1+cu128",
+  "torch_threads": 2,
+  "cuda_visible_devices": "",
+  "worktree_file_sha256": {
+   "scripts\\mask_composition_probe.py": "9163742110daab12621396d4512d172e359fd994249c846d290436c40b52e342",
+   "src\\datasets\\oct_slices_guided.py": "231145343f6fbfed3462481430a18a824670afc8fbd59c1b10217e7d5e17eaf2",
+   "src\\datasets\\oct_slices.py": "6397ed9f634473b77683b4fd9c8b5824fae8f6a54ad844ad76a0d320d367f9de",
+   "src\\transforms.py": "fabc7e08b67ef2f9f6d6e96602413f2ab997a584b9b4b9d2735790064d408c80",
+   "src\\guides\\mirage_envelope.py": "e46d5a0c75b0b613c1adb638b877351c3a213b502705a6c082a1e051c07bc7e0",
+   "configs\\patch_oracle_anatomical.yaml": "cdb7f8227ff27206dad9dfc3af3cfe23b7296515988fdf7359141a8a3cf6b951",
+   "configs\\patch_mirage_envelope.yaml": "15b8fcfca8951b8695d898d83d069b296895262eabf8540fa8c1bde80bdd9e0a",
+   "configs\\patch_anatomy_v2.yaml": "7a8167f806017d2dd1cf825dae25c3f5c12a37c2260971c75d3e433e7a087059",
+   "configs\\patch_cover_f021_ep25.yaml": "4119c33f35a5c2ba3bc7ff240a7e4172de6f8d2d31187967b3f89e771ff1463a"
+  }
+ },
+ "seeds": [
+  {
+   "seed": 42,
+   "n_batches": 10,
+   "crop_identity_assertions": 600,
+   "hard_guide_valid": 596,
+   "soft_guide_valid": 597,
+   "size_draws": [
+    [
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      5
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      15,
+      16
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      16,
+      14
+     ]
+    ],
+    [
+     [
+      7,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      13,
+      16
+     ]
+    ],
+    [
+     [
+      6,
+      8
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      15,
+      15
+     ]
+    ],
+    [
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      15,
+      16
+     ]
+    ],
+    [
+     [
+      6,
+      6
+     ],
+     [
+      7,
+      5
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      15,
+      16
+     ]
+    ],
+    [
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      14,
+      16
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      16,
+      13
+     ]
+    ],
+    [
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      16,
+      14
+     ]
+    ],
+    [
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      13,
+      16
+     ]
+    ]
+   ],
+   "metrics": {
+    "random": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 72.72,
+     "context_pct_grid": 28.40625,
+     "context_pct_grid_batch_se": 1.7593068493806807,
+     "unique_targets_U": 116.34333333333333,
+     "loss_slots_L": 169.28,
+     "duplicate_slots_D": 52.93666666666667,
+     "mask_ratio_pct": 45.446614583333336,
+     "purity_soft_pct": 31.8640231498725,
+     "purity_hard_pct": 36.115806664183594,
+     "anatomy_hidden_soft_pct": 56.08562999571346,
+     "context_tissue_share_soft_pct": 29.032502080234,
+     "context_on_tissue_soft_pct": 26.388888888888893,
+     "tissue_cells_soft": 66.09833333333333,
+     "tissue_cells_hard": 74.38333333333334,
+     "delivered_context_C_quantiles": [
+      57.0,
+      57.45,
+      67.0,
+      95.0,
+      95.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      42.0,
+      48.0,
+      48.0
+     ]
+    },
+    "centroid": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 81.30666666666667,
+     "context_pct_grid": 31.760416666666668,
+     "context_pct_grid_batch_se": 1.4173582296400837,
+     "unique_targets_U": 106.77166666666666,
+     "loss_slots_L": 169.28,
+     "duplicate_slots_D": 62.50833333333333,
+     "mask_ratio_pct": 41.707682291666664,
+     "purity_soft_pct": 38.65725926041553,
+     "purity_hard_pct": 44.23926447403338,
+     "anatomy_hidden_soft_pct": 62.44484228044076,
+     "context_tissue_share_soft_pct": 25.07627524647621,
+     "context_on_tissue_soft_pct": 20.385782223679893,
+     "tissue_cells_soft": 66.09833333333333,
+     "tissue_cells_hard": 74.38333333333334,
+     "delivered_context_C_quantiles": [
+      62.0,
+      66.95,
+      78.0,
+      98.39999999999999,
+      102.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      42.0,
+      48.0,
+      48.0
+     ]
+    },
+    "envelope": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 74.48,
+     "context_pct_grid": 29.09375,
+     "context_pct_grid_batch_se": 1.404862838210203,
+     "unique_targets_U": 115.165,
+     "loss_slots_L": 169.28,
+     "duplicate_slots_D": 54.115,
+     "mask_ratio_pct": 44.986328125,
+     "purity_soft_pct": 41.75603120160928,
+     "purity_hard_pct": 48.38999117208642,
+     "anatomy_hidden_soft_pct": 72.75271691167201,
+     "context_tissue_share_soft_pct": 17.660556241962734,
+     "context_on_tissue_soft_pct": 15.673111349803081,
+     "tissue_cells_soft": 66.09833333333333,
+     "tissue_cells_hard": 74.38333333333334,
+     "delivered_context_C_quantiles": [
+      58.0,
+      59.8,
+      75.5,
+      89.79999999999998,
+      97.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      42.0,
+      48.0,
+      48.0
+     ]
+    },
+    "envelope_hard_leastoverlap": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 67.84,
+     "context_pct_grid": 26.5,
+     "context_pct_grid_batch_se": 1.5951982288489779,
+     "unique_targets_U": 129.54166666666666,
+     "loss_slots_L": 169.28,
+     "duplicate_slots_D": 39.73833333333334,
+     "mask_ratio_pct": 50.602213541666664,
+     "purity_soft_pct": 39.61659697651979,
+     "purity_hard_pct": 44.95207462206498,
+     "anatomy_hidden_soft_pct": 77.64189717340327,
+     "context_tissue_share_soft_pct": 14.755793136488567,
+     "context_on_tissue_soft_pct": 14.376965408805031,
+     "tissue_cells_soft": 66.09833333333333,
+     "tissue_cells_hard": 74.38333333333334,
+     "delivered_context_C_quantiles": [
+      56.0,
+      56.9,
+      61.5,
+      90.04999999999998,
+      95.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      42.0,
+      48.0,
+      48.0
+     ]
+    },
+    "centroid_lat08_published": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 78.74666666666667,
+     "context_pct_grid": 30.760416666666668,
+     "context_pct_grid_batch_se": 1.425231177184999,
+     "unique_targets_U": 107.72166666666666,
+     "loss_slots_L": 169.28,
+     "duplicate_slots_D": 61.55833333333333,
+     "mask_ratio_pct": 42.078776041666664,
+     "purity_soft_pct": 39.58968328872248,
+     "purity_hard_pct": 45.673262884285116,
+     "anatomy_hidden_soft_pct": 64.52003328374393,
+     "context_tissue_share_soft_pct": 23.36417963135732,
+     "context_on_tissue_soft_pct": 19.611412123264476,
+     "tissue_cells_soft": 66.09833333333333,
+     "tissue_cells_hard": 74.38333333333334,
+     "delivered_context_C_quantiles": [
+      62.0,
+      66.05,
+      73.5,
+      97.94999999999999,
+      102.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      42.0,
+      48.0,
+      48.0
+     ]
+    },
+    "envelope_soft_leastoverlap_published": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 72.69333333333333,
+     "context_pct_grid": 28.395833333333332,
+     "context_pct_grid_batch_se": 1.5802485883962916,
+     "unique_targets_U": 121.805,
+     "loss_slots_L": 169.28,
+     "duplicate_slots_D": 47.475,
+     "mask_ratio_pct": 47.580078125,
+     "purity_soft_pct": 42.470889262892875,
+     "purity_hard_pct": 48.47775816537361,
+     "anatomy_hidden_soft_pct": 78.26470662396935,
+     "context_tissue_share_soft_pct": 13.792581759499738,
+     "context_on_tissue_soft_pct": 12.54126925898753,
+     "tissue_cells_soft": 66.09833333333333,
+     "tissue_cells_hard": 74.38333333333334,
+     "delivered_context_C_quantiles": [
+      60.0,
+      61.35,
+      65.5,
+      94.24999999999999,
+      101.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      42.0,
+      48.0,
+      48.0
+     ]
+    }
+   },
+   "per_batch_context_C": {
+    "random": [
+     95,
+     67,
+     58,
+     57,
+     76,
+     95,
+     67,
+     66,
+     79,
+     58
+    ],
+    "centroid": [
+     94,
+     73,
+     77,
+     74,
+     73,
+     102,
+     79,
+     81,
+     86,
+     62
+    ],
+    "envelope": [
+     81,
+     74,
+     58,
+     77,
+     78,
+     97,
+     63,
+     78,
+     69,
+     62
+    ],
+    "envelope_hard_leastoverlap": [
+     84,
+     59,
+     58,
+     69,
+     69,
+     95,
+     59,
+     58,
+     64,
+     56
+    ],
+    "centroid_lat08_published": [
+     93,
+     71,
+     73,
+     74,
+     73,
+     102,
+     79,
+     77,
+     73,
+     62
+    ],
+    "envelope_soft_leastoverlap_published": [
+     86,
+     74,
+     63,
+     75,
+     65,
+     101,
+     65,
+     66,
+     64,
+     60
+    ]
+   },
+   "per_batch_target_K": {
+    "random": [
+     40,
+     48,
+     36,
+     48,
+     48,
+     35,
+     42,
+     42,
+     42,
+     42
+    ],
+    "centroid": [
+     40,
+     48,
+     36,
+     48,
+     48,
+     35,
+     42,
+     42,
+     42,
+     42
+    ],
+    "envelope": [
+     40,
+     48,
+     36,
+     48,
+     48,
+     35,
+     42,
+     42,
+     42,
+     42
+    ],
+    "envelope_hard_leastoverlap": [
+     40,
+     48,
+     36,
+     48,
+     48,
+     35,
+     42,
+     42,
+     42,
+     42
+    ],
+    "centroid_lat08_published": [
+     40,
+     48,
+     36,
+     48,
+     48,
+     35,
+     42,
+     42,
+     42,
+     42
+    ],
+    "envelope_soft_leastoverlap_published": [
+     40,
+     48,
+     36,
+     48,
+     48,
+     35,
+     42,
+     42,
+     42,
+     42
+    ]
+   },
+   "per_batch_n": [
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    24
+   ],
+   "elapsed_seconds": 24.90955630003009,
+   "paired_context_gaps_vs_random": {
+    "centroid": {
+     "gap_pct_grid": 3.3541666666666665,
+     "batch_se": 0.9115513345409967,
+     "batches_arm_greater": 8,
+     "batches_equal": 0,
+     "batches_arm_smaller": 2,
+     "n_batches": 10,
+     "per_batch": [
+      -0.390625,
+      2.34375,
+      7.421875,
+      6.640625,
+      -1.171875,
+      2.734375,
+      4.6875,
+      5.859375,
+      2.734375,
+      1.5625
+     ]
+    },
+    "envelope": {
+     "gap_pct_grid": 0.6875,
+     "batch_se": 1.2303826303636989,
+     "batches_arm_greater": 6,
+     "batches_equal": 1,
+     "batches_arm_smaller": 3,
+     "n_batches": 10,
+     "per_batch": [
+      -5.46875,
+      2.734375,
+      0.0,
+      7.8125,
+      0.78125,
+      0.78125,
+      -1.5625,
+      4.6875,
+      -3.90625,
+      1.5625
+     ]
+    },
+    "envelope_hard_leastoverlap": {
+     "gap_pct_grid": -1.90625,
+     "batch_se": 0.9336037380335079,
+     "batches_arm_greater": 1,
+     "batches_equal": 2,
+     "batches_arm_smaller": 7,
+     "n_batches": 10,
+     "per_batch": [
+      -4.296875,
+      -3.125,
+      0.0,
+      4.6875,
+      -2.734375,
+      0.0,
+      -3.125,
+      -3.125,
+      -5.859375,
+      -0.78125
+     ]
+    },
+    "centroid_lat08_published": {
+     "gap_pct_grid": 2.3541666666666665,
+     "batch_se": 0.9751726220496241,
+     "batches_arm_greater": 7,
+     "batches_equal": 0,
+     "batches_arm_smaller": 3,
+     "n_batches": 10,
+     "per_batch": [
+      -0.78125,
+      1.5625,
+      5.859375,
+      6.640625,
+      -1.171875,
+      2.734375,
+      4.6875,
+      4.296875,
+      -2.34375,
+      1.5625
+     ]
+    },
+    "envelope_soft_leastoverlap_published": {
+     "gap_pct_grid": -0.010416666666666666,
+     "batch_se": 1.213734449100802,
+     "batches_arm_greater": 5,
+     "batches_equal": 1,
+     "batches_arm_smaller": 4,
+     "n_batches": 10,
+     "per_batch": [
+      -3.515625,
+      2.734375,
+      1.953125,
+      7.03125,
+      -4.296875,
+      2.34375,
+      -0.78125,
+      0.0,
+      -5.859375,
+      0.78125
+     ]
+    }
+   },
+   "saved_masks": {
+    "file": "autopilot\\investigations\\camera_ready_20261008\\mask_audit\\saved_masks\\a3scope\\delivered_masks_seed42.npz",
+    "sha256": "fa5a8ffc3e35fdea78bc9ed6436dc5a8eac7e0e55cf12900a407cdf3903634aa",
+    "layout": "per arm: <arm>__enc uint8 = concatenated batch contexts [n_b, C_b] (row-major); <arm>__pred uint8 = concatenated batch targets [npred, n_b, K_b]; <arm>__C/K per batch"
+   }
+  },
+  {
+   "seed": 1234,
+   "n_batches": 10,
+   "crop_identity_assertions": 600,
+   "hard_guide_valid": 599,
+   "soft_guide_valid": 599,
+   "size_draws": [
+    [
+     [
+      6,
+      6
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      16,
+      16
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      16,
+      13
+     ]
+    ],
+    [
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      15,
+      16
+     ]
+    ],
+    [
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      14,
+      16
+     ]
+    ],
+    [
+     [
+      6,
+      8
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      16,
+      14
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      16,
+      15
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      16,
+      15
+     ]
+    ],
+    [
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      5
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      15,
+      16
+     ]
+    ],
+    [
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      8,
+      5
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      16,
+      13
+     ]
+    ],
+    [
+     [
+      7,
+      6
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      16,
+      15
+     ]
+    ]
+   ],
+   "metrics": {
+    "random": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 74.81333333333333,
+     "context_pct_grid": 29.223958333333332,
+     "context_pct_grid_batch_se": 2.3887463115559635,
+     "unique_targets_U": 112.60833333333333,
+     "loss_slots_L": 160.64,
+     "duplicate_slots_D": 48.031666666666666,
+     "mask_ratio_pct": 43.987630208333336,
+     "purity_soft_pct": 31.66580330052542,
+     "purity_hard_pct": 36.05713017094649,
+     "anatomy_hidden_soft_pct": 53.41138877100131,
+     "context_tissue_share_soft_pct": 29.842474473874727,
+     "context_on_tissue_soft_pct": 26.630725360898236,
+     "tissue_cells_soft": 66.76166666666667,
+     "tissue_cells_hard": 75.37833333333333,
+     "delivered_context_C_quantiles": [
+      56.0,
+      57.35,
+      68.0,
+      105.24999999999999,
+      112.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      41.0,
+      45.3,
+      48.0
+     ]
+    },
+    "centroid": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 87.06666666666666,
+     "context_pct_grid": 34.010416666666664,
+     "context_pct_grid_batch_se": 1.9236050394133013,
+     "unique_targets_U": 103.705,
+     "loss_slots_L": 160.64,
+     "duplicate_slots_D": 56.935,
+     "mask_ratio_pct": 40.509765625,
+     "purity_soft_pct": 38.7573726756987,
+     "purity_hard_pct": 44.72140526814843,
+     "anatomy_hidden_soft_pct": 60.2042090021719,
+     "context_tissue_share_soft_pct": 26.225129190902962,
+     "context_on_tissue_soft_pct": 20.109111791730474,
+     "tissue_cells_soft": 66.76166666666667,
+     "tissue_cells_hard": 75.37833333333333,
+     "delivered_context_C_quantiles": [
+      64.0,
+      68.95,
+      87.0,
+      111.1,
+      112.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      41.0,
+      45.3,
+      48.0
+     ]
+    },
+    "envelope": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 77.57333333333334,
+     "context_pct_grid": 30.302083333333336,
+     "context_pct_grid_batch_se": 1.6515940354920502,
+     "unique_targets_U": 112.78333333333333,
+     "loss_slots_L": 160.64,
+     "duplicate_slots_D": 47.85666666666667,
+     "mask_ratio_pct": 44.055989583333336,
+     "purity_soft_pct": 42.083641199940885,
+     "purity_hard_pct": 49.26555342101374,
+     "anatomy_hidden_soft_pct": 71.09369148962728,
+     "context_tissue_share_soft_pct": 17.969393614099904,
+     "context_on_tissue_soft_pct": 15.46493640426263,
+     "tissue_cells_soft": 66.76166666666667,
+     "tissue_cells_hard": 75.37833333333333,
+     "delivered_context_C_quantiles": [
+      55.0,
+      58.6,
+      81.5,
+      93.69999999999999,
+      100.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      41.0,
+      45.3,
+      48.0
+     ]
+    },
+    "envelope_hard_leastoverlap": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 74.37333333333333,
+     "context_pct_grid": 29.052083333333336,
+     "context_pct_grid_batch_se": 2.1031366729286427,
+     "unique_targets_U": 126.545,
+     "loss_slots_L": 160.64,
+     "duplicate_slots_D": 34.095,
+     "mask_ratio_pct": 49.431640625,
+     "purity_soft_pct": 40.12406653759532,
+     "purity_hard_pct": 45.94676465552438,
+     "anatomy_hidden_soft_pct": 76.05412287490326,
+     "context_tissue_share_soft_pct": 15.502908355593279,
+     "context_on_tissue_soft_pct": 13.916278235926855,
+     "tissue_cells_soft": 66.76166666666667,
+     "tissue_cells_hard": 75.37833333333333,
+     "delivered_context_C_quantiles": [
+      42.0,
+      47.85,
+      79.5,
+      93.69999999999999,
+      100.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      41.0,
+      45.3,
+      48.0
+     ]
+    },
+    "centroid_lat08_published": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 83.90666666666667,
+     "context_pct_grid": 32.776041666666664,
+     "context_pct_grid_batch_se": 2.317708333333333,
+     "unique_targets_U": 104.48333333333333,
+     "loss_slots_L": 160.64,
+     "duplicate_slots_D": 56.156666666666666,
+     "mask_ratio_pct": 40.813802083333336,
+     "purity_soft_pct": 39.70170681129367,
+     "purity_hard_pct": 46.29925027915138,
+     "anatomy_hidden_soft_pct": 62.133959108270716,
+     "context_tissue_share_soft_pct": 24.010784631899543,
+     "context_on_tissue_soft_pct": 19.10456062291435,
+     "tissue_cells_soft": 66.76166666666667,
+     "tissue_cells_hard": 75.37833333333333,
+     "delivered_context_C_quantiles": [
+      64.0,
+      64.0,
+      90.0,
+      111.55,
+      112.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      41.0,
+      45.3,
+      48.0
+     ]
+    },
+    "envelope_soft_leastoverlap_published": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 81.45333333333333,
+     "context_pct_grid": 31.817708333333332,
+     "context_pct_grid_batch_se": 2.07358559401627,
+     "unique_targets_U": 119.94166666666666,
+     "loss_slots_L": 160.64,
+     "duplicate_slots_D": 40.69833333333333,
+     "mask_ratio_pct": 46.852213541666664,
+     "purity_soft_pct": 43.51281873132773,
+     "purity_hard_pct": 50.122976446883904,
+     "anatomy_hidden_soft_pct": 78.17360261627181,
+     "context_tissue_share_soft_pct": 13.747909229348178,
+     "context_on_tissue_soft_pct": 11.26821083647078,
+     "tissue_cells_soft": 66.76166666666667,
+     "tissue_cells_hard": 75.37833333333333,
+     "delivered_context_C_quantiles": [
+      65.0,
+      65.45,
+      78.5,
+      110.55,
+      111.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.45,
+      41.0,
+      45.3,
+      48.0
+     ]
+    }
+   },
+   "per_batch_context_C": {
+    "random": [
+     112,
+     61,
+     64,
+     65,
+     81,
+     59,
+     71,
+     96,
+     56,
+     97
+    ],
+    "centroid": [
+     112,
+     64,
+     101,
+     77,
+     85,
+     80,
+     89,
+     92,
+     75,
+     110
+    ],
+    "envelope": [
+     100,
+     55,
+     81,
+     65,
+     86,
+     78,
+     82,
+     85,
+     63,
+     86
+    ],
+    "envelope_hard_leastoverlap": [
+     100,
+     55,
+     77,
+     42,
+     81,
+     78,
+     85,
+     84,
+     63,
+     86
+    ],
+    "centroid_lat08_published": [
+     112,
+     64,
+     93,
+     64,
+     65,
+     91,
+     89,
+     97,
+     70,
+     111
+    ],
+    "envelope_soft_leastoverlap_published": [
+     110,
+     65,
+     76,
+     69,
+     78,
+     79,
+     85,
+     94,
+     66,
+     111
+    ]
+   },
+   "per_batch_target_K": {
+    "random": [
+     36,
+     42,
+     42,
+     48,
+     42,
+     36,
+     42,
+     35,
+     40,
+     36
+    ],
+    "centroid": [
+     36,
+     42,
+     42,
+     48,
+     42,
+     36,
+     42,
+     35,
+     40,
+     36
+    ],
+    "envelope": [
+     36,
+     42,
+     42,
+     48,
+     42,
+     36,
+     42,
+     35,
+     40,
+     36
+    ],
+    "envelope_hard_leastoverlap": [
+     36,
+     42,
+     42,
+     48,
+     42,
+     36,
+     42,
+     35,
+     40,
+     36
+    ],
+    "centroid_lat08_published": [
+     36,
+     42,
+     42,
+     48,
+     42,
+     36,
+     42,
+     35,
+     40,
+     36
+    ],
+    "envelope_soft_leastoverlap_published": [
+     36,
+     42,
+     42,
+     48,
+     42,
+     36,
+     42,
+     35,
+     40,
+     36
+    ]
+   },
+   "per_batch_n": [
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    24
+   ],
+   "elapsed_seconds": 23.508664799970575,
+   "paired_context_gaps_vs_random": {
+    "centroid": {
+     "gap_pct_grid": 4.786458333333333,
+     "batch_se": 1.5050754158441602,
+     "batches_arm_greater": 8,
+     "batches_equal": 1,
+     "batches_arm_smaller": 1,
+     "n_batches": 10,
+     "per_batch": [
+      0.0,
+      1.171875,
+      14.453125,
+      4.6875,
+      1.5625,
+      8.203125,
+      7.03125,
+      -1.5625,
+      7.421875,
+      5.078125
+     ]
+    },
+    "envelope": {
+     "gap_pct_grid": 1.078125,
+     "batch_se": 1.4446084997146864,
+     "batches_arm_greater": 5,
+     "batches_equal": 1,
+     "batches_arm_smaller": 4,
+     "n_batches": 10,
+     "per_batch": [
+      -4.6875,
+      -2.34375,
+      6.640625,
+      0.0,
+      1.953125,
+      7.421875,
+      4.296875,
+      -4.296875,
+      2.734375,
+      -4.296875
+     ]
+    },
+    "envelope_hard_leastoverlap": {
+     "gap_pct_grid": -0.171875,
+     "batch_se": 1.7160351823205156,
+     "batches_arm_greater": 4,
+     "batches_equal": 1,
+     "batches_arm_smaller": 5,
+     "n_batches": 10,
+     "per_batch": [
+      -4.6875,
+      -2.34375,
+      5.078125,
+      -8.984375,
+      0.0,
+      7.421875,
+      5.46875,
+      -4.6875,
+      2.734375,
+      -4.296875
+     ]
+    },
+    "centroid_lat08_published": {
+     "gap_pct_grid": 3.5520833333333335,
+     "batch_se": 1.8249616505673938,
+     "batches_arm_greater": 7,
+     "batches_equal": 1,
+     "batches_arm_smaller": 2,
+     "n_batches": 10,
+     "per_batch": [
+      0.0,
+      1.171875,
+      11.328125,
+      -0.390625,
+      -6.25,
+      12.5,
+      7.03125,
+      0.390625,
+      5.46875,
+      5.46875
+     ]
+    },
+    "envelope_soft_leastoverlap_published": {
+     "gap_pct_grid": 2.59375,
+     "batch_se": 0.9924061985568347,
+     "batches_arm_greater": 7,
+     "batches_equal": 0,
+     "batches_arm_smaller": 3,
+     "n_batches": 10,
+     "per_batch": [
+      -0.78125,
+      1.5625,
+      4.6875,
+      1.5625,
+      -1.171875,
+      7.8125,
+      5.46875,
+      -0.78125,
+      3.90625,
+      5.46875
+     ]
+    }
+   },
+   "saved_masks": {
+    "file": "autopilot\\investigations\\camera_ready_20261008\\mask_audit\\saved_masks\\a3scope\\delivered_masks_seed1234.npz",
+    "sha256": "23910cd4abe0e9f8ec2042964cbd3990bfceff04ff0f2ccfca08bdcd0465efbb",
+    "layout": "per arm: <arm>__enc uint8 = concatenated batch contexts [n_b, C_b] (row-major); <arm>__pred uint8 = concatenated batch targets [npred, n_b, K_b]; <arm>__C/K per batch"
+   }
+  },
+  {
+   "seed": 5678,
+   "n_batches": 10,
+   "crop_identity_assertions": 600,
+   "hard_guide_valid": 598,
+   "soft_guide_valid": 598,
+   "size_draws": [
+    [
+     [
+      7,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      15,
+      15
+     ]
+    ],
+    [
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      7,
+      6
+     ],
+     [
+      13,
+      16
+     ]
+    ],
+    [
+     [
+      6,
+      7
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      16,
+      13
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      16,
+      13
+     ]
+    ],
+    [
+     [
+      7,
+      7
+     ],
+     [
+      7,
+      5
+     ],
+     [
+      7,
+      5
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      14,
+      15
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      14,
+      16
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      8,
+      5
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      16,
+      13
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      5
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      15,
+      16
+     ]
+    ],
+    [
+     [
+      7,
+      6
+     ],
+     [
+      8,
+      5
+     ],
+     [
+      7,
+      7
+     ],
+     [
+      6,
+      6
+     ],
+     [
+      16,
+      14
+     ]
+    ],
+    [
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      7
+     ],
+     [
+      8,
+      6
+     ],
+     [
+      6,
+      8
+     ],
+     [
+      14,
+      16
+     ]
+    ]
+   ],
+   "metrics": {
+    "random": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 65.69333333333333,
+     "context_pct_grid": 25.661458333333332,
+     "context_pct_grid_batch_se": 1.1313148625128024,
+     "unique_targets_U": 113.68333333333334,
+     "loss_slots_L": 161.17333333333335,
+     "duplicate_slots_D": 47.49,
+     "mask_ratio_pct": 44.407552083333336,
+     "purity_soft_pct": 32.32370620143674,
+     "purity_hard_pct": 36.53716463861604,
+     "anatomy_hidden_soft_pct": 54.94828660436138,
+     "context_tissue_share_soft_pct": 27.720872274143304,
+     "context_on_tissue_soft_pct": 28.2195047696367,
+     "tissue_cells_soft": 66.875,
+     "tissue_cells_hard": 75.55833333333334,
+     "delivered_context_C_quantiles": [
+      49.0,
+      50.35,
+      70.0,
+      74.64999999999999,
+      76.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.0,
+      42.0,
+      45.3,
+      48.0
+     ]
+    },
+    "centroid": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 73.09333333333333,
+     "context_pct_grid": 28.552083333333332,
+     "context_pct_grid_batch_se": 1.144723065316394,
+     "unique_targets_U": 104.01,
+     "loss_slots_L": 161.17333333333335,
+     "duplicate_slots_D": 57.163333333333334,
+     "mask_ratio_pct": 40.62890625,
+     "purity_soft_pct": 38.53635868345992,
+     "purity_hard_pct": 44.38034804345736,
+     "anatomy_hidden_soft_pct": 59.935202492211836,
+     "context_tissue_share_soft_pct": 24.316510903426792,
+     "context_on_tissue_soft_pct": 22.24781101787669,
+     "tissue_cells_soft": 66.875,
+     "tissue_cells_hard": 75.55833333333334,
+     "delivered_context_C_quantiles": [
+      57.0,
+      59.7,
+      74.0,
+      86.55,
+      87.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.0,
+      42.0,
+      45.3,
+      48.0
+     ]
+    },
+    "envelope": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 69.8,
+     "context_pct_grid": 27.265625,
+     "context_pct_grid_batch_se": 0.9988770007297222,
+     "unique_targets_U": 111.73666666666666,
+     "loss_slots_L": 161.17333333333335,
+     "duplicate_slots_D": 49.43666666666667,
+     "mask_ratio_pct": 43.647135416666664,
+     "purity_soft_pct": 42.25410936427911,
+     "purity_hard_pct": 49.32430416753677,
+     "anatomy_hidden_soft_pct": 70.5993769470405,
+     "context_tissue_share_soft_pct": 17.178816199376946,
+     "context_on_tissue_soft_pct": 16.458930276981853,
+     "tissue_cells_soft": 66.875,
+     "tissue_cells_hard": 75.55833333333334,
+     "delivered_context_C_quantiles": [
+      58.0,
+      60.25,
+      67.5,
+      81.3,
+      84.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.0,
+      42.0,
+      45.3,
+      48.0
+     ]
+    },
+    "envelope_hard_leastoverlap": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 64.89333333333333,
+     "context_pct_grid": 25.348958333333332,
+     "context_pct_grid_batch_se": 0.899192014094768,
+     "unique_targets_U": 125.23,
+     "loss_slots_L": 161.17333333333335,
+     "duplicate_slots_D": 35.943333333333335,
+     "mask_ratio_pct": 48.91796875,
+     "purity_soft_pct": 40.33245494955948,
+     "purity_hard_pct": 46.237589501983024,
+     "anatomy_hidden_soft_pct": 75.5264797507788,
+     "context_tissue_share_soft_pct": 14.624299065420558,
+     "context_on_tissue_soft_pct": 15.07088555578385,
+     "tissue_cells_soft": 66.875,
+     "tissue_cells_hard": 75.55833333333334,
+     "delivered_context_C_quantiles": [
+      57.0,
+      57.45,
+      64.0,
+      76.64999999999999,
+      78.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.0,
+      42.0,
+      45.3,
+      48.0
+     ]
+    },
+    "centroid_lat08_published": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 74.58666666666667,
+     "context_pct_grid": 29.135416666666668,
+     "context_pct_grid_batch_se": 0.7274207147637199,
+     "unique_targets_U": 104.28833333333333,
+     "loss_slots_L": 161.17333333333335,
+     "duplicate_slots_D": 56.885,
+     "mask_ratio_pct": 40.73763020833333,
+     "purity_soft_pct": 39.66726863023988,
+     "purity_hard_pct": 46.008661882920755,
+     "anatomy_hidden_soft_pct": 61.85919003115264,
+     "context_tissue_share_soft_pct": 23.501557632398754,
+     "context_on_tissue_soft_pct": 21.071683947086164,
+     "tissue_cells_soft": 66.875,
+     "tissue_cells_hard": 75.55833333333334,
+     "delivered_context_C_quantiles": [
+      66.0,
+      67.8,
+      76.0,
+      84.19999999999999,
+      86.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.0,
+      42.0,
+      45.3,
+      48.0
+     ]
+    },
+    "envelope_soft_leastoverlap_published": {
+     "n_images": 600,
+     "n_batches": 10,
+     "context_tokens": 70.56,
+     "context_pct_grid": 27.5625,
+     "context_pct_grid_batch_se": 0.919237635141812,
+     "unique_targets_U": 118.94833333333334,
+     "loss_slots_L": 161.17333333333335,
+     "duplicate_slots_D": 42.225,
+     "mask_ratio_pct": 46.464192708333336,
+     "purity_soft_pct": 43.44183048662584,
+     "purity_hard_pct": 49.89421177261837,
+     "anatomy_hidden_soft_pct": 77.26853582554517,
+     "context_tissue_share_soft_pct": 13.248598130841122,
+     "context_on_tissue_soft_pct": 12.556689342403628,
+     "tissue_cells_soft": 66.875,
+     "tissue_cells_hard": 75.55833333333334,
+     "delivered_context_C_quantiles": [
+      62.0,
+      62.9,
+      70.0,
+      82.64999999999999,
+      84.0
+     ],
+     "delivered_target_K_quantiles": [
+      35.0,
+      35.0,
+      42.0,
+      45.3,
+      48.0
+     ]
+    }
+   },
+   "per_batch_context_C": {
+    "random": [
+     65,
+     76,
+     61,
+     52,
+     71,
+     71,
+     49,
+     72,
+     73,
+     69
+    ],
+    "centroid": [
+     63,
+     72,
+     76,
+     57,
+     79,
+     72,
+     71,
+     87,
+     76,
+     86
+    ],
+    "envelope": [
+     64,
+     58,
+     70,
+     75,
+     63,
+     78,
+     64,
+     84,
+     74,
+     65
+    ],
+    "envelope_hard_leastoverlap": [
+     69,
+     58,
+     66,
+     57,
+     63,
+     58,
+     60,
+     75,
+     78,
+     65
+    ],
+    "centroid_lat08_published": [
+     70,
+     72,
+     76,
+     66,
+     76,
+     82,
+     71,
+     78,
+     76,
+     86
+    ],
+    "envelope_soft_leastoverlap_published": [
+     65,
+     64,
+     71,
+     67,
+     74,
+     69,
+     62,
+     81,
+     77,
+     84
+    ]
+   },
+   "per_batch_target_K": {
+    "random": [
+     42,
+     42,
+     42,
+     48,
+     35,
+     42,
+     40,
+     35,
+     36,
+     42
+    ],
+    "centroid": [
+     42,
+     42,
+     42,
+     48,
+     35,
+     42,
+     40,
+     35,
+     36,
+     42
+    ],
+    "envelope": [
+     42,
+     42,
+     42,
+     48,
+     35,
+     42,
+     40,
+     35,
+     36,
+     42
+    ],
+    "envelope_hard_leastoverlap": [
+     42,
+     42,
+     42,
+     48,
+     35,
+     42,
+     40,
+     35,
+     36,
+     42
+    ],
+    "centroid_lat08_published": [
+     42,
+     42,
+     42,
+     48,
+     35,
+     42,
+     40,
+     35,
+     36,
+     42
+    ],
+    "envelope_soft_leastoverlap_published": [
+     42,
+     42,
+     42,
+     48,
+     35,
+     42,
+     40,
+     35,
+     36,
+     42
+    ]
+   },
+   "per_batch_n": [
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    64,
+    24
+   ],
+   "elapsed_seconds": 23.76804070000071,
+   "paired_context_gaps_vs_random": {
+    "centroid": {
+     "gap_pct_grid": 2.890625,
+     "batch_se": 1.0909562534194484,
+     "batches_arm_greater": 8,
+     "batches_equal": 0,
+     "batches_arm_smaller": 2,
+     "n_batches": 10,
+     "per_batch": [
+      -0.78125,
+      -1.5625,
+      5.859375,
+      1.953125,
+      3.125,
+      0.390625,
+      8.59375,
+      5.859375,
+      1.171875,
+      6.640625
+     ]
+    },
+    "envelope": {
+     "gap_pct_grid": 1.6041666666666667,
+     "batch_se": 1.4871137015905451,
+     "batches_arm_greater": 6,
+     "batches_equal": 0,
+     "batches_arm_smaller": 4,
+     "n_batches": 10,
+     "per_batch": [
+      -0.390625,
+      -7.03125,
+      3.515625,
+      8.984375,
+      -3.125,
+      2.734375,
+      5.859375,
+      4.6875,
+      0.390625,
+      -1.5625
+     ]
+    },
+    "envelope_hard_leastoverlap": {
+     "gap_pct_grid": -0.3125,
+     "batch_se": 1.1529137302697217,
+     "batches_arm_greater": 6,
+     "batches_equal": 0,
+     "batches_arm_smaller": 4,
+     "n_batches": 10,
+     "per_batch": [
+      1.5625,
+      -7.03125,
+      1.953125,
+      1.953125,
+      -3.125,
+      -5.078125,
+      4.296875,
+      1.171875,
+      1.953125,
+      -1.5625
+     ]
+    },
+    "centroid_lat08_published": {
+     "gap_pct_grid": 3.4739583333333335,
+     "batch_se": 0.9589558666417691,
+     "batches_arm_greater": 9,
+     "batches_equal": 0,
+     "batches_arm_smaller": 1,
+     "n_batches": 10,
+     "per_batch": [
+      1.953125,
+      -1.5625,
+      5.859375,
+      5.46875,
+      1.953125,
+      4.296875,
+      8.59375,
+      2.34375,
+      1.171875,
+      6.640625
+     ]
+    },
+    "envelope_soft_leastoverlap_published": {
+     "gap_pct_grid": 1.9010416666666667,
+     "batch_se": 1.0661987549965766,
+     "batches_arm_greater": 7,
+     "batches_equal": 1,
+     "batches_arm_smaller": 2,
+     "n_batches": 10,
+     "per_batch": [
+      0.0,
+      -4.6875,
+      3.90625,
+      5.859375,
+      1.171875,
+      -0.78125,
+      5.078125,
+      3.515625,
+      1.5625,
+      5.859375
+     ]
+    }
+   },
+   "saved_masks": {
+    "file": "autopilot\\investigations\\camera_ready_20261008\\mask_audit\\saved_masks\\a3scope\\delivered_masks_seed5678.npz",
+    "sha256": "c2465d7636f0a0d69b36bcfa496aad88ca37ee941bc51e4dd596fe2465eb1603",
+    "layout": "per arm: <arm>__enc uint8 = concatenated batch contexts [n_b, C_b] (row-major); <arm>__pred uint8 = concatenated batch targets [npred, n_b, K_b]; <arm>__C/K per batch"
+   }
+  }
+ ],
+ "summary": {
+  "random": {
+   "context_pct_grid": {
+    "mean": 27.763888888888886,
+    "seed_sd": 1.8660981780980674,
+    "per_seed": {
+     "42": 28.40625,
+     "1234": 29.223958333333332,
+     "5678": 25.661458333333332
+    }
+   },
+   "context_tokens": {
+    "mean": 71.07555555555555,
+    "seed_sd": 4.777211335931055,
+    "per_seed": {
+     "42": 72.72,
+     "1234": 74.81333333333333,
+     "5678": 65.69333333333333
+    }
+   },
+   "unique_targets_U": {
+    "mean": 114.21166666666666,
+    "seed_sd": 1.9227345977366015,
+    "per_seed": {
+     "42": 116.34333333333333,
+     "1234": 112.60833333333333,
+     "5678": 113.68333333333334
+    }
+   },
+   "loss_slots_L": {
+    "mean": 163.69777777777776,
+    "seed_sd": 4.841695448374963,
+    "per_seed": {
+     "42": 169.28,
+     "1234": 160.64,
+     "5678": 161.17333333333335
+    }
+   },
+   "duplicate_slots_D": {
+    "mean": 49.486111111111114,
+    "seed_sd": 3.000516776478,
+    "per_seed": {
+     "42": 52.93666666666667,
+     "1234": 48.031666666666666,
+     "5678": 47.49
+    }
+   },
+   "mask_ratio_pct": {
+    "mean": 44.613932291666664,
+    "seed_sd": 0.7510682022408601,
+    "per_seed": {
+     "42": 45.446614583333336,
+     "1234": 43.987630208333336,
+     "5678": 44.407552083333336
+    }
+   },
+   "purity_soft_pct": {
+    "mean": 31.95117755061155,
+    "seed_sd": 0.3374995910116358,
+    "per_seed": {
+     "42": 31.8640231498725,
+     "1234": 31.66580330052542,
+     "5678": 32.32370620143674
+    }
+   },
+   "purity_hard_pct": {
+    "mean": 36.23670049124871,
+    "seed_sd": 0.2618582834369268,
+    "per_seed": {
+     "42": 36.115806664183594,
+     "1234": 36.05713017094649,
+     "5678": 36.53716463861604
+    }
+   },
+   "anatomy_hidden_soft_pct": {
+    "mean": 54.81510179035872,
+    "seed_sd": 1.3420861291281476,
+    "per_seed": {
+     "42": 56.08562999571346,
+     "1234": 53.41138877100131,
+     "5678": 54.94828660436138
+    }
+   },
+   "context_tissue_share_soft_pct": {
+    "mean": 28.865282942750678,
+    "seed_sd": 1.0706403006760972,
+    "per_seed": {
+     "42": 29.032502080234,
+     "1234": 29.842474473874727,
+     "5678": 27.720872274143304
+    }
+   },
+   "context_on_tissue_soft_pct": {
+    "mean": 27.07970633980794,
+    "seed_sd": 0.994473008823546,
+    "per_seed": {
+     "42": 26.388888888888893,
+     "1234": 26.630725360898236,
+     "5678": 28.2195047696367
+    }
+   }
+  },
+  "centroid": {
+   "context_pct_grid": {
+    "mean": 31.440972222222218,
+    "seed_sd": 2.7431522486473945,
+    "per_seed": {
+     "42": 31.760416666666668,
+     "1234": 34.010416666666664,
+     "5678": 28.552083333333332
+    }
+   },
+   "context_tokens": {
+    "mean": 80.4888888888889,
+    "seed_sd": 7.022469756537329,
+    "per_seed": {
+     "42": 81.30666666666667,
+     "1234": 87.06666666666666,
+     "5678": 73.09333333333333
+    }
+   },
+   "unique_targets_U": {
+    "mean": 104.8288888888889,
+    "seed_sd": 1.6893920120476353,
+    "per_seed": {
+     "42": 106.77166666666666,
+     "1234": 103.705,
+     "5678": 104.01
+    }
+   },
+   "loss_slots_L": {
+    "mean": 163.69777777777776,
+    "seed_sd": 4.841695448374963,
+    "per_seed": {
+     "42": 169.28,
+     "1234": 160.64,
+     "5678": 161.17333333333335
+    }
+   },
+   "duplicate_slots_D": {
+    "mean": 58.86888888888888,
+    "seed_sd": 3.1539183448412103,
+    "per_seed": {
+     "42": 62.50833333333333,
+     "1234": 56.935,
+     "5678": 57.163333333333334
+    }
+   },
+   "mask_ratio_pct": {
+    "mean": 40.94878472222222,
+    "seed_sd": 0.6599187547061076,
+    "per_seed": {
+     "42": 41.707682291666664,
+     "1234": 40.509765625,
+     "5678": 40.62890625
+    }
+   },
+   "purity_soft_pct": {
+    "mean": 38.65033020652472,
+    "seed_sd": 0.110669801807885,
+    "per_seed": {
+     "42": 38.65725926041553,
+     "1234": 38.7573726756987,
+     "5678": 38.53635868345992
+    }
+   },
+   "purity_hard_pct": {
+    "mean": 44.44700592854639,
+    "seed_sd": 0.24788584382913104,
+    "per_seed": {
+     "42": 44.23926447403338,
+     "1234": 44.72140526814843,
+     "5678": 44.38034804345736
+    }
+   },
+   "anatomy_hidden_soft_pct": {
+    "mean": 60.8614179249415,
+    "seed_sd": 1.3778663370557434,
+    "per_seed": {
+     "42": 62.44484228044076,
+     "1234": 60.2042090021719,
+     "5678": 59.935202492211836
+    }
+   },
+   "context_tissue_share_soft_pct": {
+    "mean": 25.205971780268655,
+    "seed_sd": 0.9608963705730434,
+    "per_seed": {
+     "42": 25.07627524647621,
+     "1234": 26.225129190902962,
+     "5678": 24.316510903426792
+    }
+   },
+   "context_on_tissue_soft_pct": {
+    "mean": 20.914235011095684,
+    "seed_sd": 1.163166091482745,
+    "per_seed": {
+     "42": 20.385782223679893,
+     "1234": 20.109111791730474,
+     "5678": 22.24781101787669
+    }
+   }
+  },
+  "envelope": {
+   "context_pct_grid": {
+    "mean": 28.887152777777782,
+    "seed_sd": 1.5287352981107678,
+    "per_seed": {
+     "42": 29.09375,
+     "1234": 30.302083333333336,
+     "5678": 27.265625
+    }
+   },
+   "context_tokens": {
+    "mean": 73.95111111111112,
+    "seed_sd": 3.9135623631635665,
+    "per_seed": {
+     "42": 74.48,
+     "1234": 77.57333333333334,
+     "5678": 69.8
+    }
+   },
+   "unique_targets_U": {
+    "mean": 113.22833333333334,
+    "seed_sd": 1.7569536451230372,
+    "per_seed": {
+     "42": 115.165,
+     "1234": 112.78333333333333,
+     "5678": 111.73666666666666
+    }
+   },
+   "loss_slots_L": {
+    "mean": 163.69777777777776,
+    "seed_sd": 4.841695448374963,
+    "per_seed": {
+     "42": 169.28,
+     "1234": 160.64,
+     "5678": 161.17333333333335
+    }
+   },
+   "duplicate_slots_D": {
+    "mean": 50.46944444444444,
+    "seed_sd": 3.254482521305266,
+    "per_seed": {
+     "42": 54.115,
+     "1234": 47.85666666666667,
+     "5678": 49.43666666666667
+    }
+   },
+   "mask_ratio_pct": {
+    "mean": 44.229817708333336,
+    "seed_sd": 0.6863100176261853,
+    "per_seed": {
+     "42": 44.986328125,
+     "1234": 44.055989583333336,
+     "5678": 43.647135416666664
+    }
+   },
+   "purity_soft_pct": {
+    "mean": 42.03126058860976,
+    "seed_sd": 0.25313684118417973,
+    "per_seed": {
+     "42": 41.75603120160928,
+     "1234": 42.083641199940885,
+     "5678": 42.25410936427911
+    }
+   },
+   "purity_hard_pct": {
+    "mean": 48.993282920212316,
+    "seed_sd": 0.523291135575456,
+    "per_seed": {
+     "42": 48.38999117208642,
+     "1234": 49.26555342101374,
+     "5678": 49.32430416753677
+    }
+   },
+   "anatomy_hidden_soft_pct": {
+    "mean": 71.4819284494466,
+    "seed_sd": 1.1279468974854812,
+    "per_seed": {
+     "42": 72.75271691167201,
+     "1234": 71.09369148962728,
+     "5678": 70.5993769470405
+    }
+   },
+   "context_tissue_share_soft_pct": {
+    "mean": 17.602922018479862,
+    "seed_sd": 0.3984274588364411,
+    "per_seed": {
+     "42": 17.660556241962734,
+     "1234": 17.969393614099904,
+     "5678": 17.178816199376946
+    }
+   },
+   "context_on_tissue_soft_pct": {
+    "mean": 15.865659343682522,
+    "seed_sd": 0.5242251445811116,
+    "per_seed": {
+     "42": 15.673111349803081,
+     "1234": 15.46493640426263,
+     "5678": 16.458930276981853
+    }
+   }
+  },
+  "envelope_hard_leastoverlap": {
+   "context_pct_grid": {
+    "mean": 26.96701388888889,
+    "seed_sd": 1.8952203488559318,
+    "per_seed": {
+     "42": 26.5,
+     "1234": 29.052083333333336,
+     "5678": 25.348958333333332
+    }
+   },
+   "context_tokens": {
+    "mean": 69.03555555555556,
+    "seed_sd": 4.851764093071182,
+    "per_seed": {
+     "42": 67.84,
+     "1234": 74.37333333333333,
+     "5678": 64.89333333333333
+    }
+   },
+   "unique_targets_U": {
+    "mean": 127.10555555555555,
+    "seed_sd": 2.209815435564524,
+    "per_seed": {
+     "42": 129.54166666666666,
+     "1234": 126.545,
+     "5678": 125.23
+    }
+   },
+   "loss_slots_L": {
+    "mean": 163.69777777777776,
+    "seed_sd": 4.841695448374963,
+    "per_seed": {
+     "42": 169.28,
+     "1234": 160.64,
+     "5678": 161.17333333333335
+    }
+   },
+   "duplicate_slots_D": {
+    "mean": 36.592222222222226,
+    "seed_sd": 2.8770810503651756,
+    "per_seed": {
+     "42": 39.73833333333334,
+     "1234": 34.095,
+     "5678": 35.943333333333335
+    }
+   },
+   "mask_ratio_pct": {
+    "mean": 49.650607638888886,
+    "seed_sd": 0.8632091545173938,
+    "per_seed": {
+     "42": 50.602213541666664,
+     "1234": 49.431640625,
+     "5678": 48.91796875
+    }
+   },
+   "purity_soft_pct": {
+    "mean": 40.024372821224866,
+    "seed_sd": 0.3681946322312944,
+    "per_seed": {
+     "42": 39.61659697651979,
+     "1234": 40.12406653759532,
+     "5678": 40.33245494955948
+    }
+   },
+   "purity_hard_pct": {
+    "mean": 45.71214292652413,
+    "seed_sd": 0.6741087771361381,
+    "per_seed": {
+     "42": 44.95207462206498,
+     "1234": 45.94676465552438,
+     "5678": 46.237589501983024
+    }
+   },
+   "anatomy_hidden_soft_pct": {
+    "mean": 76.40749993302845,
+    "seed_sd": 1.1010922880906426,
+    "per_seed": {
+     "42": 77.64189717340327,
+     "1234": 76.05412287490326,
+     "5678": 75.5264797507788
+    }
+   },
+   "context_tissue_share_soft_pct": {
+    "mean": 14.961000185834136,
+    "seed_sd": 0.4738892497412119,
+    "per_seed": {
+     "42": 14.755793136488567,
+     "1234": 15.502908355593279,
+     "5678": 14.624299065420558
+    }
+   },
+   "context_on_tissue_soft_pct": {
+    "mean": 14.454709733505245,
+    "seed_sd": 0.5812165265924201,
+    "per_seed": {
+     "42": 14.376965408805031,
+     "1234": 13.916278235926855,
+     "5678": 15.07088555578385
+    }
+   }
+  },
+  "centroid_lat08_published": {
+   "context_pct_grid": {
+    "mean": 30.890625,
+    "seed_sd": 1.8238018684079493,
+    "per_seed": {
+     "42": 30.760416666666668,
+     "1234": 32.776041666666664,
+     "5678": 29.135416666666668
+    }
+   },
+   "context_tokens": {
+    "mean": 79.08,
+    "seed_sd": 4.668932783124351,
+    "per_seed": {
+     "42": 78.74666666666667,
+     "1234": 83.90666666666667,
+     "5678": 74.58666666666667
+    }
+   },
+   "unique_targets_U": {
+    "mean": 105.49777777777778,
+    "seed_sd": 1.9284106389959048,
+    "per_seed": {
+     "42": 107.72166666666666,
+     "1234": 104.48333333333333,
+     "5678": 104.28833333333333
+    }
+   },
+   "loss_slots_L": {
+    "mean": 163.69777777777776,
+    "seed_sd": 4.841695448374963,
+    "per_seed": {
+     "42": 169.28,
+     "1234": 160.64,
+     "5678": 161.17333333333335
+    }
+   },
+   "duplicate_slots_D": {
+    "mean": 58.199999999999996,
+    "seed_sd": 2.931112322045069,
+    "per_seed": {
+     "42": 61.55833333333333,
+     "1234": 56.156666666666666,
+     "5678": 56.885
+    }
+   },
+   "mask_ratio_pct": {
+    "mean": 41.21006944444444,
+    "seed_sd": 0.7532854058577747,
+    "per_seed": {
+     "42": 42.078776041666664,
+     "1234": 40.813802083333336,
+     "5678": 40.73763020833333
+    }
+   },
+   "purity_soft_pct": {
+    "mean": 39.65288624341867,
+    "seed_sd": 0.05737993717598742,
+    "per_seed": {
+     "42": 39.58968328872248,
+     "1234": 39.70170681129367,
+     "5678": 39.66726863023988
+    }
+   },
+   "purity_hard_pct": {
+    "mean": 45.99372501545242,
+    "seed_sd": 0.31326089309102745,
+    "per_seed": {
+     "42": 45.673262884285116,
+     "1234": 46.29925027915138,
+     "5678": 46.008661882920755
+    }
+   },
+   "anatomy_hidden_soft_pct": {
+    "mean": 62.83772747438909,
+    "seed_sd": 1.4633827724067419,
+    "per_seed": {
+     "42": 64.52003328374393,
+     "1234": 62.133959108270716,
+     "5678": 61.85919003115264
+    }
+   },
+   "context_tissue_share_soft_pct": {
+    "mean": 23.62550729855187,
+    "seed_sd": 0.34065693371213557,
+    "per_seed": {
+     "42": 23.36417963135732,
+     "1234": 24.010784631899543,
+     "5678": 23.501557632398754
+    }
+   },
+   "context_on_tissue_soft_pct": {
+    "mean": 19.929218897754996,
+    "seed_sd": 1.0213444093738628,
+    "per_seed": {
+     "42": 19.611412123264476,
+     "1234": 19.10456062291435,
+     "5678": 21.071683947086164
+    }
+   }
+  },
+  "envelope_soft_leastoverlap_published": {
+   "context_pct_grid": {
+    "mean": 29.258680555555554,
+    "seed_sd": 2.2550118595452693,
+    "per_seed": {
+     "42": 28.395833333333332,
+     "1234": 31.817708333333332,
+     "5678": 27.5625
+    }
+   },
+   "context_tokens": {
+    "mean": 74.90222222222222,
+    "seed_sd": 5.77283036043589,
+    "per_seed": {
+     "42": 72.69333333333333,
+     "1234": 81.45333333333333,
+     "5678": 70.56
+    }
+   },
+   "unique_targets_U": {
+    "mean": 120.23166666666667,
+    "seed_sd": 1.4502451899975801,
+    "per_seed": {
+     "42": 121.805,
+     "1234": 119.94166666666666,
+     "5678": 118.94833333333334
+    }
+   },
+   "loss_slots_L": {
+    "mean": 163.69777777777776,
+    "seed_sd": 4.841695448374963,
+    "per_seed": {
+     "42": 169.28,
+     "1234": 160.64,
+     "5678": 161.17333333333335
+    }
+   },
+   "duplicate_slots_D": {
+    "mean": 43.46611111111111,
+    "seed_sd": 3.5547250766227174,
+    "per_seed": {
+     "42": 47.475,
+     "1234": 40.69833333333333,
+     "5678": 42.225
+    }
+   },
+   "mask_ratio_pct": {
+    "mean": 46.965494791666664,
+    "seed_sd": 0.5665020273428031,
+    "per_seed": {
+     "42": 47.580078125,
+     "1234": 46.852213541666664,
+     "5678": 46.464192708333336
+    }
+   },
+   "purity_soft_pct": {
+    "mean": 43.14184616028214,
+    "seed_sd": 0.5821487793830219,
+    "per_seed": {
+     "42": 42.470889262892875,
+     "1234": 43.51281873132773,
+     "5678": 43.44183048662584
+    }
+   },
+   "purity_hard_pct": {
+    "mean": 49.49831546162529,
+    "seed_sd": 0.891199312862935,
+    "per_seed": {
+     "42": 48.47775816537361,
+     "1234": 50.122976446883904,
+     "5678": 49.89421177261837
+    }
+   },
+   "anatomy_hidden_soft_pct": {
+    "mean": 77.90228168859544,
+    "seed_sd": 0.5507271096056894,
+    "per_seed": {
+     "42": 78.26470662396935,
+     "1234": 78.17360261627181,
+     "5678": 77.26853582554517
+    }
+   },
+   "context_tissue_share_soft_pct": {
+    "mean": 13.596363039896346,
+    "seed_sd": 0.3020003852897816,
+    "per_seed": {
+     "42": 13.792581759499738,
+     "1234": 13.747909229348178,
+     "5678": 13.248598130841122
+    }
+   },
+   "context_on_tissue_soft_pct": {
+    "mean": 12.122056479287314,
+    "seed_sd": 0.7394922116295226,
+    "per_seed": {
+     "42": 12.54126925898753,
+     "1234": 11.26821083647078,
+     "5678": 12.556689342403628
+    }
+   }
+  }
+ },
+ "paired_context_gaps_vs_random": {
+  "centroid": {
+   "per_seed": {
+    "42": 3.3541666666666665,
+    "1234": 4.786458333333333,
+    "5678": 2.890625
+   },
+   "mean_of_seeds": 3.6770833333333335,
+   "seed_sd": 0.9883078402768934,
+   "pooled_batches": 30,
+   "pooled_mean": 3.6770833333333335,
+   "pooled_batch_se": 0.6809062610423173,
+   "pooled_normal_95ci": [
+    2.342507061690392,
+    5.011659604976275
+   ],
+   "batches_arm_greater": 24,
+   "batches_arm_smaller": 5,
+   "batches_equal": 1
+  },
+  "envelope": {
+   "per_seed": {
+    "42": 0.6875,
+    "1234": 1.078125,
+    "5678": 1.6041666666666667
+   },
+   "mean_of_seeds": 1.123263888888889,
+   "seed_sd": 0.459997373809935,
+   "pooled_batches": 30,
+   "pooled_mean": 1.1232638888888888,
+   "pooled_batch_se": 0.7775896050422304,
+   "pooled_normal_95ci": [
+    -0.4008117369938826,
+    2.6473395147716605
+   ],
+   "batches_arm_greater": 17,
+   "batches_arm_smaller": 11,
+   "batches_equal": 2
+  },
+  "envelope_hard_leastoverlap": {
+   "per_seed": {
+    "42": -1.90625,
+    "1234": -0.171875,
+    "5678": -0.3125
+   },
+   "mean_of_seeds": -0.796875,
+   "seed_sd": 0.963316415112397,
+   "pooled_batches": 30,
+   "pooled_mean": -0.796875,
+   "pooled_batch_se": 0.7401958619800795,
+   "pooled_normal_95ci": [
+    -2.247658889480956,
+    0.6539088894809557
+   ],
+   "batches_arm_greater": 11,
+   "batches_arm_smaller": 16,
+   "batches_equal": 3
+  },
+  "centroid_lat08_published": {
+   "per_seed": {
+    "42": 2.3541666666666665,
+    "1234": 3.5520833333333335,
+    "5678": 3.4739583333333335
+   },
+   "mean_of_seeds": 3.126736111111111,
+   "seed_sd": 0.6702041023249175,
+   "pooled_batches": 30,
+   "pooled_mean": 3.126736111111111,
+   "pooled_batch_se": 0.7432108165138378,
+   "pooled_normal_95ci": [
+    1.6700429107439891,
+    4.583429311478233
+   ],
+   "batches_arm_greater": 23,
+   "batches_arm_smaller": 6,
+   "batches_equal": 1
+  },
+  "envelope_soft_leastoverlap_published": {
+   "per_seed": {
+    "42": -0.010416666666666666,
+    "1234": 2.59375,
+    "5678": 1.9010416666666667
+   },
+   "mean_of_seeds": 1.4947916666666667,
+   "seed_sd": 1.3487773366347184,
+   "pooled_batches": 30,
+   "pooled_mean": 1.4947916666666667,
+   "pooled_batch_se": 0.6473539595625616,
+   "pooled_normal_95ci": [
+    0.2259779059240461,
+    2.7636054274092876
+   ],
+   "batches_arm_greater": 19,
+   "batches_arm_smaller": 9,
+   "batches_equal": 2
+  }
+ }
+}

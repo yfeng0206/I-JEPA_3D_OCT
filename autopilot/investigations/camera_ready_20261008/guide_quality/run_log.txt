@@ -1,0 +1,27 @@
+I6 guide quality start 2026-10-08T03:24:14; python 3.11.9; numpy 2.4.4; torch 2.7.1+cu128; scipy-ndimage; pandas 3.0.3
+plan sha256 ad2e04f9d8db49ba862fefff4104f8b5d4b6797db58c468c2ac1cfefd1fe0c98; training_running=False; workers=6
+CENTROID function provenance: {"fc4527a": {"lineno": 569, "normalized_ast_sha256": "9cb8b324a85352f85f61d15d531455a0ce5ec75c0b2ecbed22af44bcaf6cccdc", "segment_sha256": "8b85681f3bb45107f35ee86c9944ea6278c4cc06748b1ed1093c15f4fc5ad2df"}, "HEAD": {"lineno": 1061, "normalized_ast_sha256": "9cb8b324a85352f85f61d15d531455a0ce5ec75c0b2ecbed22af44bcaf6cccdc", "segment_sha256": "8b85681f3bb45107f35ee86c9944ea6278c4cc06748b1ed1093c15f4fc5ad2df"}, "working_tree": {"lineno": 1103, "normalized_ast_sha256": "9cb8b324a85352f85f61d15d531455a0ce5ec75c0b2ecbed22af44bcaf6cccdc", "segment_sha256": "8b85681f3bb45107f35ee86c9944ea6278c4cc06748b1ed1093c15f4fc5ad2df"}, "fc4527a_equals_HEAD": true, "fc4527a_equals_working_tree": true}
+ribbon geometry: band_h=7 x_keep=10 cols 3..12
+proxy pass: reused _proxy_cache.parquet (7000 volumes)
+proxy pass: 7000 volumes in 1.1s
+SNR cut-points [22.694722021187292, 23.50812574050753]; mean-intensity cut-points [34.325965833333335, 36.602421666666665]
+Training stratum sizes {'(0, 0)': 710, '(0, 1)': 1035, '(0, 2)': 1344, '(1, 0)': 1290, '(1, 1)': 965, '(1, 2)': 656}
+slice-cache spot check equal for 4 volumes
+primary: 3000 B-scans in 12.3s
+census decision (runtime rule): primary 12.3s x20 = 4.1 min -> True
+validation supplement: 1500 B-scans in 10.4s
+primary outputs written (30.2s)
+  20/240 chunks, 16.7s
+  40/240 chunks, 25.8s
+  60/240 chunks, 34.9s
+  80/240 chunks, 46.9s
+  100/240 chunks, 57.1s
+  120/240 chunks, 66.2s
+  140/240 chunks, 77.3s
+  160/240 chunks, 87.1s
+  180/240 chunks, 97.8s
+  200/240 chunks, 111.3s
+  220/240 chunks, 123.7s
+  240/240 chunks, 135.3s
+census: 60000 B-scans in 137.0s
+done in 176.8s

@@ -1,0 +1,45 @@
+# Camera-ready replication probe protocol (cr_seed_v1).
+# Pre-registered in paper/genai4health2026/PREREGISTRATION_cr_seed_v1.md, section 2.
+# Same splits, preprocessing, head and optimizer as
+# configs/downstream_frozen_meanpool_canonical.yaml, plus:
+#   - fp32 throughout (use_amp: false)
+#   - 5 head seeds, each reseeded after the feature caches exist (cold == warm)
+#   - sealed test predictions (hashed; no test metric until the results freeze)
+#   - patch-token max per B-scan collected in the same encoder pass (pooling variants)
+# encoder_checkpoint and output_dir are per run and must be passed on the
+# command line (--encoder-checkpoint, --output-dir); the probe refuses to run
+# without them and refuses an output_dir that already holds a completed or
+# sealed probe.
+mode: patch
+data:
+  data_dir: D:\jepa_phase0\fairvision-glaucoma\data
+  num_slices: 100
+  slice_size: 256
+  batch_size: 256
+  num_workers: 4
+  encode_chunk_size: 100
+  use_amp: false
+  legacy_cache_policy: reject
+model:
+  encoder_checkpoint: null
+  encoder_name: vit_base
+  patch_size: 16
+  crop_size: 256
+  freeze_encoder: true
+  probe_type: mean_pool
+  head_type: linear
+training:
+  lr_probe: 0.0004
+  lr_head: 0.0004
+  weight_decay: 0.05
+  epochs: 50
+  patience: 15
+  warmup_epochs: 5
+  seed: 42
+probe:
+  head_seeds: [42, 43, 44, 45, 46]
+  seal_test: true
+  extra_pooling: patch_max
+  hash_cache_files: true
+logging:
+  output_dir: null

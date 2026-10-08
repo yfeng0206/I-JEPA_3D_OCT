@@ -1,0 +1,18 @@
+{
+ "comparison": "worktree native mirage_overlap_fallback key vs pinned-HEAD single-line patch, same 600 views/crops/sizes/seeds (seed 42)",
+ "bitwise_equal": {
+  "random": true,
+  "envelope": true,
+  "envelope_hard_leastoverlap": true,
+  "crops": true
+ },
+ "worktree_legacy": {
+  "method": "native config key mirage_overlap_fallback=legacy_uniform_v1"
+ },
+ "worktree_curriculum_sha256": {
+  "sha256_exact_bytes": "2bf0dca7c44a1ee0aa7bc167ce90840256b53d55df13bb52321bceb1003ea538",
+  "sha256_lf": "2723cb750e300d27c89d266cd485e131181ae39d68e49045f7ce15f972cb4a08",
+  "sha256_crlf_checkout": "2bf0dca7c44a1ee0aa7bc167ce90840256b53d55df13bb52321bceb1003ea538",
+  "bytes": 130509
+ }
+}

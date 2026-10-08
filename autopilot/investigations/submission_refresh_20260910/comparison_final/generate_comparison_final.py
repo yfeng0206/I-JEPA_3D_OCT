@@ -1,5 +1,11 @@
-"""Clean symmetric comparison with isolated index-derived predictor queries."""
+"""Clean symmetric comparison with isolated index-derived predictor queries.
+
+Camera-ready (E13): chains from the regenerated Figure-1 and comparison
+evidence (trained CENTROID lateral 0.6) and writes to the staging folder by
+default.
+"""
 from pathlib import Path
+import argparse
 import hashlib
 import json
 import matplotlib
@@ -14,7 +20,9 @@ ROOT = Path(__file__).resolve().parents[4]
 HERE = Path(__file__).resolve().parent
 FIRST = HERE.parent / "figure"
 PREVIOUS = HERE.parent / "comparison"
-OUT = ROOT / "paper" / "genai4health2026" / "figures"
+PAPER_FIGURES = ROOT / "paper" / "genai4health2026" / "figures"
+STAGING = ROOT / "autopilot" / "investigations" / "camera_ready_20261008" / "figures_staging"
+OUT = PAPER_FIGURES
 STEM = "fig_oct_jepa_comparison_final"
 COLORS = ["#F5AE46", "#51C8D4", "#DA8CCC", "#B6DB78"]
 
@@ -23,13 +31,31 @@ def sha(p):
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
 
+def rel(p):
+    p = Path(p).resolve()
+    return str(p.relative_to(ROOT)) if p.is_relative_to(ROOT) else str(p)
+
+
 def main():
-    first = json.loads((FIRST / "evidence.json").read_text())
-    previous = json.loads((PREVIOUS / "evidence.json").read_text())
-    preserved = {Path(k): h for k, h in previous["preserved_v1_v2_files"].items()}
-    preserved.update({p: sha(p) for p in [PREVIOUS / "evidence.json",
+    global OUT
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--figure-evidence", type=Path,
+                        default=STAGING / "fig_oct_target_selection.evidence.json")
+    parser.add_argument("--comparison-evidence", type=Path,
+                        default=STAGING / "fig_oct_jepa_comparison.evidence.json")
+    parser.add_argument("--out-dir", type=Path, default=STAGING)
+    args = parser.parse_args()
+    OUT = args.out_dir.resolve()
+    OUT.mkdir(parents=True, exist_ok=True)
+    first_evidence = args.figure_evidence.resolve()
+    previous_evidence = args.comparison_evidence.resolve()
+    first = json.loads(first_evidence.read_text())
+    previous = json.loads(previous_evidence.read_text())
+    previous_out = ROOT / previous["out_dir"] if "out_dir" in previous else PAPER_FIGURES
+    preserved = {ROOT / k: h for k, h in previous["preserved_v1_v2_files"].items()}
+    preserved.update({p: sha(p) for p in [previous_evidence,
         PREVIOUS / "generate_comparison.py",
-        *[OUT / item["file"] for item in previous["outputs"].values()]]})
+        *[previous_out / item["file"] for item in previous["outputs"].values()]]})
     assert all(sha(p) == h for p, h in preserved.items())
     source = FIRST / first["source_image_file"]
     assert sha(source) == first["source_image_sha256"]
@@ -179,7 +205,10 @@ def main():
     assert all(sha(p) == h for p, h in preserved.items())
     evidence = {
         "generator": Path(__file__).name, "generator_sha256": sha(Path(__file__)),
-        "prior_comparison_evidence_sha256": sha(PREVIOUS / "evidence.json"),
+        "prior_comparison_evidence_sha256": sha(previous_evidence),
+        "prior_comparison_evidence_path": rel(previous_evidence),
+        "figure_evidence_path": rel(first_evidence),
+        "figure_evidence_sha256": sha(first_evidence),
         "source_image_url": first["source_image_url"],
         "source_image_sha256": first["source_image_sha256"],
         "primary_license_url": first["primary_license_url"],
@@ -205,16 +234,18 @@ def main():
         "label_font_points": {"base": 8.4, "minimum_nonmath": 8, "encoder_symbols": 11, "titles": 9},
         "target_group_colors": COLORS,
         "privacy": previous["privacy"], "limits": previous["limits"],
-        "preserved_prior_files": {str(p): h for p, h in preserved.items()},
+        "preserved_prior_files": {rel(p): h for p, h in preserved.items()},
         "validation": {"prior_files_unchanged": True, "source_crop_hash_matches": True,
                        "both_context_displays_byte_identical_to_prior": True,
                        "exact_prior_mask_indices": True, "one_final_export": True},
         "outputs": {s: {"file": f"{STEM}.{s}", "sha256": sha(OUT / f"{STEM}.{s}")}
                     for s in ("png", "pdf", "svg")},
+        "out_dir": rel(OUT),
     }
-    (HERE / "evidence.json").write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+    target = HERE / "evidence.json" if OUT == PAPER_FIGURES.resolve() else OUT / f"{STEM}.evidence.json"
+    target.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"generator_sha256": evidence["generator_sha256"],
-                      "manifest_sha256": sha(HERE / "evidence.json"),
+                      "manifest_sha256": sha(target),
                       "outputs": evidence["outputs"]}, indent=2))
 
 

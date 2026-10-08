@@ -1,0 +1,98 @@
+{
+ "label": "post hoc exploratory; not in ANALYSIS_PLAN.md; census Training B-scans",
+ "n_ref_bscans": 59962,
+ "F1_components": {
+  "iou_lt_020_only": 0,
+  "zero_gt_050_only": 2585,
+  "both": 601,
+  "F1_total": 3186
+ },
+ "thickness_cutpoints_patches": [
+  3.2,
+  3.52
+ ],
+ "F1_by_label_x_thickness_tertile": {
+  "label=0,thick_t0": {
+   "rate": 0.08031882280809319,
+   "n": 4893
+  },
+  "label=0,thick_t1": {
+   "rate": 0.02767338571916638,
+   "n": 11708
+  },
+  "label=0,thick_t2": {
+   "rate": 0.007140856902828339,
+   "n": 14284
+  },
+  "label=1,thick_t0": {
+   "rate": 0.14877683474787817,
+   "n": 12018
+  },
+  "label=1,thick_t1": {
+   "rate": 0.04714640198511166,
+   "n": 10478
+  },
+  "label=1,thick_t2": {
+   "rate": 0.012915970217292206,
+   "n": 6581
+  }
+ },
+ "F2_by_label_x_thickness_tertile": {
+  "label=0,thick_t0": 0.011649294911097487,
+  "label=0,thick_t1": 0.00538093611206013,
+  "label=0,thick_t2": 0.0012601512181461775,
+  "label=1,thick_t0": 0.031868863371609255,
+  "label=1,thick_t1": 0.008207673220080168,
+  "label=1,thick_t2": 0.003342956997416806
+ },
+ "F1_by_bscan_index": {
+  "0": 0.14035380507343123,
+  "22": 0.07154769846564377,
+  "44": 0.034333333333333334,
+  "66": 0.015166666666666667,
+  "88": 0.07016666666666667,
+  "110": 0.051859262964815744,
+  "132": 0.014002333722287048,
+  "154": 0.021681120747164776,
+  "176": 0.03754380110128483,
+  "199": 0.07480380697946235
+ },
+ "F2_by_bscan_index": {
+  "0": 0.04205607476635514,
+  "22": 0.019679786524349565,
+  "44": 0.0085,
+  "66": 0.0033333333333333335,
+  "88": 0.0011666666666666668,
+  "110": 0.00033350008337502084,
+  "132": 0.0011668611435239206,
+  "154": 0.0031687791861240828,
+  "176": 0.0076756215584848995,
+  "199": 0.017866087827684087
+ },
+ "spearman": {
+  "snr_vs_centroid_range": 0.16564162938216193,
+  "snr_vs_iou": 0.3449864952751504,
+  "thickness_vs_ribbon_zero_frac": -0.7320138454176359,
+  "mirage_confidence_vs_iou": 0.09148592365818757
+ },
+ "profile_F1": {
+  "n": 3186,
+  "median_signed_offset": -2.4047,
+  "frac_signed_offset_positive": 0.10703075957313246,
+  "median_thick": 3.04,
+  "median_snr_db": 22.066000000000003,
+  "median_centroid_range": 0.84284,
+  "median_mirage_confidence": 0.98193,
+  "median_iou": 0.25843
+ },
+ "profile_not_F1": {
+  "n": 56776,
+  "median_signed_offset": -0.473175,
+  "frac_signed_offset_positive": 0.21061716218120333,
+  "median_thick": 3.36,
+  "median_snr_db": 23.164,
+  "median_centroid_range": 1.38455,
+  "median_mirage_confidence": 0.9834,
+  "median_iou": 0.41053
+ }
+}

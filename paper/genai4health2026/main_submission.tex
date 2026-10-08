@@ -670,7 +670,7 @@ coverage strategy in complete training-sized batches.
 
 The positive rectangle-policy results motivate anatomy-guided target
 selection without requiring a new encoder architecture. The segmentation-free
-centroid strategy is particularly useful as a simple baseline.
+centroid strategy is a useful simple baseline.
 
 \paragraph{Experimental limits.}
 Each original policy has one pretraining continuation, so its test-case
@@ -683,7 +683,10 @@ and \textsc{anatomy-v2} was stopped after inspecting its epoch-75 deficit.
 Its later trajectory is unknown. Probe optimization and initialization
 can also affect frozen-probe comparisons; the reported fixed-budget
 protocol is not a measurement of the best achievable classifier for each
-encoder.
+encoder. External foundation models such as RETFound under the same frozen
+probe, other self-supervised objectives such as masked image modelling, and
+target-selection rules derived from a formal objective are left for future
+work.
 
 The study uses one dataset and one downstream task. Policies, checkpoints
 and analyses were chosen after repeated inspection of the same test split,

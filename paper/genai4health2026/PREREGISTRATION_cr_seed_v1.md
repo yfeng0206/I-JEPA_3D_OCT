@@ -93,3 +93,22 @@ initializations.
 Every started run is reported, including runs stopped by the deadline (as not completed).
 No checkpoint selection beyond the fixed epoch-50 endpoint. Results freeze: Thursday
 October 22 2026, 08:00 PDT; sealed test predictions are opened once after the freeze.
+
+## 8. Amendment 1 (committed before any new probe result; 2026-10-08)
+
+Measured throughput (about 27 hours per continuation including the probe) leaves GPU time
+after E2. A third seed index is therefore added, run after E2 in the order below:
+
+| ID | Arm | Seed |
+|---|---|---|
+| R3 | RANDOM | 9012 |
+| C3 | CENTROID | 9012 |
+| E3 | ENVELOPE (`legacy_uniform_v1`) | 9012 |
+
+Settings are identical to section 1. A seed index enters the primary analysis only if all of
+its RANDOM, CENTROID and ENVELOPE runs finish before the freeze; otherwise its completed runs
+are reported descriptively as incomplete. With three complete seed indices the outcome label
+**consistent direction** requires all three new-seed deltas to be positive and the mean delta
+to exceed the range of RANDOM's realizations (original plus new seeds); the other labels are
+unchanged. With two complete indices, section 3 applies unchanged. No other part of the
+analysis changes.

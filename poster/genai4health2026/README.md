@@ -102,11 +102,9 @@ and rebuild.
 
 ## What to fill in later
 
-1. **Authors and affiliations** (pending from the authors; same placeholder
-   approach as the paper). In `poster.tex`, set `\PosterAuthors` and
-   `\PosterAffiliations` to the OpenReview author line and affiliations (use
-   the same names as `paper/genai4health2026/camera_ready_authors.json`), then
-   delete `\CRAuthorsPending` and `\CRAffilPending`.
+1. **Authors and affiliations**: done (2026-10-10). `\PosterAuthors` and
+   `\PosterAffiliations` in `poster.tex` carry the same names and order as
+   `paper/genai4health2026/camera_ready_authors.json`.
 2. **QR code.** Set `\providecommand*{\PosterURL}{...}` in `poster.tex` to the
    final OpenReview or repository URL (avoid `#` and `%`). An empty value draws
    the "QR CODE PENDING" box; a URL draws a real code (tested).

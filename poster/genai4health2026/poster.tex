@@ -111,16 +111,12 @@
 \newcommand{\Arm}[1]{\MakeUppercase{#1}}
 \newcommand{\ArmBest}{\Arm{centroid}}
 
-% CAMERA-READY INPUT REQUIRED (authors). Same placeholder approach as the
-% paper: replace \CRAuthorsPending by the OpenReview author line and
-% \CRAffilPending by the affiliations (in \PosterAuthors and
-% \PosterAffiliations below), then delete both macros.
-\newcommand{\CRAuthorsPending}{\colorbox{PendingFill}{\color{black}\bfseries
-  AUTHORS PENDING: names from OpenReview}\typeout{POSTER-PLACEHOLDER: authors}}
-\newcommand{\CRAffilPending}{\colorbox{PendingFill}{\color{black}
-  affiliations and e-mail addresses pending}\typeout{POSTER-PLACEHOLDER: affiliations}}
-\newcommand{\PosterAuthors}{\CRAuthorsPending}
-\newcommand{\PosterAffiliations}{\CRAffilPending}
+% Authors and affiliations: same names and order as the paper
+% (paper/genai4health2026/camera_ready_authors.json).
+\newcommand{\PosterAuthors}{Yunchu Feng$^{1}$\quad Wai Tak Lau$^{2}$}
+\newcommand{\PosterAffiliations}{$^{1}$University of Pennsylvania
+  (\texttt{yfeng26@engineering.upenn.edu})\quad
+  $^{2}$Columbia University (\texttt{wl2822@columbia.edu})}
 
 % Paper/code link for the QR code. Leave empty for the placeholder; set it to
 % the final OpenReview or repository URL (no '#' or '%') to draw a real code.

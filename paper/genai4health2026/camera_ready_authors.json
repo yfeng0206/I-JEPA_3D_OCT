@@ -1,7 +1,19 @@
 {
   "version": 1,
-  "status": "pending_user_input",
+  "status": "confirmed",
+  "confirmed_by": "Yunchu Feng (author), supplied in session 2026-10-10 15:01 PDT",
   "instructions": "Copy the author list from the OpenReview record of submission 252 (order, names as printed; affiliations and e-mail addresses go in the LaTeX author block). Authors may be reordered or corrected but not added, removed or replaced. Set status to confirmed only after the names below match the \\author block in main_submission.tex.",
-  "authors": [],
+  "authors": [
+    {
+      "name": "Yunchu Feng",
+      "affiliation": "University of Pennsylvania",
+      "email": "yfeng26@engineering.upenn.edu"
+    },
+    {
+      "name": "Wai Tak Lau",
+      "affiliation": "Columbia University",
+      "email": "wl2822@columbia.edu"
+    }
+  ],
   "acknowledgments": "pending: supplied by the authors (funding, compute and other disclosures)"
 }

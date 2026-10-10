@@ -59,7 +59,8 @@ Release commands from the repository root:
 Camera-ready release (2026-10-08 tooling; authors-present gate, 10 main pages,
 workshop template gate). It fails while `\CRAuthorsPending`,
 `\CRAcknowledgmentsPending` or any `\ph` result placeholder remains, and until
-`paper\genai4health2026\camera_ready_authors.json` is confirmed:
+`paper\genai4health2026\camera_ready_authors.json` is confirmed (authors were
+filled and confirmed 2026-10-10; acknowledgments are still pending):
 
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p13_build_zip.py --camera-ready --stats-dir D:\jepa_phase0\autopilot_out\p1_stats --citation-record autopilot\investigations\camera_ready_20261008\paper_i8\citation_authorities_cr.json --review-file paper\genai4health2026\numeric_reviews.json
 

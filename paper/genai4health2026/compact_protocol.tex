@@ -19,6 +19,17 @@ selection and patience 15. Paired analyses rely on the documented shared split
 and deterministic loader ordering; historical prediction files lack
 independent case-ID manifests.
 
+\paragraph{B-scan selection and pooling.}
+Each FairVision volume stores 200 B-scans of $200\times200$ pixels. Pretraining
+and evaluation use the same 100 B-scans per volume, with indices
+$\lfloor 199k/99\rfloor$ for $k=0,\ldots,99$ (0, 2, \ldots, 196, 199), each
+resized bilinearly to $256\times256$ pixels. Pretraining samples every B-scan
+independently as a random resized crop. Evaluation encodes the full B-scans,
+averages the 256 patch features of each B-scan and then the 100 B-scan vectors
+(dimension 768) before the LayerNorm--linear head. The registered secondary
+variants use the patch maximum within B-scans, the maximum across B-scans, or
+the concatenated mean and maximum across B-scans.
+
 \paragraph{Guide sources.}
 \textsc{envelope} uses the MIRAGE-derived repaired hard retinal envelope,
 produced by MIRAGE-Large (frozen encoder, ConvNeXt decoder) fine-tuned only on

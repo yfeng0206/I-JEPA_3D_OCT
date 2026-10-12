@@ -282,6 +282,87 @@
         "figures/fig_oct_all_strategies.pdf": "2886ec25fd432a3ebb96381453ae3ca5e3d334595285b7b6bf27b840fc244e35",
         "figures/fig_oct_all_strategies.svg": "e9b12ca1685972656a419f4bdc56af55071794306dae3618fa8ade013c7c353b"
       }
+    },
+    "figures/fig_oct_strategies_v2.png": {
+      "script": "autopilot/investigations/camera_ready_20261008/figures_v2/generate_strategies_v2.py",
+      "script_sha256_at_export": "51237633162210f581b33cf6c4e2e4c730be67d9ee701a446d1c62c885be9a4d",
+      "arguments": ["--replay"],
+      "inputs": [
+        "autopilot/investigations/camera_ready_20261008/figures_v2/figstyle_v2.py",
+        "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_all_strategies.evidence.json",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_figure1_original.png",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_primary_license.html",
+        "autopilot/investigations/camera_ready_20261008/figures_staging/external_guides/octdl_crop_guides.npz",
+        "autopilot/investigations/camera_ready_20261008/figures_staging/external_guides/octdl_crop_guides.json",
+        "src/datasets/oct_slices_guided.py",
+        "scripts/mask_composition_probe.py",
+        "git:86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5:src/masks (pinned sampler sources, --replay)",
+        "configs/patch_oracle_anatomical.yaml",
+        "configs/patch_mirage_envelope.yaml",
+        "configs/patch_anatomy_v2.yaml",
+        "configs/patch_cover_f021_ep25.yaml"
+      ],
+      "evidence_manifest": "autopilot/investigations/camera_ready_20261008/figures_v2/fig_oct_strategies_v2.evidence.json",
+      "evidence_manifest_sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1",
+      "expected_output_sha256": "1931620fc9140cbf6bd78af2cc364bbb1353bc321b993564050d489a37c7ed2f",
+      "refresh_policy": "camera-ready v2 strategy figure (I13); changed outputs or caption require renewed review",
+      "evidence_scope": "All five strategies on the attributed CC BY 4.0 OCTDL crop, not FairVision: row (a) each placement guide A_s(x) on the patch grid (none, CENTROID band, hard MIRAGE envelope cells, summed soft MIRAGE scores); row (b) the delivered context C, target groups T1-T4 in Okabe-Ito colours, hidden-not-target cells and repeated indices. Exact staged replay indices (trained sampler configurations, block-size seed 3107, seed 42, batch size 1), re-derived by --replay from the samplers pinned at 86ae882; guide grids rebuilt through GuidedOCTSliceDataset and hash-matched. Replaces the target-selection and all-strategies figures in the paper. No cohort statistic or performance claim.",
+      "license": "CC BY 4.0",
+      "license_source": "https://arxiv.org/abs/2312.08255v3",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "clinical_image_source": "Publicly published external OCTDL figure crop; no private FairVision image",
+      "subject_identifiers_rendered": false,
+      "poster_variant": {
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.png": "985a96513df45f96722aa3c0a5f9cf70e42b92613f42061ade14cd11254ecfc9",
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.pdf": "80a2df487680de0a1b3e8f7c4f23dbd348e658f11cbe4079e8e28cca05354c6e",
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.svg": "fec77429f57c26d67d82929f236286c2d12101cfb5973bbba8a9e5741b4a6323"
+      },
+      "companions": {
+        "figures/fig_oct_strategies_v2.pdf": "3fa63ff79449d4122cef2faf9ee5281bc43593255d9018c7243c5b44473d20a3",
+        "figures/fig_oct_strategies_v2.svg": "c92d07dd688fd0a78584eef686e4acff1247fe805515120557f47769826d1dba"
+      }
+    },
+    "figures/fig_oct_jepa_volume_v2.png": {
+      "script": "autopilot/investigations/camera_ready_20261008/figures_v2/generate_framework_v2.py",
+      "script_sha256_at_export": "41f285709361c8985e6d39b23cb93be4ce9f9f01ffc66c27312c998c4aebc7eb",
+      "inputs": [
+        "autopilot/investigations/camera_ready_20261008/figures_v2/figstyle_v2.py",
+        "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_all_strategies.evidence.json",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_figure1_original.png",
+        "autopilot/investigations/submission_refresh_20260910/figure/octdl_primary_license.html",
+        "src/datasets/oct_slices.py",
+        "src/datasets/oct_volumes.py",
+        "src/transforms.py",
+        "src/train_patch.py",
+        "src/models/vision_transformer.py",
+        "src/helper.py",
+        "src/eval_downstream.py",
+        "src/models/attentive_pool_minimal.py",
+        "configs/patch_vitb16_ep100.yaml",
+        "configs/patch_oracle_anatomical.yaml",
+        "configs/downstream_cr_seed_v1.yaml"
+      ],
+      "evidence_manifest": "autopilot/investigations/camera_ready_20261008/figures_v2/fig_oct_jepa_volume_v2.evidence.json",
+      "evidence_manifest_sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407",
+      "expected_output_sha256": "f1d601b7320f09d8bbafe107e47cd2c99addad6787f463185fc2ccd2b94a26d2",
+      "refresh_policy": "camera-ready v2 framework/volume figure (I13); changed outputs or caption require renewed review",
+      "evidence_scope": "Schematic I-JEPA framework with 3-D volume handling: 200 B-scans per volume, the 100 used (linspace indices 0, 2, ..., 196, 199), resize to 256 x 256 and 16 x 16 patches (256 tokens); per-B-scan pretraining with uniform or guided sampler, context encoder, predictor with mask tokens, EMA target encoder, LayerNorm target selection with stop-gradient and Smooth-L1; frozen EMA evaluation with patch mean per B-scan, mean over B-scans and LayerNorm-linear head. Facts recorded with source lines and hashes; CENTROID masks from the staged replay on the OCTDL crop; volume stacks schematic. Replaces the uniform-versus-guided comparison figure in the paper. No measured feature or performance claim.",
+      "license": "CC BY 4.0",
+      "license_source": "https://arxiv.org/abs/2312.08255v3",
+      "rendered_metrics": [],
+      "raw_oct_pixels_rendered": true,
+      "clinical_image_source": "Publicly published external OCTDL figure crop; no private FairVision image",
+      "subject_identifiers_rendered": false,
+      "poster_variant": {
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_jepa_volume_v2_poster.png": "b91290a38e933fb80bbbe348653bb9cfd750e84eba259463f22ec858e923c439",
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_jepa_volume_v2_poster.pdf": "0853efe4d1ec48378ae625a35c01b11d8997c66582056da848bd1a23d1af0621",
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_jepa_volume_v2_poster.svg": "3d44a0c87c43816bff18d09efbfc2e328dac60a9979179420c18b791b021d0d5"
+      },
+      "companions": {
+        "figures/fig_oct_jepa_volume_v2.pdf": "50f9bbd05f58460baac71e9e2efa046813a4085c88bccbacb0d4b6cee438c38c",
+        "figures/fig_oct_jepa_volume_v2.svg": "d7243de849be47931581189d527f7af5de974d7bdc859acc030ca9831950729a"
+      }
     }
   },
   "fixed_inputs": {},

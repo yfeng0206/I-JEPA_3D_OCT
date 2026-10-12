@@ -501,6 +501,56 @@
       "root": "repo",
       "path": "autopilot/investigations/submission_refresh_20260910/figure/produce_external_guides.py",
       "sha256": "d845a62680fc079082802ef503ea4fc35359f1d9f5374b65359aca6606c819b0"
+    },
+    "i13_snap_oct_slices": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\source_snapshots\\110bd18\\src\\datasets\\oct_slices.py",
+      "sha256": "25148e05b1c46f27a1df7fd012e088bd4205776eb95ce6fde2f1b7676f227c4b"
+    },
+    "i13_snap_oct_volumes": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\source_snapshots\\110bd18\\src\\datasets\\oct_volumes.py",
+      "sha256": "3b7aefbb3f53946c204dc2b5544cd9da793b03e836d9a456de8cc02cebd09138"
+    },
+    "i13_snap_helper": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\source_snapshots\\110bd18\\src\\helper.py",
+      "sha256": "c168dc28c67b5a112276172eb1f30655ba89e4a12f75a329e24fb7a657894d85"
+    },
+    "i13_snap_cfg_uniform": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\source_snapshots\\110bd18\\configs\\patch_vitb16_ep100.yaml",
+      "sha256": "d68b64770c6078b66784bc01c3628d9919644666d5e6c91719855b6b8e60ea0c"
+    },
+    "i13_snap_cfg_centroid": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\source_snapshots\\110bd18\\configs\\patch_oracle_anatomical.yaml",
+      "sha256": "e5a894d1cdf1041771f454838fa85abdd74a354459bf99e9afcf3a5fee88d637"
+    },
+    "i13_fig_strategies_evidence": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\fig_oct_strategies_v2.evidence.json",
+      "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
+    },
+    "i13_fig_volume_evidence": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\fig_oct_jepa_volume_v2.evidence.json",
+      "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+    },
+    "i13_fig_strategies_generator": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\generate_strategies_v2.py",
+      "sha256": "51237633162210f581b33cf6c4e2e4c730be67d9ee701a446d1c62c885be9a4d"
+    },
+    "i13_fig_volume_generator": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\generate_framework_v2.py",
+      "sha256": "41f285709361c8985e6d39b23cb93be4ce9f9f01ffc66c27312c998c4aebc7eb"
+    },
+    "i13_figstyle": {
+      "root": "repo",
+      "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\figstyle_v2.py",
+      "sha256": "375827e5aef90b703abdc12c599729395251615f98e335733e08f34ca4f4fe36"
     }
   },
   "macros": {
@@ -2532,89 +2582,6 @@
   "literals": [
     {
       "file": "main_submission.tex",
-      "context_sha256": "be8cd6099684998e22ecaaa1aaf25db342b7cf33d394b48e0717e4ce53d63a05",
-      "token_index": 1,
-      "value": "6{,}000",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "source": "lr_metadata",
-            "pointer": "/split_sizes/Training"
-          }
-        ],
-        "format": "%d"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "be8cd6099684998e22ecaaa1aaf25db342b7cf33d394b48e0717e4ce53d63a05",
-      "token_index": 2,
-      "value": "1{,}000",
-      "expression": {
-        "op": "format",
-        "args": [
-          {
-            "source": "lr_metadata",
-            "pointer": "/split_sizes/Validation"
-          }
-        ],
-        "format": "%d"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "be8cd6099684998e22ecaaa1aaf25db342b7cf33d394b48e0717e4ce53d63a05",
-      "token_index": 3,
-      "value": "100",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Saved primary probe configuration: num_slices100, slice/crop size256, evaluation/probe seed42; not the pretraining seed. Re-reviewed current context: Unchanged full-volume evaluation dimensions: 100 B-scans, each resized to 256 by 256, from retained primary configuration.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "be8cd6099684998e22ecaaa1aaf25db342b7cf33d394b48e0717e4ce53d63a05",
-      "token_index": 4,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Saved primary probe configuration: num_slices100, slice/crop size256, evaluation/probe seed42; not the pretraining seed. Re-reviewed current context: Unchanged full-volume evaluation dimensions: 100 B-scans, each resized to 256 by 256, from retained primary configuration.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "be8cd6099684998e22ecaaa1aaf25db342b7cf33d394b48e0717e4ce53d63a05",
-      "token_index": 5,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10",
-        "rationale": "Saved primary probe configuration: num_slices100, slice/crop size256, evaluation/probe seed42; not the pretraining seed. Re-reviewed current context: Unchanged full-volume evaluation dimensions: 100 B-scans, each resized to 256 by 256, from retained primary configuration.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "ae19e064278a0e07aa5df8f62895fb9273cda45775afd693cd621062fbf3e9fa",
       "token_index": 1,
       "value": "50",
@@ -3327,152 +3294,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
-      "token_index": 0,
-      "value": "1",
-      "review": {
-        "kind": "citation",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Figure1 identifies the published OCTDL source image, not this paper's result number.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/source_image_url"
-          },
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/attribution"
-          }
-        ],
-        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
-        "locator": "Figure 1 and version-pinned article record"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
-      "token_index": 1,
-      "value": "2312.08255",
-      "review": {
-        "kind": "citation",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "2312.08255 is the source arXiv identifier, not an empirical value.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/primary_license_url"
-          }
-        ],
-        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
-        "locator": "Figure 1 and version-pinned article record"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
-      "token_index": 2,
-      "value": "3",
-      "review": {
-        "kind": "citation",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "3 is the explicitly pinned source-article version v3.",
-        "evidence": [
-          {
-            "source": "external_oct_license",
-            "excerpt": "2312.08255v3"
-          }
-        ],
-        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
-        "locator": "Figure 1 and version-pinned article record"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
-      "token_index": 3,
-      "value": "4.0",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "4.0 is the CC BY license version. The retained primary version-pinned article page links this license; it is not the FairVision ND license.",
-        "evidence": [
-          {
-            "source": "external_oct_license",
-            "excerpt": "creativecommons.org/licenses/by/4.0/"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
-      "token_index": 4,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "256 is the input crop width after whole-crop bilinear downsampling, independently reproduced from the retained published image.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/sampler_config/input_size/0"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
-      "token_index": 5,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "256 is the input crop height after the same whole-crop downsampling, not a cohort or model outcome.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/sampler_config/input_size/1"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "a3c634619446865c0dfd16b2589f59e659204c48b21b686928a09dc694ecf931",
-      "token_index": 6,
-      "value": "4.0",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "4.0 repeats the CC BY license version in its attribution URL.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/license_url"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "398bde8b3745187f8434861319045d7f5396481583e4bc851f892b12febcf0ab",
-      "token_index": 0,
-      "value": "4",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Declared target-block count M=4.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "num_pred_masks: 4"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
       "token_index": 0,
       "value": "100",
@@ -3791,23 +3612,6 @@
           {
             "source": "lr_stats",
             "pointer": "/table/0"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "11fa2f455fb1e4e7065e16a120f3ca9ec10724ab16f415fe057fda42b40a1a3d",
-      "token_index": 0,
-      "value": "1",
-      "review": {
-        "kind": "formula",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "The 1 in Smooth-L1 in the shortened framework caption is the production loss name, not a value. Template evidence: The 1 in Smooth-L1 is the unchanged production loss name, not an empirical value. Both diagram panels preserve the same mean Smooth-L1 objective. Current-context review: The unchanged caption still names the same production Smooth-L1 loss; only the included image filename changed.",
-        "evidence": [
-          {
-            "source": "lr_training",
-            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
           }
         ]
       }
@@ -4987,23 +4791,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "bfb8099a8747532cb5788a02fac3d4760e1033d58e39769b8e7bc5a3977fd346",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "The shortened evaluation paragraph retains the same saved 50-epoch head budget.",
-        "evidence": [
-          {
-            "source": "lr_primary_result",
-            "pointer": "/config/training/epochs"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "60ad6b8d28c7f88780870086b4db46619b764c03a79a72c239063960df7c2cb9",
       "token_index": 6,
       "value": "2",
@@ -5468,6 +5255,802 @@
           }
         ]
       }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "token_index": 1,
+      "value": "6{,}000",
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_metadata",
+            "pointer": "/split_sizes/Training"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "token_index": 2,
+      "value": "1{,}000",
+      "expression": {
+        "op": "format",
+        "args": [
+          {
+            "source": "lr_metadata",
+            "pointer": "/split_sizes/Validation"
+          }
+        ],
+        "format": "%d"
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "token_index": 3,
+      "value": "100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "Saved primary probe configuration: num_slices100, slice/crop size256, evaluation/probe seed42; not the pretraining seed. Re-reviewed current context: Unchanged full-volume evaluation dimensions: 100 B-scans, each resized to 256 by 256, from retained primary configuration.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "token_index": 5,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "Saved primary probe configuration: num_slices100, slice/crop size256, evaluation/probe seed42; not the pretraining seed. Re-reviewed current context: Unchanged full-volume evaluation dimensions: 100 B-scans, each resized to 256 by 256, from retained primary configuration.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "token_index": 6,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "Saved primary probe configuration: num_slices100, slice/crop size256, evaluation/probe seed42; not the pretraining seed. Re-reviewed current context: Unchanged full-volume evaluation dimensions: 100 B-scans, each resized to 256 by 256, from retained primary configuration.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "020332e62f1f43587855ffb327bdeb23597c687b00ce1d296a6db6333da4e365",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "The shortened evaluation paragraph retains the same saved 50-epoch head budget.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/training/epochs"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "6214e17c197ac539c1474af9e476fb3b232df9847abd6e486afb5cd4b942a926",
+      "token_index": 0,
+      "value": "4",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "Declared target-block count M=4.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "num_pred_masks: 4"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "token_index": 4,
+      "value": "200",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "FairVision volumes are stored as oct_bscans arrays of shape (200, 200, 200); the first axis indexes the 200 B-scans of a volume (loader docstring; one Training file was opened read-only on 2026-10-11 and has this shape).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(200, 200, 200) (uint8)"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 0,
+      "value": "200",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "FairVision volumes are stored as oct_bscans arrays of shape (200, 200, 200); the first axis indexes the 200 B-scans of a volume (loader docstring; one Training file was opened read-only on 2026-10-11 and has this shape).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(200, 200, 200) (uint8)"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 1,
+      "value": "200",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Each stored B-scan is 200 by 200 pixels (last two axes of the (200, 200, 200) array) before the bilinear resize to slice_size.",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(200, 200, 200) (uint8)"
+          },
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(self.slice_size, self.slice_size), Image.BILINEAR"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 2,
+      "value": "200",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Each stored B-scan is 200 by 200 pixels (last two axes of the (200, 200, 200) array) before the bilinear resize to slice_size.",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(200, 200, 200) (uint8)"
+          },
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(self.slice_size, self.slice_size), Image.BILINEAR"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 3,
+      "value": "100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Pretraining and evaluation configurations both use num_slices 100: 100 B-scans per volume.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "num_slices: 100"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 4,
+      "value": "199",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Both loaders select np.linspace(0, 199, num_slices) cast to int64; with num_slices 100 this is floor(199 k / 99) for k = 0..99, i.e. 0, 2, ..., 196, 199 (100 distinct indices; checked numerically by generate_framework_v2.slice_indices).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "0, 199, num=num_slices, dtype=np.int64"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 5,
+      "value": "99",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Both loaders select np.linspace(0, 199, num_slices) cast to int64; with num_slices 100 this is floor(199 k / 99) for k = 0..99, i.e. 0, 2, ..., 196, 199 (100 distinct indices; checked numerically by generate_framework_v2.slice_indices).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "0, 199, num=num_slices, dtype=np.int64"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 6,
+      "value": "0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Both loaders select np.linspace(0, 199, num_slices) cast to int64; with num_slices 100 this is floor(199 k / 99) for k = 0..99, i.e. 0, 2, ..., 196, 199 (100 distinct indices; checked numerically by generate_framework_v2.slice_indices).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "0, 199, num=num_slices, dtype=np.int64"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 7,
+      "value": "99",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Both loaders select np.linspace(0, 199, num_slices) cast to int64; with num_slices 100 this is floor(199 k / 99) for k = 0..99, i.e. 0, 2, ..., 196, 199 (100 distinct indices; checked numerically by generate_framework_v2.slice_indices).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "0, 199, num=num_slices, dtype=np.int64"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 8,
+      "value": "0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Both loaders select np.linspace(0, 199, num_slices) cast to int64; with num_slices 100 this is floor(199 k / 99) for k = 0..99, i.e. 0, 2, ..., 196, 199 (100 distinct indices; checked numerically by generate_framework_v2.slice_indices).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "0, 199, num=num_slices, dtype=np.int64"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 9,
+      "value": "2",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Both loaders select np.linspace(0, 199, num_slices) cast to int64; with num_slices 100 this is floor(199 k / 99) for k = 0..99, i.e. 0, 2, ..., 196, 199 (100 distinct indices; checked numerically by generate_framework_v2.slice_indices).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "0, 199, num=num_slices, dtype=np.int64"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 10,
+      "value": "196",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Both loaders select np.linspace(0, 199, num_slices) cast to int64; with num_slices 100 this is floor(199 k / 99) for k = 0..99, i.e. 0, 2, ..., 196, 199 (100 distinct indices; checked numerically by generate_framework_v2.slice_indices).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "0, 199, num=num_slices, dtype=np.int64"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 11,
+      "value": "199",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Both loaders select np.linspace(0, 199, num_slices) cast to int64; with num_slices 100 this is floor(199 k / 99) for k = 0..99, i.e. 0, 2, ..., 196, 199 (100 distinct indices; checked numerically by generate_framework_v2.slice_indices).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "0, 199, num=num_slices, dtype=np.int64"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 12,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Every selected B-scan is resized bilinearly to slice_size 256 (evaluation) / crop_size 256 (pretraining view) pixels.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/slice_size"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "crop_size: 256"
+          },
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(self.slice_size, self.slice_size), Image.BILINEAR"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 13,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Every selected B-scan is resized bilinearly to slice_size 256 (evaluation) / crop_size 256 (pretraining view) pixels.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/slice_size"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "crop_size: 256"
+          },
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(self.slice_size, self.slice_size), Image.BILINEAR"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 14,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "A 256 by 256 input with patch size 16 gives a 16 by 16 grid, i.e. 256 patch tokens.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/slice_size"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/model/patch_size"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "patch_size: 16"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 15,
+      "value": "100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Pretraining and evaluation configurations both use num_slices 100: 100 B-scans per volume.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "num_slices: 100"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "5cc603219d26860220cdefd2a8dc35f96de1aba3d203e150e4b5d43283277b43",
+      "token_index": 16,
+      "value": "768",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "ViT-Base feature dimension 768: each B-scan vector and the volume vector are 768-dimensional.",
+        "evidence": [
+          {
+            "source": "i13_snap_helper",
+            "excerpt": "'vit_base':  dict(embed_dim=768,  depth=12, num_heads=12),"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "token_index": 1,
+      "value": "1",
+      "review": {
+        "kind": "citation",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "Figure1 identifies the published OCTDL source image, not this paper's result number.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/source_image_url"
+          },
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/attribution"
+          }
+        ],
+        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
+        "locator": "Figure 1 and version-pinned article record"
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "token_index": 2,
+      "value": "2312.08255",
+      "review": {
+        "kind": "citation",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "2312.08255 is the source arXiv identifier, not an empirical value.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/primary_license_url"
+          }
+        ],
+        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
+        "locator": "Figure 1 and version-pinned article record"
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "token_index": 3,
+      "value": "3",
+      "review": {
+        "kind": "citation",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "3 is the explicitly pinned source-article version v3.",
+        "evidence": [
+          {
+            "source": "external_oct_license",
+            "excerpt": "2312.08255v3"
+          }
+        ],
+        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
+        "locator": "Figure 1 and version-pinned article record"
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "token_index": 4,
+      "value": "4.0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "4.0 is the CC BY license version. The retained primary version-pinned article page links this license; it is not the FairVision ND license.",
+        "evidence": [
+          {
+            "source": "external_oct_license",
+            "excerpt": "creativecommons.org/licenses/by/4.0/"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "token_index": 5,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "256 is the input crop width after whole-crop bilinear downsampling, independently reproduced from the retained published image.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/sampler_config/input_size/0"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "token_index": 6,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "256 is the input crop height after the same whole-crop downsampling, not a cohort or model outcome.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/sampler_config/input_size/1"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "token_index": 7,
+      "value": "4.0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "4.0 repeats the CC BY license version in its attribution URL.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/license_url"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "token_index": 8,
+      "value": "1",
+      "review": {
+        "kind": "formula",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "The 1 in Smooth-L1 in the shortened framework caption is the production loss name, not a value. Template evidence: The 1 in Smooth-L1 is the unchanged production loss name, not an empirical value. Both diagram panels preserve the same mean Smooth-L1 objective. Current-context review: The unchanged caption still names the same production Smooth-L1 loss; only the included image filename changed.",
+        "evidence": [
+          {
+            "source": "lr_training",
+            "excerpt": "loss = F.smooth_l1_loss(predictions, targets)"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "token_index": 1,
+      "value": "200",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "FairVision volumes are stored as oct_bscans arrays of shape (200, 200, 200); the first axis indexes the 200 B-scans of a volume (loader docstring; one Training file was opened read-only on 2026-10-11 and has this shape).",
+        "evidence": [
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(200, 200, 200) (uint8)"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "token_index": 2,
+      "value": "100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Pretraining and evaluation configurations both use num_slices 100: 100 B-scans per volume.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/num_slices"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "num_slices: 100"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "token_index": 3,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Every selected B-scan is resized bilinearly to slice_size 256 (evaluation) / crop_size 256 (pretraining view) pixels.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/slice_size"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "crop_size: 256"
+          },
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(self.slice_size, self.slice_size), Image.BILINEAR"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "token_index": 4,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Every selected B-scan is resized bilinearly to slice_size 256 (evaluation) / crop_size 256 (pretraining view) pixels.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/slice_size"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "crop_size: 256"
+          },
+          {
+            "source": "i13_snap_oct_slices",
+            "excerpt": "(self.slice_size, self.slice_size), Image.BILINEAR"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "token_index": 5,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "A 256 by 256 input with patch size 16 gives a 16 by 16 grid, i.e. 256 patch tokens.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/data/slice_size"
+          },
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/model/patch_size"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "patch_size: 16"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "token_index": 6,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Patch size 16 pixels (ViT-Base/16), in both the probe and the pretraining configuration.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/model/patch_size"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "patch_size: 16"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "token_index": 7,
+      "value": "16",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "rationale": "Patch size 16 pixels (ViT-Base/16), in both the probe and the pretraining configuration.",
+        "evidence": [
+          {
+            "source": "lr_primary_result",
+            "pointer": "/config/model/patch_size"
+          },
+          {
+            "source": "i13_snap_cfg_uniform",
+            "excerpt": "patch_size: 16"
+          }
+        ]
+      }
     }
   ],
   "figures": [
@@ -5523,122 +6106,33 @@
       }
     },
     {
-      "path": "figures/fig_oct_target_selection_cr.png",
-      "sha256": "bf0549ea716607846262b13ad34806e65272cdbf7ee703b51239fc2560d61888",
-      "caption_sha256": "815579066cd1fe5fdfc8f5c420d60bd6b470446c1efb6c68553d4d6faf2c2641",
+      "path": "figures/fig_oct_strategies_v2.png",
+      "sha256": "1931620fc9140cbf6bd78af2cc364bbb1353bc321b993564050d489a37c7ed2f",
+      "caption_sha256": "0c04ff6d80f5acb9765e7abc0616ee33ba27b04d52a6588e6ecaa55db59358ca",
       "inputs": [
         {
-          "source": "cr_fig1_evidence",
-          "pointer": "/masks",
-          "sha256": "34cd8310c4bf8ef957c09e5a4f6b9614cbd88e6de0ce2533af3c612a7a7b18dd"
+          "source": "i13_fig_strategies_evidence",
+          "pointer": "/plotted/masks",
+          "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
         },
         {
-          "source": "cr_fig1_evidence",
-          "pointer": "/guide",
-          "sha256": "34cd8310c4bf8ef957c09e5a4f6b9614cbd88e6de0ce2533af3c612a7a7b18dd"
+          "source": "i13_fig_strategies_evidence",
+          "pointer": "/plotted/guide_overlays",
+          "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
         },
         {
-          "source": "cr_fig1_evidence",
-          "pointer": "/centroid_setting",
-          "sha256": "34cd8310c4bf8ef957c09e5a4f6b9614cbd88e6de0ce2533af3c612a7a7b18dd"
+          "source": "i13_fig_strategies_evidence",
+          "pointer": "/replay",
+          "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
         },
         {
-          "source": "cr_fig1_generator",
-          "pointer": "/",
-          "sha256": "9028c6d9b849f54528532c322f4849e2053203b907ff8414ac443c80ec01c5cf"
+          "source": "i13_fig_strategies_evidence",
+          "pointer": "/guide_products",
+          "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
         },
-        {
-          "source": "external_oct_source_image",
-          "pointer": "/sha256",
-          "sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5"
-        },
-        {
-          "source": "external_oct_license",
-          "pointer": "/",
-          "sha256": "98f0608fea4d233a4b41040413a224aaeb1e5ff8cf93a827be5751d8dc18ce18"
-        }
-      ],
-      "validation": {
-        "method": "reviewed_source_illustration",
-        "reviewer": "GitHub Copilot I8 camera-ready figure review, 2026-10-08",
-        "quantitative_scope": "illustrative_only",
-        "limitations": "Attributed CC BY 4.0 OCTDL Figure 1 crop (arXiv:2312.08255v3), not FairVision. A single fixed-seed replay with matched block sizes; context omitted. Not a segmentation annotation, historical training batch, evaluation sample, cohort statistic or performance comparison. Hash and evidence checks are not mathematical verification of every rendered pixel. RANDOM masks equal the submitted figure; the CENTROID guide and union use the trained band width (lateral fraction 0.6).",
-        "review_checks": [
-          "Final PNG rendered and inspected: OCT crop in all four panels, categorical target/guide overlays, attribution line, no subject identifiers or performance readouts.",
-          "PNG/PDF/SVG hashes equal the staged evidence outputs and autopilot/release_assets.json pins.",
-          "Evidence records the pinned sampler commit, the trained CENTROID configuration and the change_vs_published_v9 block (guide 70 vs 78 cells; RANDOM masks identical).",
-          "Generator hash equals the evidence generator_sha256; source image and licence hashes unchanged.",
-          "Caption states the trained configuration and disclaims annotation, historical batch and performance use."
-        ]
-      }
-    },
-    {
-      "path": "figures/fig_oct_jepa_comparison_final_cr.png",
-      "sha256": "14307f0a7f43f1a9f11b544fb54932773ac4f7a2da9e2e9526275323cc8b0ebc",
-      "caption_sha256": "bb9db69fdf1d48d3e428be9bb3e0f7461e00ffb478f29adb56fec7a14b70d2b0",
-      "inputs": [
-        {
-          "source": "cr_fig2_evidence",
-          "pointer": "/mask_contract",
-          "sha256": "19f6205b8e13b310cf799dcec9d0ba7ab84483a320da5542c22d3be166604279"
-        },
-        {
-          "source": "cr_fig2_evidence",
-          "pointer": "/figure_evidence_sha256",
-          "sha256": "19f6205b8e13b310cf799dcec9d0ba7ab84483a320da5542c22d3be166604279"
-        },
-        {
-          "source": "cr_fig2_chain_evidence",
-          "pointer": "/",
-          "sha256": "ce06b96d83a68ea50b2e7cfd40d83c337b7f083635b07b7aa67c506f748bc590"
-        },
-        {
-          "source": "cr_fig2_generator",
-          "pointer": "/",
-          "sha256": "e3db377e2dd5d58fdf12f6361da90a970f89888126b774bd46ae83a79144abd9"
-        },
-        {
-          "source": "external_oct_source_image",
-          "pointer": "/sha256",
-          "sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5"
-        },
-        {
-          "source": "external_oct_license",
-          "pointer": "/",
-          "sha256": "98f0608fea4d233a4b41040413a224aaeb1e5ff8cf93a827be5751d8dc18ce18"
-        }
-      ],
-      "validation": {
-        "method": "reviewed_source_illustration",
-        "reviewer": "GitHub Copilot I8 camera-ready figure review, 2026-10-08",
-        "quantitative_scope": "illustrative_only",
-        "limitations": "Attributed CC BY 4.0 OCTDL Figure 1 crop (arXiv:2312.08255v3), not FairVision. A single fixed-seed replay with matched block sizes; context omitted. Not a segmentation annotation, historical training batch, evaluation sample, cohort statistic or performance comparison. Hash and evidence checks are not mathematical verification of every rendered pixel. Schematic I-JEPA pathways; embedding blocks are illustrative. Layout is unchanged from the submitted figure, including a pre-existing tight label in the query box.",
-        "review_checks": [
-          "Final PNG rendered and inspected: symmetric uniform/CENTROID pathways, EMA teacher, stopped-gradient targets, positional queries and parallel prediction; no performance values.",
-          "Evidence chains to the staged Figure 1 masks (figure_evidence_sha256) and the staged comparison evidence.",
-          "PNG/PDF/SVG hashes equal the staged evidence outputs and registry pins; generator hash matches.",
-          "Shortened caption keeps the architecture, omitted-token and colour-coding disclaimers."
-        ]
-      }
-    },
-    {
-      "path": "figures/fig_oct_all_strategies.png",
-      "sha256": "015939ce8ee2818258b86a897bdb74f1b44df92e05e673afcb8da1c400b3f886",
-      "caption_sha256": "a5f1ac0d3945ed7aba1b9ac5ed00de08c2c518f26e9d38d0a01b5d1b5f0c2f76",
-      "inputs": [
         {
           "source": "cr_figall_evidence",
           "pointer": "/masks",
-          "sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7"
-        },
-        {
-          "source": "cr_figall_evidence",
-          "pointer": "/guide_overlays",
-          "sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7"
-        },
-        {
-          "source": "cr_figall_evidence",
-          "pointer": "/consistency_with_staged_figure1",
           "sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7"
         },
         {
@@ -5647,14 +6141,9 @@
           "sha256": "f9456a3f0fa806bc0891c765b934b903c7649b7d7d2d524a14bcedaafc19cc2b"
         },
         {
-          "source": "cr_figall_generator",
+          "source": "i13_fig_strategies_generator",
           "pointer": "/",
-          "sha256": "e7713307bf60c7858148f3012e315bff2b0124e0ee51dd9492b53d62d65bf076"
-        },
-        {
-          "source": "cr_guides_producer",
-          "pointer": "/",
-          "sha256": "d845a62680fc079082802ef503ea4fc35359f1d9f5374b65359aca6606c819b0"
+          "sha256": "51237633162210f581b33cf6c4e2e4c730be67d9ee701a446d1c62c885be9a4d"
         },
         {
           "source": "external_oct_source_image",
@@ -5665,18 +6154,105 @@
           "source": "external_oct_license",
           "pointer": "/",
           "sha256": "98f0608fea4d233a4b41040413a224aaeb1e5ff8cf93a827be5751d8dc18ce18"
+        },
+        {
+          "source": "i13_figstyle",
+          "pointer": "/",
+          "sha256": "375827e5aef90b703abdc12c599729395251615f98e335733e08f34ca4f4fe36"
         }
       ],
       "validation": {
         "method": "reviewed_source_illustration",
-        "reviewer": "GitHub Copilot I8 camera-ready figure review, 2026-10-08",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
         "quantitative_scope": "illustrative_only",
-        "limitations": "Attributed CC BY 4.0 OCTDL Figure 1 crop (arXiv:2312.08255v3), not FairVision. A single fixed-seed replay with matched block sizes; context omitted. Not a segmentation annotation, historical training batch, evaluation sample, cohort statistic or performance comparison. Hash and evidence checks are not mathematical verification of every rendered pixel. MIRAGE envelope and soft scores were produced on this crop by the training guide pipelines on CPU; MIRAGE was not trained on OCTDL, so the outlines are not a validated segmentation.",
+        "limitations": "Attributed CC BY 4.0 OCTDL Figure 1 crop (arXiv:2312.08255v3), not FairVision. A single fixed-seed replay for one image with matched block sizes (batch size 1: no additional cross-image shortening; target-group collation still applies, so each rectangle group is truncated to 40 indices and ANATOMY-V2 groups are resampled to 16); masks are the staged camera-ready replay indices (autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_all_strategies.evidence.json), re-derived from the samplers pinned at commit 86ae882 by the producer's --replay check. MIRAGE envelope and soft scores were produced on this crop by the training guide pipelines; MIRAGE was not trained on OCTDL, so they are not a validated segmentation. Not a segmentation annotation, historical training batch, evaluation sample, cohort statistic or performance comparison. Hash and evidence checks are not mathematical verification of every rendered pixel.",
         "review_checks": [
-          "Final PNG rendered and inspected: six panels (crop, RANDOM, CENTROID, ENVELOPE, ANATOMY-V2, COVER), final target unions and guide outlines, attribution line; no identifiers or performance readouts.",
-          "Evidence asserts RANDOM and CENTROID masks equal the staged Figure 1 and records the guide checkpoints matching the training caches; no fallback guide was used.",
-          "PNG/PDF/SVG hashes equal the staged evidence outputs and registry pins; generator and guide producer hashes recorded.",
-          "Caption states the external crop, trained configurations and that MIRAGE was not trained on OCTDL."
+          "Final PNG rendered and inspected at paper scale: two rows (guide A_s(x); I-JEPA view with context, four Okabe-Ito target groups each also identified by a numeral 1-4 with white halo at the top-left 2x2 square of its own cells, grey hidden-not-target cells, repeated-index dots left uncovered) over RANDOM, CENTROID, ENVELOPE, ANATOMY-V2 and COVER; a target-rule line per column whose words equal the target-shape and placement cells of Table tab:strategies (checked by the producer); legend with numbered swatches and attribution line; no identifiers or performance readouts; no text overlap (producer assertion).",
+          "Soft guides drawn for every cell with score > 0 (opacity 0.8 x min(score, 1)); the first export's 0.02 display cutoff (23 cells, 0.24% of the summed score) was removed and is recorded in the evidence (plotted.display_transformations).",
+          "Producer --replay: masks recomputed from the pinned sampler sources equal the staged indices (masks_equal_staged true) and the CENTROID guide equals the staged guide.",
+          "Guide grids rebuilt through GuidedOCTSliceDataset hash-match the staged replay (grid_sha256_equal_staged true).",
+          "PNG/PDF/SVG hashes equal the evidence outputs and the release_assets.json pins; generator and style-module hashes equal the evidence.",
+          "Caption states the external crop, the trained configurations, MIRAGE not trained on OCTDL, and disclaims segmentation, historical batch, evaluation sample and performance use."
+        ]
+      }
+    },
+    {
+      "path": "figures/fig_oct_jepa_volume_v2.png",
+      "sha256": "f1d601b7320f09d8bbafe107e47cd2c99addad6787f463185fc2ccd2b94a26d2",
+      "caption_sha256": "9ca513e0354653c8ce8c03c813d6e306a829c8b91048663a5abd07c2e2983ba3",
+      "inputs": [
+        {
+          "source": "i13_fig_volume_evidence",
+          "pointer": "/plotted/a_volume",
+          "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+        },
+        {
+          "source": "i13_fig_volume_evidence",
+          "pointer": "/plotted/b_pretraining",
+          "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+        },
+        {
+          "source": "i13_fig_volume_evidence",
+          "pointer": "/plotted/c_evaluation",
+          "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+        },
+        {
+          "source": "i13_fig_volume_evidence",
+          "pointer": "/source_facts",
+          "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+        },
+        {
+          "source": "cr_figall_evidence",
+          "pointer": "/masks/centroid",
+          "sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7"
+        },
+        {
+          "source": "i13_snap_oct_slices",
+          "pointer": "/",
+          "sha256": "25148e05b1c46f27a1df7fd012e088bd4205776eb95ce6fde2f1b7676f227c4b"
+        },
+        {
+          "source": "i13_snap_oct_volumes",
+          "pointer": "/",
+          "sha256": "3b7aefbb3f53946c204dc2b5544cd9da793b03e836d9a456de8cc02cebd09138"
+        },
+        {
+          "source": "i13_snap_helper",
+          "pointer": "/",
+          "sha256": "c168dc28c67b5a112276172eb1f30655ba89e4a12f75a329e24fb7a657894d85"
+        },
+        {
+          "source": "i13_fig_volume_generator",
+          "pointer": "/",
+          "sha256": "41f285709361c8985e6d39b23cb93be4ce9f9f01ffc66c27312c998c4aebc7eb"
+        },
+        {
+          "source": "external_oct_source_image",
+          "pointer": "/sha256",
+          "sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5"
+        },
+        {
+          "source": "external_oct_license",
+          "pointer": "/",
+          "sha256": "98f0608fea4d233a4b41040413a224aaeb1e5ff8cf93a827be5751d8dc18ce18"
+        },
+        {
+          "source": "i13_figstyle",
+          "pointer": "/",
+          "sha256": "375827e5aef90b703abdc12c599729395251615f98e335733e08f34ca4f4fe36"
+        }
+      ],
+      "validation": {
+        "method": "reviewed_source_illustration",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "quantitative_scope": "illustrative_only",
+        "limitations": "Schematic of the implemented protocol, drawn from source facts recorded with file, line and sha256 in the evidence (loaders, transforms, train_patch.jepa_forward_loss, eval_downstream pooling and LinearHead, registered probe config). Volume stacks are drawn schematics, not data; the example B-scan and CENTROID masks are the attributed CC BY 4.0 OCTDL crop and staged replay indices of the strategy figure. Encoder shapes and token/vector icons are illustrative, not measured features. No cohort statistic, result or performance claim.",
+        "review_checks": [
+          "V12 typography revision and author polish: three full-width bands; every label >= 6.6 pt and math >= 7.6 pt at the 5.5 in print width (sub/superscripts >= 5.3 pt, none nested; measured from the PDF, evidence typography); target identity carried by numbered tokens 1-4; pooling steps drawn as operator boxes on the arrows; no text overlap (producer assertion).",
+          "Final PNG rendered and inspected at paper scale: (a) 200 B-scans with alternate slices marked used, indices 0, 2, ..., 196, 199, resize to 256 x 256, 16 x 16 patch grid (N = 256); (b) view x, guide, sampler, context view, f_theta, g_phi with mask tokens at T positions, EMA f_theta_bar on the full view, LayerNorm and select T_m with stop-gradient, Smooth-L1 per T_m; (c) frozen EMA encoder, 256 x 768 tokens, patch mean, 100 x 768, B-scan mean, 768, LayerNorm + linear, sigmoid.",
+          "Every drawn protocol fact is located in the evidence source_facts (path, line, sha256) and was checked against the code: oct_slices.py/oct_volumes.py linspace(0, 199, 100) and bilinear resize, transforms.RandomResizedCrop, train_patch.jepa_forward_loss, vision_transformer context masking, helper vit_base 768, eval_downstream target_encoder/patch mean/LinearHead/sigmoid, MeanPool.",
+          "PNG/PDF/SVG hashes equal the evidence outputs and the release_assets.json pins; generator and style-module hashes equal the evidence.",
+          "Caption states the B-scan selection, per-B-scan pretraining and the pooling path; numbers in the caption carry literal receipts."
         ]
       }
     }

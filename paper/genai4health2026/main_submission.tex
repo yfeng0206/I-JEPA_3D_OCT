@@ -104,18 +104,17 @@ comparisons of what to predict and what to keep visible.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{fig_oct_target_selection_cr.png}
-\caption{Target-selection intuition on an external OCT example, not FairVision
-data. (a) One annotation-free crop from the real OCT B-scan in Kulyabin et al.,
-OCTDL, Fig.~1 (arXiv:2312.08255v3), adapted under CC BY 4.0.
-(b) \textsc{random} final target union.
-(c) \ArmBest{}'s intensity-derived guide.
-(d) \ArmBest{} final target union.
-The same crop is downsampled to 256 by 256 pixels without contrast enhancement;
-masks use the samplers in their trained configuration, matched block-size draws and a fixed seed.
-Overlays show exact delivered indices; encoder context is omitted.
-This single illustrative replay is not a segmentation annotation, historical
-training batch, evaluation sample or performance comparison.
+\includegraphics[width=\linewidth]{fig_oct_strategies_v2.png}
+\caption{The five target-selection strategies on one external OCT example, not
+FairVision data: an annotation-free B-scan crop from Kulyabin et al., OCTDL,
+Fig.~1 (arXiv:2312.08255v3), adapted under CC BY 4.0 and downsampled to 256 by
+256 pixels without contrast enhancement. (a) Placement guide $A_s(x)$; MIRAGE
+was not trained on OCTDL. (b) One I-JEPA view: visible context $C$, target
+groups $T_m$ (colour and number mark identity, not relevance), hidden
+non-targets (grey) and repeated indices (dots); the target rule follows
+Table~\ref{tab:strategies}. Exact indices from each trained sampler for this
+image (matched block sizes, fixed seed); a single illustrative replay, not a
+segmentation, training batch, evaluation sample or performance comparison.
 License: \url{https://creativecommons.org/licenses/by/4.0/}.}
 \label{fig:target_selection}
 \end{figure}
@@ -254,17 +253,19 @@ are part of the strategy comparisons.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{fig_oct_jepa_comparison_final_cr.png}
-\caption{Uniform and anatomy-guided target selection within the same I-JEPA
-framework. In both panels, the context encoder and predictor are trainable,
-the EMA target encoder receives the full image, and normalized target
-embeddings are selected afterward with gradients stopped. The predictor uses
-visible context and positional queries to predict each target group in
-parallel with the same Smooth-L1 objective. The panels differ only in target
-selection and the resulting visible context. The guided panel illustrates
-\ArmBest{} on the image and exact masks of Figure~\ref{fig:target_selection}.
-Masked views show omitted tokens, not zero-filled inputs, and colours identify
-target groups, not relevance.}
+\includegraphics[width=\linewidth]{fig_oct_jepa_volume_v2.png}
+\caption{From an OCT volume to I-JEPA pretraining and volume-level evaluation.
+(a) Each FairVision volume has 200 B-scans; pretraining and evaluation use the
+same 100 evenly spaced ones, resized to 256 by 256 pixels ($N=256$ patches of
+16 by 16 pixels). (b) Each B-scan is a separate sample (random resized crop).
+Strategies differ in the sampler of context $C$ (grey: omitted tokens) and
+targets $T_m$ (uniform or from $A_s(x)$; \ArmBest{}'s masks of
+Figure~\ref{fig:target_selection}); encoders, predictor and loss are shared. The
+predictor sees $h_C$ and mask tokens at the target positions; the EMA target
+encoder's normalized outputs at $T_m$ are the stop-gradient Smooth-L1 targets.
+(c) The frozen EMA encoder sees uncropped B-scans; patch features are averaged
+per B-scan, then across the volume, before a LayerNorm--linear head. Stacks are
+schematic; the B-scan is the OCTDL crop.}
 \label{fig:policies}
 \end{figure}
 
@@ -346,7 +347,7 @@ context.
 \subsection{Compared masking strategies}
 
 All policies request $M{=}4$ target blocks and one context block
-(Table~\ref{tab:strategies}, Figure~\ref{fig:allstrategies}). Rectangle
+(Table~\ref{tab:strategies}, Figure~\ref{fig:target_selection}). Rectangle
 policies share nominal scale and aspect-ratio ranges, but placement and
 collation can change unique target area and encoder-visible context.
 
@@ -414,20 +415,6 @@ policy & guide $A_s(x)$ & target shape & placement & target length \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.74\linewidth]{fig_oct_all_strategies.png}
-\caption{All five strategies on the external OCT crop of
-Figure~\ref{fig:target_selection}, not FairVision data. Each panel shows the
-final target union from the sampler in its trained configuration, with matched
-block-size draws and a fixed seed. Outlines mark each strategy's placement
-guide. The MIRAGE guides were produced on this crop by the training guide
-pipelines, although MIRAGE was not trained on OCTDL. Encoder context is omitted.
-This single illustrative replay is not a segmentation, historical training
-batch or performance comparison.}
-\label{fig:allstrategies}
-\end{figure}
-
 \section{Experimental setup}
 \label{sec:setup}
 
@@ -435,7 +422,8 @@ batch or performance comparison.}
 We use FairVision OCT volumes with binary glaucoma
 labels~\citep{luo2024fairvision} and the fixed released splits.
 Training and validation contain 6{,}000 and 1{,}000 volumes, respectively.
-Each volume contributes 100 B-scans, resized to $256{\times}256$.
+Each volume contributes 100 of its 200 B-scans, evenly spaced and resized to
+$256{\times}256$ (Figure~\ref{fig:policies}a).
 The test split contains $N{=}\Ntest$ volumes (\Npos{} positive).
 Diagnosis labels are used only for downstream evaluation, not JEPA pretraining.
 Demographic attributes are not model inputs.
@@ -471,8 +459,10 @@ are evaluated on the same test split as the original runs. Test predictions stay
 results freeze, and all run decisions use validation AUC.
 \CRSeedResultsPending
 
-\paragraph{Evaluation.} The EMA target encoder is frozen. We average patch features within each
-B-scan, then average across the volume and train a LayerNorm--linear head.
+\paragraph{Evaluation.} The EMA target encoder is frozen and encodes each B-scan
+without cropping. We average patch features within each
+B-scan, then average across the volume's B-scans and train a LayerNorm--linear
+head (Figure~\ref{fig:policies}c).
 Each head uses a 50-epoch budget and is selected by validation AUC.
 We report test AUC with percentile bootstrap intervals and paired differences
 (\Nboot{} class-stratified resamples, fitted heads fixed), together with

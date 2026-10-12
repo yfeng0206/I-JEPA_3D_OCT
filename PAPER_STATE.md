@@ -32,9 +32,12 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
 
    Preflight plan (campaign state, probe dirs, late / in-progress runs) -> `cr_stats`
    inventory -> unseal every ready probe dir that has no receipt (never twice) -> `final`
-   (~5-6 min) -> MD on the test split (2 min on synthetic caches; the real caches are larger,
-   allow ~10-20 min) -> RANDOM-CB budget audit from its trainer logs -> `make_cr_results build
-   --update-reviews` -> `build --check` -> scratch copy, integrate, Tectonic -> receipt preview
+   (~5-6 min) -> MD on the test split (`cr_md_regression.py --split test`, the registered
+   secondary analysis; 2 min on synthetic caches; the real caches are larger, allow ~10-20 min;
+   it always runs, build always gets `--md`, and a missing MD metadata file stops the preflight
+   before anything is unsealed) -> RANDOM-CB budget audit from its trainer logs ->
+   `make_cr_results build --update-reviews` -> `build --check` -> scratch copy, integrate,
+   Tectonic -> receipt preview
    -> scratch poster build -> `REVIEW.md`. `final` and MD are cached by a key over their input
    hashes *and* the completion evidence (stop file path / existence / hash, seal and probe
    times), and the cache record also holds the sha256 of the output it produced (an output
@@ -50,8 +53,12 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
 2. **Human review.** `REVIEW.md` (scenario, labels, matched control, display warnings, TL;DR =
    `paper\genai4health2026\auto\cr_tldr.txt` for OpenReview) and the scratch PDF
    `scratch\paper\genai4health2026\main_submission.pdf`: abstract, introduction, contributions,
-   section 5.2 with Tables 2-3, discussion, limitations, conclusion, appendix tables and the
-   seed-spread figure; at most 10 main pages (rehearsal worst case: main text ends at 9.81),
+   section 5.2 with Tables 2-3, discussion, limitations, conclusion, appendix tables (incl.
+   `tab:md`) and the seed-spread figure ((a) test AUC per encoder in the paper's arm colours,
+   seed letters O/A/B/C; (b) paired differences from RANDOM with the grey +/- r band only when
+   the registered RANDOM range exists; printed 1:1 at `\linewidth`, text >= 7 pt; its colour /
+   marker / label contract is in `fig_cr_seed_spread.evidence.json` under `encoding`); at most
+   10 main pages (rehearsal worst case: main text ends at 9.81),
    no undefined references. Fill the acknowledgments (`\CRAcknowledgmentsPending`) before step 3.
 3. **Phase 2, about 1-2 min.**
 

@@ -1097,6 +1097,117 @@ def test_v10_missing_or_late_original_random_withholds_registered_labels(tmp_pat
                    ('RepAbstractResults', 'RepIntroResults', 'RepLimitations'))
 
 
+def _literal(path, name):
+    """A module-level dict literal of another script, read without importing it."""
+    import ast
+    for node in ast.parse(open(path, encoding='utf-8').read()).body:
+        if isinstance(node, ast.Assign) and any(getattr(x, 'id', None) == name
+                                                for x in node.targets):
+            return ast.literal_eval(node.value)
+    raise KeyError(name)
+
+
+def _pdf_font_sizes(path):
+    import zlib
+    raw = open(path, 'rb').read()
+    sizes = []
+    for match in re.finditer(rb'stream\r?\n(.*?)\r?\nendstream', raw, re.S):
+        try:
+            body = zlib.decompress(match.group(1))
+        except zlib.error:
+            body = match.group(1)
+        sizes += [float(s) for s in re.findall(rb'/F\d+ ([\d.]+) Tf', body)]
+    return sizes
+
+
+POINT_KEYS = {'run', 'arm', 'tag', 'seed', 'x', 'test_auc', 'head_sd', 'status'}
+
+
+def test_f3_figure_uses_the_paper_palette_and_records_its_contract(designs, tmp_path):
+    """F3: arm colours / markers are p8's single mapping (RANDOM-CB uses neither a colour nor a
+    marker of any p8 arm), seeds are letters at x offsets, text prints at >= 7 pt at the
+    included width, panel (b) holds the final's paired differences with the registered band,
+    and the plotted data (points, means) keep the schema the poster gate checks."""
+    p8 = os.path.join(REPO, 'autopilot', 'p8_make_assets.py')
+    col, mk_ = _literal(p8, 'COL'), _literal(p8, 'MK')
+    story = _literal(os.path.join(REPO, 'paper', 'genai4health2026', 'scripts',
+                                  'make_story_figures.py'), 'COLORS')
+    assert {a: mk.FIG_COLORS[a] for a in ('random', 'centroid', 'envelope')} == \
+        {'random': col['random'], 'centroid': col['oracle'], 'envelope': col['envelope']}
+    assert mk.FIG_COLORS['random_cb'].lower() not in {c.lower() for c in
+                                                      list(col.values()) + list(story.values())}
+    assert {a: mk.FIG_ARM_MARKERS[a] for a in ('random', 'centroid', 'envelope')} == \
+        {'random': mk_['random'], 'centroid': mk_['oracle'], 'envelope': mk_['envelope']}
+    assert mk.FIG_ARM_MARKERS['random_cb'] not in mk_.values()
+    assert set(mk.FIG_SEED_LETTERS.values()) == {'O', 'A', 'B', 'C'}
+    d = designs['mixed']  # E3 late: seed C descriptive; registered range exists
+    run_build(d, tmp_path, figure=True)
+    out = tmp_path / 'out'
+    ev = json.load(open(out / 'fig_cr_seed_spread.evidence.json'))
+    assert ev['encoding'] == json.loads(json.dumps(mk.figure_encoding()))
+    assert all(set(p) == POINT_KEYS for p in ev['points'])
+    assert all(set(m) == {'x', 'mean', 'n'} for m in ev['means'].values())
+    block = json.load(open(d['final']))['analysis'][fx.PRIMARY]
+    panel = ev['panel_b']
+    assert panel['band'] == {'drawn': True, 'r': block['outcomes']['centroid']['random_range'],
+                             'missing': []}
+    for q in panel['points']:
+        listname, i = q['contrast']
+        c = block[listname][i]
+        assert q['delta'] == c['delta'] and c['kind'] == q['arm'] + '-random'
+        assert q['status'] == ('registered' if listname == 'primary_contrasts' else 'descriptive')
+        assert (q['status'] == 'descriptive') == (q['seed'] == 9012)
+    assert {a: m['mean_delta'] for a, m in panel['means'].items()} == \
+        {a: block['outcomes'][a]['mean_delta'] for a in ('centroid', 'envelope')}
+    assert len(panel['points']) == 6
+    caption = tex_macros(out / 'cr_results.tex')['RepFigSeedSpreadCaption']
+    assert 'grey band' in caption and r'\RepRandomRange' in caption
+    assert '(a)~' in caption and '(b)~' in caption and not re.search(r'\d', caption)
+    tex = (out / 'cr_figure_seed_spread.tex').read_text(encoding='utf-8')
+    assert r'\includegraphics[width=\linewidth]{fig_cr_seed_spread.png}' in tex
+    # printed 1:1 (figure width = 5.5 in text width): every font size is >= 7 pt
+    assert mk.FIG_SIZE_IN[0] == ev['encoding']['include_width_in'] == 5.5
+    sizes = _pdf_font_sizes(out / 'fig_cr_seed_spread.pdf')
+    assert sizes and min(sizes) >= 7.0, sorted(set(sizes))
+    # --check recomputes panel (b) and the contract
+    for edit in (lambda e: e['panel_b']['points'][0].update(delta=0.5),
+                 lambda e: e['panel_b']['band'].update(drawn=False),
+                 lambda e: e['encoding']['colors'].update(centroid='#0072B2')):
+        good = (out / 'fig_cr_seed_spread.evidence.json').read_bytes()
+        _edit_json(out / 'fig_cr_seed_spread.evidence.json', edit)
+        assert 'fig_cr_seed_spread.evidence.json' in run_build(d, tmp_path, check=True,
+                                                               figure=True)['stale']
+        (out / 'fig_cr_seed_spread.evidence.json').write_bytes(good)
+    assert run_build(d, tmp_path, check=True, figure=True)['stale'] == []
+
+
+def test_f3_no_band_without_the_registered_range(designs, tmp_path):
+    d = designs['I']  # one complete index: no registered RANDOM range
+    run_build(d, tmp_path, figure=True)
+    out = tmp_path / 'out'
+    ev = json.load(open(out / 'fig_cr_seed_spread.evidence.json'))
+    assert ev['panel_b']['band'] == {'drawn': False, 'r': None, 'missing': ['indices']}
+    caption = tex_macros(out / 'cr_results.tex')['RepFigSeedSpreadCaption']
+    assert 'no band is drawn because the registered range' in caption
+    assert r'\pm' not in caption and r'\RepRandomRange' not in caption
+
+
+def test_h8_md_secondary_analysis_is_reported_or_declared_not_run(designs, tmp_path):
+    d = designs['A']
+    res = run_build(d, tmp_path / 'with')
+    texts = {t['name']: t['text'] for t in res['text_macros']}
+    assert res['md_secondary'] == {'run': True, 'source': 'rep_md'}
+    assert r'Table~\ref{tab:md}' in texts['RepAppendixResults']
+    assert r'\label{tab:md}' in (tmp_path / 'with' / 'out' / 'cr_table_md.tex').read_text()
+    res = mk.build(d['final'], d['runs'], None, [I5], out_dir=tmp_path / 'without' / 'out',
+                   evidence_dir=tmp_path / 'without' / 'ev', allow_synthetic=True, figure=False)
+    texts = {t['name']: t['text'] for t in res['text_macros']}
+    assert res['md_secondary'] == {'run': False, 'source': None}
+    assert 'mean-deviation regression within glaucoma cases, a secondary analysis, was not run' \
+        in texts['RepAppendixResults']
+    assert any('MD secondary analysis not supplied' in w for w in res['warnings'])
+
+
 def test_i12_generated_table_cells_keep_their_words_for_the_word_gate(designs, tmp_path):
     import check_docx
     run_build(designs['A'], tmp_path, figure=False)

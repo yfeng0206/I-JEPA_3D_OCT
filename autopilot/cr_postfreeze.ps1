@@ -345,6 +345,9 @@ try {
     # ======================================================================== phase 1
     Invoke-Step 'preflight' {
       Wait-Memory
+      # H8: the registered MD secondary analysis always runs (md-test, then build --md); its
+      # metadata must exist before anything is unsealed.
+      if (-not $Rehearsal -and -not (Test-Path -LiteralPath $MdMetadata)) { Fail "MD metadata missing: $MdMetadata (needed by the registered MD secondary analysis)" }
       # The plan comes first: in a rehearsal it contains every derived path in the fixture root
       # (junctions resolved) before anything else is read or copied (V8-1).
       $planArgs = @("$Tools\cr_postfreeze.py", 'plan', '--campaign', $CampaignJson, '--state', $StateJson,

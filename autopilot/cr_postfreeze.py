@@ -456,6 +456,27 @@ def contain(root, paths):
     return 0
 
 
+GRAPHICSPATH = re.compile(r"\\graphicspath\s*\{((?:\{[^{}]*\})+)\}")
+
+
+def poster_external_dirs(src):
+    """Directories outside the poster that its sources name in \\graphicspath (relative paths
+    such as ../../autopilot/.../figures_v2/poster/), other than the paper, which the scratch
+    paper copy provides. A scratch poster build needs them at the same relative place."""
+    src = Path(src).resolve()
+    repo = src.parents[1]
+    found = set()
+    for tex in src.glob("*.tex"):
+        text = tex.read_text(encoding="utf-8", errors="replace")
+        for group in GRAPHICSPATH.findall(text):
+            for entry in re.findall(r"\{([^{}]*)\}", group):
+                path = (src / entry).resolve()
+                if path.is_dir() and inside(path, repo) and not inside(path, src) and \
+                        not inside(path, repo / "paper" / "genai4health2026"):
+                    found.add(path)
+    return sorted(found)
+
+
 def scratch_copy(src, dst, kind):
     src, dst = Path(src).resolve(), Path(dst).resolve()
     if inside(dst, src) or inside(src, dst):
@@ -476,6 +497,20 @@ def scratch_copy(src, dst, kind):
         ignore = shutil.ignore_patterns("*.pdf", "*_preview.png", "build_logs", "_*", "*.log")
     shutil.copytree(src, dst, ignore=ignore)
     (dst / SCRATCH_MARKER).write_text("scratch copy of %s (%s)\n" % (src, kind), encoding="utf-8")
+    if kind == "poster":
+        # Figure directories the poster names by relative path (read-only copies).
+        root = dst.parents[1]
+        for external in poster_external_dirs(src):
+            target = root / external.relative_to(src.parents[1])
+            if not inside(target, root) or inside(target, assets.REPO):
+                raise Refused("poster figure directory would leave the scratch tree: %s" % target)
+            if target.exists():
+                if not (target / SCRATCH_MARKER).is_file():
+                    raise Refused("%s exists and is not a scratch copy made by this tool" % target)
+                shutil.rmtree(target)
+            shutil.copytree(external, target)
+            (target / SCRATCH_MARKER).write_text("scratch copy of %s (poster figures)\n"
+                                                 % external, encoding="utf-8")
     return dst
 
 

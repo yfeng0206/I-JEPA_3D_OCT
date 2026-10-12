@@ -395,6 +395,41 @@ def test_ps1_cache_record_binds_the_output_digest(tmp_path):
     assert 'changed after it was computed' in lines
 
 
+def test_scratch_poster_copy_brings_the_figure_directories_it_names(tmp_path):
+    """The poster names figure directories by relative path (graphicspath); its scratch build
+    needs read-only copies of them at the same relative place (the paper comes from the
+    scratch paper copy)."""
+    repo = tmp_path / 'repo'
+    poster = repo / 'poster' / 'genai4health2026'
+    figs = repo / 'autopilot' / 'figs' / 'poster'
+    for d in (poster, figs, repo / 'paper' / 'genai4health2026' / 'figures'):
+        d.mkdir(parents=True)
+    (poster / 'poster.tex').write_text(
+        '\\graphicspath{{../../autopilot/figs/poster/}{../../paper/genai4health2026/figures/}}\n'
+        '\\includegraphics{a.pdf}\n')
+    (figs / 'a.pdf').write_bytes(b'%PDF-1.4 synthetic')
+    dst = tmp_path / 'out' / 'scratch' / 'poster' / 'genai4health2026'
+    for _ in range(2):  # re-runnable
+        pf.scratch_copy(poster, dst, 'poster')
+        assert (tmp_path / 'out' / 'scratch' / 'autopilot' / 'figs' / 'poster' / 'a.pdf').is_file()
+    assert not (tmp_path / 'out' / 'scratch' / 'paper').exists()
+    assert pf.poster_external_dirs(poster) == [figs.resolve()]
+
+
+def test_ps1_always_runs_the_md_secondary_analysis_and_passes_it_to_build():
+    """H8: md-test runs cr_md_regression on the test split (no skip switch), build always gets
+    --md, and the real run checks the MD metadata before anything is unsealed."""
+    text = open(os.path.join(REPO, 'autopilot', 'cr_postfreeze.ps1'), encoding='utf-8').read()
+    step = text[text.index("Invoke-Step 'md-test'"):text.index("Invoke-Step 'cb-audit'")]
+    assert "cr_md_regression.py" in step and "'--split', 'test'" in step
+    assert "'--metadata', $MdMetadata" in step and 'return' in step  # only the cache skip
+    build_args = text[text.index('function Get-BuildArgs'):text.index('function Read-BuildArgs')]
+    assert "'--md', (Join-Path $OutRoot 'md_test.json')" in build_args
+    assert 'SkipMd' not in text
+    preflight = text[text.index("Invoke-Step 'preflight'"):text.index("Invoke-Step 'inventory'")]
+    assert preflight.index('MD metadata missing') < preflight.index("'plan'")
+
+
 # ---------------------------------------------------------------------------
 # V8-5: fixtures are time-invariant
 # ---------------------------------------------------------------------------

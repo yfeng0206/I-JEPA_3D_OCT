@@ -1552,6 +1552,10 @@ def build_text(ctx):
                      r"label, so this is a severity endpoint on the same cohort, not an "
                      r"independent task." % ("\\RepMDN", t.num("RepMDMAEMin"),
                                              t.num("RepMDMAEMax"), t.num("RepMDBaseMAE")))
+    else:
+        # H8: a registered secondary analysis is never dropped silently.
+        appendix += (" The registered visual-field mean-deviation regression within glaucoma "
+                     "cases, a secondary analysis, was not run for this version.")
     t.put("RepAppendixResults", appendix, "appendix results paragraph")
     if n_seeds >= 2:
         rule = (r"A seed index enters the primary analysis only if its \textsc{random}, \ArmBest{} "
@@ -1574,14 +1578,30 @@ def build_text(ctx):
              r"negative, placement accounting for most of the gap if P exceeds it and is at least "
              r"half of P plus B, and both contributing otherwise.")
     t.put("RepAppendixRule", rule, "appendix decision rule (amendments one and two)")
-    t.put("RepFigSeedSpreadCaption",
-          r"Test AUC at epoch~%s of every evaluated encoder, averaged over %s probe-head seeds "
-          r"(error bars: head-seed s.d.). Filled markers are new continuations in the registered "
-          r"analysis, open markers are descriptive runs and stars are the re-probed original "
-          r"encoders. Horizontal bars are means over the registered new seeds. Continuations share "
-          r"an ancestor checkpoint, so the spread is across continuations, not independent "
-          r"initializations." % (t.bare("RepEndpoint"), t.bare("RepNHeadSeedsWord")),
-          "figure caption")
+    # F3: caption follows the drawn encoding (panel b and its band only when drawn).
+    panel_b = figure_panel_b(ctx)
+    caption = (r"%sTest AUC at epoch~%s of every evaluated encoder, averaged over %s probe-head "
+               r"seeds (error bars: head-seed s.d.); bars are means over the registered seed "
+               r"indices." % ("(a)~" if panel_b else "", t.bare("RepEndpoint"),
+                              t.bare("RepNHeadSeedsWord")))
+    if panel_b:
+        caption += (r" (b)~Difference from \textsc{random} of the same seed index for each guided "
+                    r"strategy, with its mean over the registered seed indices")
+        if panel_b["band"]["drawn"]:
+            caption += (r"; the grey band spans $\pm$ the range of \textsc{random}'s "
+                        r"realizations (%s), the threshold of the registered rule."
+                        % t.num("RepRandomRange"))
+        else:
+            caption += (r"; no band is drawn because the registered range of \textsc{random}'s "
+                        r"realizations is not available.")
+    caption += (r" Letters give the seed index (O: original run, re-probed). Filled markers are "
+                r"runs in the registered analysis%s and open markers descriptive runs. Colours "
+                r"and marker shapes per strategy are those of the other figures. Continuations "
+                r"share an ancestor checkpoint, so the spread is across continuations, not "
+                r"independent initializations." % (
+                    ", half-filled markers re-probed original runs"
+                    if any(r["role"] == "anchor" for r in ctx.runs.values()) else ""))
+    t.put("RepFigSeedSpreadCaption", caption, "figure caption")
     return t
 
 
@@ -2008,7 +2028,7 @@ def figure_float(caption):
     """The generated caption is written out (not a macro), so the p15 figure receipt's
     caption hash binds the caption text itself."""
     return "\n".join([r"\begin{figure}[t]", r"\centering",
-                      r"\includegraphics[width=0.62\linewidth]{fig_cr_seed_spread.png}",
+                      r"\includegraphics[width=%s]{fig_cr_seed_spread.png}" % FIG_INCLUDE_WIDTH,
                       r"\caption{%s}" % caption, r"\label{fig:seed_spread}",
                       r"\end{figure}"]) + "\n"
 
@@ -2017,10 +2037,23 @@ def figure_float(caption):
 # Figure
 # ---------------------------------------------------------------------------
 
-FIG_COLORS = {"random": "#555555", "centroid": "#0072B2", "envelope": "#D55E00",
-              "random_cb": "#009E73"}
+# F3: arm colours are the paper's single mapping (autopilot/p8_make_assets.py COL: random,
+# oracle = centroid, envelope; mirrored in paper/.../scripts/make_story_figures.py); RANDOM-CB
+# gets Okabe-Ito orange, which no p8 arm uses. Arm markers follow p8 MK (random o, oracle s,
+# envelope ^); RANDOM-CB gets a hexagon, which no p8 arm uses. Seed indices are encoded by x
+# offset plus a small letter (never by marker), status by fill.
+FIG_COLORS = {"random": "#000000", "centroid": "#882255", "envelope": "#0072B2",
+              "random_cb": "#E69F00"}
+FIG_ARM_MARKERS = {"random": "o", "centroid": "s", "envelope": "^", "random_cb": "h"}
 FIG_OFFSETS = {"Orig": -0.24, "SeedA": -0.08, "SeedB": 0.08, "SeedC": 0.24}
-FIG_MARKERS = {"SeedA": "o", "SeedB": "s", "SeedC": "^"}
+FIG_B_OFFSETS = {"SeedA": -0.18, "SeedB": 0.0, "SeedC": 0.18}
+FIG_SEED_LETTERS = {"Orig": "O", "SeedA": "A", "SeedB": "B", "SeedC": "C"}
+FIG_FILL = {"registered": "full", "control": "full", "original": "left", "descriptive": "none"}
+FIG_SIZE_IN = (5.5, 2.45)       # printed 1:1 at \linewidth (5.5 in text width)
+FIG_INCLUDE_WIDTH = r"\linewidth"
+FIG_FONT_PT = 7.0               # smallest text at print size
+FIG_BAND_GREY = "0.86"
+FIGURE_ENCODING = "cr_seed_spread_encoding_v2"
 
 
 def figure_points(ctx):
@@ -2042,6 +2075,63 @@ def figure_points(ctx):
     return arms, points, means
 
 
+def figure_panel_b(ctx):
+    """Panel (b): per-seed paired differences, guided minus RANDOM of the same seed index (the
+    final's contrasts, verified by verify_analysis), their mean over the registered seed
+    indices (outcomes mean_delta), and the band +/- r only with the registered RANDOM range
+    (V10-2); None when no paired difference exists."""
+    tags = ("SeedA", "SeedB", "SeedC")
+    points = []
+    for (kind, seed), (listname, i, c, descriptive) in ctx.cidx.items():
+        if kind not in ("centroid-random", "envelope-random"):
+            continue
+        arm = kind.split("-")[0]
+        points.append({"arm": arm, "tag": seed_tag(seed), "seed": seed,
+                       "x": GUIDED.index(arm) + FIG_B_OFFSETS[seed_tag(seed)],
+                       "delta": c["delta"], "status": "descriptive" if descriptive
+                       else "registered", "contrast": [listname, i]})
+    if not points:
+        return None
+    points.sort(key=lambda q: (GUIDED.index(q["arm"]), tags.index(q["tag"])))
+    means = {}
+    for arm in GUIDED:
+        o = ctx.block["outcomes"][arm]
+        if o.get("mean_delta") is not None:
+            means[arm] = {"x": GUIDED.index(arm), "mean_delta": o["mean_delta"],
+                          "n": o["n_new_seeds"]}
+    r, missing = ctx.reference
+    return {"arms": list(GUIDED), "points": points, "means": means,
+            "band": {"drawn": r is not None, "r": r, "missing": list(missing)}}
+
+
+def figure_encoding():
+    """The colour / marker / label contract of the figure, recorded in its evidence so other
+    renderers (the poster) can follow it."""
+    return {"contract": FIGURE_ENCODING,
+            "colors": dict(FIG_COLORS),
+            "colors_source": "autopilot/p8_make_assets.py COL (random; oracle = centroid; "
+                             "envelope); random_cb #E69F00 is used by no p8 arm",
+            "markers": dict(FIG_ARM_MARKERS),
+            "markers_source": "autopilot/p8_make_assets.py MK (random o, oracle s, envelope ^); "
+                              "random_cb hexagon is used by no p8 arm",
+            "fill_by_status": dict(FIG_FILL),
+            "fill_meaning": {"full": "run in the registered analysis (or on-time control)",
+                             "left": "re-probed original run (left half filled, right white)",
+                             "none": "descriptive run (late or incomplete seed index): open "
+                                     "marker with a white face"},
+            "seed_labels": dict(FIG_SEED_LETTERS),
+            "seed_encoding": "x offset within the arm group plus the letter as an x tick label "
+                             "(never the marker)",
+            "x_offsets_panel_a": dict(FIG_OFFSETS), "x_offsets_panel_b": dict(FIG_B_OFFSETS),
+            "mean_bar": "line in the arm colour over the registered seed indices (panel a: mean "
+                        "test AUC; panel b: mean paired difference)",
+            "band": "panel b only: grey band at +/- r, the registered RANDOM range; not drawn "
+                    "without the registered reference (M_incomplete / I)",
+            "band_color": FIG_BAND_GREY,
+            "figsize_in": list(FIG_SIZE_IN), "include_width": FIG_INCLUDE_WIDTH,
+            "include_width_in": 5.5, "min_font_pt": FIG_FONT_PT}
+
+
 FIGURE_SCHEMA = "cr_fig_seed_spread_v1"
 
 
@@ -2055,53 +2145,106 @@ def figure_provenance(ctx, stage):
                        if name == "rep_final" or name.startswith("rep_receipt_")}}
 
 
+def figure_content(ctx):
+    """Everything the figure plots, recomputed identically by make_figure and --check."""
+    arms, points, means = figure_points(ctx)
+    return {"arms": arms, "points": points, "means": means, "panel_b": figure_panel_b(ctx),
+            "encoding": figure_encoding()}
+
+
 def make_figure(ctx, out_dir, stage):
     os.environ.setdefault("MPLBACKEND", "Agg")
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
 
-    arms, points, means = figure_points(ctx)
-    plt.rcParams.update({"font.size": 7, "pdf.fonttype": 42, "ps.fonttype": 42,
+    content = figure_content(ctx)
+    arms, points, means, panel_b = (content["arms"], content["points"], content["means"],
+                                    content["panel_b"])
+    plt.rcParams.update({"font.size": FIG_FONT_PT, "axes.titlesize": FIG_FONT_PT + 0.5,
+                         "axes.labelsize": FIG_FONT_PT, "xtick.labelsize": FIG_FONT_PT,
+                         "ytick.labelsize": FIG_FONT_PT, "legend.fontsize": FIG_FONT_PT,
+                         "axes.linewidth": 0.6, "pdf.fonttype": 42, "ps.fonttype": 42,
                          "font.family": "DejaVu Sans"})
-    fig, ax = plt.subplots(figsize=(4.4, 2.2))
+    if panel_b:
+        fig, (ax, bx) = plt.subplots(1, 2, figsize=FIG_SIZE_IN, gridspec_kw={
+            "width_ratios": [len(arms) + 0.3, len(GUIDED) + 0.6]})
+    else:
+        fig, ax = plt.subplots(figsize=FIG_SIZE_IN)
+        bx = None
+
+    def draw(axis, x, y, arm, status, yerr=None):
+        color = FIG_COLORS[arm]
+        if yerr is not None:
+            axis.errorbar(x, y, yerr=yerr, fmt="none", ecolor=color, elinewidth=0.6,
+                          capsize=1.5, zorder=2)
+        # Open and half-filled markers get a white face so lines behind them do not show.
+        fill = FIG_FILL[status]
+        axis.plot(x, y, marker=FIG_ARM_MARKERS[arm], markersize=4.8, linestyle="none",
+                  fillstyle="full" if fill == "none" else fill,
+                  markerfacecolor="white" if fill == "none" else color,
+                  markerfacecoloralt="white", markeredgecolor=color, markeredgewidth=0.8,
+                  zorder=3)
+
+    def x_labels(axis, groups, centers, seeds):
+        axis.xaxis.remove_overlapping_locs = False  # keep the letter at a group centre
+        axis.set_xticks(centers)
+        axis.set_xticklabels([ARM_PLAIN[g] for g in groups])
+        axis.set_xticks([x for x, _ in seeds], minor=True)
+        axis.set_xticklabels([letter for _, letter in seeds], minor=True)
+        axis.tick_params(axis="x", which="minor", length=0, pad=1.5, labelcolor="0.3")
+        axis.tick_params(axis="x", which="major", length=0, pad=FIG_FONT_PT + 4)
+        axis.set_xlim(-0.55, len(groups) - 0.45)
+        axis.grid(axis="y", linewidth=0.3, alpha=0.5)
+        for side in ("top", "right"):
+            axis.spines[side].set_visible(False)
+
     for p in points:
-        color = FIG_COLORS[p["arm"]]
-        if p["tag"] == "Orig":
-            marker, face, size = "*", color, 9
-        else:
-            marker, size = FIG_MARKERS[p["tag"]], 5
-            face = color if p["status"] in ("registered", "control") else "none"
-        if p["head_sd"] is not None:
-            ax.errorbar(p["x"], p["test_auc"], yerr=p["head_sd"], fmt="none", ecolor=color,
-                        elinewidth=0.6, capsize=1.5, zorder=2)
-        ax.plot(p["x"], p["test_auc"], marker=marker, markersize=size, markerfacecolor=face,
-                markeredgecolor="black" if p["tag"] == "Orig" else color, markeredgewidth=0.6,
-                linestyle="none", zorder=3)
+        draw(ax, p["x"], p["test_auc"], p["arm"], p["status"], p["head_sd"])
     for arm, mean in means.items():
-        ax.plot([mean["x"] - 0.34, mean["x"] + 0.34], [mean["mean"]] * 2, color="black",
-                linewidth=1.0, zorder=1)
-    ax.set_xticks(range(len(arms)))
-    ax.set_xticklabels([ARM_PLAIN[a] for a in arms], fontsize=6)
-    ax.set_xlim(-0.6, len(arms) - 0.4)
+        ax.plot([mean["x"] - 0.34, mean["x"] + 0.34], [mean["mean"]] * 2,
+                color=FIG_COLORS[arm], linewidth=1.1, zorder=1)
+    x_labels(ax, arms, range(len(arms)),
+             [(p["x"], FIG_SEED_LETTERS[p["tag"]]) for p in points])
     ax.set_ylabel("test AUC (epoch %d)" % cr_stats.ENDPOINT_EPOCH)
-    ax.grid(axis="y", linewidth=0.3, alpha=0.5)
-    for side in ("top", "right"):
-        ax.spines[side].set_visible(False)
-    handles = [Line2D([], [], marker="*", color="grey", markeredgecolor="black", linestyle="none",
-                      markersize=7, label="original (re-probed)")]
-    for tag in ("SeedA", "SeedB", "SeedC"):
-        if any(p["tag"] == tag for p in points):
-            handles.append(Line2D([], [], marker=FIG_MARKERS[tag], color="grey", linestyle="none",
-                                  markersize=4, label="seed " + tag[-1]))
-    if any(p["status"] == "descriptive" for p in points):
-        handles.append(Line2D([], [], marker="o", markerfacecolor="none", color="grey",
-                              linestyle="none", markersize=4, label="descriptive"))
-    handles.append(Line2D([], [], color="black", linewidth=1.0, label="mean (registered seeds)"))
-    ax.legend(handles=handles, fontsize=5.5, frameon=False, loc="upper left",
-              bbox_to_anchor=(1.0, 1.0))
-    fig.tight_layout()
+    ax.set_title("(a) every evaluated encoder", loc="left")
+    if bx is not None:
+        band = panel_b["band"]
+        if band["drawn"]:
+            bx.axhspan(-band["r"], band["r"], color=FIG_BAND_GREY, linewidth=0, zorder=0)
+        bx.axhline(0.0, color="0.45", linewidth=0.6, zorder=1)
+        for q in panel_b["points"]:
+            draw(bx, q["x"], q["delta"], q["arm"], q["status"])
+        for arm, mean in panel_b["means"].items():
+            bx.plot([mean["x"] - 0.3, mean["x"] + 0.3], [mean["mean_delta"]] * 2,
+                    color=FIG_COLORS[arm], linewidth=1.1, zorder=2)
+        top = max([abs(q["delta"]) for q in panel_b["points"]] +
+                  [band["r"] if band["drawn"] else 0.0])
+        bx.set_ylim(-1.2 * top, 1.2 * top)
+        x_labels(bx, list(GUIDED), range(len(GUIDED)),
+                 [(q["x"], FIG_SEED_LETTERS[q["tag"]]) for q in panel_b["points"]])
+        bx.set_ylabel("AUC minus RANDOM (same seed)")
+        bx.set_title("(b) paired difference", loc="left")
+    statuses = set(p["status"] for p in points) | set(
+        q["status"] for q in (panel_b or {}).get("points", []))
+    handles = [Line2D([], [], marker="o", color="0.3", fillstyle="full", linestyle="none",
+                      markersize=4.8, label="registered")]
+    if "original" in statuses:
+        handles.append(Line2D([], [], marker="o", color="0.3", fillstyle="left",
+                              markerfacecoloralt="white", linestyle="none", markersize=4.8,
+                              label="original (re-probed)"))
+    if "descriptive" in statuses:
+        handles.append(Line2D([], [], marker="o", color="0.3", markerfacecolor="white",
+                              linestyle="none", markersize=4.8, label="descriptive"))
+    handles.append(Line2D([], [], color="0.3", linewidth=1.1, label="mean (registered)"))
+    if panel_b and panel_b["band"]["drawn"]:
+        handles.append(Patch(facecolor=FIG_BAND_GREY, edgecolor="none",
+                             label="\u00b1r (RANDOM range)"))
+    fig.legend(handles=handles, loc="lower center", ncol=len(handles), frameon=False,
+               bbox_to_anchor=(0.5, 0.0), handletextpad=0.4, columnspacing=1.2)
+    fig.tight_layout(rect=(0, 0.09, 1, 1), w_pad=1.5)
     png, pdf = out_dir / "fig_cr_seed_spread.png", out_dir / "fig_cr_seed_spread.pdf"
     fig.savefig(png, dpi=300, metadata={"Software": None})
     fig.savefig(pdf, metadata={"Creator": None, "Producer": None, "CreationDate": None})
@@ -2110,8 +2253,11 @@ def make_figure(ctx, out_dir, stage):
     evidence.update({
         "values": "test_auc = final analysis/<primary>/per_run_test_auc; head_sd = unseal "
                   "receipt variants/<primary>/test_auc_sd; mean over complete seed indices",
-        "arms": arms, "points": points, "means": means,
-        "outputs": {"png": sha256_file(png), "pdf": sha256_file(pdf)}})
+        "panel_b_values": "delta = final analysis/<primary>/<contrast list>[i]/delta (guided "
+                          "minus RANDOM of the same seed index); mean_delta = outcomes/<arm>/"
+                          "mean_delta; r = outcomes/centroid/random_range, drawn only with the "
+                          "registered RANDOM reference",
+        **content, "outputs": {"png": sha256_file(png), "pdf": sha256_file(pdf)}})
     path = out_dir / "fig_cr_seed_spread.evidence.json"
     path.write_text(json.dumps(evidence, indent=1) + "\n", encoding="utf-8", newline="\n")
     return evidence
@@ -2280,6 +2426,9 @@ def build(final_path, run_dirs, md_path=None, budget_paths=(), stats_dir=DEFAULT
                                        r"fp(?:16|32)", "", body)):
                 raise ValueError("literal digit in generated table/figure file " + name)
     warnings = display_warnings(ctx)
+    if ctx.md is None:
+        warnings.append("MD secondary analysis not supplied (--md): the appendix states that "
+                        "it was not run")
     if check:
         stale = [name for name, content in outputs.items()
                  if not (out_dir / name).is_file()
@@ -2322,6 +2471,8 @@ def build(final_path, run_dirs, md_path=None, budget_paths=(), stats_dir=DEFAULT
         "text_macros": [{"name": n, "text": val, "note": text.notes.get(n)}
                         for n, val in text.macros.items()],
         "tldr": tldr, "warnings": warnings,
+        "md_secondary": {"run": ctx.md is not None,
+                         "source": "rep_md" if ctx.md is not None else None},
         "outputs": {name: sha256_bytes(content.encode("utf-8")) for name, content in outputs.items()},
         "figure": fig_evidence["outputs"] if fig_evidence else None}
     (out_dir / "cr_results.values.json").write_text(json.dumps(manifest, indent=1) + "\n",
@@ -2359,8 +2510,7 @@ def check_sidecar_and_figure(ctx, out_dir, outputs, figure, stage):
         evidence = read_json(evidence_path)[0]
     except (OSError, ValueError):
         return stale + list(FIGURE_FILES)
-    arms, points, means = figure_points(ctx)
-    recomputed = json.loads(json.dumps({"arms": arms, "points": points, "means": means}))
+    recomputed = json.loads(json.dumps(figure_content(ctx)))
     provenance = json.loads(json.dumps(figure_provenance(ctx, stage)))
     if any(evidence.get(k) != recomputed[k] for k in recomputed) or \
             any(evidence.get(k) != provenance[k] for k in provenance):
@@ -2635,9 +2785,12 @@ FIGURE_LIMITATIONS = (
     "across continuations, not independent initializations. Hash and evidence checks are not "
     "a verification of every rendered pixel.")
 FIGURE_CHECKS = (
-    "Rendered figure inspected in the compiled paper: one marker per evaluated encoder, head-seed "
-    "s.d. error bars, filled markers for registered runs, open markers for descriptive runs, "
-    "stars for re-probed originals, bars for means over the registered seed indices.",
+    "Rendered figure inspected in the compiled paper: (a) one marker per evaluated encoder in the "
+    "paper's arm colours and marker shapes, seed letters O/A/B/C under the markers, head-seed "
+    "s.d. error bars, filled markers for registered runs, half-filled for re-probed originals, "
+    "open for descriptive runs, bars for means over the registered seed indices; (b) per-seed "
+    "paired differences from RANDOM with their mean, and the grey +/- r band only when the "
+    "registered RANDOM range exists; text legible at print size.",
     "PNG and PDF hashes equal the figure evidence outputs, the results sidecar and the "
     "release_assets.json producer pin.",
     "Figure evidence inputs equal the staged final.json and unseal receipts bound in this review "
@@ -2762,10 +2915,15 @@ def register_figure(paper_dir, results_dir, reviewer, registry=REGISTRY, review_
                           "inputs; changed outputs or caption require renewed review",
         "evidence_scope": "Per-encoder epoch-50 test AUC (head-seed mean, head-seed s.d. error "
                           "bars) of every evaluated encoder of the registered cr_seed_v1 "
-                          "analysis, with means over the registered seed indices; values from "
-                          "the unsealed, hash-verified post-freeze analysis.",
+                          "analysis, with means over the registered seed indices, and the "
+                          "per-seed paired differences from RANDOM with their mean and the "
+                          "registered RANDOM range band; values from the unsealed, "
+                          "hash-verified post-freeze analysis.",
         "rendered_metrics": ["per-encoder test AUC (mean over probe-head seeds)",
-                             "probe-head-seed s.d.", "mean test AUC over registered seeds"],
+                             "probe-head-seed s.d.", "mean test AUC over registered seeds",
+                             "paired difference from RANDOM per seed index",
+                             "mean paired difference over registered seeds",
+                             "registered RANDOM range (band, when registered)"],
         "raw_oct_pixels_rendered": False,
         "subject_identifiers_rendered": False}
     if sidecar["synthetic"]:
@@ -2779,8 +2937,10 @@ def register_figure(paper_dir, results_dir, reviewer, registry=REGISTRY, review_
         "path": rel, "sha256": evidence["outputs"]["png"],
         "caption_sha256": numeric.digest_text(caption),
         "inputs": [{"source": FIGURE_SOURCE, "pointer": "/points", "sha256": evidence_sha},
-                   {"source": FIGURE_SOURCE, "pointer": "/means", "sha256": evidence_sha},
-                   {"source": "rep_final",
+                   {"source": FIGURE_SOURCE, "pointer": "/means", "sha256": evidence_sha}] +
+                  ([{"source": FIGURE_SOURCE, "pointer": "/panel_b", "sha256": evidence_sha}]
+                   if evidence.get("panel_b") else []) +
+                  [{"source": "rep_final",
                     "pointer": "/analysis/%s/per_run_test_auc" % PRIMARY,
                     "sha256": final_source["sha256"]}],
         "validation": {"method": "reviewed_source_illustration", "reviewer": reviewer.strip(),

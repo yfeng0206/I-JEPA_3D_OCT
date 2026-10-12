@@ -31,7 +31,7 @@ and `.../fig_oct_jepa_volume_v2_poster.pdf` (I13's poster variants of the
 paper's Fig. 1 and Fig. 2: same data, labels of at least 14 pt at 12 in width;
 registered with their SHA-256 under `poster_variant` in
 `../../autopilot/release_assets.json`, which the report checks),
-`../../paper/genai4health2026/auto/auto_numbers.tex` (Table 1 macros) and
+`../../paper/genai4health2026/auto/auto_numbers.tex` (original-run result macros, paper Table 2) and
 `../../paper/genai4health2026/auto/cr_numbers.tex` (delivered-mask, guide
 agreement and reference macros). After the results freeze the gate validates
 the bundle that `autopilot/make_cr_results.py` writes to the same `auto/`
@@ -43,9 +43,11 @@ macros; do not type result numbers into `poster.tex`.
 
 ### Layout (R1 polish review, section 5)
 
-- Left column: why OCT (question, then a navy **Answer** box with the
-  epoch-50 original-run differences `\DOracleRandomEpFifty`,
-  `\DEnvelopeRandomEpFifty` and, once results are validated, the generated
+- Left column: why OCT (question, then a navy **Answer** box: tissue-directed
+  rectangles scored higher at epoch 50, `\DOracleRandomEpFifty` with CENTROID
+  and `\DEnvelopeRandomEpFifty` with ENVELOPE, more anatomical detail did not
+  add gains, CENTROID and ENVELOPE (named; COVER is the exception) also leave
+  more context visible, and, once results are validated, the generated
   replication labels, digit-free); **Five target-selection strategies** (v2
   poster figure; the old strategy table is dropped because the figure's column
   heads and target-rule row carry it); **Same I-JEPA, different sampler;
@@ -53,15 +55,20 @@ macros; do not type result numbers into `poster.tex`.
 - Right column: neutral title "Single runs: tissue-directed rectangles scored
   higher" (the replication may disagree); KeyBox at the registered epoch 50
   for both arms with 95% CIs, "positive at epochs 50, 75 and 100" with the
-  per-arm range (R1 H1), ANATOMY-V2 minus ENVELOPE at epoch 50 and COVER minus
-  RANDOM at epoch 100 (no post hoc peak); no bold AUC; delivered-mask table
-  with the context column on a light fill; guide chart with the overall rate
-  as a dashed reference and "% of B-scans" axis; takeaways unchanged.
-- The report checks the wording that depends on the original-run macros
-  (`Claims`): all six guided-minus-RANDOM differences positive, the range end
-  points (ENVELOPE epoch 100 to 50, CENTROID epoch 50 to 75), ANATOMY-V2
-  minus ENVELOPE and COVER minus RANDOM negative, and both context gaps
-  positive ("guided masks also leave more context visible").
+  per-arm range (R1 H1, now also the paper's Section 5.1), ANATOMY-V2 minus
+  ENVELOPE at epoch 50 and COVER minus RANDOM at epochs 50 and 100 (as the
+  paper's Section 5.1; no post hoc peak); no bold AUC; delivered-mask table
+  with the context column on a light fill and the bullet "CENTROID and
+  ENVELOPE leave more context visible than RANDOM ...; COVER leaves less";
+  guide chart with the overall rate as a dashed reference and "% of B-scans"
+  axis; takeaways as before, "tissue-directed rectangles" as in the paper.
+- The report checks the wording that depends on the paper macros (`Claims`,
+  6 checks): CENTROID and ENVELOPE minus RANDOM positive at all three epochs,
+  the range end points (ENVELOPE epoch 100 to 50, CENTROID epoch 50 to 75),
+  "more anatomy did not add gains" (ANATOMY-V2 minus ENVELOPE and COVER minus
+  RANDOM at epoch 100 negative, COVER minus RANDOM at epoch 50 below ENVELOPE
+  minus RANDOM), both CENTROID and ENVELOPE context gaps positive, and COVER's
+  context below RANDOM's.
 - Replication block: the label rule (pre-registration section 3, amendment 1)
   in the RESULTS PENDING banner and, with results, at the end of the outcome
   strip; pooling panel notes the mean+max variant (paper).

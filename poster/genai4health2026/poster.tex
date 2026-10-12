@@ -459,11 +459,11 @@
     give a better frozen encoder for glaucoma detection, with the same
     architecture and latent loss?}\par
   \vspace{0.5em}
-  \AnswerBox{\textbf{Answer (original single runs).} Targets on the retinal
-    band scored higher than uniform I-JEPA masking at epoch 50:
-    $\DOracleRandomEpFifty$ AUC with a segmentation-free intensity centroid,
-    $\DEnvelopeRandomEpFifty$ with a MIRAGE envelope. More anatomical detail did
-    not add gains, and guided masks also leave more context visible.\par
+  \AnswerBox{\textbf{Answer (original single runs).} Tissue-directed rectangles
+    scored higher than uniform I-JEPA masking at epoch 50:
+    $\DOracleRandomEpFifty$ AUC with the segmentation-free \ArmBest{},
+    $\DEnvelopeRandomEpFifty$ with \Arm{envelope}. More anatomical detail did not
+    add gains; \ArmBest{} and \Arm{envelope} also leave more context visible.\par
     \vspace{0.3em}
     \ifPosterResults
       \ifPosterSynthetic\textbf{SYNTHETIC DRY RUN:} \fi\textbf{Registered
@@ -538,7 +538,8 @@
     \ArmBest{} $\DOracleRandomEpFifty$ to $\DOracleRandomEpSeventyFive$).\par
     \textbf{More anatomy did not add gains:} \Arm{anatomy-v2} minus
     \Arm{envelope} $\DAnatomyTwoEnvelopeEpFifty$ at epoch 50; \Arm{cover}
-    minus \Arm{random} $\DCoverRandomEpHundred$ at epoch 100.}
+    minus \Arm{random} $\DCoverRandomEpFifty$ at epoch 50,
+    $\DCoverRandomEpHundred$ at epoch 100.}
 }
 
 \block{Which masks actually reach the model?}{
@@ -565,10 +566,9 @@
   \end{tabular}\par}
   \vspace{0.3em}
   \begin{plist}
-    \item Guided rectangles also leave more context visible than
-      \Arm{random}: \ArmBest{} $+\CRCtxGapCentroid$ points (95\% CI
-      \CRCtxGapCentroidCI), \Arm{envelope} $+\CRCtxGapEnvelope$
-      (\CRCtxGapEnvelopeCI).
+    \item \ArmBest{} and \Arm{envelope} leave more context visible than
+      \Arm{random}: $+\CRCtxGapCentroid$ points (95\% CI \CRCtxGapCentroidCI)
+      and $+\CRCtxGapEnvelope$ (\CRCtxGapEnvelopeCI); \Arm{cover} leaves less.
     \item \Arm{anatomy-v2} has the purest targets (\CRPurAnatomyTwo\%) but
       \CRSlotsAnatomyTwo{} loss slots versus \CRSlotsRandom.
   \end{plist}
@@ -623,7 +623,7 @@
 \block{Takeaways}{
   \raggedright
   \begin{plist}
-    \item Tissue-directed targets improved frozen glaucoma probes in the
+    \item Tissue-directed rectangles improved frozen glaucoma probes in the
       original runs, even with a segmentation-free intensity centroid.
     \item More anatomical specificity (tissue shapes, coverage) added no
       further gain.

@@ -1172,8 +1172,9 @@ def build_text(ctx):
                   "run-to-run variation in a single continuation")
         abstract = ("Across repeated pretraining continuations, tissue-directed rectangle "
                     "placement gives higher frozen-probe AUC than uniform masking, including with "
-                    "segmentation-free intensity guidance. These strategies also leave more of the "
-                    "image visible to the encoder." + ABSTRACT_CB + budget + "." + more)
+                    "segmentation-free intensity guidance. \\ArmBest{} and \\textsc{envelope} "
+                    "also leave more of the image visible to the encoder." + ABSTRACT_CB + budget +
+                    "." + more)
     elif scen == "A":
         abstract = ("Across repeated pretraining continuations, tissue-directed rectangle "
                     "placement gives higher frozen-probe AUC than uniform masking, including with "
@@ -2186,22 +2187,66 @@ def figure_late_originals(ctx):
     return sorted(name for name, r in ctx.runs.items() if late_original(r))
 
 
+def figure_legend_handles(original, descriptive, late_only, band):
+    """Legend entries of the seed-spread figure (every optional combination is tested)."""
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    handles = [Line2D([], [], marker="o", color="0.3", fillstyle="full", linestyle="none",
+                      markersize=4.8, label="registered")]
+    if original:
+        handles.append(Line2D([], [], marker="o", color="0.3", fillstyle="left",
+                              markerfacecoloralt="white", linestyle="none", markersize=4.8,
+                              label="original (re-probed)"))
+    if descriptive:
+        handles.append(Line2D([], [], marker="o", color="0.3", markerfacecolor="white",
+                              linestyle="none", markersize=4.8,
+                              label="descriptive (late)" if late_only else "descriptive"))
+    handles.append(Line2D([], [], color="0.3", linewidth=1.1, label="mean (registered)"))
+    if band:
+        handles.append(Patch(facecolor=FIG_BAND_GREY, edgecolor="none",
+                             label="\u00b1r (RANDOM range)"))
+    return handles
+
+
+FIG_LEGEND_MARGIN_IN = 0.04
+FIG_RC = {"font.size": FIG_FONT_PT, "axes.titlesize": FIG_FONT_PT + 0.5,
+          "axes.labelsize": FIG_FONT_PT, "xtick.labelsize": FIG_FONT_PT,
+          "ytick.labelsize": FIG_FONT_PT, "legend.fontsize": FIG_FONT_PT, "axes.linewidth": 0.6,
+          "pdf.fonttype": 42, "ps.fonttype": 42, "font.family": "DejaVu Sans"}
+
+
+def place_legend(fig, handles):
+    """V16-1: a centred legend below the panels in one row if it fits inside the canvas (with a
+    small margin), otherwise in as few rows as fit; the panels are then laid out above it.
+    The canvas size (and so the 1:1 print size and font sizes) never changes."""
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    width = fig.bbox.width
+    margin = FIG_LEGEND_MARGIN_IN * fig.dpi
+    for ncol in range(len(handles), 0, -1):
+        legend = fig.legend(handles=handles, loc="lower center", ncol=ncol, frameon=False,
+                            bbox_to_anchor=(0.5, 0.0), handletextpad=0.4, columnspacing=1.2)
+        box = legend.get_window_extent(renderer)
+        if box.x0 >= margin and box.x1 <= width - margin:
+            break
+        legend.remove()
+    else:  # pragma: no cover - a single column always fits the 5.5 in canvas
+        raise ValueError("seed-spread legend does not fit the canvas")
+    bottom = box.height / fig.bbox.height + 0.02
+    fig.tight_layout(rect=(0, max(0.09, bottom), 1, 1), w_pad=1.5)
+    return legend
+
+
 def make_figure(ctx, out_dir, stage):
     os.environ.setdefault("MPLBACKEND", "Agg")
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    from matplotlib.lines import Line2D
-    from matplotlib.patches import Patch
 
     content = figure_content(ctx)
     arms, points, means, panel_b = (content["arms"], content["points"], content["means"],
                                     content["panel_b"])
-    plt.rcParams.update({"font.size": FIG_FONT_PT, "axes.titlesize": FIG_FONT_PT + 0.5,
-                         "axes.labelsize": FIG_FONT_PT, "xtick.labelsize": FIG_FONT_PT,
-                         "ytick.labelsize": FIG_FONT_PT, "legend.fontsize": FIG_FONT_PT,
-                         "axes.linewidth": 0.6, "pdf.fonttype": 42, "ps.fonttype": 42,
-                         "font.family": "DejaVu Sans"})
+    plt.rcParams.update(FIG_RC)
     if panel_b:
         fig, (ax, bx) = plt.subplots(1, 2, figsize=FIG_SIZE_IN, gridspec_kw={
             "width_ratios": [len(arms) + 0.3, len(GUIDED) + 0.6]})
@@ -2268,25 +2313,10 @@ def make_figure(ctx, out_dir, stage):
         bx.set_title("(b) paired difference", loc="left")
     statuses = set(shown(p) for p in points) | set(
         q["status"] for q in (panel_b or {}).get("points", []))
-    handles = [Line2D([], [], marker="o", color="0.3", fillstyle="full", linestyle="none",
-                      markersize=4.8, label="registered")]
-    if "original" in statuses:
-        handles.append(Line2D([], [], marker="o", color="0.3", fillstyle="left",
-                              markerfacecoloralt="white", linestyle="none", markersize=4.8,
-                              label="original (re-probed)"))
-    if "descriptive" in statuses:
-        handles.append(Line2D([], [], marker="o", color="0.3", markerfacecolor="white",
-                              linestyle="none", markersize=4.8,
-                              label="descriptive (late)" if late and not any(
-                                  p["status"] == "descriptive" for p in points)
-                              else "descriptive"))
-    handles.append(Line2D([], [], color="0.3", linewidth=1.1, label="mean (registered)"))
-    if panel_b and panel_b["band"]["drawn"]:
-        handles.append(Patch(facecolor=FIG_BAND_GREY, edgecolor="none",
-                             label="\u00b1r (RANDOM range)"))
-    fig.legend(handles=handles, loc="lower center", ncol=len(handles), frameon=False,
-               bbox_to_anchor=(0.5, 0.0), handletextpad=0.4, columnspacing=1.2)
-    fig.tight_layout(rect=(0, 0.09, 1, 1), w_pad=1.5)
+    late_only = bool(late) and not any(p["status"] == "descriptive" for p in points)
+    handles = figure_legend_handles("original" in statuses, "descriptive" in statuses, late_only,
+                                    bool(panel_b and panel_b["band"]["drawn"]))
+    place_legend(fig, handles)
     png, pdf = out_dir / "fig_cr_seed_spread.png", out_dir / "fig_cr_seed_spread.pdf"
     fig.savefig(png, dpi=300, metadata={"Software": None})
     fig.savefig(pdf, metadata={"Creator": None, "Producer": None, "CreationDate": None})
@@ -2626,8 +2656,9 @@ INTEGRATION = (
      r"\item Frozen-probe results showing gains from tissue-directed rectangle placement, "
      r"alongside mixed results for more specific anatomical targeting.",
      "\\item \\RepContribResults\n\\RepContribControlItem"),
+    # V17: completed procedures in the past tense, like the surrounding Setup sentence.
     ("main_submission.tex", r"and all run decisions use validation AUC. \CRSeedResultsPending",
-     r"and all run decisions use validation AUC. \RepSetupResults{}"),
+     r"and all run decisions used validation AUC. \RepSetupResults{}"),
     ("main_submission.tex", r"\paragraph{Repeated continuations.} \CRSeedResultsPending",
      r"\paragraph{Repeated continuations.} \RepResultsSeeds{}"),
     ("main_submission.tex", r"\CRControlResultsPending", r"\RepResultsControl{}"),

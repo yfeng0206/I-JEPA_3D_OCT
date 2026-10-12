@@ -1348,27 +1348,32 @@ def paper_macros(problems):
 
 
 def check_static_claims(problems):
-    """Words in the KeyBox and the Answer box that depend on the original-run macros: the
-    signs, and which epochs give the end points of the stated ranges."""
+    """Words in the KeyBox, the Answer box and the delivered-mask bullet that depend on the
+    original-run and mask macros: the signs (scoped to the arms named on the poster), and which
+    epochs give the end points of the stated ranges."""
     v = paper_macros(problems)
     try:
         env = [float(v["DEnvelopeRandomEp" + e]) for e in ("Fifty", "SeventyFive", "Hundred")]
         cen = [float(v["DOracleRandomEp" + e]) for e in ("Fifty", "SeventyFive", "Hundred")]
         ana, cov = float(v["DAnatomyTwoEnvelopeEpFifty"]), float(v["DCoverRandomEpHundred"])
         ctx = [float(v["CRCtxGapCentroid"]), float(v["CRCtxGapEnvelope"])]
+        cover_ctx, random_ctx = float(v["CRCtxCover"]), float(v["CRCtxRandom"])
+        cover50 = float(v["DCoverRandomEpFifty"])
     except (KeyError, ValueError) as exc:
         problems.append(f"KeyBox/Answer macros missing or not numeric ({exc})")
         return
     claims = [
-        ("guided minus RANDOM positive at epochs 50, 75 and 100", min(env + cen) > 0),
+        ("CENTROID and ENVELOPE minus RANDOM positive at epochs 50, 75 and 100",
+         min(env + cen) > 0),
         ("ENVELOPE range runs from epoch 100 to epoch 50", min(env) == env[2] and
          max(env) == env[0]),
         ("CENTROID range runs from epoch 50 to epoch 75", min(cen) == cen[0] and
          max(cen) == cen[1]),
-        ("more anatomy did not add gains (ANATOMY-V2 - ENVELOPE, COVER - RANDOM < 0)",
-         ana < 0 and cov < 0),
-        ("guided masks leave more context visible (CENTROID, ENVELOPE context gaps > 0)",
-         min(ctx) > 0),
+        ("more anatomy did not add gains (ANATOMY-V2 - ENVELOPE < 0, COVER - RANDOM < 0 at "
+         "epoch 100 and below ENVELOPE - RANDOM at epoch 50)",
+         ana < 0 and cov < 0 and cover50 < env[0]),
+        ("CENTROID and ENVELOPE leave more context visible (context gaps > 0)", min(ctx) > 0),
+        ("COVER leaves less context than RANDOM", cover_ctx < random_ctx),
     ]
     bad = [text for text, ok in claims if not ok]
     for text in bad:

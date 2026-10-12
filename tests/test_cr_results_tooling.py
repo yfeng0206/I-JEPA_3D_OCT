@@ -1292,6 +1292,107 @@ def test_v14_check_refuses_altered_or_missing_md_secondary(designs, tmp_path):
                     '--check']) == 1
 
 
+def _legend_inside(fig, legend, axes):
+    renderer = fig.canvas.get_renderer()
+    box, margin = legend.get_window_extent(renderer), mk.FIG_LEGEND_MARGIN_IN * fig.dpi
+    assert box.x0 >= margin - 1e-6 and box.x1 <= fig.bbox.width - margin + 1e-6, \
+        (box.x0, box.x1, fig.bbox.width)
+    assert box.y0 >= -1e-6 and box.y1 <= fig.bbox.height
+    for ax in axes:  # panels (with their tick labels) sit above the legend
+        assert ax.get_tightbbox(renderer).y0 >= box.y1 - 1.0, (ax.get_tightbbox(renderer), box)
+    sizes = [text.get_fontsize() for text in legend.get_texts()]
+    assert sizes and min(sizes) >= mk.FIG_FONT_PT
+
+
+def test_v16_legend_fits_the_canvas_for_every_combination():
+    """V16-1: every optional legend combination (original, descriptive / descriptive (late),
+    band; one or two panels) is laid out inside the fixed 5.5 x 2.45 in canvas, below the
+    panels, at >= 7 pt; the canvas size never changes."""
+    import itertools
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    plt.rcParams.update(mk.FIG_RC)
+    seen = set()
+    for original, descriptive, late_only, band, panel_b in itertools.product((False, True),
+                                                                            repeat=5):
+        if late_only and not descriptive:
+            continue
+        if panel_b:
+            fig, axes = plt.subplots(1, 2, figsize=mk.FIG_SIZE_IN,
+                                     gridspec_kw={'width_ratios': [4.3, 2.6]})
+        else:
+            fig, ax = plt.subplots(figsize=mk.FIG_SIZE_IN)
+            axes = [ax]
+        for ax in axes:
+            ax.set_xticks(range(2))
+            ax.set_xticklabels(['RANDOM-CB', 'ENVELOPE'])
+            ax.set_ylabel('AUC minus RANDOM (same seed)')
+        handles = mk.figure_legend_handles(original, descriptive, late_only, band)
+        legend = mk.place_legend(fig, handles)
+        fig.canvas.draw()
+        _legend_inside(fig, legend, axes)
+        assert tuple(fig.get_size_inches()) == mk.FIG_SIZE_IN
+        seen.add((len(handles), legend._ncols))
+        plt.close(fig)
+    assert (5, 5) not in seen and any(n == 5 for n, _ in seen)  # five entries wrap
+
+
+def test_v16_late_centroid_figure_legend_stays_inside(tmp_path, monkeypatch):
+    """V16's reproducer at producer level: original CENTROID late, three complete indices,
+    registered band -> five legend entries; the delivered PNG keeps its size and the legend
+    lies inside the canvas."""
+    placed = []
+    place = mk.place_legend
+
+    def spy(fig, handles):
+        legend = place(fig, handles)
+        fig.canvas.draw()
+        _legend_inside(fig, legend, fig.axes)
+        placed.append([h.get_label() for h in handles])
+        return legend
+
+    monkeypatch.setattr(mk, 'place_legend', spy)
+    d = fx.build_design(tmp_path / 'd', 'A', 'A', 'M+', seeds=(1234, 5678, 9012),
+                        late=[('centroid', None)], n_test=N_TEST, n_boot=N_BOOT)
+    run_build(d, tmp_path, figure=True)
+    assert placed == [['registered', 'original (re-probed)', 'descriptive (late)',
+                       'mean (registered)', '\u00b1r (RANDOM range)']]
+    from PIL import Image
+    assert Image.open(tmp_path / 'out' / 'fig_cr_seed_spread.png').size == (1650, 735)
+    ev = json.load(open(tmp_path / 'out' / 'fig_cr_seed_spread.evidence.json'))
+    assert ev['encoding'] == json.loads(json.dumps(mk.figure_encoding()))  # contract unchanged
+
+
+VISIBILITY = re.compile(r'[^.]*\b(?:more of the image|more context|leaves? more)\b[^.]*\.')
+
+
+def test_v17_visibility_claims_name_centroid_and_envelope(designs, tmp_path):
+    """V17: a generated claim that guided masks leave more visible context names CENTROID and
+    ENVELOPE (COVER leaves less); swept over every label and control state."""
+    d = designs['mixed']
+    ctx, _, _ = mk.prepare(d['final'], d['runs'], d['md'], [I5],
+                           evidence_dir=os.path.join(d['root'], '_ev_vis'), allow_synthetic=True)
+    claims = 0
+    for c in mk.LABEL_CODE:
+        for e in mk.LABEL_CODE:
+            for m in ('M+', 'M0', 'M-', 'M_partial', 'M_desc', 'M_na', 'M_unassessed', 'M_noP',
+                      'M_incomplete'):
+                ctx.labels = {'centroid': c, 'envelope': e}
+                ctx.scenario, ctx.codes = mk.scenario_of(ctx.labels)
+                ctx.matched = dict(ctx.matched, label=m)
+                texts = list(mk.build_text(ctx).macros.values()) + [mk.tldr_text(ctx)]
+                for sentence in VISIBILITY.findall(' '.join(texts)):
+                    claims += 1
+                    assert r'\ArmBest{}' in sentence and r'\textsc{envelope}' in sentence, \
+                        (c, e, m, sentence)
+                    assert 'These strategies' not in sentence
+    assert claims  # the A + M0 / M- abstract makes the claim
+    setup = [new for rel, old, new, _ in mk.integration_pairs('A', True)
+             if 'run decisions' in old]
+    assert setup == [r'and all run decisions used validation AUC. \RepSetupResults{}']
+
+
 def test_h8_md_secondary_analysis_is_reported_or_declared_not_run(designs, tmp_path):
     d = designs['A']
     res = run_build(d, tmp_path / 'with')

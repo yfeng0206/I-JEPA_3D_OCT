@@ -53,7 +53,7 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
 2. **Human review.** `REVIEW.md` (scenario, labels, matched control, display warnings, TL;DR =
    `paper\genai4health2026\auto\cr_tldr.txt` for OpenReview) and the scratch PDF
    `scratch\paper\genai4health2026\main_submission.pdf`: abstract, introduction, contributions,
-   section 5.2 with Tables 2-3, discussion, limitations, conclusion, appendix tables (incl.
+   section 5.3 with Tables 4-5, discussion, limitations, conclusion, appendix tables (incl.
    `tab:md`) and the seed-spread figure ((a) test AUC per encoder in the paper's arm colours,
    seed letters O/A/B/C; (b) paired differences from RANDOM with the grey +/- r band only when
    the registered RANDOM range exists; printed 1:1 at `\linewidth`, text >= 7 pt; its colour /

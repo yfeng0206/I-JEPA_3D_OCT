@@ -152,32 +152,63 @@ def p8_artists(fig, name, evidence):
     elif name == "fig_trajectories_ci.png":
         if len(fig.axes) != 2:
             raise ValueError("trajectory axes missing")
+        from matplotlib.colors import to_hex
         table = stats["table"]
         ix = {r["key"]: i for i, r in enumerate(table)}
         anc = ix["ancestor@ep25@fp32"]
+        common = (50, 75, 100)
+        # Solid = fp16 family, dashed = fp32 arms; anatomy-v1 (excluded) is not drawn.
+        series = (("random", "fp16", "-", "RANDOM"), ("oracle", "fp16", "-", "CENTROID"),
+                  ("envelope", "fp16", "-", "ENVELOPE"), ("anatomy-v2", "fp32", "--", "ANATOMY-V2"),
+                  ("cover-f021", "fp32", "--", "COVER"))
         ax = fig.axes[0]
-        if len(ax.lines) != 7 or ax.collections or ax.patches:
+        if ax.collections or ax.patches or ax.texts or ax.get_legend() is not None:
             raise ValueError("trajectory series coverage differs")
-        record([n.ref("p1c_stats.json", "table", anc, "auc")], ax.lines[0].get_ydata(), "ancestor AUC")
-        record([n.ref("p1c_stats.json", "table", anc, "epoch")], ax.lines[0].get_xdata(), "ancestor epoch")
-        if len(ax.texts) != 1 or ax.texts[0].get_text() != "shared ancestor (ep25)":
-            raise ValueError("uncovered trajectory annotation")
-        equal(ax.texts[0].xy, [25, table[anc]["auc"]], "ancestor annotation position")
-        for line, arm in zip(ax.lines[1:], ("random", "oracle", "envelope", "anatomy-v2", "cover-f021", "anatomy-v1")):
-            rows = sorted([(i, r) for i, r in enumerate(table) if r["arm"] == arm
-                           and (arm not in ("random", "oracle", "envelope") or r["precision"] == "fp16")], key=lambda pair: pair[1]["epoch"])
-            ids = [anc] + [i for i, r in rows]
-            record([n.ref("p1c_stats.json", "table", i, "epoch") for i in ids], line.get_xdata(), arm + " epochs")
-            record([n.ref("p1c_stats.json", "table", i, "auc") for i in ids], line.get_ydata(), arm + " AUC")
+        if ax.get_title(loc="left") != "(a) Frozen-probe test AUC":
+            raise ValueError("trajectory panel title differs")
+        equal(ax.get_xticks(), [25, 50, 75, 100], "trajectory measured-epoch ticks")
+        lines = list(ax.lines)
+        line = lines.pop(0)
+        if line.get_label() != "ancestor" or line.get_linestyle() != "None":
+            raise ValueError("ancestor encoding differs")
+        record([n.ref("p1c_stats.json", "table", anc, "auc")], line.get_ydata(), "ancestor AUC")
+        record([n.ref("p1c_stats.json", "table", anc, "epoch")], line.get_xdata(), "ancestor epoch")
+        for arm, precision, style, label in series:
+            rows = sorted([(i, r) for i, r in enumerate(table) if r["arm"] == arm and r["precision"] == precision],
+                          key=lambda pair: pair[1]["epoch"])
+            joined = [anc] + [i for i, r in rows if r["epoch"] in common]
+            extra = [i for i, r in rows if r["epoch"] not in common]
+            if not lines:
+                raise ValueError("trajectory series coverage differs")
+            line = lines.pop(0)
+            if line.get_label() != label or line.get_linestyle() != style:
+                raise ValueError("trajectory arm label or precision line style differs: " + arm)
+            record([n.ref("p1c_stats.json", "table", i, "epoch") for i in joined], line.get_xdata(), arm + " epochs")
+            record([n.ref("p1c_stats.json", "table", i, "auc") for i in joined], line.get_ydata(), arm + " AUC")
+            if extra:
+                line = lines.pop(0) if lines else None
+                if (line is None or line.get_linestyle() != "None" or not line.get_label().startswith("_")
+                        or to_hex(line.get_markerfacecolor()) != "#ffffff"):
+                    raise ValueError("unjoined checkpoint encoding differs: " + arm)
+                record([n.ref("p1c_stats.json", "table", i, "epoch") for i in extra], line.get_xdata(),
+                       arm + " unjoined checkpoint epochs")
+                record([n.ref("p1c_stats.json", "table", i, "auc") for i in extra], line.get_ydata(),
+                       arm + " unjoined checkpoint AUC")
+        if lines:
+            raise ValueError("uncovered trajectory series")
+        if len(fig.legends) != 1 or [t.get_text() for t in fig.legends[0].get_texts()] != [s[3] for s in series] + ["ancestor"]:
+            raise ValueError("trajectory legend differs")
         ax = fig.axes[1]
-        if ax.get_title() != "(b) Paired difference, 95%% bootstrap CI\n(%s draws, same test cases)" % stats["n_bootstrap"]:
+        if ax.get_title(loc="left") != "(b) Paired difference, 95% bootstrap CI" or ax.get_title() or ax.get_legend() is not None:
             raise ValueError("trajectory resampling annotation differs")
+        if [t.get_text() for t in ax.get_xticklabels()] != ["50", "75", "100"] or ax.get_ylabel() != r"$\Delta$AUC vs RANDOM":
+            raise ValueError("paired-trajectory axis labels differ")
         if ax.texts or fig.texts:
             raise ValueError("uncovered paired-trajectory annotation")
         containers = [c for c in ax.containers if isinstance(c, ErrorbarContainer)]
         if len(containers) != 3:
             raise ValueError("trajectory paired-delta series missing")
-        for c, arm, off in zip(containers, ("envelope", "oracle", "cover-f021"), (-.30, 0, .30)):
+        for c, arm, off in zip(containers, ("envelope", "oracle", "cover-f021"), (-.22, 0, .22)):
             expected, lower, upper, x = [], [], [], []
             for j, ep in enumerate((50, 75, 100)):
                 precision = "fp32" if arm == "cover-f021" else "fp16"

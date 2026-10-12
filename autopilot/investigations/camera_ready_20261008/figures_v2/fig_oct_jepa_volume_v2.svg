@@ -1619,7 +1619,7 @@ z
    </g>
    <g id="text_25">
     <!-- guide $A_s(x)$ -->
-    <g style="fill: #1a1a1a" transform="translate(9.794 79.015109)">
+    <g style="fill: #1a1a1a" transform="translate(9.604 79.015109)">
      <text>
       <tspan x="0" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">g</tspan>
       <tspan x="4.820251" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">u</tspan>
@@ -1627,11 +1627,11 @@ z
       <tspan x="11.742874" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">d</tspan>
       <tspan x="16.563126" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">e</tspan>
       <tspan x="21.235062" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a"> </tspan>
-      <tspan x="31.820876" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">(</tspan>
-      <tspan x="39.277434" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">)</tspan>
+      <tspan x="32.216507" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">(</tspan>
+      <tspan x="39.673065" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">)</tspan>
       <tspan x="23.648895" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">A</tspan>
-      <tspan x="34.783476" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">x</tspan>
-      <tspan x="28.843643" y="0.905621" style="font-style: oblique; font-size: 5.32px; font-family: 'DejaVu Sans'; fill: #1a1a1a">s</tspan>
+      <tspan x="35.179108" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">x</tspan>
+      <tspan x="28.843643" y="0.905621" style="font-style: oblique; font-size: 6.08px; font-family: 'DejaVu Sans'; fill: #1a1a1a">s</tspan>
      </text>
     </g>
    </g>
@@ -1656,7 +1656,7 @@ z
    </g>
    <g id="text_29">
     <!-- $(C, T) \sim \Pi_s$ -->
-    <g style="fill: #1a1a1a" transform="translate(72.478 138.415109)">
+    <g style="fill: #1a1a1a" transform="translate(72.288 138.415109)">
      <text>
       <tspan x="0" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">(</tspan>
       <tspan x="8.264877" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">,</tspan>
@@ -1665,7 +1665,7 @@ z
       <tspan x="29.080948" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">Π</tspan>
       <tspan x="2.962601" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">C</tspan>
       <tspan x="12.158157" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">T</tspan>
-      <tspan x="34.863826" y="0.905621" style="font-style: oblique; font-size: 5.32px; font-family: 'DejaVu Sans'; fill: #1a1a1a">s</tspan>
+      <tspan x="34.874217" y="0.905621" style="font-style: oblique; font-size: 6.08px; font-family: 'DejaVu Sans'; fill: #1a1a1a">s</tspan>
      </text>
     </g>
    </g>
@@ -1708,10 +1708,10 @@ z
    </g>
    <g id="text_33">
     <!-- $f_\theta$ -->
-    <g style="fill: #1a1a1a" transform="translate(217.1925 101.828887)">
+    <g style="fill: #1a1a1a" transform="translate(216.9075 101.828887)">
      <text>
       <tspan x="0" y="-0.78125" style="font-style: oblique; font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a">f</tspan>
-      <tspan x="3.344482" y="0.643745" style="font-style: oblique; font-size: 6.65px; font-family: 'DejaVu Sans'; fill: #1a1a1a">θ</tspan>
+      <tspan x="3.344482" y="0.9" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">θ</tspan>
      </text>
     </g>
    </g>
@@ -1720,11 +1720,11 @@ z
    </g>
    <g id="text_35">
     <!-- $f_{\bar\theta}$ -->
-    <g style="fill: #1a1a1a" transform="translate(217.1925 165.1425)">
+    <g style="fill: #1a1a1a" transform="translate(216.9075 164.6675)">
      <text>
       <tspan x="0" y="-0.78125" style="font-style: oblique; font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a">f</tspan>
-      <tspan x="6.921045" y="0.0125" style="font-size: 6.65px; font-family: 'DejaVu Sans'; fill: #1a1a1a">̄</tspan>
-      <tspan x="3.344482" y="1.482812" style="font-style: oblique; font-size: 6.65px; font-family: 'DejaVu Sans'; fill: #1a1a1a">θ</tspan>
+      <tspan x="8.416357" y="0.721875" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">̄</tspan>
+      <tspan x="3.344482" y="2.4" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">θ</tspan>
      </text>
     </g>
    </g>
@@ -1736,10 +1736,10 @@ z
    </g>
    <g id="text_38">
     <!-- $g_\phi$ -->
-    <g style="fill: #1a1a1a" transform="translate(279.0325 101.543887)">
+    <g style="fill: #1a1a1a" transform="translate(278.7475 101.353887)">
      <text>
       <tspan x="0" y="-0.671875" style="font-style: oblique; font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a">g</tspan>
-      <tspan x="6.030273" y="0.75312" style="font-style: oblique; font-size: 6.65px; font-family: 'DejaVu Sans'; fill: #1a1a1a">ϕ</tspan>
+      <tspan x="6.030273" y="0.946875" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">ϕ</tspan>
      </text>
     </g>
    </g>
@@ -1748,10 +1748,10 @@ z
    </g>
    <g id="text_40">
     <!-- $h_C$ -->
-    <g style="fill: #1a1a1a" transform="translate(248.35 94.135109)">
+    <g style="fill: #1a1a1a" transform="translate(248.084 94.135109)">
      <text>
       <tspan x="0" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">h</tspan>
-      <tspan x="4.812836" y="0.905621" style="font-style: oblique; font-size: 5.32px; font-family: 'DejaVu Sans'; fill: #1a1a1a">C</tspan>
+      <tspan x="4.812836" y="0.953125" style="font-style: oblique; font-size: 6.08px; font-family: 'DejaVu Sans'; fill: #1a1a1a">C</tspan>
      </text>
     </g>
    </g>
@@ -1760,7 +1760,7 @@ z
    </g>
    <g id="text_42">
     <!-- select $T_m$ -->
-    <g style="fill: #1a1a1a" transform="translate(264.722 170.455109)">
+    <g style="fill: #1a1a1a" transform="translate(264.342 170.455109)">
      <text>
       <tspan x="0" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">s</tspan>
       <tspan x="3.956314" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">e</tspan>
@@ -1770,7 +1770,7 @@ z
       <tspan x="19.585052" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">t</tspan>
       <tspan x="22.562485" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a"> </tspan>
       <tspan x="24.976318" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">T</tspan>
-      <tspan x="29.614883" y="0.905621" style="font-style: oblique; font-size: 5.32px; font-family: 'DejaVu Sans'; fill: #1a1a1a">m</tspan>
+      <tspan x="29.614883" y="0.905621" style="font-style: oblique; font-size: 6.08px; font-family: 'DejaVu Sans'; fill: #1a1a1a">m</tspan>
      </text>
     </g>
    </g>
@@ -1783,7 +1783,7 @@ z
      <text>
       <tspan x="4.449219" y="-1.453125" style="font-size: 8.2px; font-family: 'DejaVu Sans'; fill: #1a1a1a">̂</tspan>
       <tspan x="0" y="-0.521875" style="font-style: oblique; font-size: 8.2px; font-family: 'DejaVu Sans'; fill: #1a1a1a">z</tspan>
-      <tspan x="4.562852" y="0.708121" style="font-style: oblique; font-size: 5.74px; font-family: 'DejaVu Sans'; fill: #1a1a1a">m</tspan>
+      <tspan x="4.574063" y="0.708121" style="font-style: oblique; font-size: 6.56px; font-family: 'DejaVu Sans'; fill: #1a1a1a">m</tspan>
      </text>
     </g>
    </g>
@@ -1792,7 +1792,7 @@ z
     <g style="fill: #1a1a1a" transform="translate(339.84 179.250078)">
      <text>
       <tspan x="0" y="-0.515625" style="font-style: oblique; font-size: 8.2px; font-family: 'DejaVu Sans'; fill: #1a1a1a">z</tspan>
-      <tspan x="4.297638" y="0.714371" style="font-style: oblique; font-size: 5.74px; font-family: 'DejaVu Sans'; fill: #1a1a1a">m</tspan>
+      <tspan x="4.297638" y="0.714371" style="font-style: oblique; font-size: 6.56px; font-family: 'DejaVu Sans'; fill: #1a1a1a">m</tspan>
      </text>
     </g>
    </g>
@@ -1804,14 +1804,14 @@ z
    </g>
    <g id="text_48">
     <!-- per $T_m$ -->
-    <g style="fill: #1a1a1a" transform="translate(357.54 139.134219)">
+    <g style="fill: #1a1a1a" transform="translate(357.16 139.134219)">
      <text>
       <tspan x="0" y="-0.46875" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">p</tspan>
       <tspan x="4.820251" y="-0.46875" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">e</tspan>
       <tspan x="9.492188" y="-0.46875" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">r</tspan>
       <tspan x="12.614227" y="-0.46875" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a"> </tspan>
       <tspan x="15.028061" y="-0.46875" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">T</tspan>
-      <tspan x="19.666626" y="0.671246" style="font-style: oblique; font-size: 5.32px; font-family: 'DejaVu Sans'; fill: #1a1a1a">m</tspan>
+      <tspan x="19.666626" y="0.671246" style="font-style: oblique; font-size: 6.08px; font-family: 'DejaVu Sans'; fill: #1a1a1a">m</tspan>
      </text>
     </g>
    </g>
@@ -1823,11 +1823,11 @@ z
    </g>
    <g id="text_51">
     <!-- $f_{\bar\theta}$ -->
-    <g style="fill: #1a1a1a" transform="translate(68.1525 233.5425)">
+    <g style="fill: #1a1a1a" transform="translate(67.8675 233.0675)">
      <text>
       <tspan x="0" y="-0.78125" style="font-style: oblique; font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1a1a1a">f</tspan>
-      <tspan x="6.921045" y="0.0125" style="font-size: 6.65px; font-family: 'DejaVu Sans'; fill: #1a1a1a">̄</tspan>
-      <tspan x="3.344482" y="1.482812" style="font-style: oblique; font-size: 6.65px; font-family: 'DejaVu Sans'; fill: #1a1a1a">θ</tspan>
+      <tspan x="8.416357" y="0.721875" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">̄</tspan>
+      <tspan x="3.344482" y="2.4" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">θ</tspan>
      </text>
     </g>
    </g>

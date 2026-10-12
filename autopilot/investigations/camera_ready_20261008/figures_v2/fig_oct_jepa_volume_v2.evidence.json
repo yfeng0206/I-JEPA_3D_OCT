@@ -1,9 +1,9 @@
 {
  "status": "schematic_ijepa_framework_and_volume_handling_with_external_OCT_example",
  "generator": "generate_framework_v2.py",
- "generator_sha256": "41f285709361c8985e6d39b23cb93be4ce9f9f01ffc66c27312c998c4aebc7eb",
+ "generator_sha256": "d7342bf0d70e75a0ed4ccb73b727de6a7d6f72350a13b24aea68b178cb0a0dc4",
  "style_module": "figstyle_v2.py",
- "style_module_sha256": "375827e5aef90b703abdc12c599729395251615f98e335733e08f34ca4f4fe36",
+ "style_module_sha256": "5753f6350d6b0d504413341c8218208d3016ba9368c85e607ba958d2d9d3539c",
  "source_image_file": "autopilot\\investigations\\submission_refresh_20260910\\figure\\octdl_figure1_original.png",
  "source_image_sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5",
  "primary_license_file": "autopilot\\investigations\\submission_refresh_20260910\\figure\\octdl_primary_license.html",
@@ -1000,11 +1000,10 @@
  "numerical_readouts": false,
  "limits": "Schematic of the implemented protocol; not a measured feature, cohort statistic or result.",
  "typography": {
-  "pdf_text_min_pt": 5.32,
+  "pdf_text_min_pt": 6.08,
   "pdf_text_sizes_pt": [
-   5.32,
-   5.74,
-   6.65,
+   6.08,
+   6.56,
    6.72,
    6.8,
    7.0,
@@ -1015,32 +1014,64 @@
   ],
   "smallest_spans": [
    [
-    5.32,
+    6.08,
     "C"
    ],
    [
-    5.32,
+    6.08,
     "m"
    ],
    [
-    5.32,
+    6.08,
     "m"
    ],
    [
-    5.32,
+    6.08,
     "s"
    ],
    [
-    5.32,
+    6.08,
     "s"
    ],
    [
-    5.74,
+    6.56,
     "m"
    ]
   ],
-  "design": "labels 7.0 pt, math 7.6 pt, encoder symbols 9.5 pt, titles 7.8 pt at the 5.5 in print width; single-level sub/superscripts only",
+  "design": "labels 7.0 pt, math 7.6 pt, encoder symbols 9.5 pt, titles 7.8 pt at the 5.5 in print width; single-level sub/superscripts only, drawn at 0.8 x their base size (matplotlib default 0.7) so that they print at >= 6 pt",
+  "math_script_scale": 0.8,
   "target_identity": "numbered tokens 1-4 in the Okabe-Ito group colours"
+ },
+ "layout_guard": {
+  "paper": {
+   "texts_checked": 69,
+   "pad_pt": [
+    2.0,
+    0.5
+   ],
+   "canvas_margin_pt": 0.5,
+   "overlaps": [],
+   "outside_canvas": []
+  },
+  "poster": {
+   "texts_checked": 69,
+   "pad_pt": [
+    2.0,
+    0.5
+   ],
+   "canvas_margin_pt": 0.5,
+   "overlaps": [],
+   "outside_canvas": []
+  },
+  "scope": "figstyle_v2.layout_guard: every visible text artist (band titles, labels, math labels, encoder symbols, all token digits) pairwise without collision (2 pt horizontal / 0.5 pt vertical clearance) and fully inside the canvas (0.5 pt margin); asserted before export",
+  "selftest": {
+   "clean_layout_passes": true,
+   "numeral_collision_detected": true,
+   "title_numeral_collision_detected": true,
+   "rotated_label_collision_detected": true,
+   "out_of_canvas_label_detected": true,
+   "token_digit_collision_detected": true
+  }
  },
  "caption_summary": "From an OCT volume to I-JEPA pretraining and volume-level evaluation. (a) Each FairVision volume has 200 B-scans; pretraining and evaluation use the same 100 evenly spaced ones, resized to 256 by 256 pixels (N=256 patches of 16 by 16 pixels). (b) Each B-scan is a separate sample (random resized crop). Strategies differ in the sampler of context C (grey: omitted tokens) and targets T_m (uniform or from A_s(x); CENTROID's masks of Figure 1); encoders, predictor and loss are shared. The predictor sees h_C and mask tokens at the target positions; the EMA target encoder's normalized outputs at T_m are the stop-gradient Smooth-L1 targets. (c) The frozen EMA encoder sees uncropped B-scans; patch features are averaged per B-scan, then across the volume, before a LayerNorm-linear head. Stacks are schematic; the B-scan is the OCTDL crop.",
  "alt_text": "Three panels. (a) A schematic stack of OCT B-scans with alternate slices marked used, an example B-scan with a 16 by 16 patch grid. (b) I-JEPA: view x and guide feed a sampler; the context view goes through the context encoder and predictor with mask tokens at the target positions (numbered tokens 1 to 4 in the group colours); the full view goes through the EMA target encoder, LayerNorm and target selection with stop-gradient; Smooth-L1 per target group. (c) The frozen EMA encoder encodes each of 100 B-scans; patch tokens are averaged per B-scan, B-scan vectors averaged per volume, then LayerNorm and linear head give the glaucoma probability.",
@@ -1052,15 +1083,15 @@
    ],
    "png": {
     "file": "fig_oct_jepa_volume_v2.png",
-    "sha256": "f1d601b7320f09d8bbafe107e47cd2c99addad6787f463185fc2ccd2b94a26d2"
+    "sha256": "cbd33acb96adce0e827127a8b374b63e8e322bc5a0efd3a44fed4cce09bf775d"
    },
    "pdf": {
     "file": "fig_oct_jepa_volume_v2.pdf",
-    "sha256": "50f9bbd05f58460baac71e9e2efa046813a4085c88bccbacb0d4b6cee438c38c"
+    "sha256": "af4232fb38b4c9760d28b29e42954dcf6d07157e314c139568b6023185ca2186"
    },
    "svg": {
     "file": "fig_oct_jepa_volume_v2.svg",
-    "sha256": "d7243de849be47931581189d527f7af5de974d7bdc859acc030ca9831950729a"
+    "sha256": "ccab9237caeebbbcb3142982c4ad7f06b76fba513d3cfc1ce333eb4dd2dccc4a"
    }
   },
   "poster": {
@@ -1071,15 +1102,15 @@
    "dir": "poster",
    "png": {
     "file": "fig_oct_jepa_volume_v2_poster.png",
-    "sha256": "b91290a38e933fb80bbbe348653bb9cfd750e84eba259463f22ec858e923c439"
+    "sha256": "27cfe9b47f4f7156dd50d1b0024a20f1dac95ca2f4dccafc1a3f83a9a72f32e3"
    },
    "pdf": {
     "file": "fig_oct_jepa_volume_v2_poster.pdf",
-    "sha256": "0853efe4d1ec48378ae625a35c01b11d8997c66582056da848bd1a23d1af0621"
+    "sha256": "78acc6f16ae353a2dc5df561efe2db944eb46c0c9b41b360fab8651e3809b8fe"
    },
    "svg": {
     "file": "fig_oct_jepa_volume_v2_poster.svg",
-    "sha256": "3d44a0c87c43816bff18d09efbfc2e328dac60a9979179420c18b791b021d0d5"
+    "sha256": "f504745ce557d884cb636f613442063674eaad9c1d9e380e99af7e578df7bc3d"
    }
   }
  },

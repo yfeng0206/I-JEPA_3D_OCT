@@ -1,9 +1,9 @@
 {
  "status": "real_external_OCT_CC_BY_4_0_strategy_uniqueness_illustration",
  "generator": "generate_strategies_v2.py",
- "generator_sha256": "51237633162210f581b33cf6c4e2e4c730be67d9ee701a446d1c62c885be9a4d",
+ "generator_sha256": "32f1e85feb461235e1c8c65e7ca4632b86ff15071ae0b306050d5c52755e1772",
  "style_module": "figstyle_v2.py",
- "style_module_sha256": "375827e5aef90b703abdc12c599729395251615f98e335733e08f34ca4f4fe36",
+ "style_module_sha256": "5753f6350d6b0d504413341c8218208d3016ba9368c85e607ba958d2d9d3539c",
  "source_image_file": "autopilot\\investigations\\submission_refresh_20260910\\figure\\octdl_figure1_original.png",
  "source_image_sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5",
  "primary_license_file": "autopilot\\investigations\\submission_refresh_20260910\\figure\\octdl_primary_license.html",
@@ -305,6 +305,16 @@
   },
   "target_rules": {
    "source": "paper Table tab:strategies (target shape, placement); checked by table_rules() against main_submission.tex at export",
+   "manuscript_input": {
+    "file": "paper/genai4health2026/main_submission.tex",
+    "table_label": "tab:strategies",
+    "table_block_lines": [
+     397,
+     416
+    ],
+    "table_block_sha256_lf": "97a32debf4ee6c2ce78e75c3a57a4548014930a9ed1fda1fda364ebfe1a4403a",
+    "file_sha256_at_export": "5aa29f56a22a6b46eab0487f1867e987a83a43174d46ebda135650b6ddb63b97"
+   },
    "rows": {
     "random": {
      "row": "\\textsc{random} & none & rectangles & uniform & variable \\\\",
@@ -3493,9 +3503,9 @@
  "numerical_readouts": false,
  "limits": "Single fixed-seed replay at batch size 1 on an external image; MIRAGE was not trained on OCTDL, so MIRAGE guides are not a validated segmentation; no cohort statistic, historical batch or performance claim. At batch size 1 there is no cross-image shortening, but target-group collation still applies (see plotted.collation); training-batch collation can shorten the delivered context further (Table 2 of the paper).",
  "typography": {
-  "pdf_text_min_pt": 5.32,
+  "pdf_text_min_pt": 6.08,
   "pdf_text_sizes_pt": [
-   5.32,
+   6.08,
    6.53,
    6.58,
    6.7,
@@ -3504,7 +3514,39 @@
    7.6,
    8.0
   ],
-  "note": "sizes at the 5.5 in print width; includes mathtext sub/superscripts"
+  "math_script_scale": 0.8,
+  "note": "sizes at the 5.5 in print width; includes mathtext sub/superscripts, drawn at 0.8 x their base size (matplotlib default 0.7) so that they print at >= 6 pt"
+ },
+ "layout_guard": {
+  "paper": {
+   "texts_checked": 61,
+   "pad_pt": [
+    2.0,
+    0.5
+   ],
+   "canvas_margin_pt": 0.5,
+   "overlaps": [],
+   "outside_canvas": []
+  },
+  "poster": {
+   "texts_checked": 61,
+   "pad_pt": [
+    2.0,
+    0.5
+   ],
+   "canvas_margin_pt": 0.5,
+   "overlaps": [],
+   "outside_canvas": []
+  },
+  "scope": "figstyle_v2.layout_guard: every visible text artist of the figure (figure and axes texts, numerals, legend digits and labels, titles, rotated row labels, attribution, target rules) pairwise without collision (2 pt horizontal / 0.5 pt vertical clearance) and fully inside the canvas (0.5 pt margin); asserted before export",
+  "selftest": {
+   "clean_layout_passes": true,
+   "numeral_collision_detected": true,
+   "title_numeral_collision_detected": true,
+   "rotated_label_collision_detected": true,
+   "out_of_canvas_label_detected": true,
+   "token_digit_collision_detected": true
+  }
  },
  "caption_summary": "The five target-selection strategies on one external OCT example, not FairVision data: an annotation-free B-scan crop from Kulyabin et al., OCTDL, Fig. 1 (arXiv:2312.08255v3), adapted under CC BY 4.0 and downsampled to 256 by 256 pixels without contrast enhancement. (a) Placement guide A_s(x); MIRAGE was not trained on OCTDL. (b) One I-JEPA view: visible context C, target groups T_m (colour and number mark identity, not relevance), hidden non-targets (grey) and repeated indices (dots); the target rule follows Table tab:strategies. Exact indices from each trained sampler for this image (matched block sizes, fixed seed); a single illustrative replay, not a segmentation, training batch, evaluation sample or performance comparison. License: CC BY 4.0 URL.",
  "alt_text": "Ten panels in two rows over five columns (RANDOM, CENTROID, ENVELOPE, ANATOMY-V2, COVER) show the same external OCT crop. Top row: each strategy's placement guide in yellow (none for RANDOM). Bottom row: visible context as image, four target groups tinted orange, sky blue, green and purple with outlines and numbered badges 1 to 4, grey cells hidden but not predicted, white dots on repeated target indices.",
@@ -3516,15 +3558,15 @@
    ],
    "png": {
     "file": "fig_oct_strategies_v2.png",
-    "sha256": "1931620fc9140cbf6bd78af2cc364bbb1353bc321b993564050d489a37c7ed2f"
+    "sha256": "63d95c7e5f20baae1e16b4c7320e474b91b59184d51a83bd561ac3bdea40141b"
    },
    "pdf": {
     "file": "fig_oct_strategies_v2.pdf",
-    "sha256": "3fa63ff79449d4122cef2faf9ee5281bc43593255d9018c7243c5b44473d20a3"
+    "sha256": "bea410abc462d2bb902749690ddc1b46b87867dffbb2b91e1f365feefa702ff3"
    },
    "svg": {
     "file": "fig_oct_strategies_v2.svg",
-    "sha256": "c92d07dd688fd0a78584eef686e4acff1247fe805515120557f47769826d1dba"
+    "sha256": "c557745183ff21bf107f4503b54010e39f8d82bdea96ed9069c80992ce4330fc"
    }
   },
   "poster": {
@@ -3535,15 +3577,15 @@
    "dir": "poster",
    "png": {
     "file": "fig_oct_strategies_v2_poster.png",
-    "sha256": "985a96513df45f96722aa3c0a5f9cf70e42b92613f42061ade14cd11254ecfc9"
+    "sha256": "79676ad0b25926b224f21486a4b43c45d95fae11a70f9c116573147719ab15f8"
    },
    "pdf": {
     "file": "fig_oct_strategies_v2_poster.pdf",
-    "sha256": "80a2df487680de0a1b3e8f7c4f23dbd348e658f11cbe4079e8e28cca05354c6e"
+    "sha256": "cd4b0cbef5924fb6c6a9825794811e06c2a1a34b1454f6c62be4838af03e51f3"
    },
    "svg": {
     "file": "fig_oct_strategies_v2_poster.svg",
-    "sha256": "fec77429f57c26d67d82929f236286c2d12101cfb5973bbba8a9e5741b4a6323"
+    "sha256": "01e4b9e59f8d7ed37aed564c5e2e93ca1d381afec222635c24a1ab2f5566d31c"
    }
   }
  },

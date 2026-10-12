@@ -22,6 +22,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+from matplotlib.ticker import FormatStrFormatter, MultipleLocator
 import numpy as np
 from sklearn.metrics import roc_curve
 
@@ -105,6 +106,98 @@ def matched_trajectory_keys(arm, epoch, table):
     if missing:
         raise ValueError("Missing matched trajectory evidence: " + ", ".join(missing))
     return source, baseline
+
+
+# Fig. 3 is drawn at its final print size (\linewidth = 5.5 in, included 1:1),
+# so every label prints at 7 pt.
+TRAJ_RC = {"font.family": "DejaVu Sans", "font.size": 7, "axes.titlesize": 7,
+           "axes.labelsize": 7, "xtick.labelsize": 7, "ytick.labelsize": 7,
+           "legend.fontsize": 7, "axes.linewidth": 0.6, "xtick.major.width": 0.6,
+           "ytick.major.width": 0.6, "xtick.major.size": 2.5, "ytick.major.size": 2.5,
+           "xtick.major.pad": 2.0, "ytick.major.pad": 2.0, "axes.labelpad": 2.0,
+           "axes.titlepad": 3.0}
+# Lines join only the epochs that every arm shares, starting at the common
+# ancestor; any other checkpoint is an unjoined open marker, so straight-line
+# interpolation never invents a trajectory between uneven epoch grids.
+TRAJ_COMMON_EPOCHS = (50, 75, 100)
+# (arm, probe precision, line style): solid = fp16 family, dashed = fp32 arms.
+# anatomy-v1 is the excluded continuation reported in the appendix; not drawn.
+TRAJ_SERIES = (("random", "fp16", "-"), ("oracle", "fp16", "-"), ("envelope", "fp16", "-"),
+               ("anatomy-v2", "fp32", "--"), ("cover-f021", "fp32", "--"))
+TRAJ_DELTA_OFFSET = {"envelope": -0.22, "oracle": 0.0, "cover-f021": 0.22}
+ARM_FIG = {"random": "RANDOM", "oracle": "CENTROID", "envelope": "ENVELOPE",
+           "anatomy-v2": "ANATOMY-V2", "cover-f021": "COVER"}
+
+
+def draw_trajectories(st, T, delta, path):
+    """Fig. 3: (a) frozen-probe AUC by epoch; (b) matched-precision paired deltas.
+
+    Marginal per-arm CIs overlap heavily because they carry between-case
+    variance that cancels in a paired comparison, so (b) plots the paired
+    differences from RANDOM on the same test cases.
+    """
+    with plt.rc_context(TRAJ_RC):
+        fig, (ax, bx) = plt.subplots(1, 2, figsize=(5.5, 2.05),
+                                     gridspec_kw={"width_ratios": [1.3, 1]})
+        fig.subplots_adjust(left=0.083, right=0.992, bottom=0.175, top=0.80, wspace=0.27)
+        anc = T["ancestor@ep25@fp32"]
+        ax.plot([anc["epoch"]], [anc["auc"]], ls="none", marker=MK["ancestor"],
+                color=COL["ancestor"], ms=7, zorder=6, label="ancestor")
+        for arm, precision, ls in TRAJ_SERIES:
+            rows = sorted([t for t in st["table"] if t["arm"] == arm and t["precision"] == precision],
+                          key=lambda t: t["epoch"])
+            joined = [t for t in rows if t["epoch"] in TRAJ_COMMON_EPOCHS]
+            extra = [t for t in rows if t["epoch"] not in TRAJ_COMMON_EPOCHS]
+            ax.plot([anc["epoch"]] + [t["epoch"] for t in joined],
+                    [anc["auc"]] + [t["auc"] for t in joined],
+                    ls=ls, marker=MK[arm], color=COL[arm], lw=1.4 if ls == "-" else 1.1,
+                    ms=3.6 if ls == "-" else 4.6, zorder=4 if ls == "-" else 3.5,
+                    label=ARM_FIG[arm])
+            if extra:
+                ax.plot([t["epoch"] for t in extra], [t["auc"] for t in extra], ls="none",
+                        marker=MK[arm], color=COL[arm], mfc="white", mew=0.8, ms=3.4,
+                        zorder=5, label="_extra_" + arm)
+        ax.set_xticks((anc["epoch"],) + TRAJ_COMMON_EPOCHS)
+        ax.set_xlim(21, 104)
+        ax.yaxis.set_major_locator(MultipleLocator(0.01))
+        ax.yaxis.set_major_formatter(FormatStrFormatter("%.2f"))
+        ax.set_xlabel("pretraining epoch")
+        ax.set_ylabel("test AUC")
+        ax.set_title("(a) Frozen-probe test AUC", loc="left")
+        ax.grid(alpha=0.35, ls=":", lw=0.6)
+
+        for arm in ("envelope", "oracle", "cover-f021"):
+            xs, ds, lo, hi = [], [], [], []
+            for i, ep in enumerate(TRAJ_COMMON_EPOCHS):
+                src, nul = matched_trajectory_keys(arm, ep, T)
+                r = delta(src, nul)
+                if r is None:
+                    raise ValueError("Missing paired trajectory contrast: %s minus %s" % (src, nul))
+                d, l, h, p, c = r
+                xs.append(i + TRAJ_DELTA_OFFSET[arm])
+                ds.append(d)
+                lo.append(d - l)
+                hi.append(h - d)
+            bx.errorbar(xs, ds, yerr=[lo, hi], fmt=MK[arm], color=COL[arm], capsize=2.2,
+                        capthick=0.9, ms=3.8, lw=0.9, label="_delta_" + arm)
+        bx.axhline(0, color="#333333", lw=0.8, ls="-")
+        bx.set_xticks(range(len(TRAJ_COMMON_EPOCHS)))
+        bx.set_xticklabels([str(e) for e in TRAJ_COMMON_EPOCHS])
+        bx.set_xlim(-0.5, len(TRAJ_COMMON_EPOCHS) - 0.5)
+        bx.yaxis.set_major_locator(MultipleLocator(0.01))
+        bx.yaxis.set_major_formatter(FormatStrFormatter("%.2f"))
+        bx.set_xlabel("pretraining epoch")
+        bx.set_ylabel(r"$\Delta$AUC vs RANDOM")
+        bx.set_title("(b) Paired difference, 95% bootstrap CI", loc="left")
+        bx.grid(axis="y", alpha=0.35, ls=":", lw=0.6)
+
+        handles, labels = ax.get_legend_handles_labels()
+        order = [labels.index(ARM_FIG[arm]) for arm, _, _ in TRAJ_SERIES] + [0]
+        fig.legend([handles[i] for i in order], [labels[i] for i in order], loc="upper center",
+                   bbox_to_anchor=(0.5, 1.0), ncol=len(order), frameon=False, handlelength=2.0,
+                   handletextpad=0.5, columnspacing=1.0, borderaxespad=0.3)
+        fig.savefig(path, dpi=300)
+    plt.close(fig)
 
 
 def main():
@@ -749,74 +842,7 @@ def main():
     print("wrote table_fairness.tex")
 
     # ---------------------------------------------------------- Fig: trajectories
-    # Left: trajectories. Right: PAIRED deltas vs the null with 95% CI.
-    # Marginal per-arm CIs overlap heavily because they carry between-case
-    # variance that cancels in a paired comparison; plotting them alone would
-    # understate the evidence. The paired panel is the actual inference.
-    fig, axes = plt.subplots(1, 2, figsize=(10.2, 4.2),
-                             gridspec_kw={"width_ratios": [1.25, 1]})
-    ax = axes[0]
-    anc = T["ancestor@ep25@fp32"]
-    ax.plot([25], [anc["auc"]], marker=MK["ancestor"], ls="none", mfc="white",
-            color=COL["ancestor"], ms=9, mew=1.2, zorder=5)
-    ax.annotate("shared ancestor (ep25)", (25, anc["auc"]), textcoords="offset points",
-                xytext=(14, 26), fontsize=8, color=COL["ancestor"],
-                arrowprops=dict(arrowstyle="-", color=COL["ancestor"], lw=0.7))
-
-    # Solid line = fp16 family, dashed = fp32 family: line style carries
-    # PRECISION here, so arm identity is carried redundantly by a unique marker.
-    for arm in ("random", "oracle", "envelope"):
-        pts = sorted([t for t in st["table"] if t["arm"] == arm and t["precision"] == "fp16"],
-                     key=lambda t: t["epoch"])
-        if not pts:
-            continue
-        ax.plot([25] + [p["epoch"] for p in pts], [anc["auc"]] + [p["auc"] for p in pts],
-                ls="-", marker=MK[arm], color=COL[arm], label=ARM_PLOT[arm], lw=2.2, ms=5.5)
-
-    for arm in ("anatomy-v2", "cover-f021", "anatomy-v1"):
-        pts = sorted([t for t in st["table"] if t["arm"] == arm], key=lambda t: t["epoch"])
-        if not pts:
-            continue
-        ax.plot([25] + [p["epoch"] for p in pts], [anc["auc"]] + [p["auc"] for p in pts],
-                ls="--", marker=MK[arm], color=COL[arm], label=ARM_PLOT[arm] + " (fp32)",
-                lw=1.3, ms=4.5, alpha=0.9)
-
-    ax.set_xlabel("pretraining epoch")
-    ax.set_ylabel("frozen-probe test AUC")
-    ax.set_title("(a) Trajectories from a shared checkpoint", fontsize=10)
-    ax.grid(alpha=0.25, ls=":")
-    ax.legend(fontsize=7.5, ncol=2, loc="lower right")
-
-    ax = axes[1]
-    eps = [50, 75, 100]
-    off = {"envelope": -0.30, "oracle": 0.0, "cover-f021": 0.30}
-    for arm in ("envelope", "oracle", "cover-f021"):
-        xs, ds, lo, hi = [], [], [], []
-        for i, ep in enumerate(eps):
-            src, nul = matched_trajectory_keys(arm, ep, T)
-            r = delta(src, nul)
-            if r is None:
-                raise ValueError("Missing paired trajectory contrast: %s minus %s" % (src, nul))
-            d, l, h, p, c = r
-            xs.append(i + off[arm])
-            ds.append(d)
-            lo.append(d - l)
-            hi.append(h - d)
-        if not xs:
-            continue
-        ax.errorbar(xs, ds, yerr=[lo, hi], fmt=MK[arm], color=COL[arm], capsize=4,
-                    ms=6, lw=1.8, label=ARM_PLOT[arm] + r" $-$ random")
-    ax.axhline(0, color="#333333", lw=1.2, ls="-")
-    ax.set_xticks(range(len(eps)))
-    ax.set_xticklabels(["ep%d" % e for e in eps])
-    ax.set_ylabel(r"$\Delta$ AUC vs unguided null")
-    ax.set_title("(b) Paired difference, 95%% bootstrap CI\n(%s draws, same test cases)"
-                 % st["n_bootstrap"], fontsize=10)
-    ax.grid(axis="y", alpha=0.25, ls=":")
-    ax.legend(fontsize=8, loc="lower left")
-    fig.tight_layout()
-    fig.savefig(os.path.join(AUTO, "fig_trajectories_ci.png"), dpi=200)
-    plt.close(fig)
+    draw_trajectories(st, T, delta, os.path.join(AUTO, "fig_trajectories_ci.png"))
     print("wrote fig_trajectories_ci.png")
 
     # ---------------------------------------------------------- Fig: fairness

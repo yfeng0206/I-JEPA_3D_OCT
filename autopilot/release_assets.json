@@ -3,23 +3,6 @@
   "baseline": "de145d7",
   "limits": "Hashes protect identity, not numerical correctness or claim support. Only currently referenced assets are required. Retired input hashes preserve historical identity without retaining them in the current required set.",
   "producers": {
-    "figures/fig_archived_occlusion_examples.png": {
-      "script": "autopilot/investigations/submission_refresh_20260910/archived_occlusion/generate_archived_occlusion.py",
-      "script_sha256_at_export": "779f2c14d45aec49453ec009dd71bf6b1d88dd117860bfe474bb026b52a06a85",
-      "inputs": ["results/summary/heatmap_grid.png", "scripts/assemble_heatmap_grid.py", "scripts/interpretability.py"],
-      "evidence_manifest": "autopilot/investigations/submission_refresh_20260910/archived_occlusion/evidence.json",
-      "evidence_manifest_sha256": "fa94e7aa59e22c2632900d623c20a57ce3f4264b35813520361d346a087d29a9",
-      "expected_output_sha256": "9792883349d0c3b173f41be67e3ab9cbc3a7c621c3d51934fe341ee724fae391",
-      "refresh_policy": "new historical-illustration review required for any changed panel, output or caption",
-      "evidence_scope": "All six archived original/overlay pairs, twelve panel crops preserved pixel-for-pixel. Quantitative and clinical headings removed outside panels. Historical fine-tuned-model visualization only; no numeric, localization or population validation.",
-      "authorization_scope": "User-requested reuse of archived composite; no new licence or de-identification determination.",
-      "rendered_metrics": [],
-      "raw_oct_pixels_rendered": true,
-      "subject_identifiers_rendered": false,
-      "companions": {
-        "figures/fig_archived_occlusion_examples.pdf": "26b1ba594372adc96efd1d25247f1e6409c48fd0ed059b314a799f4eac8c7f60"
-      }
-    },
     "figures/fig_oct_jepa_comparison_final.png": {
       "script": "autopilot/investigations/submission_refresh_20260910/comparison_final/generate_comparison_final.py",
       "script_sha256_at_export": "0ac3b4507ce3e158e3851e55cf7a0cdfcdefce94cd89630522955e9b010497e3",
@@ -119,7 +102,22 @@
         "figures/fig_oct_target_selection.svg": "41de814ecfd98117ff2f9b81ef92996ef5d9ccf2802111113a2028d001c3720b"
       }
     },
-    "auto/fig_trajectories_ci.png": {"script": "autopilot/p8_make_assets.py", "inputs": ["p1c_stats.json"]},
+    "auto/fig_trajectories_ci.png": {
+      "script": "autopilot/p8_make_assets.py",
+      "script_sha256_at_export": "91dee0bfd898871423b608e8c8887f108cfcb70b24b4d0f845de07f8ac61dc1e",
+      "inputs": ["p1c_stats.json"],
+      "evidence_manifest": "autopilot/investigations/camera_ready_20261008/figures_v2/lane_b/fig_trajectories_ci.evidence.json",
+      "evidence_manifest_sha256": "f82605c6fd6e81d0d5c130c3213d8e8db8b424ba837d108c991aef69c7fe2fb4",
+      "expected_output_sha256": "c6c1bdab8d0f00353b324721319f531e050c6a524793b7e8cac55ac80bec71f6",
+      "refresh_policy": "p15 replays p8 main() and requires these PNG bytes (numeric_plot_review.p8_artists); any change of the trajectory code, the statistics or the caption requires a renewed lane-B registration",
+      "evidence_scope": "Fig. 3 at print size (5.5 x 2.05 in, 7 pt, included 1:1): (a) frozen-probe test AUC of RANDOM, CENTROID, ENVELOPE (fp16) and ANATOMY-V2, COVER (fp32) from the shared epoch-25 ancestor, lines joining epochs 50/75/100 only, other checkpoints as open markers, ANATOMY-V1 (excluded continuation) not drawn; (b) matched-precision paired differences from RANDOM with 95% percentile bootstrap intervals at epochs 50/75/100. Every coordinate equals p1c_stats.json (p15 artist replay). Original single runs; no seed variation.",
+      "rendered_metrics": [
+        "frozen-probe test AUC (original runs)",
+        "paired test-AUC difference from RANDOM with 95% percentile bootstrap interval"
+      ],
+      "raw_oct_pixels_rendered": false,
+      "subject_identifiers_rendered": false
+    },
     "auto/fig_fairness.png": {"script": "autopilot/p8_make_assets.py", "inputs": ["p7_fairness.json", "p7_gap_correlation.json"]},
     "auto/fig_roc.png": {"script": "autopilot/p8_make_assets.py", "inputs": ["p1b_full_inventory.json", "per-case prediction files"]},
     "auto/fig_labeleff.png": {"script": "autopilot/p8_make_assets.py", "inputs": ["p5_label_efficiency.json"]},
@@ -285,7 +283,7 @@
     },
     "figures/fig_oct_strategies_v2.png": {
       "script": "autopilot/investigations/camera_ready_20261008/figures_v2/generate_strategies_v2.py",
-      "script_sha256_at_export": "51237633162210f581b33cf6c4e2e4c730be67d9ee701a446d1c62c885be9a4d",
+      "script_sha256_at_export": "32f1e85feb461235e1c8c65e7ca4632b86ff15071ae0b306050d5c52755e1772",
       "arguments": ["--replay"],
       "inputs": [
         "autopilot/investigations/camera_ready_20261008/figures_v2/figstyle_v2.py",
@@ -300,13 +298,14 @@
         "configs/patch_oracle_anatomical.yaml",
         "configs/patch_mirage_envelope.yaml",
         "configs/patch_anatomy_v2.yaml",
-        "configs/patch_cover_f021_ep25.yaml"
+        "configs/patch_cover_f021_ep25.yaml",
+        "paper/genai4health2026/main_submission.tex"
       ],
       "evidence_manifest": "autopilot/investigations/camera_ready_20261008/figures_v2/fig_oct_strategies_v2.evidence.json",
-      "evidence_manifest_sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1",
-      "expected_output_sha256": "1931620fc9140cbf6bd78af2cc364bbb1353bc321b993564050d489a37c7ed2f",
+      "evidence_manifest_sha256": "df580830bf7213a511aab4c55353775f205930a08ac802a7100f93aa3ad42a94",
+      "expected_output_sha256": "63d95c7e5f20baae1e16b4c7320e474b91b59184d51a83bd561ac3bdea40141b",
       "refresh_policy": "camera-ready v2 strategy figure (I13); changed outputs or caption require renewed review",
-      "evidence_scope": "All five strategies on the attributed CC BY 4.0 OCTDL crop, not FairVision: row (a) each placement guide A_s(x) on the patch grid (none, CENTROID band, hard MIRAGE envelope cells, summed soft MIRAGE scores); row (b) the delivered context C, target groups T1-T4 in Okabe-Ito colours, hidden-not-target cells and repeated indices. Exact staged replay indices (trained sampler configurations, block-size seed 3107, seed 42, batch size 1), re-derived by --replay from the samplers pinned at 86ae882; guide grids rebuilt through GuidedOCTSliceDataset and hash-matched. Replaces the target-selection and all-strategies figures in the paper. No cohort statistic or performance claim.",
+      "evidence_scope": "All five strategies on the attributed CC BY 4.0 OCTDL crop, not FairVision: row (a) each placement guide A_s(x) on the patch grid (none, CENTROID band, hard MIRAGE envelope cells, summed soft MIRAGE scores); row (b) the delivered context C, target groups T1-T4 in Okabe-Ito colours, hidden-not-target cells and repeated indices. Exact staged replay indices (trained sampler configurations, block-size seed 3107, seed 42, batch size 1), re-derived by --replay from the samplers pinned at 86ae882; guide grids rebuilt through GuidedOCTSliceDataset and hash-matched. Target-rule words equal the tab:strategies cells of the declared manuscript input (LF-normalised table-block SHA-256 in the evidence). Replaces the target-selection and all-strategies figures in the paper. No cohort statistic or performance claim.",
       "license": "CC BY 4.0",
       "license_source": "https://arxiv.org/abs/2312.08255v3",
       "rendered_metrics": [],
@@ -314,18 +313,18 @@
       "clinical_image_source": "Publicly published external OCTDL figure crop; no private FairVision image",
       "subject_identifiers_rendered": false,
       "poster_variant": {
-        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.png": "985a96513df45f96722aa3c0a5f9cf70e42b92613f42061ade14cd11254ecfc9",
-        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.pdf": "80a2df487680de0a1b3e8f7c4f23dbd348e658f11cbe4079e8e28cca05354c6e",
-        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.svg": "fec77429f57c26d67d82929f236286c2d12101cfb5973bbba8a9e5741b4a6323"
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.png": "79676ad0b25926b224f21486a4b43c45d95fae11a70f9c116573147719ab15f8",
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.pdf": "cd4b0cbef5924fb6c6a9825794811e06c2a1a34b1454f6c62be4838af03e51f3",
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.svg": "01e4b9e59f8d7ed37aed564c5e2e93ca1d381afec222635c24a1ab2f5566d31c"
       },
       "companions": {
-        "figures/fig_oct_strategies_v2.pdf": "3fa63ff79449d4122cef2faf9ee5281bc43593255d9018c7243c5b44473d20a3",
-        "figures/fig_oct_strategies_v2.svg": "c92d07dd688fd0a78584eef686e4acff1247fe805515120557f47769826d1dba"
+        "figures/fig_oct_strategies_v2.pdf": "bea410abc462d2bb902749690ddc1b46b87867dffbb2b91e1f365feefa702ff3",
+        "figures/fig_oct_strategies_v2.svg": "c557745183ff21bf107f4503b54010e39f8d82bdea96ed9069c80992ce4330fc"
       }
     },
     "figures/fig_oct_jepa_volume_v2.png": {
       "script": "autopilot/investigations/camera_ready_20261008/figures_v2/generate_framework_v2.py",
-      "script_sha256_at_export": "41f285709361c8985e6d39b23cb93be4ce9f9f01ffc66c27312c998c4aebc7eb",
+      "script_sha256_at_export": "d7342bf0d70e75a0ed4ccb73b727de6a7d6f72350a13b24aea68b178cb0a0dc4",
       "inputs": [
         "autopilot/investigations/camera_ready_20261008/figures_v2/figstyle_v2.py",
         "autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_all_strategies.evidence.json",
@@ -344,8 +343,8 @@
         "configs/downstream_cr_seed_v1.yaml"
       ],
       "evidence_manifest": "autopilot/investigations/camera_ready_20261008/figures_v2/fig_oct_jepa_volume_v2.evidence.json",
-      "evidence_manifest_sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407",
-      "expected_output_sha256": "f1d601b7320f09d8bbafe107e47cd2c99addad6787f463185fc2ccd2b94a26d2",
+      "evidence_manifest_sha256": "e1ed62e03076a69dd0b6c2e87acbdaf30a5cec9c019bbdcd9f0bb21abcbed534",
+      "expected_output_sha256": "cbd33acb96adce0e827127a8b374b63e8e322bc5a0efd3a44fed4cce09bf775d",
       "refresh_policy": "camera-ready v2 framework/volume figure (I13); changed outputs or caption require renewed review",
       "evidence_scope": "Schematic I-JEPA framework with 3-D volume handling: 200 B-scans per volume, the 100 used (linspace indices 0, 2, ..., 196, 199), resize to 256 x 256 and 16 x 16 patches (256 tokens); per-B-scan pretraining with uniform or guided sampler, context encoder, predictor with mask tokens, EMA target encoder, LayerNorm target selection with stop-gradient and Smooth-L1; frozen EMA evaluation with patch mean per B-scan, mean over B-scans and LayerNorm-linear head. Facts recorded with source lines and hashes; CENTROID masks from the staged replay on the OCTDL crop; volume stacks schematic. Replaces the uniform-versus-guided comparison figure in the paper. No measured feature or performance claim.",
       "license": "CC BY 4.0",
@@ -355,18 +354,19 @@
       "clinical_image_source": "Publicly published external OCTDL figure crop; no private FairVision image",
       "subject_identifiers_rendered": false,
       "poster_variant": {
-        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_jepa_volume_v2_poster.png": "b91290a38e933fb80bbbe348653bb9cfd750e84eba259463f22ec858e923c439",
-        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_jepa_volume_v2_poster.pdf": "0853efe4d1ec48378ae625a35c01b11d8997c66582056da848bd1a23d1af0621",
-        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_jepa_volume_v2_poster.svg": "3d44a0c87c43816bff18d09efbfc2e328dac60a9979179420c18b791b021d0d5"
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_jepa_volume_v2_poster.png": "27cfe9b47f4f7156dd50d1b0024a20f1dac95ca2f4dccafc1a3f83a9a72f32e3",
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_jepa_volume_v2_poster.pdf": "78acc6f16ae353a2dc5df561efe2db944eb46c0c9b41b360fab8651e3809b8fe",
+        "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_jepa_volume_v2_poster.svg": "f504745ce557d884cb636f613442063674eaad9c1d9e380e99af7e578df7bc3d"
       },
       "companions": {
-        "figures/fig_oct_jepa_volume_v2.pdf": "50f9bbd05f58460baac71e9e2efa046813a4085c88bccbacb0d4b6cee438c38c",
-        "figures/fig_oct_jepa_volume_v2.svg": "d7243de849be47931581189d527f7af5de974d7bdc859acc030ca9831950729a"
+        "figures/fig_oct_jepa_volume_v2.pdf": "af4232fb38b4c9760d28b29e42954dcf6d07157e314c139568b6023185ca2186",
+        "figures/fig_oct_jepa_volume_v2.svg": "ccab9237caeebbbcb3142982c4ad7f06b76fba513d3cfc1ce333eb4dd2dccc4a"
       }
     }
   },
   "fixed_inputs": {},
   "retired_inputs": {
+    "figures/fig_archived_occlusion_examples.png": "9792883349d0c3b173f41be67e3ab9cbc3a7c621c3d51934fe341ee724fae391",
     "figures/fig1_policies_compact.png": "30805f537d14a76e9cdcfe46362394b8cffc0bcc0fb159d1fd24cb6722078f6f",
     "figures/fig_masking_policies.png": "7493287e756cfc7f2739bfed1bc28ad1abfcefb775137f8af5159df04afb4fe1",
     "figures/fig_precision_paradox.png": "b39d5e46fb59cb13f00c14cebef14949e554b37436012476c5dc7805ccb91658",

@@ -9013,13 +9013,13 @@ z
   </g>
   <g id="text_59">
    <!-- $A_s(x)$ -->
-   <g style="fill: #1a1a1a" transform="translate(21.559109 65.974) rotate(-90)">
+   <g style="fill: #1a1a1a" transform="translate(21.559109 66.202) rotate(-90)">
     <text>
      <tspan x="0" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">A</tspan>
-     <tspan x="11.134581" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">x</tspan>
-     <tspan x="5.194748" y="0.905621" style="font-style: oblique; font-size: 5.32px; font-family: 'DejaVu Sans'; fill: #1a1a1a">s</tspan>
-     <tspan x="8.17198" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">(</tspan>
-     <tspan x="15.628539" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">)</tspan>
+     <tspan x="11.530212" y="-0.234375" style="font-style: oblique; font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">x</tspan>
+     <tspan x="5.194748" y="0.905621" style="font-style: oblique; font-size: 6.08px; font-family: 'DejaVu Sans'; fill: #1a1a1a">s</tspan>
+     <tspan x="8.567612" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">(</tspan>
+     <tspan x="16.02417" y="-0.234375" style="font-size: 7.6px; font-family: 'DejaVu Sans'; fill: #1a1a1a">)</tspan>
     </text>
    </g>
   </g>

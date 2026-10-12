@@ -220,6 +220,133 @@ def text_overlaps(fig, artists, pad_pt=2.0, pad_y_pt=0.5):
                 hits.append([boxes[i][0], boxes[j][0]])
     return hits
 
+
+def visible_texts(fig):
+    """Every text artist that is drawn: figure and axes texts, numerals and token digits, titles,
+    axis/tick labels and legend entries (visible, non-empty, figure and axes visible)."""
+    from matplotlib.text import Text
+    fig.canvas.draw()
+    found = []
+    for t in fig.findobj(Text):
+        if not t.get_visible() or not t.get_text().strip() or t.figure is None:
+            continue
+        if t.axes is not None and not t.axes.get_visible():
+            continue
+        found.append(t)
+    return found
+
+
+def layout_guard(fig, pad_pt=2.0, pad_y_pt=0.5, margin_pt=0.5):
+    """Collisions between ALL visible texts (pad as text_overlaps) and texts not fully inside
+    the canvas (margin_pt clearance from every edge)."""
+    texts = visible_texts(fig)
+    renderer = fig.canvas.get_renderer()
+    margin = margin_pt * fig.dpi / 72.0
+    width, height = fig.bbox.width, fig.bbox.height
+    outside = []
+    for t in texts:
+        bb = t.get_window_extent(renderer)
+        if bb.x0 < margin or bb.y0 < margin or bb.x1 > width - margin or bb.y1 > height - margin:
+            outside.append([t.get_text(), [round(v / fig.dpi, 4) for v in (bb.x0, bb.y0, bb.x1, bb.y1)]])
+    return {"texts_checked": len(texts), "pad_pt": [pad_pt, pad_y_pt], "canvas_margin_pt": margin_pt,
+            "overlaps": text_overlaps(fig, texts, pad_pt, pad_y_pt), "outside_canvas": outside}
+
+
+def assert_layout(fig, **kw):
+    guard = layout_guard(fig, **kw)
+    assert not guard["overlaps"] and not guard["outside_canvas"], guard
+    return guard
+
+
+def guard_selftest():
+    """Regression cases for the layout guard: each injected defect must be reported, and the
+    clean layout must pass. Covers texts that the first I13 guard did not collect."""
+    import matplotlib.pyplot as plt
+    cases = {}
+
+    def run(build):
+        fig = plt.figure(figsize=(2.0, 1.0), dpi=100)
+        try:
+            build(fig)
+            return layout_guard(fig)
+        finally:
+            plt.close(fig)
+
+    def clean(fig):
+        ax = fig.add_axes([0.3, 0.3, 0.4, 0.4])
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.text(0.2, 0.5, "1", fontsize=7, transform=ax.transAxes)
+        ax.text(0.8, 0.5, "2", fontsize=7, transform=ax.transAxes)
+        fig.text(0.5, 0.92, "TITLE", ha="center", va="center", fontsize=7)
+
+    def numerals_collide(fig):
+        ax = fig.add_axes([0.3, 0.3, 0.4, 0.4])
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.text(0.50, 0.5, "1", fontsize=7, transform=ax.transAxes)
+        ax.text(0.53, 0.5, "3", fontsize=7, transform=ax.transAxes)
+
+    def title_on_numeral(fig):
+        ax = fig.add_axes([0.3, 0.3, 0.4, 0.4])
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.text(0.5, 0.5, "2", ha="center", va="center", fontsize=7, transform=ax.transAxes)
+        fig.text(0.5, 0.5, "TITLE", ha="center", va="center", fontsize=7)
+
+    def rotated_collide(fig):
+        fig.text(0.10, 0.5, "row label", rotation=90, ha="center", va="center", fontsize=7)
+        fig.text(0.13, 0.5, "$A_s(x)$", rotation=90, ha="center", va="center", fontsize=7)
+
+    def outside_canvas(fig):
+        fig.text(0.98, 0.5, "label", ha="left", va="center", fontsize=7)
+
+    def token_digit_on_label(fig):
+        ax = fig.add_axes([0, 0, 1, 1])
+        ax.set_xlim(0, 2)
+        ax.set_ylim(0, 1)
+        ax.axis("off")
+        draw_token(ax, 1.0, 0.5, 0, 0.1, 7, 0.4)
+        ax.text(1.02, 0.5, "mask tokens", fontsize=7, ha="left", va="center")
+
+    cases["clean_layout_passes"] = not (lambda g: g["overlaps"] or g["outside_canvas"])(run(clean))
+    cases["numeral_collision_detected"] = bool(run(numerals_collide)["overlaps"])
+    cases["title_numeral_collision_detected"] = bool(run(title_on_numeral)["overlaps"])
+    cases["rotated_label_collision_detected"] = bool(run(rotated_collide)["overlaps"])
+    cases["out_of_canvas_label_detected"] = bool(run(outside_canvas)["outside_canvas"])
+    cases["token_digit_collision_detected"] = bool(run(token_digit_on_label)["overlaps"])
+    assert all(cases.values()), cases
+    return cases
+
+
+# matplotlib draws single-level math scripts at 0.7 x the base size (mathtext SHRINK_FACTOR);
+# 0.8 lets the 7.6 pt math labels print their subscripts at 6.08 pt (>= 6 pt) without
+# enlarging the labels. Checked on the exported PDF spans (min_pdf_text_pt).
+MATH_SCRIPT_SCALE = 0.8
+
+
+class math_scripts:
+    """Context manager: mathtext script scale MATH_SCRIPT_SCALE, mathtext caches cleared."""
+
+    def __enter__(self):
+        from matplotlib import _mathtext, mathtext
+        if not isinstance(getattr(_mathtext, "SHRINK_FACTOR", None), float):
+            raise RuntimeError("matplotlib mathtext script scale unavailable")
+        self.old = _mathtext.SHRINK_FACTOR
+        _mathtext.SHRINK_FACTOR = MATH_SCRIPT_SCALE
+        mathtext.MathTextParser._parse_cached.cache_clear()
+        return self
+
+    def __exit__(self, *exc):
+        from matplotlib import _mathtext, mathtext
+        _mathtext.SHRINK_FACTOR = self.old
+        mathtext.MathTextParser._parse_cached.cache_clear()
+        return False
+
+
+def min_pdf_text_pt(pdf_path):
+    return min(s for s, _ in pdf_text_sizes(pdf_path))
+
 def pdf_text_sizes(pdf_path):
     """Font sizes (pt) of every text span in a one-page figure PDF, at its own print size."""
     import fitz

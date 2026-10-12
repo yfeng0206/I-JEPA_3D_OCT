@@ -220,8 +220,10 @@ def figure_receipt(key, png_rel, caption, ev):
             "2x2 square of its own cells, grey hidden-not-target cells, repeated-index dots left uncovered) over "
             "RANDOM, CENTROID, ENVELOPE, ANATOMY-V2 and COVER; a target-rule line per column whose words equal "
             "the target-shape and placement cells of Table tab:strategies (checked by the producer); legend with "
-            "numbered swatches and attribution line; no identifiers or performance readouts; no text overlap "
-            "(producer assertion).",
+            "numbered swatches and attribution line; no identifiers or performance readouts. Layout guard "
+            "(producer assertion, lane B): all 61 drawn texts, numerals and legend digits included, pairwise "
+            "collision-free and inside the canvas; guard self-test regression cases recorded in the evidence. "
+            "Smallest PDF text span 6.08 pt (math subscripts at 0.8 x base; ordinary labels >= 6.5 pt).",
             "Soft guides drawn for every cell with score > 0 (opacity 0.8 x min(score, 1)); the first export's "
             "0.02 display cutoff (23 cells, 0.24% of the summed score) was removed and is recorded in the "
             "evidence (plotted.display_transformations).",
@@ -252,9 +254,11 @@ def figure_receipt(key, png_rel, caption, ev):
             "No cohort statistic, result or performance claim.")
         checks = [
             "V12 typography revision and author polish: three full-width bands; every label >= 6.6 pt and math "
-            ">= 7.6 pt at the 5.5 in print width (sub/superscripts >= 5.3 pt, none nested; measured from the PDF, "
-            "evidence typography); target identity carried by numbered tokens 1-4; pooling steps drawn as "
-            "operator boxes on the arrows; no text overlap (producer assertion).",
+            ">= 7.6 pt at the 5.5 in print width (single-level sub/superscripts drawn at 0.8 x base, >= 6.08 pt, "
+            "none nested; measured from the PDF, evidence typography); target identity carried by numbered "
+            "tokens 1-4; pooling steps drawn as operator boxes on the arrows. Layout guard (producer assertion, "
+            "lane B): all 69 drawn texts, token digits included, pairwise collision-free and inside the canvas; "
+            "guard self-test regression cases recorded in the evidence.",
             "Final PNG rendered and inspected at paper scale: (a) 200 B-scans with alternate slices marked "
             "used, indices 0, 2, ..., 196, 199, resize to 256 x 256, 16 x 16 patch grid (N = 256); (b) view x, "
             "guide, sampler, context view, f_theta, g_phi with mask tokens at T positions, EMA f_theta_bar on the "
@@ -305,13 +309,16 @@ def producer_entry(key, outputs_dir=HERE):
             "src/datasets/oct_slices_guided.py", "scripts/mask_composition_probe.py",
             "git:86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5:src/masks (pinned sampler sources, --replay)",
             "configs/patch_oracle_anatomical.yaml", "configs/patch_mirage_envelope.yaml",
-            "configs/patch_anatomy_v2.yaml", "configs/patch_cover_f021_ep25.yaml"]
+            "configs/patch_anatomy_v2.yaml", "configs/patch_cover_f021_ep25.yaml",
+            "paper/genai4health2026/main_submission.tex"]
         scope = ("All five strategies on the attributed CC BY 4.0 OCTDL crop, not FairVision: row (a) each placement "
                  "guide A_s(x) on the patch grid (none, CENTROID band, hard MIRAGE envelope cells, summed soft "
                  "MIRAGE scores); row (b) the delivered context C, target groups T1-T4 in Okabe-Ito colours, "
                  "hidden-not-target cells and repeated indices. Exact staged replay indices (trained sampler "
                  "configurations, block-size seed 3107, seed 42, batch size 1), re-derived by --replay from the "
                  "samplers pinned at 86ae882; guide grids rebuilt through GuidedOCTSliceDataset and hash-matched. "
+                 "Target-rule words equal the tab:strategies cells of the declared manuscript input (LF-normalised "
+                 "table-block SHA-256 in the evidence). "
                  "Replaces the target-selection and all-strategies figures in the paper. No cohort statistic or "
                  "performance claim.")
         policy = "camera-ready v2 strategy figure (I13); changed outputs or caption require renewed review"

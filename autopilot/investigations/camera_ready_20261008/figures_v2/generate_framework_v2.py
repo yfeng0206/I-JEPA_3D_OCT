@@ -383,12 +383,12 @@ def render(image, masks, guide_cells, idx, out_dir, stem, poster=False):
         c.text(xp_, ye - 0.08, "p(glaucoma)", size=B)
         c.text(2.76, 0.068, "Secondary variants: patch max per B-scan; max, or mean and max, over B-scans.",
                size=B * 0.96, color=st.MUTED)
-        overlaps = st.text_overlaps(fig, c.texts)
-        assert not overlaps, overlaps
+        # Every drawn text, including the token digits: no collision, fully inside the canvas.
+        guard = st.assert_layout(fig)
         outputs = st.save_all(fig, out_dir, stem, "I-JEPA pretraining and volume-level evaluation",
                               dpi=300 if poster else 400)
         plt.close(fig)
-    return outputs, [round(W * k, 4), round(H * k, 4)]
+    return outputs, [round(W * k, 4), round(H * k, 4)], guard
 
 def main():
     parser = argparse.ArgumentParser()
@@ -406,10 +406,13 @@ def main():
         rec = st.source_lines(rel, needles)
         rec["claim"] = claim
         facts.append(rec)
-    paper_outputs, paper_inches = render(image, masks, guide_cells, idx, out, STEM)
-    poster_outputs, poster_inches = render(image, masks, guide_cells, idx, out / "poster", POSTER_STEM,
-                                           poster=True)
+    selftest = st.guard_selftest()
+    with st.math_scripts():
+        paper_outputs, paper_inches, paper_guard = render(image, masks, guide_cells, idx, out, STEM)
+        poster_outputs, poster_inches, poster_guard = render(image, masks, guide_cells, idx, out / "poster",
+                                                             POSTER_STEM, poster=True)
     sizes = st.pdf_text_sizes(out / (STEM + ".pdf"))
+    assert min(s for s, _ in sizes) >= 6.0, sorted(set(s for s, _ in sizes))
     evidence = {
         "status": "schematic_ijepa_framework_and_volume_handling_with_external_OCT_example",
         "generator": Path(__file__).name, "generator_sha256": st.sha(Path(__file__)),
@@ -459,9 +462,17 @@ def main():
                        "pdf_text_sizes_pt": sorted(set(s for s, _ in sizes)),
                        "smallest_spans": sorted(sizes)[:6],
                        "design": "labels %.1f pt, math %.1f pt, encoder symbols %.1f pt, titles %.1f pt at the "
-                                 "5.5 in print width; single-level sub/superscripts only" % (
-                                     BODY_PT, MATH_PT, SYMBOL_PT, TITLE_PT),
+                                 "5.5 in print width; single-level sub/superscripts only, drawn at %.1f x "
+                                 "their base size (matplotlib default 0.7) so that they print at >= 6 pt" % (
+                                     BODY_PT, MATH_PT, SYMBOL_PT, TITLE_PT, st.MATH_SCRIPT_SCALE),
+                       "math_script_scale": st.MATH_SCRIPT_SCALE,
                        "target_identity": "numbered tokens 1-4 in the Okabe-Ito group colours"},
+        "layout_guard": {"paper": paper_guard, "poster": poster_guard,
+                         "scope": ("figstyle_v2.layout_guard: every visible text artist (band titles, labels, "
+                                   "math labels, encoder symbols, all token digits) pairwise without collision "
+                                   "(2 pt horizontal / 0.5 pt vertical clearance) and fully inside the canvas "
+                                   "(0.5 pt margin); asserted before export"),
+                         "selftest": selftest},
         "caption_summary": (
             "From an OCT volume to I-JEPA pretraining and volume-level evaluation. (a) Each FairVision volume "
             "has 200 B-scans; pretraining and evaluation use the same 100 evenly spaced ones, resized to 256 by "

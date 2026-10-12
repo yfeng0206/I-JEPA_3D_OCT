@@ -529,13 +529,14 @@ background.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.71\linewidth]{fig_trajectories_ci.png}
+\includegraphics[width=\linewidth]{fig_trajectories_ci.png}
 \caption{\textbf{(a)} Frozen-probe test AUC against pretraining epoch; note the
-truncated AUC axis. The open star marks the shared epoch-25 ancestor.
-Solid lines are the
-precision-matched fp16 family; dashed lines are fp32
-arms and must not be compared vertically against the solid lines.
-\textbf{(b)} The actual inference: paired differences against the unguided null
+truncated AUC axis. Lines join the shared epoch-25 ancestor (star) to epochs 50,
+75 and 100; open markers are other checkpoints, not joined.
+Solid lines are fp16 probes and dashed lines fp32 probes; each $\Delta$ uses a
+precision-matched \textsc{random} (fp16/fp32 gap at most $2\times10^{-4}$,
+Appendix~\ref{app:fp32}).
+\textbf{(b)} Paired differences from \textsc{random}
 on identical test cases, \Nboot-resample percentile bootstrap intervals. Every
 \textsc{envelope} and \ArmBest{} interval excludes zero; \textsc{cover} straddles
 zero at epoch 50 and is negative thereafter.}
@@ -829,26 +830,8 @@ features after omitting patch $p$, the attribution is
 \end{equation}
 Positive values mean that removing the feature lowers the glaucoma logit;
 negative values mean that removal raises it. Both signs indicate
-prediction sensitivity. Figure~\ref{fig:archived_occlusion} shows selected
-archived examples of the resulting spatial patterns.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\linewidth]{fig_archived_occlusion_examples.png}
-\caption{Selected archived feature-occlusion examples from fine-tuned
-classifiers initialized with uniform-masking I-JEPA.
-Each pair shows an OCT B-scan and its patch-attribution overlay.
-Red denotes positive $\Delta_{s,p}$ and blue negative $\Delta_{s,p}$
-as defined in Equation~\ref{eq:occlusion_delta}.
-The archived plotting procedure interpolates patch values and uses a
-separate symmetric colour scale for each image; colour intensity is
-therefore not comparable across examples.
-Image panels are reproduced without recolouring.
-Original numerical headers and clinical annotations are omitted.
-These selected visualizations provide context for the retinal-targeting
-motivation, not a quantitative localization comparison.}
-\label{fig:archived_occlusion}
-\end{figure}
+prediction sensitivity. Selected archived displays are not reproduced because
+of the dataset licence.
 
 The historical report and selected overlays prompted us to investigate retinal
 regions as prediction targets. Those examples were selected from correctly

@@ -1,0 +1,872 @@
+{
+ "status": "programmatically_verified_trajectory_figure",
+ "figure": "auto/fig_trajectories_ci.png",
+ "producer": {
+  "file": "autopilot/p8_make_assets.py",
+  "sha256": "91dee0bfd898871423b608e8c8887f108cfcb70b24b4d0f845de07f8ac61dc1e",
+  "function": "draw_trajectories (called from main())"
+ },
+ "independent_validator": {
+  "file": "autopilot/numeric_plot_review.py",
+  "sha256": "efd8b3a186f18e1a49ce062c7117482c417a11d47f10cbae6ba3a08743352716",
+  "function": "p8_artists, fig_trajectories_ci.png branch (run by p15 on every audit; requires the delivered PNG bytes)"
+ },
+ "inputs": [
+  {
+   "root": "stats",
+   "path": "p1c_stats.json",
+   "sha256": "1653addb98ccba8cd4be8ca7f13dc1812ec749bd51b8e1b237db6768cf79f7b4",
+   "note": "original-run aggregate statistics (published results), read-only"
+  }
+ ],
+ "output": {
+  "path": "auto/fig_trajectories_ci.png",
+  "sha256": "c6c1bdab8d0f00353b324721319f531e050c6a524793b7e8cac55ac80bec71f6",
+  "inches": [
+   5.5,
+   2.05
+  ],
+  "dpi": 300,
+  "inclusion": "\\includegraphics[width=\\linewidth]: 5.5 in, scale 1.000"
+ },
+ "data_identity": "Every plotted coordinate equals p1c_stats.json (table rows and matched-precision contrasts), checked artist by artist by numeric_plot_review.p8_artists; the same values as the previous Fig. 3 for every point still drawn.",
+ "p8_bundle_identity": {
+  "outputs_sha256": {
+   "auto_numbers.tex": "d6f2c6201dd19c363ba51e1c006490eb7211af53615a45f2f62d4ef6bb80cbc2",
+   "table_allprobes.tex": "dcc31d5a0bf5cf2c9538a65a1f223b6fe033586d4d4bbfc4ccc96879cfdd0bf5",
+   "table_fairness.tex": "95fb065d4e7c90638fc4abdad82053429a9503c5b5e1b7c60b15aa3cc73b22eb",
+   "table_labeleff.tex": "8c3dc6b0b830055b9dfcf355aff970c6360f7fdf2b48f0fb18e29f87df4db546",
+   "table_main.tex": "969be178962ff2b6f6d420ec563f50d1e648a88de63e8a0069b382557eb20d33",
+   "table_operating.tex": "4562025c084847f2bde3be36f2a44c9184a6ab250e343a1c0fc5267aad897d35",
+   "table_paired_subgroup.tex": "074a1ecd38dafcec2c87c85bcc5fcc97ad45466f32e52a894f19db6b7a5db10a",
+   "table_subgroup_operating.tex": "4fe8e8569a57d6ca61cdd5d381c7a850fbe048523858e5eb9167bfc11e6ed4c1",
+   "table_subgroup_trends.tex": "4edc6013c4dec8a567168475b87db2cb3b57592bad699e6da786e38a988e10b2",
+   "fig_trajectories_ci.png": "c6c1bdab8d0f00353b324721319f531e050c6a524793b7e8cac55ac80bec71f6",
+   "fig_fairness.png": "003e4867ceffa5232d211ca4baa05697a23c3a76045e292fc118c7c4e7c1ac70",
+   "fig_roc.png": "0dbe1d493de657e913431edc1d87f2cbe418828e559ee501bf8095f768767857",
+   "fig_labeleff.png": "c38adc921b2d6d95771d4656549e6c127bc7b2052dcaef9136a9a2bc29c3d082"
+  },
+  "all_equal_paper_auto": true,
+  "note": "only draw_trajectories changed; every table, macro and other figure of the P8 bundle replays byte-identical"
+ },
+ "plotted": {
+  "ancestor": {
+   "key": "ancestor@ep25@fp32",
+   "table_index": 5,
+   "epoch": 25,
+   "auc": 0.848680032941369,
+   "marker": "filled star, legend entry 'ancestor'"
+  },
+  "panel_a_series": [
+   {
+    "arm": "random",
+    "label": "RANDOM",
+    "precision": "fp16",
+    "line_style": "solid",
+    "joined": [
+     {
+      "key": "ancestor@ep25@fp32",
+      "table_index": 5,
+      "epoch": 25,
+      "auc": 0.848680032941369
+     },
+     {
+      "key": "random@ep50@fp16",
+      "table_index": 25,
+      "epoch": 50,
+      "auc": 0.8640970649809413
+     },
+     {
+      "key": "random@ep75@fp16",
+      "table_index": 27,
+      "epoch": 75,
+      "auc": 0.8723021694701811
+     },
+     {
+      "key": "random@ep100@fp16",
+      "table_index": 29,
+      "epoch": 100,
+      "auc": 0.8745808957846787
+     }
+    ],
+    "unjoined_open_markers": []
+   },
+   {
+    "arm": "oracle",
+    "label": "CENTROID",
+    "precision": "fp16",
+    "line_style": "solid",
+    "joined": [
+     {
+      "key": "ancestor@ep25@fp32",
+      "table_index": 5,
+      "epoch": 25,
+      "auc": 0.848680032941369
+     },
+     {
+      "key": "oracle@ep50@fp16",
+      "table_index": 20,
+      "epoch": 50,
+      "auc": 0.8740299460522829
+     },
+     {
+      "key": "oracle@ep75@fp16",
+      "table_index": 22,
+      "epoch": 75,
+      "auc": 0.8836355478637025
+     },
+     {
+      "key": "oracle@ep100@fp16",
+      "table_index": 23,
+      "epoch": 100,
+      "auc": 0.8854851648224599
+     }
+    ],
+    "unjoined_open_markers": []
+   },
+   {
+    "arm": "envelope",
+    "label": "ENVELOPE",
+    "precision": "fp16",
+    "line_style": "solid",
+    "joined": [
+     {
+      "key": "ancestor@ep25@fp32",
+      "table_index": 5,
+      "epoch": 25,
+      "auc": 0.848680032941369
+     },
+     {
+      "key": "envelope@ep50@fp16",
+      "table_index": 14,
+      "epoch": 50,
+      "auc": 0.876064102267654
+     },
+     {
+      "key": "envelope@ep75@fp16",
+      "table_index": 16,
+      "epoch": 75,
+      "auc": 0.8803067264781372
+     },
+     {
+      "key": "envelope@ep100@fp16",
+      "table_index": 18,
+      "epoch": 100,
+      "auc": 0.8807433952733048
+     }
+    ],
+    "unjoined_open_markers": []
+   },
+   {
+    "arm": "anatomy-v2",
+    "label": "ANATOMY-V2",
+    "precision": "fp32",
+    "line_style": "dashed",
+    "joined": [
+     {
+      "key": "ancestor@ep25@fp32",
+      "table_index": 5,
+      "epoch": 25,
+      "auc": 0.848680032941369
+     },
+     {
+      "key": "anatomy-v2@ep50@fp32",
+      "table_index": 3,
+      "epoch": 50,
+      "auc": 0.8653855047304304
+     },
+     {
+      "key": "anatomy-v2@ep75@fp32",
+      "table_index": 4,
+      "epoch": 75,
+      "auc": 0.8612460446344877
+     }
+    ],
+    "unjoined_open_markers": [
+     {
+      "key": "anatomy-v2@ep35@fp32",
+      "table_index": 1,
+      "epoch": 35,
+      "auc": 0.8661285531588674
+     },
+     {
+      "key": "anatomy-v2@ep40@fp32",
+      "table_index": 2,
+      "epoch": 40,
+      "auc": 0.8682514216192853
+     }
+    ]
+   },
+   {
+    "arm": "cover-f021",
+    "label": "COVER",
+    "precision": "fp32",
+    "line_style": "dashed",
+    "joined": [
+     {
+      "key": "ancestor@ep25@fp32",
+      "table_index": 5,
+      "epoch": 25,
+      "auc": 0.848680032941369
+     },
+     {
+      "key": "cover-f021@ep50@fp32",
+      "table_index": 9,
+      "epoch": 50,
+      "auc": 0.8642813819011012
+     },
+     {
+      "key": "cover-f021@ep75@fp32",
+      "table_index": 11,
+      "epoch": 75,
+      "auc": 0.8638576086202511
+     },
+     {
+      "key": "cover-f021@ep100@fp32",
+      "table_index": 12,
+      "epoch": 100,
+      "auc": 0.857663759691646
+     }
+    ],
+    "unjoined_open_markers": [
+     {
+      "key": "cover-f021@ep27@fp32",
+      "table_index": 6,
+      "epoch": 27,
+      "auc": 0.848346528260742
+     },
+     {
+      "key": "cover-f021@ep30@fp32",
+      "table_index": 7,
+      "epoch": 30,
+      "auc": 0.8522489776969856
+     },
+     {
+      "key": "cover-f021@ep34@fp32",
+      "table_index": 8,
+      "epoch": 34,
+      "auc": 0.8570825722015399
+     },
+     {
+      "key": "cover-f021@ep73@fp32",
+      "table_index": 10,
+      "epoch": 73,
+      "auc": 0.8647171613504538
+     }
+    ]
+   }
+  ],
+  "panel_b_paired_deltas": [
+   {
+    "label": "ENVELOPE",
+    "contrast_index": 339,
+    "a": "envelope@ep50@fp16",
+    "b": "random@ep50@fp16",
+    "delta_a_minus_b": 0.011967037286712667,
+    "boot_ci95_lo": 0.006753775495321207,
+    "boot_ci95_hi": 0.01729422427700628,
+    "x_offset": -0.22
+   },
+   {
+    "label": "ENVELOPE",
+    "contrast_index": 370,
+    "a": "envelope@ep75@fp16",
+    "b": "random@ep75@fp16",
+    "delta_a_minus_b": 0.008004557007956103,
+    "boot_ci95_lo": 0.0028146516610311452,
+    "boot_ci95_hi": 0.013235505664243537,
+    "x_offset": -0.22
+   },
+   {
+    "label": "ENVELOPE",
+    "contrast_index": 397,
+    "a": "envelope@ep100@fp16",
+    "b": "random@ep100@fp16",
+    "delta_a_minus_b": 0.0061624994886262385,
+    "boot_ci95_lo": 0.0009593484474690245,
+    "boot_ci95_hi": 0.011312928998187425,
+    "x_offset": -0.22
+   },
+   {
+    "label": "CENTROID",
+    "contrast_index": 414,
+    "a": "oracle@ep50@fp16",
+    "b": "random@ep50@fp16",
+    "delta_a_minus_b": 0.009932881071341493,
+    "boot_ci95_lo": 0.005113716202635671,
+    "boot_ci95_hi": 0.014933894925570679,
+    "x_offset": 0.0
+   },
+   {
+    "label": "CENTROID",
+    "contrast_index": 433,
+    "a": "oracle@ep75@fp16",
+    "b": "random@ep75@fp16",
+    "delta_a_minus_b": 0.011333378393521443,
+    "boot_ci95_lo": 0.006345765869042022,
+    "boot_ci95_hi": 0.016368159596663927,
+    "x_offset": 0.0
+   },
+   {
+    "label": "CENTROID",
+    "contrast_index": 442,
+    "a": "oracle@ep100@fp16",
+    "b": "random@ep100@fp16",
+    "delta_a_minus_b": 0.010904269037781189,
+    "boot_ci95_lo": 0.005686777295357118,
+    "boot_ci95_hi": 0.016038251208176316,
+    "x_offset": 0.0
+   },
+   {
+    "label": "COVER",
+    "contrast_index": 250,
+    "a": "cover-f021@ep50@fp32",
+    "b": "random@ep50@fp32",
+    "delta_a_minus_b": 0.0001600822467009433,
+    "boot_ci95_lo": -0.004985250199658125,
+    "boot_ci95_hi": 0.005279512496198047,
+    "x_offset": 0.22
+   },
+   {
+    "label": "COVER",
+    "contrast_index": 291,
+    "a": "cover-f021@ep75@fp32",
+    "b": "random@ep75@fp32",
+    "delta_a_minus_b": -0.008443893840568872,
+    "boot_ci95_lo": -0.01458671655303792,
+    "boot_ci95_hi": -0.0025470197132393246,
+    "x_offset": 0.22
+   },
+   {
+    "label": "COVER",
+    "contrast_index": 311,
+    "a": "cover-f021@ep100@fp32",
+    "b": "random@ep100@fp32",
+    "delta_a_minus_b": -0.016821531417919644,
+    "boot_ci95_lo": -0.023333421526793324,
+    "boot_ci95_hi": -0.010505786528545377,
+    "x_offset": 0.22
+   }
+  ],
+  "n_bootstrap": 10000,
+  "not_drawn": {
+   "rows": [
+    "anatomy-v1@ep30@fp32",
+    "envelope@ep100@fp32",
+    "envelope@ep30@fp32",
+    "envelope@ep50@fp32",
+    "envelope@ep75@fp32",
+    "oracle@ep100@fp32",
+    "oracle@ep50@fp32",
+    "random@ep100@fp32",
+    "random@ep50@fp32",
+    "random@ep75@fp32"
+   ],
+   "reason": "anatomy-v1@ep30 is the excluded continuation reported only in the appendix (main text: 'The early ANATOMY-V1 continuation is reported in Appendix'); the fp32 re-probes of RANDOM, CENTROID and ENVELOPE are Table 1's lower block and Appendix fp32, not trajectories (the previous Fig. 3 omitted them as well)"
+  }
+ },
+ "design": {
+  "review": "R1 polish review F1/H5 (readability, encoding) and M4 (caption wording)",
+  "print_size": "drawn at 5.5 x 2.05 in and included at \\linewidth (1:1); every text 7 pt",
+  "epoch_axis": "ticks only at the measured common epochs 25, 50, 75, 100; lines join the ancestor and epochs 50/75/100; other checkpoints (ANATOMY-V2 35, 40; COVER 27, 30, 34, 73) are unjoined open markers, so no interpolation crosses uneven epoch grids",
+  "precision": "solid = fp16 family, dashed = fp32 arms (ANATOMY-V2, COVER); panel (b) deltas use the precision-matched RANDOM (p8 matched_trajectory_keys)",
+  "colours": "the paper's single arm mapping (p8 COL): RANDOM #000000, CENTROID #882255, ENVELOPE #0072B2, ANATOMY-V2 #666666, COVER #009E73, ancestor #333333; unique marker per arm",
+  "legend": "one row above both panels, upper-case arm names, ancestor as a legend entry (no arrow)",
+  "anatomy_v1": "not drawn (excluded continuation, appendix only)",
+  "panel_b": "x = epoch 50 / 75 / 100, y = Delta AUC vs RANDOM, zero line, 95% bootstrap intervals"
+ },
+ "typography": {
+  "text_sizes_pt_at_print": [
+   7.0
+  ],
+  "min_text_pt": 7.0
+ },
+ "layout_guard": {
+  "texts_checked": 31,
+  "pad_pt": [
+   2.0,
+   0.5
+  ],
+  "canvas_margin_pt": 0.5,
+  "overlaps": [],
+  "outside_canvas": []
+ },
+ "texts": [
+  "$\\Delta$AUC vs RANDOM",
+  "(a) Frozen-probe test AUC",
+  "(b) Paired difference, 95% bootstrap CI",
+  "-0.01",
+  "-0.02",
+  "-0.03",
+  "0.00",
+  "0.01",
+  "0.02",
+  "0.84",
+  "0.85",
+  "0.86",
+  "0.87",
+  "0.88",
+  "0.89",
+  "100",
+  "100",
+  "25",
+  "50",
+  "50",
+  "75",
+  "75",
+  "ANATOMY-V2",
+  "CENTROID",
+  "COVER",
+  "ENVELOPE",
+  "RANDOM",
+  "ancestor",
+  "pretraining epoch",
+  "pretraining epoch",
+  "test AUC"
+ ],
+ "legend": [
+  "RANDOM",
+  "CENTROID",
+  "ENVELOPE",
+  "ANATOMY-V2",
+  "COVER",
+  "ancestor"
+ ],
+ "titles": [
+  "(a) Frozen-probe test AUC",
+  "(b) Paired difference, 95% bootstrap CI"
+ ],
+ "axis_labels": [
+  [
+   "pretraining epoch",
+   "test AUC"
+  ],
+  [
+   "pretraining epoch",
+   "$\\Delta$AUC vs RANDOM"
+  ]
+ ],
+ "artist_replay": {
+  "status": "programmatically_verified_plotted_values",
+  "observed_series": [
+   {
+    "semantic_key": "ancestor AUC",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/auc"
+     }
+    ],
+    "observed": [
+     0.848680032941369
+    ]
+   },
+   {
+    "semantic_key": "ancestor epoch",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/epoch"
+     }
+    ],
+    "observed": [
+     25
+    ]
+   },
+   {
+    "semantic_key": "random epochs",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/25/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/27/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/29/epoch"
+     }
+    ],
+    "observed": [
+     25,
+     50,
+     75,
+     100
+    ]
+   },
+   {
+    "semantic_key": "random AUC",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/25/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/27/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/29/auc"
+     }
+    ],
+    "observed": [
+     0.848680032941369,
+     0.8640970649809413,
+     0.8723021694701811,
+     0.8745808957846787
+    ]
+   },
+   {
+    "semantic_key": "oracle epochs",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/20/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/22/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/23/epoch"
+     }
+    ],
+    "observed": [
+     25,
+     50,
+     75,
+     100
+    ]
+   },
+   {
+    "semantic_key": "oracle AUC",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/20/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/22/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/23/auc"
+     }
+    ],
+    "observed": [
+     0.848680032941369,
+     0.8740299460522829,
+     0.8836355478637025,
+     0.8854851648224599
+    ]
+   },
+   {
+    "semantic_key": "envelope epochs",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/14/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/16/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/18/epoch"
+     }
+    ],
+    "observed": [
+     25,
+     50,
+     75,
+     100
+    ]
+   },
+   {
+    "semantic_key": "envelope AUC",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/14/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/16/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/18/auc"
+     }
+    ],
+    "observed": [
+     0.848680032941369,
+     0.876064102267654,
+     0.8803067264781372,
+     0.8807433952733048
+    ]
+   },
+   {
+    "semantic_key": "anatomy-v2 epochs",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/3/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/4/epoch"
+     }
+    ],
+    "observed": [
+     25,
+     50,
+     75
+    ]
+   },
+   {
+    "semantic_key": "anatomy-v2 AUC",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/3/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/4/auc"
+     }
+    ],
+    "observed": [
+     0.848680032941369,
+     0.8653855047304304,
+     0.8612460446344877
+    ]
+   },
+   {
+    "semantic_key": "anatomy-v2 unjoined checkpoint epochs",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/1/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/2/epoch"
+     }
+    ],
+    "observed": [
+     35,
+     40
+    ]
+   },
+   {
+    "semantic_key": "anatomy-v2 unjoined checkpoint AUC",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/1/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/2/auc"
+     }
+    ],
+    "observed": [
+     0.8661285531588674,
+     0.8682514216192853
+    ]
+   },
+   {
+    "semantic_key": "cover-f021 epochs",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/9/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/11/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/12/epoch"
+     }
+    ],
+    "observed": [
+     25,
+     50,
+     75,
+     100
+    ]
+   },
+   {
+    "semantic_key": "cover-f021 AUC",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/5/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/9/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/11/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/12/auc"
+     }
+    ],
+    "observed": [
+     0.848680032941369,
+     0.8642813819011012,
+     0.8638576086202511,
+     0.857663759691646
+    ]
+   },
+   {
+    "semantic_key": "cover-f021 unjoined checkpoint epochs",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/6/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/7/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/8/epoch"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/10/epoch"
+     }
+    ],
+    "observed": [
+     27,
+     30,
+     34,
+     73
+    ]
+   },
+   {
+    "semantic_key": "cover-f021 unjoined checkpoint AUC",
+    "expressions": [
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/6/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/7/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/8/auc"
+     },
+     {
+      "source": "p1c_stats.json",
+      "pointer": "/table/10/auc"
+     }
+    ],
+    "observed": [
+     0.848346528260742,
+     0.8522489776969856,
+     0.8570825722015399,
+     0.8647171613504538
+    ]
+   },
+   {
+    "semantic_key": "envelope@ep50@fp16 minus random@ep50@fp16",
+    "source": "p1c_stats.json",
+    "pointer": "/contrasts/339"
+   },
+   {
+    "semantic_key": "envelope@ep75@fp16 minus random@ep75@fp16",
+    "source": "p1c_stats.json",
+    "pointer": "/contrasts/370"
+   },
+   {
+    "semantic_key": "envelope@ep100@fp16 minus random@ep100@fp16",
+    "source": "p1c_stats.json",
+    "pointer": "/contrasts/397"
+   },
+   {
+    "semantic_key": "oracle@ep50@fp16 minus random@ep50@fp16",
+    "source": "p1c_stats.json",
+    "pointer": "/contrasts/414"
+   },
+   {
+    "semantic_key": "oracle@ep75@fp16 minus random@ep75@fp16",
+    "source": "p1c_stats.json",
+    "pointer": "/contrasts/433"
+   },
+   {
+    "semantic_key": "oracle@ep100@fp16 minus random@ep100@fp16",
+    "source": "p1c_stats.json",
+    "pointer": "/contrasts/442"
+   },
+   {
+    "semantic_key": "cover-f021@ep50@fp32 minus random@ep50@fp32",
+    "source": "p1c_stats.json",
+    "pointer": "/contrasts/250"
+   },
+   {
+    "semantic_key": "cover-f021@ep75@fp32 minus random@ep75@fp32",
+    "source": "p1c_stats.json",
+    "pointer": "/contrasts/291"
+   },
+   {
+    "semantic_key": "cover-f021@ep100@fp32 minus random@ep100@fp32",
+    "source": "p1c_stats.json",
+    "pointer": "/contrasts/311"
+   }
+  ]
+ },
+ "limits": "Original single runs; intervals are test-case bootstrap intervals, not seed variation. No new result; no FairVision pixels."
+}

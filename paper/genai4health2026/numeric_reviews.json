@@ -135,7 +135,7 @@
     "lr_p8_code": {
       "root": "repo",
       "path": "autopilot\\p8_make_assets.py",
-      "sha256": "fdc233fbad0cc0a25cf3f64700f2f4c178d1a0ae63b4571c491465a608f1eff7"
+      "sha256": "91dee0bfd898871423b608e8c8887f108cfcb70b24b4d0f845de07f8ac61dc1e"
     },
     "lr_p5_code": {
       "root": "repo",
@@ -402,31 +402,6 @@
       "path": "autopilot\\investigations\\submission_refresh_20260910\\comparison_final\\generate_comparison_final.py",
       "sha256": "0ac3b4507ce3e158e3851e55cf7a0cdfcdefce94cd89630522955e9b010497e3"
     },
-    "archived_overlay_manifest": {
-      "root": "repo",
-      "path": "autopilot\\investigations\\submission_refresh_20260910\\archived_occlusion\\evidence.json",
-      "sha256": "fa94e7aa59e22c2632900d623c20a57ce3f4264b35813520361d346a087d29a9"
-    },
-    "archived_overlay_generator": {
-      "root": "repo",
-      "path": "autopilot\\investigations\\submission_refresh_20260910\\archived_occlusion\\generate_archived_occlusion.py",
-      "sha256": "779f2c14d45aec49453ec009dd71bf6b1d88dd117860bfe474bb026b52a06a85"
-    },
-    "archived_overlay_source": {
-      "root": "repo",
-      "path": "results\\summary\\heatmap_grid.png",
-      "sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb"
-    },
-    "archived_overlay_assembly": {
-      "root": "repo",
-      "path": "scripts\\assemble_heatmap_grid.py",
-      "sha256": "2cd3d678e2dc5b5190e997256d926faf098382f04efa14d3a36e2d7a3a05780d"
-    },
-    "archived_overlay_prior_review": {
-      "root": "repo",
-      "path": "autopilot\\investigations\\delivered_task\\evidence\\legacy_figure_reviews\\REVIEW.md",
-      "sha256": "3c83752a07346d0f13f8098ed7334f7ff1800d29095366061cc217a10cd5460f"
-    },
     "cr_mask_bs64": {
       "root": "repo",
       "path": "autopilot/investigations/camera_ready_20261008/mask_audit/delivered_mask_audit_trained_3seeds_100draws.json",
@@ -530,27 +505,27 @@
     "i13_fig_strategies_evidence": {
       "root": "repo",
       "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\fig_oct_strategies_v2.evidence.json",
-      "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
+      "sha256": "df580830bf7213a511aab4c55353775f205930a08ac802a7100f93aa3ad42a94"
     },
     "i13_fig_volume_evidence": {
       "root": "repo",
       "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\fig_oct_jepa_volume_v2.evidence.json",
-      "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+      "sha256": "e1ed62e03076a69dd0b6c2e87acbdaf30a5cec9c019bbdcd9f0bb21abcbed534"
     },
     "i13_fig_strategies_generator": {
       "root": "repo",
       "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\generate_strategies_v2.py",
-      "sha256": "51237633162210f581b33cf6c4e2e4c730be67d9ee701a446d1c62c885be9a4d"
+      "sha256": "32f1e85feb461235e1c8c65e7ca4632b86ff15071ae0b306050d5c52755e1772"
     },
     "i13_fig_volume_generator": {
       "root": "repo",
       "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\generate_framework_v2.py",
-      "sha256": "41f285709361c8985e6d39b23cb93be4ce9f9f01ffc66c27312c998c4aebc7eb"
+      "sha256": "d7342bf0d70e75a0ed4ccb73b727de6a7d6f72350a13b24aea68b178cb0a0dc4"
     },
     "i13_figstyle": {
       "root": "repo",
       "path": "autopilot\\investigations\\camera_ready_20261008\\figures_v2\\figstyle_v2.py",
-      "sha256": "375827e5aef90b703abdc12c599729395251615f98e335733e08f34ca4f4fe36"
+      "sha256": "5753f6350d6b0d504413341c8218208d3016ba9368c85e607ba958d2d9d3539c"
     }
   },
   "macros": {
@@ -5089,40 +5064,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "56b70901b9bee988162a8b71978652117a071662ad95140d696d5a91cffbb20d",
-      "token_index": 1,
-      "value": "-25",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/5"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "56b70901b9bee988162a8b71978652117a071662ad95140d696d5a91cffbb20d",
-      "token_index": 4,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for cover-f021, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/9"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "3aa303657401dc1934d62215bf9a7a02cf70818dc619a45979db46d36ff73f4b",
       "token_index": 0,
       "value": "50",
@@ -6051,84 +5992,394 @@
           }
         ]
       }
-    }
-  ],
-  "figures": [
+    },
     {
-      "path": "figures/fig_archived_occlusion_examples.png",
-      "sha256": "9792883349d0c3b173f41be67e3ab9cbc3a7c621c3d51934fe341ee724fae391",
-      "caption_sha256": "10f070b96284f345ece396a5786de9759184eb95c95798516655e95028e7e545",
-      "inputs": [
-        {
-          "source": "archived_overlay_manifest",
-          "pointer": "/mapping",
-          "sha256": "fa94e7aa59e22c2632900d623c20a57ce3f4264b35813520361d346a087d29a9"
-        },
-        {
-          "source": "archived_overlay_generator",
-          "pointer": "/",
-          "sha256": "779f2c14d45aec49453ec009dd71bf6b1d88dd117860bfe474bb026b52a06a85"
-        },
-        {
-          "source": "archived_overlay_source",
-          "pointer": "/sha256",
-          "sha256": "be5e3b32966606710c13c937cdd1362f22d876078e8a54288d2c69b48fc0e7bb"
-        },
-        {
-          "source": "archived_overlay_assembly",
-          "pointer": "/",
-          "sha256": "2cd3d678e2dc5b5190e997256d926faf098382f04efa14d3a36e2d7a3a05780d"
-        },
-        {
-          "source": "archived_overlay_prior_review",
-          "pointer": "/",
-          "sha256": "3c83752a07346d0f13f8098ed7334f7ff1800d29095366061cc217a10cd5460f"
-        },
-        {
-          "source": "lr_interpretability_code",
-          "pointer": "/",
-          "sha256": "ffb1ebefb9ba7420b27beae5f3e03a49aad73666468e0ee2d8f00c79f730f1cc"
-        }
-      ],
-      "validation": {
-        "method": "reviewed_historical_illustration",
-        "reviewer": "GitHub Copilot archived-panel/source/normalization review, 2026-09-10",
-        "quantitative_scope": "illustrative_only",
-        "limitations": "User-requested historical visualization from diagnosis-fine-tuned classifiers initialized with uniform I-JEPA. All six curated pairs are retained, not matched subjects across model columns. Per-image symmetric scaling, linear interpolation and alpha blending are documented, not newly reconstructed from absent attribution arrays. No cross-image magnitude, sub-patch detail, disease localization, population effect or masking mechanism is validated. This is a new review of stripped panel crops, not approval of the old quantitative/clinical headings or a new licence/de-identification determination.",
-        "review_checks": [
-          "Visually inspected the final image: twelve panels, neutral model/selection headings, no probability, contribution, volume/slice identifier or clinical-interpretation headings.",
-          "Independently compared all twelve exported panel regions pixel-for-pixel to the archived source; all six source rows and both original/overlay sides are preserved without recolouring or resizing.",
-          "Read prior REVIEW.md conditional-retention requirements and verified this is the original heatmap-grid variant, not the shared-scale/mean-subtracted B+C variant.",
-          "Read interpretability.py: alternative B-scan mean omits patch p with denominator P-1; contribution is baseline_logit minus alt_logits. This supports the new delta equation and both sign interpretations.",
-          "Documented renderer uses per-image max absolute heatmap limits, linear zoom, RdBu_r and alpha blending; caption forbids cross-image magnitude comparison and discloses the archived status.",
-          "Producer/source/code/output hashes are pinned; raw attribution arrays remain unavailable and no new analysis was run."
+      "file": "main_submission.tex",
+      "context_sha256": "b00a0b94d90c6666cd0a69677747a584247b323923e5305f2a10b1b416ae11de",
+      "token_index": 0,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the lane-B Fig. 3 caption edit (GitHub Copilot I13, 2026-10-12)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/5"
+          }
         ]
       }
     },
     {
+      "file": "main_submission.tex",
+      "context_sha256": "b00a0b94d90c6666cd0a69677747a584247b323923e5305f2a10b1b416ae11de",
+      "token_index": 1,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 lane-B figure review, 2026-10-12",
+        "rationale": "Measured checkpoint epoch 50, one of the epochs 50, 75 and 100 that every arm drawn in Fig. 3(a) shares (ANATOMY-V2 has no epoch-100 checkpoint); lines join only these and the epoch-25 ancestor.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/25"
+          },
+          {
+            "source": "lr_p8_code",
+            "excerpt": "TRAJ_COMMON_EPOCHS = (50, 75, 100)"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "b00a0b94d90c6666cd0a69677747a584247b323923e5305f2a10b1b416ae11de",
+      "token_index": 2,
+      "value": "75",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 lane-B figure review, 2026-10-12",
+        "rationale": "Measured checkpoint epoch 75, one of the epochs 50, 75 and 100 that every arm drawn in Fig. 3(a) shares (ANATOMY-V2 has no epoch-100 checkpoint); lines join only these and the epoch-25 ancestor.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/27"
+          },
+          {
+            "source": "lr_p8_code",
+            "excerpt": "TRAJ_COMMON_EPOCHS = (50, 75, 100)"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "b00a0b94d90c6666cd0a69677747a584247b323923e5305f2a10b1b416ae11de",
+      "token_index": 3,
+      "value": "100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I13 lane-B figure review, 2026-10-12",
+        "rationale": "Measured checkpoint epoch 100, one of the epochs 50, 75 and 100 that every arm drawn in Fig. 3(a) shares (ANATOMY-V2 has no epoch-100 checkpoint); lines join only these and the epoch-25 ancestor.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/29"
+          },
+          {
+            "source": "lr_p8_code",
+            "excerpt": "TRAJ_COMMON_EPOCHS = (50, 75, 100)"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "b00a0b94d90c6666cd0a69677747a584247b323923e5305f2a10b1b416ae11de",
+      "token_index": 8,
+      "value": "2",
+      "assertion": {
+        "expression": {
+          "op": "max",
+          "args": [
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/0/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/1/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/2/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/3/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/4/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/5/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/6/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/7/delta_fp32_minus_fp16"
+                }
+              ]
+            }
+          ]
+        },
+        "relation": "le",
+        "bound": "2\\times10^{-4}",
+        "component": 0
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "b00a0b94d90c6666cd0a69677747a584247b323923e5305f2a10b1b416ae11de",
+      "token_index": 9,
+      "value": "10",
+      "assertion": {
+        "expression": {
+          "op": "max",
+          "args": [
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/0/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/1/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/2/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/3/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/4/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/5/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/6/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/7/delta_fp32_minus_fp16"
+                }
+              ]
+            }
+          ]
+        },
+        "relation": "le",
+        "bound": "2\\times10^{-4}",
+        "component": 1
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "b00a0b94d90c6666cd0a69677747a584247b323923e5305f2a10b1b416ae11de",
+      "token_index": 10,
+      "value": "-4",
+      "assertion": {
+        "expression": {
+          "op": "max",
+          "args": [
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/0/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/1/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/2/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/3/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/4/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/5/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/6/delta_fp32_minus_fp16"
+                }
+              ]
+            },
+            {
+              "op": "abs",
+              "args": [
+                {
+                  "source": "lr_fp32",
+                  "pointer": "/rows/7/delta_fp32_minus_fp16"
+                }
+              ]
+            }
+          ]
+        },
+        "relation": "le",
+        "bound": "2\\times10^{-4}",
+        "component": 2
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "b00a0b94d90c6666cd0a69677747a584247b323923e5305f2a10b1b416ae11de",
+      "token_index": 12,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the lane-B Fig. 3 caption edit (GitHub Copilot I13, 2026-10-12)",
+        "rationale": "Reviewed checkpoint/analysis epoch descriptor for cover-f021, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/9"
+          }
+        ]
+      }
+    }
+  ],
+  "figures": [
+    {
       "path": "figures/fig_oct_strategies_v2.png",
-      "sha256": "1931620fc9140cbf6bd78af2cc364bbb1353bc321b993564050d489a37c7ed2f",
+      "sha256": "63d95c7e5f20baae1e16b4c7320e474b91b59184d51a83bd561ac3bdea40141b",
       "caption_sha256": "0c04ff6d80f5acb9765e7abc0616ee33ba27b04d52a6588e6ecaa55db59358ca",
       "inputs": [
         {
           "source": "i13_fig_strategies_evidence",
           "pointer": "/plotted/masks",
-          "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
+          "sha256": "df580830bf7213a511aab4c55353775f205930a08ac802a7100f93aa3ad42a94"
         },
         {
           "source": "i13_fig_strategies_evidence",
           "pointer": "/plotted/guide_overlays",
-          "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
+          "sha256": "df580830bf7213a511aab4c55353775f205930a08ac802a7100f93aa3ad42a94"
         },
         {
           "source": "i13_fig_strategies_evidence",
           "pointer": "/replay",
-          "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
+          "sha256": "df580830bf7213a511aab4c55353775f205930a08ac802a7100f93aa3ad42a94"
         },
         {
           "source": "i13_fig_strategies_evidence",
           "pointer": "/guide_products",
-          "sha256": "009500e8db549654d720e8c4aecfdaca4c1baeaeb6b162b0a150aff66e5c06f1"
+          "sha256": "df580830bf7213a511aab4c55353775f205930a08ac802a7100f93aa3ad42a94"
         },
         {
           "source": "cr_figall_evidence",
@@ -6143,7 +6394,7 @@
         {
           "source": "i13_fig_strategies_generator",
           "pointer": "/",
-          "sha256": "51237633162210f581b33cf6c4e2e4c730be67d9ee701a446d1c62c885be9a4d"
+          "sha256": "32f1e85feb461235e1c8c65e7ca4632b86ff15071ae0b306050d5c52755e1772"
         },
         {
           "source": "external_oct_source_image",
@@ -6158,7 +6409,7 @@
         {
           "source": "i13_figstyle",
           "pointer": "/",
-          "sha256": "375827e5aef90b703abdc12c599729395251615f98e335733e08f34ca4f4fe36"
+          "sha256": "5753f6350d6b0d504413341c8218208d3016ba9368c85e607ba958d2d9d3539c"
         }
       ],
       "validation": {
@@ -6167,7 +6418,7 @@
         "quantitative_scope": "illustrative_only",
         "limitations": "Attributed CC BY 4.0 OCTDL Figure 1 crop (arXiv:2312.08255v3), not FairVision. A single fixed-seed replay for one image with matched block sizes (batch size 1: no additional cross-image shortening; target-group collation still applies, so each rectangle group is truncated to 40 indices and ANATOMY-V2 groups are resampled to 16); masks are the staged camera-ready replay indices (autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_all_strategies.evidence.json), re-derived from the samplers pinned at commit 86ae882 by the producer's --replay check. MIRAGE envelope and soft scores were produced on this crop by the training guide pipelines; MIRAGE was not trained on OCTDL, so they are not a validated segmentation. Not a segmentation annotation, historical training batch, evaluation sample, cohort statistic or performance comparison. Hash and evidence checks are not mathematical verification of every rendered pixel.",
         "review_checks": [
-          "Final PNG rendered and inspected at paper scale: two rows (guide A_s(x); I-JEPA view with context, four Okabe-Ito target groups each also identified by a numeral 1-4 with white halo at the top-left 2x2 square of its own cells, grey hidden-not-target cells, repeated-index dots left uncovered) over RANDOM, CENTROID, ENVELOPE, ANATOMY-V2 and COVER; a target-rule line per column whose words equal the target-shape and placement cells of Table tab:strategies (checked by the producer); legend with numbered swatches and attribution line; no identifiers or performance readouts; no text overlap (producer assertion).",
+          "Final PNG rendered and inspected at paper scale: two rows (guide A_s(x); I-JEPA view with context, four Okabe-Ito target groups each also identified by a numeral 1-4 with white halo at the top-left 2x2 square of its own cells, grey hidden-not-target cells, repeated-index dots left uncovered) over RANDOM, CENTROID, ENVELOPE, ANATOMY-V2 and COVER; a target-rule line per column whose words equal the target-shape and placement cells of Table tab:strategies (checked by the producer); legend with numbered swatches and attribution line; no identifiers or performance readouts. Layout guard (producer assertion, lane B): all 61 drawn texts, numerals and legend digits included, pairwise collision-free and inside the canvas; guard self-test regression cases recorded in the evidence. Smallest PDF text span 6.08 pt (math subscripts at 0.8 x base; ordinary labels >= 6.5 pt).",
           "Soft guides drawn for every cell with score > 0 (opacity 0.8 x min(score, 1)); the first export's 0.02 display cutoff (23 cells, 0.24% of the summed score) was removed and is recorded in the evidence (plotted.display_transformations).",
           "Producer --replay: masks recomputed from the pinned sampler sources equal the staged indices (masks_equal_staged true) and the CENTROID guide equals the staged guide.",
           "Guide grids rebuilt through GuidedOCTSliceDataset hash-match the staged replay (grid_sha256_equal_staged true).",
@@ -6178,28 +6429,28 @@
     },
     {
       "path": "figures/fig_oct_jepa_volume_v2.png",
-      "sha256": "f1d601b7320f09d8bbafe107e47cd2c99addad6787f463185fc2ccd2b94a26d2",
+      "sha256": "cbd33acb96adce0e827127a8b374b63e8e322bc5a0efd3a44fed4cce09bf775d",
       "caption_sha256": "9ca513e0354653c8ce8c03c813d6e306a829c8b91048663a5abd07c2e2983ba3",
       "inputs": [
         {
           "source": "i13_fig_volume_evidence",
           "pointer": "/plotted/a_volume",
-          "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+          "sha256": "e1ed62e03076a69dd0b6c2e87acbdaf30a5cec9c019bbdcd9f0bb21abcbed534"
         },
         {
           "source": "i13_fig_volume_evidence",
           "pointer": "/plotted/b_pretraining",
-          "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+          "sha256": "e1ed62e03076a69dd0b6c2e87acbdaf30a5cec9c019bbdcd9f0bb21abcbed534"
         },
         {
           "source": "i13_fig_volume_evidence",
           "pointer": "/plotted/c_evaluation",
-          "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+          "sha256": "e1ed62e03076a69dd0b6c2e87acbdaf30a5cec9c019bbdcd9f0bb21abcbed534"
         },
         {
           "source": "i13_fig_volume_evidence",
           "pointer": "/source_facts",
-          "sha256": "416591a04dcda845a662e6bc18042a02120220c062eb22b2b45a372f8ce38407"
+          "sha256": "e1ed62e03076a69dd0b6c2e87acbdaf30a5cec9c019bbdcd9f0bb21abcbed534"
         },
         {
           "source": "cr_figall_evidence",
@@ -6224,7 +6475,7 @@
         {
           "source": "i13_fig_volume_generator",
           "pointer": "/",
-          "sha256": "41f285709361c8985e6d39b23cb93be4ce9f9f01ffc66c27312c998c4aebc7eb"
+          "sha256": "d7342bf0d70e75a0ed4ccb73b727de6a7d6f72350a13b24aea68b178cb0a0dc4"
         },
         {
           "source": "external_oct_source_image",
@@ -6239,7 +6490,7 @@
         {
           "source": "i13_figstyle",
           "pointer": "/",
-          "sha256": "375827e5aef90b703abdc12c599729395251615f98e335733e08f34ca4f4fe36"
+          "sha256": "5753f6350d6b0d504413341c8218208d3016ba9368c85e607ba958d2d9d3539c"
         }
       ],
       "validation": {
@@ -6248,7 +6499,7 @@
         "quantitative_scope": "illustrative_only",
         "limitations": "Schematic of the implemented protocol, drawn from source facts recorded with file, line and sha256 in the evidence (loaders, transforms, train_patch.jepa_forward_loss, eval_downstream pooling and LinearHead, registered probe config). Volume stacks are drawn schematics, not data; the example B-scan and CENTROID masks are the attributed CC BY 4.0 OCTDL crop and staged replay indices of the strategy figure. Encoder shapes and token/vector icons are illustrative, not measured features. No cohort statistic, result or performance claim.",
         "review_checks": [
-          "V12 typography revision and author polish: three full-width bands; every label >= 6.6 pt and math >= 7.6 pt at the 5.5 in print width (sub/superscripts >= 5.3 pt, none nested; measured from the PDF, evidence typography); target identity carried by numbered tokens 1-4; pooling steps drawn as operator boxes on the arrows; no text overlap (producer assertion).",
+          "V12 typography revision and author polish: three full-width bands; every label >= 6.6 pt and math >= 7.6 pt at the 5.5 in print width (single-level sub/superscripts drawn at 0.8 x base, >= 6.08 pt, none nested; measured from the PDF, evidence typography); target identity carried by numbered tokens 1-4; pooling steps drawn as operator boxes on the arrows. Layout guard (producer assertion, lane B): all 69 drawn texts, token digits included, pairwise collision-free and inside the canvas; guard self-test regression cases recorded in the evidence.",
           "Final PNG rendered and inspected at paper scale: (a) 200 B-scans with alternate slices marked used, indices 0, 2, ..., 196, 199, resize to 256 x 256, 16 x 16 patch grid (N = 256); (b) view x, guide, sampler, context view, f_theta, g_phi with mask tokens at T positions, EMA f_theta_bar on the full view, LayerNorm and select T_m with stop-gradient, Smooth-L1 per T_m; (c) frozen EMA encoder, 256 x 768 tokens, patch mean, 100 x 768, B-scan mean, 768, LayerNorm + linear, sigmoid.",
           "Every drawn protocol fact is located in the evidence source_facts (path, line, sha256) and was checked against the code: oct_slices.py/oct_volumes.py linspace(0, 199, 100) and bilinear resize, transforms.RandomResizedCrop, train_patch.jepa_forward_loss, vision_transformer context masking, helper vit_base 768, eval_downstream target_encoder/patch mean/LinearHead/sigmoid, MeanPool.",
           "PNG/PDF/SVG hashes equal the evidence outputs and the release_assets.json pins; generator and style-module hashes equal the evidence.",

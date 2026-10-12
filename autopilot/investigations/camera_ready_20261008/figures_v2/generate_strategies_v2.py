@@ -87,6 +87,23 @@ def table_rules():
     return rows
 
 
+def table_source():
+    """Declared manuscript input of table_rules(): the tab:strategies table environment, pinned by
+    the SHA-256 of its LF-normalised text (stable across checkouts and unrelated paper edits)."""
+    import re
+    raw = PAPER_TEX.read_bytes()
+    text = raw.decode("utf-8").replace("\r\n", "\n")
+    blocks = re.findall(r"\\begin\{table\}(?:(?!\\end\{table\}).)*?\\label\{tab:strategies\}.*?\\end\{table\}",
+                        text, re.S)
+    assert len(blocks) == 1, len(blocks)
+    start = text[:text.index(blocks[0])].count("\n") + 1
+    return {"file": str(PAPER_TEX.relative_to(ROOT)).replace("\\", "/"),
+            "table_label": "tab:strategies",
+            "table_block_lines": [start, start + blocks[0].count("\n")],
+            "table_block_sha256_lf": hashlib.sha256(blocks[0].encode("utf-8")).hexdigest(),
+            "file_sha256_at_export": hashlib.sha256(raw).hexdigest()}
+
+
 def guide_grids(image, staged):
     """Hard and soft guide grids through the production dataset code path."""
     import torch
@@ -209,7 +226,6 @@ def render(image, masks, overlays, soft_score, out_dir, stem, poster=False):
         fy = lambda inch: inch / height  # noqa: E731
         rows = [height - header - size, height - header - 2 * size - gap_y]
         numerals, wrapped = {}, {}
-        texts = []
         for j, (name, label, guide_name) in enumerate(ARMS):
             x = left + j * (size + gap_x)
             fig.text(fx(x + size / 2), fy(height - 0.03 * u), label, ha="center", va="top",
@@ -275,8 +291,8 @@ def render(image, masks, overlays, soft_score, out_dir, stem, poster=False):
             assert len(lines) <= 3, (name, lines)
             wrapped[name] = lines
             for n, line in enumerate(lines):
-                texts.append(fig.text(fx(x + size / 2), fy(rows[1] - 0.03 * u - (n + 0.5) * rule_line), line,
-                                      ha="center", va="center", fontsize=rule_pt, color=st.TEXT))
+                fig.text(fx(x + size / 2), fy(rows[1] - 0.03 * u - (n + 0.5) * rule_line), line,
+                         ha="center", va="center", fontsize=rule_pt, color=st.TEXT)
             for a in (ax, ax2):
                 a.set_xlim(0, 16)
                 a.set_ylim(16, 0)
@@ -287,8 +303,8 @@ def render(image, masks, overlays, soft_score, out_dir, stem, poster=False):
                     spine.set_color("#333333")
         # Row labels (two lines, rotated)
         for n, word in enumerate(("target", "rule")):
-            texts.append(fig.text(fx(left - 0.03 * u), fy(rows[1] - 0.03 * u - (n + 0.5) * rule_line), word,
-                                  ha="right", va="center", fontsize=rule_pt, fontweight="bold", color=st.TEXT))
+            fig.text(fx(left - 0.03 * u), fy(rows[1] - 0.03 * u - (n + 0.5) * rule_line), word,
+                     ha="right", va="center", fontsize=rule_pt, fontweight="bold", color=st.TEXT)
         for r, (head, sub) in zip(rows, (("(a) guide", "$A_s(x)$"), ("(b) I-JEPA view", "$C$, targets 1–4"))):
             fig.text(fx(left * 0.30), fy(r + size / 2), head, rotation=90, ha="center", va="center",
                      fontsize=label_pt, fontweight="bold", color=st.TEXT)
@@ -339,14 +355,13 @@ def render(image, masks, overlays, soft_score, out_dir, stem, poster=False):
         fig.canvas.draw()
         bb = attribution.get_window_extent()
         assert bb.x0 >= 0.05 * fig.dpi and bb.x1 <= (width - 0.05) * fig.dpi, "attribution touches the edge"
-        for txt in texts:
-            assert txt.get_window_extent().x0 >= 0.02 * fig.dpi, "label touches the left edge: " + txt.get_text()
-        overlaps = st.text_overlaps(fig, texts)
-        assert not overlaps, overlaps
+        # Every drawn text (titles, subtitles, rotated row labels, numerals, legend digits and
+        # labels, attribution, target rules): no collision and fully inside the canvas.
+        guard = st.assert_layout(fig)
         outputs = st.save_all(fig, out_dir, stem, "Five target-selection strategies in I-JEPA view",
                               dpi=300 if poster else 400)
         plt.close(fig)
-    return outputs, [width, round(height, 4)], {"numerals": numerals, "rules": wrapped}
+    return outputs, [width, round(height, 4)], {"numerals": numerals, "rules": wrapped, "layout_guard": guard}
 
 
 def main():
@@ -377,11 +392,15 @@ def main():
         assert replay["masks_equal_staged"] and replay["centroid_guide_equal_staged"], replay
     plotted = describe(masks)
     rules_table = table_rules()
-    paper_outputs, paper_inches, layout = render(image, masks, overlays, soft_score, out, STEM)
-    poster_outputs, poster_inches, poster_layout = render(image, masks, overlays, soft_score, out / "poster",
-                                                          POSTER_STEM, poster=True)
+    rules_source = table_source()
+    selftest = st.guard_selftest()
+    with st.math_scripts():
+        paper_outputs, paper_inches, layout = render(image, masks, overlays, soft_score, out, STEM)
+        poster_outputs, poster_inches, poster_layout = render(image, masks, overlays, soft_score, out / "poster",
+                                                              POSTER_STEM, poster=True)
     assert poster_layout["numerals"] == layout["numerals"]
     sizes = st.pdf_text_sizes(out / (STEM + ".pdf"))
+    assert min(s for s, _ in sizes) >= 6.0, sorted(set(s for s, _ in sizes))
     positive = soft_score[soft_score > 0]
     v1_omitted = soft_score[(soft_score > 0) & (soft_score <= 0.02)]
     caption = (
@@ -431,6 +450,7 @@ def main():
             "numerals": layout["numerals"],
             "target_rules": {"source": "paper Table tab:strategies (target shape, placement); checked by "
                                        "table_rules() against main_submission.tex at export",
+                             "manuscript_input": rules_source,
                              "rows": rules_table, "printed_lines": layout["rules"]},
             "display_transformations": {
                 "image": "OCTDL crop, PIL L, bilinear 1280 -> 256, no contrast change",
@@ -462,7 +482,17 @@ def main():
                    "training-batch collation can shorten the delivered context further (Table 2 of the paper)."),
         "typography": {"pdf_text_min_pt": min(s for s, _ in sizes),
                        "pdf_text_sizes_pt": sorted(set(s for s, _ in sizes)),
-                       "note": "sizes at the 5.5 in print width; includes mathtext sub/superscripts"},
+                       "math_script_scale": st.MATH_SCRIPT_SCALE,
+                       "note": ("sizes at the 5.5 in print width; includes mathtext sub/superscripts, drawn at "
+                                "%.1f x their base size (matplotlib default 0.7) so that they print at >= 6 pt"
+                                % st.MATH_SCRIPT_SCALE)},
+        "layout_guard": {"paper": layout["layout_guard"], "poster": poster_layout["layout_guard"],
+                         "scope": ("figstyle_v2.layout_guard: every visible text artist of the figure "
+                                   "(figure and axes texts, numerals, legend digits and labels, titles, "
+                                   "rotated row labels, attribution, target rules) pairwise without collision "
+                                   "(2 pt horizontal / 0.5 pt vertical clearance) and fully inside the canvas "
+                                   "(0.5 pt margin); asserted before export"),
+                         "selftest": selftest},
         "caption_summary": caption,
         "alt_text": ("Ten panels in two rows over five columns (RANDOM, CENTROID, ENVELOPE, ANATOMY-V2, COVER) "
                      "show the same external OCT crop. Top row: each strategy's placement guide in yellow "

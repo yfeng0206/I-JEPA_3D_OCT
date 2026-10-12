@@ -16,7 +16,10 @@ indices; generator label M_incomplete) they forge the registered label a partial
 give, clear the recorded reasons, add a range macro or a registered replication label.
 With a current generator the figure evidence also has panel (b) (paired differences) and the
 encoding contract: an extra point, a changed difference, a forged band, an extra mean, an
-unknown contract or a malformed colour must all fail.
+unknown contract, an unknown encoding field or a malformed colour must all fail. With late
+originals (re-probe after the freeze; per-run table "original, late") dropping them from the
+evidence, removing the encoding's late_original entry or removing the table mark (rehashed)
+must fail; without them, inventing one in the evidence or adding the table mark must fail.
 Synthetic data only; files are written only under WORKDIR.
 Set POSTER_GENERATOR_DIR to autopilot/ to include the generator's own metadata check.
 Relative paths are resolved first. Exit code: number of failing expectations.
@@ -351,6 +354,45 @@ def cases(bundle):
         figure_cases += [
             ("encoding_contract_changed", 1, encoding_contract, "figure encoding contract"),
             ("encoding_bad_color", 1, encoding_bad_color, "#RRGGBB"),
+            ("encoding_unknown_field", 1, lambda a, o: edit_evidence(
+                a, lambda ev: ev["encoding"].__setitem__("glow", {"random": True})),
+             "unknown fields"),
+        ]
+
+    # Late originals (generator V14-1): evidence late_originals must equal the originals that
+    # the hash-checked per-run table marks "original, late"; the original RANDOM must agree
+    # with reference_missing anchor_late; the encoding must say how to draw them.
+    late0 = ev0.get("late_originals")
+    seeds_table = bundle / "cr_table_seeds.tex"
+    orig_runs = [p["run"] for p in ev0.get("points", []) if p.get("tag") == "Orig"]
+
+    def edit_seeds_table(a, old, new):
+        path = a / "cr_table_seeds.tex"
+        text = path.read_text(encoding="utf-8")
+        assert old in text, old
+        path.write_bytes(text.replace(old, new, 1).encode("utf-8"))
+        rehash(a, "cr_table_seeds.tex")
+
+    if late0:
+        random_late = "anchor_late" in missing
+        figure_cases += [
+            ("late_original_dropped_from_evidence", 1, lambda a, o: edit_evidence(
+                a, lambda ev: ev.__setitem__("late_originals", [])), "!= per-run table"),
+            ("late_original_encoding_missing", 1, lambda a, o: edit_evidence(
+                a, lambda ev: ev["encoding"].pop("late_original")), "no late_original entry"),
+            ("seeds_table_late_mark_removed_rehashed", 1, lambda a, o: edit_seeds_table(
+                a, "& original, late \\\\", "& original \\\\"),
+             "reference_missing says anchor_late" if random_late else "!= per-run table"),
+        ]
+    elif late0 is not None and orig_runs and seeds_table.is_file():
+        random_orig = "RepAUCRandomOrig" in present
+        figure_cases += [
+            ("late_original_invented", 1, lambda a, o: edit_evidence(
+                a, lambda ev: ev.__setitem__("late_originals", [orig_runs[0]])),
+             "!= per-run table"),
+            ("seeds_table_late_mark_added_rehashed", 1, lambda a, o: edit_seeds_table(
+                a, "& original \\\\", "& original, late \\\\"),
+             "reference_missing says not late" if random_orig else "!= per-run table"),
         ]
 
     reference_cases = [
@@ -480,6 +522,15 @@ def main():
                     enc.get("source", "").startswith("figure evidence")
                 ok = ok and e_ok
                 needle += "; encoding from evidence" if e_ok else "; ENCODING MISMATCH"
+            if ev.get("late_originals") is not None:
+                runs = load_side(bundle)["probe_runs"]
+                want_late = sorted(runs[n]["identity"]["arm"] for n in ev["late_originals"])
+                fig = state.get("figure") or {}
+                l_ok = sorted(state.get("late_originals") or []) == want_late and \
+                    sorted(fig.get("late_originals_open") or []) == want_late
+                ok = ok and l_ok
+                needle += ("; late originals drawn open: %s" % (", ".join(want_late) or "none")
+                           if l_ok else "; LATE ORIGINAL MISMATCH")
             side = load_side(bundle)
             missing = side["scenario"]["reference_missing"]
             mc = side["scenario"]["matched_control"]

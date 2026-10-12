@@ -67,6 +67,7 @@
 \newif\ifPosterAnyDescSeed
 \newif\ifPosterSpreadFig
 \newif\ifPosterLateNote
+\newif\ifPosterLateOrig
 % State file interface (written by make_preview.py --precheck).
 \makeatletter
 \newcommand*{\PosterStateDef}[2]{\expandafter\gdef\csname PosterState#1\endcsname{#2}}
@@ -95,6 +96,14 @@
 % sidecar: a seed index with runs that is not complete at the freeze).
 \NewDocumentCommand \PosterIfDescSeed { m m m }
   { \exp_args:Nv \tl_if_in:nnTF { PosterStateSeedsDesc } {#1} {#2} {#3} }
+% \PosterIfLateOrig{Word}{true}{false}: the re-probed original of that strategy
+% (Random, Centroid, Envelope) finished after the freeze (validated per-run table).
+\NewDocumentCommand \PosterIfLateOrig { m m m }
+  {
+    \cs_if_exist:cTF { PosterStateLateOrig }
+      { \exp_args:Nv \tl_if_in:nnTF { PosterStateLateOrig } { ,#1, } {#2} {#3} }
+      {#3}
+  }
 % Matched-control text: the registered descriptions of pre-registration
 % amendment 2, or the generator's status when no description applies.
 \NewDocumentCommand \PosterControlText { }
@@ -188,6 +197,10 @@
   % Late-run note: a shown P or B contrast computed from a run after the freeze.
   \ifdefined\RepPlacementDelta\PosterIfState{PDesc}{1}{\PosterLateNotetrue}{}\fi
   \ifdefined\RepBudgetShift\PosterIfState{BDesc}{1}{\PosterLateNotetrue}{}\fi
+  % Late-original note: a shown original AUC whose re-probe finished after the freeze.
+  \ifdefined\RepAUCRandomOrig\PosterIfLateOrig{Random}{\PosterLateOrigtrue}{}\fi
+  \ifdefined\RepAUCCentroidOrig\PosterIfLateOrig{Centroid}{\PosterLateOrigtrue}{}\fi
+  \ifdefined\RepAUCEnvelopeOrig\PosterIfLateOrig{Envelope}{\PosterLateOrigtrue}{}\fi
   % Seed-spread figure: only the file validated by the precheck (MD5 re-checked).
   \PosterIfState{Figure}{}{}{%
     \IfFileExists{\PosterStateFigure}{%
@@ -302,6 +315,11 @@
   \else\CRCell\fi}
 \newcommand*{\PosterCellMLate}[2]{\PosterCellM{#1}\ifPosterResults
   \ifcsname #1\endcsname\PosterIfState{#2}{1}{\rlap{$^{\dagger}$}}{}\fi\fi}
+% Original (re-probed) AUC of strategy #1 (Random, Centroid, Envelope), with a
+% dagger when that re-probe finished after the freeze (as the paper's
+% generated replication table marks it).
+\newcommand*{\PosterCellOrig}[1]{\PosterCell{RepAUC#1Orig}\ifPosterResults
+  \ifcsname RepAUC#1Orig\endcsname\PosterIfLateOrig{#1}{\rlap{$^{\dagger}$}}{}\fi\fi}
 % Synthetic dry run (generator marker in auto/cr_results.tex): a banner across
 % the top and a watermark (overlays drawn last, layout unchanged), plus the
 % replication block title, the outcome strip and the takeaway are marked.
@@ -656,16 +674,19 @@
 % then the registered label rule (pre-registration section 3 and amendment 1;
 % digit-free apart from the comparison with zero).
 \newcommand{\PosterLabelRule}{\textbf{Label rule:} consistent direction if every
-  registered $\Delta>0$ and the mean $\Delta$ exceeds the \Arm{random} range;
-  reversed if the mean $\Delta\le 0$; otherwise within run-to-run variation;
-  incomplete with too few on-time runs.}
+  registered $\Delta>0$ and mean $\Delta$ > \Arm{random} range; reversed if mean
+  $\Delta\le 0$; else within run-to-run variation; incomplete with too few
+  on-time runs.}
 \newcommand{\PosterOutcome}{%
   \ifPosterSynthetic\textbf{SYNTHETIC DRY RUN.}\space\fi
   \textbf{Registered labels:} \ArmBest{} \emph{\RepLabelCentroid},
   \Arm{envelope} \emph{\RepLabelEnvelope}%
   \ifdefined\RepRandomRange\space(\Arm{random} range \RepRandomRange)\fi.
   \textbf{Matched-budget control:} \PosterControlText.%
-  \ifPosterAnyDescSeed\space$^{*}$Incomplete at the freeze: descriptive.\fi
+  \ifPosterAnyDescSeed\space$^{*}$Incomplete at the freeze\ifPosterLateOrig,
+    $^{\dagger}$original re-probed after the freeze\fi: descriptive.%
+  \else\ifPosterLateOrig\space$^{\dagger}$Original re-probed after the freeze:
+    descriptive.\fi\fi
   \space\PosterLabelRule}
 {\ifPosterSynthetic
   \colorlet{blocktitlebgcolor}{OIVermillion}\colorlet{blocktitlefgcolor}{black}%
@@ -690,11 +711,11 @@
       \toprule
       strategy & original \PosterSeedHeads & mean & mean $\Delta$ \\
       \midrule
-      \Arm{random}   & \PosterCell{RepAUCRandomOrig} \PosterSeedCellsRandom
+      \Arm{random}   & \PosterCellOrig{Random} \PosterSeedCellsRandom
         & \PosterCell{RepMeanAUCRandom} & --- \\
-      \Arm{envelope} & \PosterCell{RepAUCEnvelopeOrig} \PosterSeedCellsEnvelope
+      \Arm{envelope} & \PosterCellOrig{Envelope} \PosterSeedCellsEnvelope
         & \PosterCell{RepMeanAUCEnvelope} & \PosterCellM{RepDeltaMeanEnvelope} \\
-      \ArmBest{}     & \PosterCell{RepAUCCentroidOrig} \PosterSeedCellsCentroid
+      \ArmBest{}     & \PosterCellOrig{Centroid} \PosterSeedCellsCentroid
         & \PosterCell{RepMeanAUCCentroid} & \PosterCellM{RepDeltaMeanCentroid} \\
       \bottomrule
     \end{tabular}\par}

@@ -90,11 +90,12 @@ FIG_OFFSETS = {"Orig": -0.24, "SeedA": -0.08, "SeedB": 0.08, "SeedC": 0.24}
 FIG_B_OFFSETS = {"SeedA": -0.18, "SeedB": 0.0, "SeedC": 0.18}
 FIG_SEED_LABELS = {"Orig": "O", "SeedA": "A", "SeedB": "B", "SeedC": "C"}
 FIG_FILL = {"registered": "full", "control": "full", "original": "left", "descriptive": "none"}
+FIG_LATE_ORIGINAL = {"fill": "none", "label": "O"}  # V14-1: late original drawn open
 FIG_BAND_GREY = "0.86"
 DEFAULT_ENCODING = {"contract": FIG_ENCODING, "colors": FIG_COLORS, "markers": FIG_ARM_MARKERS,
                     "fill_by_status": FIG_FILL, "seed_labels": FIG_SEED_LABELS,
                     "x_offsets_panel_a": FIG_OFFSETS, "x_offsets_panel_b": FIG_B_OFFSETS,
-                    "band_color": FIG_BAND_GREY}
+                    "band_color": FIG_BAND_GREY, "late_original": FIG_LATE_ORIGINAL}
 ALLOWED_MARKERS = set("os^vh<>dDpPH8X*")
 CONTROL_TEXT = {
     "M+": "placement accounts for most of the gap (registered description)",
@@ -479,6 +480,7 @@ def validate_bundle(results_dir, use_generator=True):
     if not complete_l <= present:
         problems.append("a complete seed index has no AUC macros")
     desc = present - complete_l
+    late_orig = late_originals(rdir, hashes, runs, scen, problems)
 
     # Figure evidence.
     evidence, series = None, None
@@ -487,6 +489,7 @@ def validate_bundle(results_dir, use_generator=True):
                              "fig_cr_seed_spread.evidence.json (required with a figure)")
         if evidence is not None:
             series = figure_series(runs, fullp, numeric, complete, mc, problems)
+            series["late_originals"] = late_orig
             evidence = check_evidence(evidence, side, figure, series, problems)
 
     gen_status, gen_problem = ("skipped", None)
@@ -502,6 +505,7 @@ def validate_bundle(results_dir, use_generator=True):
         "sidecar_sha256": sha256_file(sidecar_path), "numeric": numeric, "texts": texts,
         "labels": labels, "complete": sorted(complete_l), "present_seeds": sorted(present),
         "desc_seeds": sorted(desc), "control": mc, "figure": figure, "evidence": evidence,
+        "late_originals": late_orig,
         "series": series if evidence is not None else None,
         "evidence_sha256": sha256_file(rdir / "fig_cr_seed_spread.evidence.json")
         if evidence is not None else None,
@@ -510,6 +514,48 @@ def validate_bundle(results_dir, use_generator=True):
 
 
 TAG_ORDER = ("Orig", "SeedA", "SeedB", "SeedC")
+SEEDS_TABLE = "cr_table_seeds.tex"
+ORIG_STATUS = {"original": False, "original, late": True}
+ORIG_ROW = re.compile(r"\\RepAUC(RandomCB|Random|Centroid|Envelope)Orig(?![A-Za-z])")
+LATE_ORIGINAL_NOTE = "\u2020original re-probed after the freeze"
+
+
+def late_originals(rdir, hashes, runs, scen, problems):
+    """Re-probed originals that finished after the freeze (generator V14-1), read from the
+    hash-checked per-run table (tab:replication_runs, analysis column "original" or
+    "original, late"); every original AUC macro needs exactly one such row, and the original
+    RANDOM is late exactly when the sidecar's reference_missing says anchor_late."""
+    origs = {arm for (arm, tag) in runs if tag == "Orig"}
+    seen = {}
+    if SEEDS_TABLE in hashes and (rdir / SEEDS_TABLE).is_file():
+        text = (rdir / SEEDS_TABLE).read_text(encoding="utf-8", errors="replace")
+        for line in text.splitlines():
+            m = ORIG_ROW.search(line)
+            if not m:
+                continue
+            arm = WORD_ARM[m.group(1)]
+            status = line.rstrip().rstrip("\\").split("&")[-1].strip()
+            if status not in ORIG_STATUS:
+                problems.append(f"{SEEDS_TABLE}: original {ARM_PLAIN[arm]} has analysis status "
+                                f"{status!r} (expected 'original' or 'original, late')")
+            elif arm in seen:
+                problems.append(f"{SEEDS_TABLE}: original {ARM_PLAIN[arm]} listed twice")
+            else:
+                seen[arm] = ORIG_STATUS[status]
+        if set(seen) != origs:
+            problems.append(f"{SEEDS_TABLE} lists originals {sorted(seen)} but the sidecar has "
+                            f"original AUC macros for {sorted(origs)}")
+    elif origs:
+        problems.append(f"{SEEDS_TABLE} (hash-checked per-run status) is required to tell late "
+                        f"originals")
+    late = {arm for arm, is_late in seen.items() if is_late}
+    if isinstance(scen, dict) and "random" in origs:
+        anchor_late = "anchor_late" in (scen.get("reference_missing") or [])
+        if anchor_late != ("random" in late):
+            problems.append(f"{SEEDS_TABLE} marks the original RANDOM "
+                            f"{'late' if 'random' in late else 'on time'} but reference_missing "
+                            f"says {'anchor_late' if anchor_late else 'not late'}")
+    return [arm for arm in FIG_ARMS if arm in late]
 LETTER_SEED = {v: k for k, v in SEED_LETTERS.items()}
 POINT_KEYS = {"run", "arm", "tag", "seed", "x", "test_auc", "head_sd", "status"}
 MEAN_KEYS = {"x", "mean", "n"}
@@ -654,12 +700,22 @@ def check_panel_b(evb, want, problems):
 
 
 HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
+# Encoding fields of contract cr_seed_spread_encoding_v2 the poster knows: the ones it draws
+# with (required), late_original (optional, V14-1) and descriptive text/size fields it does not
+# use. Any other field is refused: it could change how something must be drawn.
+ENCODING_DRAWN = {"contract", "colors", "markers", "fill_by_status", "seed_labels",
+                  "x_offsets_panel_a", "x_offsets_panel_b", "band_color"}
+ENCODING_OPTIONAL = {"late_original"}
+ENCODING_DESCRIPTIVE = {"colors_source", "markers_source", "fill_meaning", "seed_encoding",
+                        "mean_bar", "band", "figsize_in", "include_width", "include_width_in",
+                        "min_font_pt"}
+LATE_ORIGINAL_KEYS = {"runs", "fill", "label", "meaning"}
 
 
 def check_encoding(enc, series, problems):
     """The generator's figure encoding (colours, markers, fill by status, seed letters,
-    offsets), validated so the poster render can follow it; defaults if the evidence predates
-    the contract. Presentation only: no value is read from it."""
+    offsets, late originals), validated so the poster render can follow it; defaults if the
+    evidence predates the contract. Presentation only: no value is read from it."""
     if enc is None:
         return dict(DEFAULT_ENCODING, source="poster default (evidence has no encoding)")
     n0 = len(problems)
@@ -668,6 +724,22 @@ def check_encoding(enc, series, problems):
                         f"{enc.get('contract') if isinstance(enc, dict) else enc!r} != "
                         f"{FIG_ENCODING} (update the poster render)")
         return None
+    unknown = sorted(set(enc) - ENCODING_DRAWN - ENCODING_OPTIONAL - ENCODING_DESCRIPTIVE)
+    if unknown:
+        problems.append(f"figure encoding has unknown fields {unknown} (update the poster "
+                        f"render)")
+    missing = sorted(ENCODING_DRAWN - set(enc))
+    if missing:
+        problems.append(f"figure encoding lacks {missing}")
+    late = enc.get("late_original")
+    if late is not None and not (
+            isinstance(late, dict) and set(late) <= LATE_ORIGINAL_KEYS
+            and late.get("fill") in ("full", "left", "none")
+            and isinstance(late.get("label"), str) and 1 <= len(late["label"]) <= 2):
+        problems.append(f"figure encoding late_original {late!r} is malformed")
+    if series.get("late_originals") and late is None:
+        problems.append("figure encoding has no late_original entry although an original "
+                        "finished after the freeze (cannot draw it)")
     arms = set(series["arms"]) | set((series.get("panel_b") or {}).get("arms", []))
     points = series["points"] + list((series.get("panel_b") or {}).get("points", []))
     statuses = {p["status"] for p in points}
@@ -700,7 +772,10 @@ def check_encoding(enc, series, problems):
     return {"contract": FIG_ENCODING, "colors": dict(colors), "markers": dict(markers),
             "fill_by_status": dict(fills), "seed_labels": dict(labels),
             "x_offsets_panel_a": dict(FIG_OFFSETS), "x_offsets_panel_b": dict(FIG_B_OFFSETS),
-            "band_color": band, "source": "figure evidence (generator contract)"}
+            "band_color": band,
+            "late_original": {"fill": late["fill"], "label": late["label"]} if late
+            else dict(FIG_LATE_ORIGINAL),
+            "source": "figure evidence (generator contract)"}
 
 
 def check_evidence(ev, side, figure, series, problems):
@@ -769,8 +844,40 @@ def check_evidence(ev, side, figure, series, problems):
         check_panel_b(ev["panel_b"], series["panel_b"], problems)
     else:
         series["panel_b"] = None  # evidence before panel (b): the poster draws panel (a) only
+    check_late_originals(ev, side, series, problems)
     series["encoding"] = check_encoding(ev.get("encoding"), series, problems)
     return ev if len(problems) == n0 else None
+
+
+def check_late_originals(ev, side, series, problems):
+    """Evidence late_originals (run names) must name exactly the originals that the
+    hash-checked per-run table marks late; absent only when none is late."""
+    want = set(series.get("late_originals") or [])
+    names = ev.get("late_originals")
+    if names is None:
+        if want:
+            problems.append(f"figure evidence has no late_originals although the per-run table "
+                            f"marks {sorted(want)} late")
+        return
+    runs = side.get("probe_runs") if isinstance(side.get("probe_runs"), dict) else {}
+    origin = {q["arm"] for q in series["points"] if q["tag"] == "Orig"}
+    got = []
+    if not isinstance(names, list):
+        problems.append(f"figure evidence late_originals {names!r} is not a list")
+        return
+    for name in names:
+        ident = (runs.get(name) or {}).get("identity") if isinstance(name, str) else None
+        if not (isinstance(ident, dict) and ident.get("role") == "anchor"
+                and ident.get("arm") in origin):
+            problems.append(f"figure evidence late original {name!r} is not a re-probed "
+                            f"original run of the sidecar")
+            continue
+        got.append(ident["arm"])
+    if len(got) != len(set(got)):
+        problems.append("figure evidence late_originals lists an original twice")
+    if set(got) != want:
+        problems.append(f"figure evidence late originals {sorted(set(got))} != per-run table "
+                        f"{sorted(want)}")
 
 
 def render_poster_figure(bundle, out_pdf):
@@ -779,7 +886,9 @@ def render_poster_figure(bundle, out_pdf):
     cr_seed_spread_encoding_v2: arm colours and markers, fill by status, seed letters under
     the points): (a) test AUC of every encoder with head-seed s.d. and the registered means,
     (b) the paired differences guided minus RANDOM of the same seed index, their registered
-    means and the band +/- the registered RANDOM range (only with that reference). Nothing
+    means and the band +/- the registered RANDOM range (only with that reference). A
+    re-probed original that finished after the freeze (hash-checked per-run table, equal to
+    the evidence late_originals) is drawn with the encoding's late_original fill (open). Nothing
     from the evidence file is plotted; only the encoding (presentation) is read from it."""
     try:
         import matplotlib
@@ -795,6 +904,12 @@ def render_poster_figure(bundle, out_pdf):
                                series.get("panel_b"))
     colors, markers = enc["colors"], enc["markers"]
     fills, letters = enc["fill_by_status"], enc["seed_labels"]
+    late = set(series.get("late_originals") or [])
+
+    def fill_of(p):  # V14-1: a late original is drawn with the late_original fill (open)
+        if p["status"] == "original" and p["arm"] in late:
+            return enc["late_original"]["fill"]
+        return fills[p["status"]]
     fs = 14
     plt.rcParams.update({"font.size": fs, "pdf.fonttype": 42, "ps.fonttype": 42,
                          "font.family": "DejaVu Sans", "axes.linewidth": 1.0,
@@ -807,12 +922,11 @@ def render_poster_figure(bundle, out_pdf):
         fig, ax = plt.subplots(figsize=(8.1, 3.4))
         bx = None
 
-    def draw(axis, x, y, arm, status, yerr=None):
+    def draw(axis, x, y, arm, fill, yerr=None):
         color = colors[arm]
         if yerr is not None:
             axis.errorbar(x, y, yerr=yerr, fmt="none", ecolor=color, elinewidth=1.3,
                           capsize=3, zorder=2)
-        fill = fills[status]
         axis.plot(x, y, marker=markers[arm], markersize=9.5, linestyle="none",
                   fillstyle="full" if fill == "none" else fill,
                   markerfacecolor="white" if fill == "none" else color,
@@ -836,7 +950,7 @@ def render_poster_figure(bundle, out_pdf):
             axis.spines[side].set_visible(False)
 
     for p in points:
-        draw(ax, p["x"], p["test_auc"], p["arm"], p["status"], p["head_sd"])
+        draw(ax, p["x"], p["test_auc"], p["arm"], fill_of(p), p["head_sd"])
     for arm, mean in means.items():
         ax.plot([mean["x"] - 0.34, mean["x"] + 0.34], [mean["mean"]] * 2, color=colors[arm],
                 linewidth=2.2, zorder=1)
@@ -849,7 +963,7 @@ def render_poster_figure(bundle, out_pdf):
             bx.axhspan(-band["r"], band["r"], color=enc["band_color"], linewidth=0, zorder=0)
         bx.axhline(0.0, color="0.45", linewidth=1.0, zorder=1)
         for q in pb["points"]:
-            draw(bx, q["x"], q["delta"], q["arm"], q["status"])
+            draw(bx, q["x"], q["delta"], q["arm"], fills[q["status"]])
         for arm, mean in pb["means"].items():
             bx.plot([mean["x"] - 0.3, mean["x"] + 0.3], [mean["mean_delta"]] * 2,
                     color=colors[arm], linewidth=2.2, zorder=2)
@@ -861,16 +975,18 @@ def render_poster_figure(bundle, out_pdf):
             lambda v, _: "0" if abs(v) < 1e-12 else ("%+.3f" % v).replace("-", "\u2212")))
 
         bx.set_title("(b) \u0394 vs RANDOM", loc="left")
-    statuses = {p["status"] for p in points} | {q["status"] for q in (pb or {}).get("points", [])}
+    shown = {fill_of(p) for p in points} | {fills[q["status"]] for q in (pb or {}).get("points", [])}
     handles = [Line2D([], [], marker="o", color="0.3", fillstyle="full", linestyle="none",
                       markersize=9, label="registered")]
-    if "original" in statuses:
+    if "left" in shown:
         handles.append(Line2D([], [], marker="o", color="0.3", fillstyle="left",
                               markerfacecoloralt="white", linestyle="none", markersize=9,
                               label="original (re-probed)"))
-    if "descriptive" in statuses:
+    if "none" in shown:
+        only_late = late and not any(p["status"] == "descriptive" for p in points)
         handles.append(Line2D([], [], marker="o", color="0.3", markerfacecolor="white",
-                              linestyle="none", markersize=9, label="descriptive"))
+                              linestyle="none", markersize=9,
+                              label="descriptive (late)" if only_late else "descriptive"))
     handles.append(Line2D([], [], color="0.3", linewidth=2.2, label="mean (registered)"))
     if pb and pb["band"]["drawn"]:
         handles.append(Patch(facecolor=enc["band_color"], edgecolor="none",
@@ -884,7 +1000,7 @@ def render_poster_figure(bundle, out_pdf):
     fig.savefig(out_pdf, metadata={"Creator": None, "Producer": None, "CreationDate": None})
     plt.close(fig)
     return {"matplotlib": matplotlib.__version__, "panels": "a+b" if bx is not None else "a",
-            "encoding": enc["source"]}
+            "encoding": enc["source"], "late_originals_open": sorted(late)}
 
 
 def clear_state():
@@ -921,6 +1037,7 @@ def write_state(bundle):
              "cb_eligible": mc["cb_eligible"], "P_descriptive": mc.get("P_descriptive"),
              "B_descriptive": mc.get("B_descriptive"),
              "reference_missing": mc.get("reference_missing"),
+             "late_originals": bundle["late_originals"],
              "seeds_present": bundle["present_seeds"],
              "seeds_descriptive": bundle["desc_seeds"], "figure": figure,
              "figure_series": {"points": [[q["arm"], q["tag"]] for q in bundle["series"]["points"]],
@@ -947,6 +1064,8 @@ def write_state(bundle):
              r"\PosterStateDef{BDesc}{%s}" % flag(mc.get("B_descriptive")),
              r"\PosterStateDef{SeedsPresent}{%s}" % "".join(bundle["present_seeds"]),
              r"\PosterStateDef{SeedsDesc}{%s}" % "".join(bundle["desc_seeds"]),
+             r"\PosterStateDef{LateOrig}{,%s,}" % ",".join(ARM_WORD[a] for a in
+                                                         bundle["late_originals"]),
              r"\PosterStateDef{Figure}{%s}" % (figure["tex_path"] if figure else ""),
              r"\PosterStateDef{FigureMDfive}{%s}" % (figure["md5"] if figure else "")]
     lines += [r"\PosterExpectMacro{%s}" % name for name in state["expected_macros"]]
@@ -1048,7 +1167,9 @@ def pdf_results_check(page, bundle):
     rep_rows = anchors(xr, heads["rep"], {"RANDOM", "ENVELOPE", "CENTROID"})
     for arm in POSTER_ROWS:
         w = ARM_WORD[arm]
-        want = [val("RepAUC%sOrig" % w)] + [val("RepAUC%sSeed%s" % (w, s)) for s in seeds] + \
+        orig = "RepAUC%sOrig" % w
+        late_mark = "\u2020" if arm in bundle["late_originals"] and orig in num else ""
+        want = [val(orig) + late_mark] + [val("RepAUC%sSeed%s" % (w, s)) for s in seeds] + \
                [val("RepMeanAUC" + w), "---" if arm == "random" else val("RepDeltaMean" + w)]
         anchor = rep_rows.get(ARM_PLAIN[arm])
         got = row_tokens(words, anchor, xr, xc) if anchor else None
@@ -1099,8 +1220,16 @@ def pdf_results_check(page, bundle):
         bool(mc.get("B_descriptive") and "RepBudgetShift" in num)
     if (late in text) != has_late:
         problems.append("PDF late-run note " + ("missing" if has_late else "unexpected"))
-    if bool(bundle["desc_seeds"]) != (squash("*Incomplete at the freeze: descriptive.") in text):
+    desc, late_o = bool(bundle["desc_seeds"]), bool(bundle["late_originals"])
+    if desc != (squash("*Incomplete at the freeze") in text):
         problems.append("PDF descriptive-seed note disagrees with the sidecar")
+    if late_o != (squash(LATE_ORIGINAL_NOTE).lower() in text.lower()):
+        problems.append("PDF late-original note disagrees with the per-run table")
+    note = ("*Incomplete at the freeze, \u2020original re-probed after the freeze: descriptive."
+            if desc and late_o else "*Incomplete at the freeze: descriptive." if desc else
+            "\u2020Original re-probed after the freeze: descriptive." if late_o else None)
+    if note and squash(note) not in text:
+        problems.append(f"PDF strip note '{note}' not found")
     return slots, problems
 
 
@@ -1130,7 +1259,8 @@ def check_log_and_state(log, bundle, problems):
         problems.append("poster seed columns/descriptive seeds disagree with the sidecar")
     else:
         print(f"               seed indices shown: {seeds.group(1)}; descriptive: "
-              f"{seeds.group(2)}")
+              f"{seeds.group(2)}; late originals: "
+              f"{', '.join(ARM_PLAIN[a] for a in bundle['late_originals']) or 'none'}")
     mc = bundle["control"]
     control = re.search(r"POSTER-RESULTS-CONTROL: (\S+) P=(\S+) B=(\S+)", log)
     want = (mc["label"], {None: "none", True: "late", False: "ontime"}[mc.get("P_descriptive")],

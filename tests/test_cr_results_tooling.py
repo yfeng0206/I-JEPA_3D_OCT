@@ -1192,6 +1192,106 @@ def test_f3_no_band_without_the_registered_range(designs, tmp_path):
     assert r'\pm' not in caption and r'\RepRandomRange' not in caption
 
 
+def test_v14_late_original_random_is_drawn_open_and_named(designs, tmp_path, monkeypatch):
+    """V14-1, producer level (real unseal / final): all new runs on time, the original RANDOM
+    late. Its evidence point keeps status "original" (poster contract), but it is listed in
+    late_originals, drawn open (white face, not half-filled), named in the caption and marked in
+    both tables; on-time originals stay half-filled."""
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.axes
+    import matplotlib.figure
+    calls, legends = [], []
+    plot, legend = matplotlib.axes.Axes.plot, matplotlib.figure.Figure.legend
+
+    def spy_plot(self, *args, **kwargs):
+        calls.append((args, kwargs))
+        return plot(self, *args, **kwargs)
+
+    def spy_legend(self, *args, **kwargs):
+        legends.append([h.get_label() for h in kwargs.get('handles') or []])
+        return legend(self, *args, **kwargs)
+
+    monkeypatch.setattr(matplotlib.axes.Axes, 'plot', spy_plot)
+    monkeypatch.setattr(matplotlib.figure.Figure, 'legend', spy_legend)
+    d = fx.build_design(tmp_path / 'd', 'A', 'A', 'M+', seeds=(1234, 5678, 9012),
+                        late=[('random', None)], n_test=N_TEST, n_boot=N_BOOT)
+    final = json.load(open(d['final']))
+    anchor = next(n for n, e in final['runs'].items()
+                  if e['identity']['role'] == 'anchor' and e['identity']['arm'] == 'random')
+    assert final['runs'][anchor]['eligibility']['eligible'] is False
+    run_build(d, tmp_path, figure=True)
+    out = tmp_path / 'out'
+    ev = json.load(open(out / 'fig_cr_seed_spread.evidence.json'))
+    assert ev['late_originals'] == [anchor]
+    assert ev['encoding']['late_original']['fill'] == 'none'
+    pts = {(p['arm'], p['tag']): p for p in ev['points']}
+    assert pts[('random', 'Orig')]['status'] == 'original'  # unchanged for the poster gate
+
+    def marker_at(y):
+        hits = [kw for args, kw in calls if len(args) == 2 and kw.get('marker')
+                and args[1] == y]
+        assert len(hits) == 1, y
+        return hits[0]
+
+    late = marker_at(pts[('random', 'Orig')]['test_auc'])
+    assert late['fillstyle'] == 'full' and late['markerfacecolor'] == 'white'  # open
+    on_time = marker_at(pts[('centroid', 'Orig')]['test_auc'])
+    assert on_time['fillstyle'] == 'left'  # half-filled
+    assert legends and 'descriptive (late)' in legends[-1]
+    caption = tex_macros(out / 'cr_results.tex')['RepFigSeedSpreadCaption']
+    assert (r'The re-probed original \textsc{random} run finished after the results freeze '
+            r'and is drawn open, as descriptive.') in caption
+    assert 'half-filled markers re-probed original runs' in caption
+    seeds = (out / 'cr_table_seeds.tex').read_text(encoding='utf-8')
+    assert seeds.lower().count('original, late') == 2  # the row and the caption note
+    replication = (out / 'cr_table_replication.tex').read_text(encoding='utf-8')
+    assert r'original (re-probed)$^{\dagger}$' in replication
+    assert r'$^{\dagger}$The re-probed original \textsc{random} run finished after the freeze' \
+        in replication
+    # on time: nothing late anywhere
+    run_build(designs['A'], tmp_path / 'ontime', figure=True)
+    ev = json.load(open(tmp_path / 'ontime' / 'out' / 'fig_cr_seed_spread.evidence.json'))
+    assert ev['late_originals'] == []
+    assert 'dagger' not in (tmp_path / 'ontime' / 'out' / 'cr_table_replication.tex').read_text()
+    assert 'finished after the results freeze' not in tex_macros(
+        tmp_path / 'ontime' / 'out' / 'cr_results.tex')['RepFigSeedSpreadCaption']
+
+
+def test_v14_check_refuses_altered_or_missing_md_secondary(designs, tmp_path):
+    """V14-2: md_secondary is bound like the other sidecar fields (figure and no-figure)."""
+    d = designs['A']
+    for figure in (False, True):
+        out = tmp_path / ('fig' if figure else 'nofig')
+        run_build(d, out, figure=figure)
+        sidecar = out / 'out' / 'cr_results.values.json'
+        good = sidecar.read_bytes()
+        assert run_build(d, out, check=True, figure=figure)['stale'] == []
+        for edit in (lambda s: s.update(md_secondary={'run': False, 'source': None}),
+                     lambda s: s['md_secondary'].update(source='made_up'),
+                     lambda s: s['md_secondary'].update(extra=True),
+                     lambda s: s.pop('md_secondary')):
+            _edit_json(sidecar, edit)
+            assert 'cr_results.values.json' in run_build(d, out, check=True,
+                                                         figure=figure)['stale'], figure
+            sidecar.write_bytes(good)
+    # without MD: a sidecar claiming MD was run is refused
+    nomd = dict(d, md=None)
+    run_build(nomd, tmp_path / 'nomd')
+    sidecar = tmp_path / 'nomd' / 'out' / 'cr_results.values.json'
+    assert run_build(nomd, tmp_path / 'nomd', check=True)['stale'] == []
+    _edit_json(sidecar, lambda s: s.update(md_secondary={'run': True, 'source': 'rep_md'}))
+    assert 'cr_results.values.json' in run_build(nomd, tmp_path / 'nomd', check=True)['stale']
+    # V14's CLI replay: valid --md, sidecar says not run -> --check fails (exit 1)
+    out = tmp_path / 'fig' / 'out'
+    _edit_json(out / 'cr_results.values.json',
+               lambda s: s.update(md_secondary={'run': False, 'source': None}))
+    assert mk.main(['build', '--final', d['final'], '--runs'] + d['runs'] +
+                   ['--md', d['md'], '--budget-i5', I5, '--out-dir', str(out),
+                    '--evidence-dir', str(tmp_path / 'fig' / 'evidence'), '--allow-synthetic',
+                    '--check']) == 1
+
+
 def test_h8_md_secondary_analysis_is_reported_or_declared_not_run(designs, tmp_path):
     d = designs['A']
     res = run_build(d, tmp_path / 'with')

@@ -175,8 +175,18 @@ with it:
   exists (registered RANDOM reference) with that full-precision range and the
   recorded `reference_missing`; its `encoding` (contract
   `cr_seed_spread_encoding_v2`: arm colours `#RRGGBB`, arm markers, fill by
-  status, seed letters, offsets equal to the poster's, grey band colour) is
-  validated; another contract is refused (update the poster render);
+  status, seed letters, offsets equal to the poster's, grey band colour, and
+  the optional `late_original` entry) is validated; another contract or any
+  encoding field the poster does not know is refused (update the poster
+  render);
+- late originals (generator V14-1: a re-probed original that finished after
+  the freeze): the hash-checked per-run table `cr_table_seeds.tex` must list
+  every original AUC macro once with analysis status `original` or
+  `original, late`; the original RANDOM is late exactly when
+  `reference_missing` says `anchor_late`; the evidence `late_originals` (run
+  names, mapped to strategies through the sidecar's `probe_runs`) must name
+  exactly the late ones (absent only when none is late), and the encoding must
+  then have its `late_original` entry;
 - if `autopilot/make_cr_results.py` is importable (repository layout, or
   `$env:POSTER_GENERATOR_DIR`), its own `verified_results_metadata()` must
   also pass (read-only use).
@@ -193,7 +203,9 @@ encoding read from the validated evidence (I12's contract
 `cr_seed_spread_encoding_v2`: the paper's arm colours RANDOM `#000000`,
 CENTROID `#882255`, ENVELOPE `#0072B2`, RANDOM-CB `#E69F00`; arm markers
 o/s/^/hexagon; filled = registered or on-time control, left half filled =
-re-probed original, open = descriptive; seed letters O/A/B/C under the
+re-probed original, open = descriptive, including a late original (encoding
+`late_original`; legend "descriptive (late)" when no other run is
+descriptive); seed letters O/A/B/C under the
 points; arm-coloured registered means; head-seed s.d. error bars; panel (b)
 paired differences with the grey ±RANDOM-range band only with the registered
 reference). Evidence without an encoding (older generator) uses the same v2
@@ -253,6 +265,12 @@ placeholder per strategy), a FIGURE PENDING box and a RESULTS PENDING banner.
   (`M_noP`), or a late RANDOM seed-A run with an on-time P), the value gets a
   dagger and the control panel says "†From a run after the freeze:
   descriptive."; the figure shows such runs with open markers.
+- Late originals: a re-probed original that finished after the freeze (per-run
+  table "original, late") gets a dagger on its `original` cell, as the paper's
+  generated replication table marks its original row, and the outcome strip
+  says "†Original re-probed after the freeze: descriptive." (with a
+  descriptive seed: "*Incomplete at the freeze, †original re-probed after the
+  freeze: descriptive."); the figure draws it open.
 - Matched-budget control description: M+ "placement accounts for most of the
   gap", M0 "placement difference not detected", M− "placement difference
   reversed", both contribute (`M_partial`), each marked "(registered
@@ -329,8 +347,10 @@ the generator's own metadata check).
 # indices: the registered label a partial range would give, reasons cleared, range macro
 # or registered label added; both: reason lists disagree, reason swapped) plus, with a
 # current generator, 4 panel (b) variants (extra point, changed difference, forged band,
-# extra mean) and 2 encoding variants (unknown contract, malformed colour); relative
-# paths are fine
+# extra mean), 3 encoding variants (unknown contract, unknown field, malformed colour) and
+# 2 or 3 late-original variants (with a late original: dropped from the evidence, encoding
+# entry removed, table mark removed and rehashed; without: invented in the evidence, table
+# mark added and rehashed); relative paths are fine
 $env:POSTER_GENERATOR_DIR = '<repo>\autopilot'   # optional: also run the generator's check
 D:\jepa_phase0\.venv\Scripts\python.exe tests\test_results_gate.py `
   --bundle <synthetic auto folder> --other-bundle <another scenario> --work <scratch dir>
@@ -463,11 +483,15 @@ and rebuild.
   contract (`cr_seed_spread_encoding_v2`); a new contract is refused until
   `render_poster_figure` in `make_preview.py` is updated.
 - Spare space at 24 x 36 in (design canvas, layout of 2026-10-12): 90.3 pt
-  (32 mm) with placeholders; at least 12.2 pt (about 4.3 mm) in every fresh
-  synthetic replication scenario tested (17 bundles from the current
-  generator: 12.2 pt with a descriptive seed C and three complete arms,
+  (32 mm) with placeholders; at least 11.6 pt (about 4.1 mm) in every fresh
+  synthetic replication scenario tested (17 bundles from the generator of
+  2026-10-12 01:00: 12.2 pt with a descriptive seed C and three complete arms,
   16.6 to 17.2 pt with a descriptive seed or long labels, 36.1 pt when no
-  registered RANDOM reference exists, 41.6 to 42.2 pt otherwise)
+  registered RANDOM reference exists, 41.6 to 42.2 pt otherwise; late
+  originals, generator of 03:00: 11.6 pt with the longest labels, a
+  descriptive seed A, a late budget contrast and a late CENTROID original,
+  17.2 pt with a late CENTROID original, 36.1 pt with a late RANDOM original
+  and a late seed C)
   (two or three seed indices, late or missing runs, every control state,
   late placement or budget contrasts, missing or late original RANDOM, the
   longest labels; real results have no synthetic prefixes and at least as much

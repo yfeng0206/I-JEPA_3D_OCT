@@ -1594,13 +1594,21 @@ def build_text(ctx):
         else:
             caption += (r"; no band is drawn because the registered range of \textsc{random}'s "
                         r"realizations is not available.")
+    anchors = [r for r in ctx.runs.values() if r["role"] == "anchor"]
+    late = [r for r in anchors if late_original(r)]
     caption += (r" Letters give the seed index (O: original run, re-probed). Filled markers are "
-                r"runs in the registered analysis%s and open markers descriptive runs. Colours "
-                r"and marker shapes per strategy are those of the other figures. Continuations "
-                r"share an ancestor checkpoint, so the spread is across continuations, not "
-                r"independent initializations." % (
-                    ", half-filled markers re-probed original runs"
-                    if any(r["role"] == "anchor" for r in ctx.runs.values()) else ""))
+                r"runs in the registered analysis%s and open markers descriptive runs."
+                % (", half-filled markers re-probed original runs"
+                   if len(late) < len(anchors) else ""))
+    if late:  # V14-1: a late original is open (descriptive), never an unqualified original
+        arms = [a for a in SEED_ARMS + ("random_cb",) if any(r["arm"] == a for r in late)]
+        caption += (r" The re-probed original %s run%s finished after the results freeze and "
+                    r"%s drawn open, as descriptive." % (
+                        join_and(ARM_TEX[a] for a in arms), "s" if len(late) > 1 else "",
+                        "are" if len(late) > 1 else "is"))
+    caption += (r" Colours and marker shapes per strategy are those of the other figures. "
+                r"Continuations share an ancestor checkpoint, so the spread is across "
+                r"continuations, not independent initializations.")
     t.put("RepFigSeedSpreadCaption", caption, "figure caption")
     return t
 
@@ -1815,8 +1823,11 @@ def table_replication(ctx):
         return row_text(cells)
 
     rows = []
+    late_orig = [a for a in SEED_ARMS if (a, "Orig") in ctx.slots
+                 and late_original(ctx.runs[ctx.slots[(a, "Orig")]])]
     if any((a, "Orig") in ctx.slots for a in SEED_ARMS):
-        rows.append(row("original (re-probed)", "Orig"))
+        rows.append(row("original (re-probed)%s" % (r"$^{\dagger}$" if late_orig else ""),
+                        "Orig"))
     for s in ctx.new_seeds:
         rows.append(row("seed %s%s" % (SEED_LETTERS[s], "" if s in ctx.complete else "$^{*}$"),
                         seed_tag(s)))
@@ -1838,10 +1849,19 @@ def table_replication(ctx):
                 r"original row.")
     if any(s not in ctx.complete for s in ctx.new_seeds):
         caption += r" $^{*}$Seed index incomplete at the freeze, not in the analysis."
+    if late_orig:
+        caption += (r" $^{\dagger}$The re-probed original %s run%s finished after the freeze "
+                    r"(descriptive)." % (join_and(ARM_TEX[a] for a in late_orig),
+                                         "s" if len(late_orig) > 1 else ""))
     caption += r" Intervals: Table~\ref{tab:replication_runs}."
     header = (r" & \textsc{random} & \ArmBest{} & \textsc{envelope} & $\Delta$ \ArmBest{} & "
               r"$\Delta$ \textsc{envelope}")
     return float_table("tab:replication", caption, "lccccc", header, rows, sep="4pt")
+
+
+def late_original(r):
+    """A re-probed original (anchor) that finished after the freeze (V14-1)."""
+    return r["role"] == "anchor" and not r["eligible"]
 
 
 def run_status(ctx, r):
@@ -1881,7 +1901,7 @@ def table_seeds(ctx):
         run = "original" if r["tag"] == "Orig" else "seed " + SEED_LETTERS[r["seed"]]
         rows.append(row_text([ARM_TEX[r["arm"]], run, cell(v, "RepAUC" + w),
                               cell(v, "RepHeadSD" + w), cell(v, "RepValAUC" + w), delta, val,
-                              run_status(ctx, r)]))
+                              "original, late" if late_original(r) else run_status(ctx, r)]))
     caption = (r"Every evaluated encoder at epoch~\RepEndpoint{}. AUC is the mean over "
                r"\RepNHeadSeedsWord{} probe-head seeds, with their s.d. $\Delta$ is the difference "
                r"from \textsc{random} of the same seed with a paired, label-stratified test-case "
@@ -1889,6 +1909,8 @@ def table_seeds(ctx):
                r"given for comparison. Intervals describe test-case sampling, not retraining. "
                r"Original encoders are compared descriptively. Registered: in the primary "
                r"analysis. Descriptive: seed index incomplete or run finished after the freeze.")
+    if any(late_original(r) for r in ctx.runs.values()):
+        caption += r" Original, late: re-probed original that finished after the freeze."
     header = (r"policy & run & test AUC & head s.d. & val.\ AUC & $\Delta$ test (interval) & "
               r"$\Delta$ val. & analysis")
     return float_table("tab:replication_runs", caption, "llccclcl", header, rows,
@@ -2120,6 +2142,11 @@ def figure_encoding():
                              "none": "descriptive run (late or incomplete seed index): open "
                                      "marker with a white face"},
             "seed_labels": dict(FIG_SEED_LETTERS),
+            "late_original": {"runs": "evidence late_originals (run names)",
+                              "fill": FIG_FILL["descriptive"], "label": FIG_SEED_LETTERS["Orig"],
+                              "meaning": "re-probed original that finished after the results "
+                                         "freeze: drawn open like a descriptive run (not "
+                                         "half-filled), named in the caption and tables"},
             "seed_encoding": "x offset within the arm group plus the letter as an x tick label "
                              "(never the marker)",
             "x_offsets_panel_a": dict(FIG_OFFSETS), "x_offsets_panel_b": dict(FIG_B_OFFSETS),
@@ -2149,7 +2176,14 @@ def figure_content(ctx):
     """Everything the figure plots, recomputed identically by make_figure and --check."""
     arms, points, means = figure_points(ctx)
     return {"arms": arms, "points": points, "means": means, "panel_b": figure_panel_b(ctx),
-            "encoding": figure_encoding()}
+            "late_originals": figure_late_originals(ctx), "encoding": figure_encoding()}
+
+
+def figure_late_originals(ctx):
+    """V14-1: re-probed originals that finished after the freeze. Their point keeps status
+    "original" (the poster gate's sidecar-built series), but they are drawn open and named in
+    the caption; the encoding's late_original entry tells other renderers how."""
+    return sorted(name for name, r in ctx.runs.items() if late_original(r))
 
 
 def make_figure(ctx, out_dir, stage):
@@ -2201,8 +2235,13 @@ def make_figure(ctx, out_dir, stage):
         for side in ("top", "right"):
             axis.spines[side].set_visible(False)
 
+    late = set(content["late_originals"])
+
+    def shown(p):  # V14-1: a late original is drawn as descriptive (open)
+        return "descriptive" if p["status"] == "original" and p["run"] in late else p["status"]
+
     for p in points:
-        draw(ax, p["x"], p["test_auc"], p["arm"], p["status"], p["head_sd"])
+        draw(ax, p["x"], p["test_auc"], p["arm"], shown(p), p["head_sd"])
     for arm, mean in means.items():
         ax.plot([mean["x"] - 0.34, mean["x"] + 0.34], [mean["mean"]] * 2,
                 color=FIG_COLORS[arm], linewidth=1.1, zorder=1)
@@ -2227,7 +2266,7 @@ def make_figure(ctx, out_dir, stage):
                  [(q["x"], FIG_SEED_LETTERS[q["tag"]]) for q in panel_b["points"]])
         bx.set_ylabel("AUC minus RANDOM (same seed)")
         bx.set_title("(b) paired difference", loc="left")
-    statuses = set(p["status"] for p in points) | set(
+    statuses = set(shown(p) for p in points) | set(
         q["status"] for q in (panel_b or {}).get("points", []))
     handles = [Line2D([], [], marker="o", color="0.3", fillstyle="full", linestyle="none",
                       markersize=4.8, label="registered")]
@@ -2237,7 +2276,10 @@ def make_figure(ctx, out_dir, stage):
                               label="original (re-probed)"))
     if "descriptive" in statuses:
         handles.append(Line2D([], [], marker="o", color="0.3", markerfacecolor="white",
-                              linestyle="none", markersize=4.8, label="descriptive"))
+                              linestyle="none", markersize=4.8,
+                              label="descriptive (late)" if late and not any(
+                                  p["status"] == "descriptive" for p in points)
+                              else "descriptive"))
     handles.append(Line2D([], [], color="0.3", linewidth=1.1, label="mean (registered)"))
     if panel_b and panel_b["band"]["drawn"]:
         handles.append(Patch(facecolor=FIG_BAND_GREY, edgecolor="none",
@@ -2471,8 +2513,7 @@ def build(final_path, run_dirs, md_path=None, budget_paths=(), stats_dir=DEFAULT
         "text_macros": [{"name": n, "text": val, "note": text.notes.get(n)}
                         for n, val in text.macros.items()],
         "tldr": tldr, "warnings": warnings,
-        "md_secondary": {"run": ctx.md is not None,
-                         "source": "rep_md" if ctx.md is not None else None},
+        "md_secondary": md_secondary(ctx),
         "outputs": {name: sha256_bytes(content.encode("utf-8")) for name, content in outputs.items()},
         "figure": fig_evidence["outputs"] if fig_evidence else None}
     (out_dir / "cr_results.values.json").write_text(json.dumps(manifest, indent=1) + "\n",
@@ -2484,6 +2525,11 @@ def build(final_path, run_dirs, md_path=None, budget_paths=(), stats_dir=DEFAULT
     if update_reviews:
         write_reviews(stage, macro_records)
     return manifest
+
+
+def md_secondary(ctx):
+    """H8 / V14-2: whether the registered MD secondary analysis is in these results."""
+    return {"run": ctx.md is not None, "source": "rep_md" if ctx.md is not None else None}
 
 
 def check_sidecar_and_figure(ctx, out_dir, outputs, figure, stage):
@@ -2501,7 +2547,8 @@ def check_sidecar_and_figure(ctx, out_dir, outputs, figure, stage):
     if sidecar.get("schema") != SCHEMA or sidecar.get("synthetic") is not ctx.synthetic \
             or sidecar.get("outputs") != expected \
             or (sidecar.get("generator") or {}).get("sha256") != sha256_file(__file__) \
-            or inputs != {name: spec["sha256"] for name, spec in stage.sources.items()}:
+            or inputs != {name: spec["sha256"] for name, spec in stage.sources.items()} \
+            or sidecar.get("md_secondary") != md_secondary(ctx):
         stale.append("cr_results.values.json")
     if not figure:
         return stale
@@ -2787,8 +2834,9 @@ FIGURE_LIMITATIONS = (
 FIGURE_CHECKS = (
     "Rendered figure inspected in the compiled paper: (a) one marker per evaluated encoder in the "
     "paper's arm colours and marker shapes, seed letters O/A/B/C under the markers, head-seed "
-    "s.d. error bars, filled markers for registered runs, half-filled for re-probed originals, "
-    "open for descriptive runs, bars for means over the registered seed indices; (b) per-seed "
+    "s.d. error bars, filled markers for registered runs, half-filled for on-time re-probed "
+    "originals, open for descriptive runs and late originals (named in the caption), bars for "
+    "means over the registered seed indices; (b) per-seed "
     "paired differences from RANDOM with their mean, and the grey +/- r band only when the "
     "registered RANDOM range exists; text legible at print size.",
     "PNG and PDF hashes equal the figure evidence outputs, the results sidecar and the "

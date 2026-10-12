@@ -51,6 +51,25 @@ POOL_SHIFT = {PRIMARY: 0.0, 'patchmean_slicemax': -0.0021, 'patchmean_slicemeanm
 POOL_ARM = {('patchmean_slicemax', 'envelope'): -0.0045}
 LATE = '2026-10-22T09:00:00-07:00'
 HEAD_SD = 0.0008
+# V8-5: fixed, mutually consistent synthetic timestamps (stop file < probe start < seal < probe
+# finish), independent of the wall clock, so on-time runs stay on time after the freeze.
+ON_TIME_TIMES = {'stop': '2026-10-20T12:00:00-07:00', 'started': '2026-10-20T12:05:00-07:00',
+                 'seal': '2026-10-20T13:10:00-07:00', 'finished': '2026-10-20T13:15:00-07:00'}
+LATE_TIMES = {'stop': LATE, 'started': '2026-10-22T09:05:00-07:00',
+              'seal': '2026-10-22T10:10:00-07:00', 'finished': '2026-10-22T10:15:00-07:00'}
+
+
+def set_seal_created(out_dir, created):
+    """Pin the sealed manifest's creation time, rewriting it and its .sha256 sidecar in the
+    producer's format (src/eval_downstream.write_sealed_manifest)."""
+    path = os.path.join(out_dir, 'sealed_manifest.json')
+    with open(path, 'r', encoding='utf-8') as stream:
+        manifest = json.load(stream)
+    manifest['created'] = created
+    with open(path, 'w', encoding='utf-8') as stream:
+        json.dump(manifest, stream, indent=2, sort_keys=True)
+    with open(path + '.sha256', 'w', encoding='utf-8') as stream:
+        stream.write('%s  sealed_manifest.json\n' % evaluation.file_sha256(path))
 
 
 def exact_probs(labels, target, latent, rng):
@@ -98,13 +117,15 @@ def make_probe(root, cohort, name, arm, seed, role, aucs, stop_time=None, head_s
     ckpt = '%064x' % (zlib.crc32(name.encode('utf-8')) * 7919)
     identity = {'arm': arm, 'train_seed': seed, 'role': role,
                 'run_uuid': 'synthetic-' + name, 'checkpoint_sha256': ckpt[-64:], 'epoch': 50}
-    now = cr_stats._now().isoformat(timespec='seconds')
+    times = dict(LATE_TIMES if stop_time else ON_TIME_TIMES)
+    if stop_time:
+        times['stop'] = stop_time
     if role == 'new':
         stop = os.path.join(str(root), 'train_' + name, 'stop_epoch_050.json')
         os.makedirs(os.path.dirname(stop))
         with open(stop, 'w') as stream:
             json.dump({'schema': 'jepa_stop_epoch_v1', 'epoch': 50,
-                       'timestamp_utc': stop_time or now,
+                       'timestamp_utc': times['stop'],
                        'checkpoints': [{'role': 'periodic', 'epoch': 50,
                                         'sha256': identity['checkpoint_sha256']}]}, stream)
         identity.update({'run_provenance': os.path.realpath(stop),
@@ -142,13 +163,14 @@ def make_probe(root, cohort, name, arm, seed, role, aucs, stop_time=None, head_s
                               'val_auc_sd': float(np.std(vals, ddof=1)),
                               'test_auc_mean': None, 'test_auc_sd': None}
     evaluation.write_sealed_manifest(out, entries, cohort.labels, cohort.manifest, identity)
+    set_seal_created(out, times['seal'])
     config = {'mode': 'patch', 'data': {'num_slices': 100, 'use_amp': False},
               'model': {'encoder_checkpoint': 'synthetic-' + name, 'probe_type': 'mean_pool'},
               'training': {'epochs': 50, 'lr': 4e-4}, 'probe': {'head_seeds': list(head_seeds)}}
-    results = {'schema': 'cr_probe_v1', 'status': 'complete', 'sealed': True,
+    results = {'schema': 'cr_probe_v1', 'status': 'complete', 'sealed': True, 'synthetic': True,
                'head_seeds': list(head_seeds), 'identity': identity, 'variants': summaries,
                'best_val_auc': summaries[PRIMARY]['val_auc_mean'], 'test_auc': None,
-               'config': config, 'started': now, 'finished': now}
+               'config': config, 'started': times['started'], 'finished': times['finished']}
     with open(os.path.join(out, 'results.json'), 'w') as stream:
         json.dump(results, stream)
     return out

@@ -10,7 +10,7 @@
 % Every number is a macro from the paper's generated files
 % (../../paper/genai4health2026/auto/*.tex); do not type result numbers here.
 \documentclass[25pt, a0paper, portrait, margin=0mm, innermargin=14mm,
-  colspace=14mm, subcolspace=10mm, blockverticalspace=10mm]{tikzposter}
+  colspace=14mm, subcolspace=10mm, blockverticalspace=8mm]{tikzposter}
 
 \input{poster_size}
 \input{poster_setup}
@@ -38,12 +38,160 @@
 \graphicspath{{../../paper/genai4health2026/figures/}}
 \input{../../paper/genai4health2026/auto/auto_numbers}
 \input{../../paper/genai4health2026/auto/cr_numbers}
-% Replication, matched-budget control and pooling results are generated after
-% the Oct 22 results freeze. Until that file exists the panels show placeholders.
-\IfFileExists{../../paper/genai4health2026/auto/cr_results.tex}{%
-  \input{../../paper/genai4health2026/auto/cr_results}%
-  \typeout{POSTER: cr_results.tex found and loaded}}{%
+
+% ---------------------------------------------------------------------------
+% Registered replication (automatic). After the Oct 22 results freeze,
+% autopilot/make_cr_results.py writes auto/cr_results.tex (\Rep* macros only),
+% cr_results.values.json (the sidecar), the tables and the seed-spread figure.
+% build.ps1 first runs make_preview.py --precheck, which validates that bundle
+% (schema, output/figure/evidence hashes, every macro value and label against
+% the sidecar) and writes generated/results_state.tex: the validated control
+% status and late-run flags, the descriptive seed indices, the expected macros,
+% the poster render of the seed-spread figure, and MD5s re-checked here.
+% \ifPosterResults is true only if cr_results.tex defines the sentinel macros
+% \RepEndpoint, \RepNSeedsWord, \RepLabelCentroid and \RepLabelEnvelope (the
+% generator always writes them) AND a state validated for exactly this file
+% exists; otherwise every result cell stays a TBD placeholder and the log has a
+% POSTER-PROBLEM line, which fails the build report.
+\newcommand*{\PosterAutoDir}{../../paper/genai4health2026/auto/}
+\newcommand*{\PosterStateFile}{generated/results_state.tex}
+\newif\ifPosterResults
+\newif\ifPosterSynthetic
+\newif\ifPosterSeedA
+\newif\ifPosterSeedB
+\newif\ifPosterSeedC
+\newif\ifPosterAnyDescSeed
+\newif\ifPosterSpreadFig
+\newif\ifPosterLateNote
+% State file interface (written by make_preview.py --precheck).
+\makeatletter
+\newcommand*{\PosterStateDef}[2]{\expandafter\gdef\csname PosterState#1\endcsname{#2}}
+\newcommand*{\PosterExpectMacro}[1]{\expandafter\gdef\csname PosterExpect@#1\endcsname{}}
+\makeatother
+\ExplSyntaxOn
+\ior_new:N \g__poster_scan_ior
+% Synthetic marker of the generator, read as text from cr_results.tex.
+\NewDocumentCommand \PosterScanMarker { m }
+  {
+    \file_if_exist:nT {#1}
+      {
+        \ior_open:Nn \g__poster_scan_ior {#1}
+        \ior_str_map_inline:Nn \g__poster_scan_ior
+          { \str_if_in:nnT {##1} { SYNTHETIC~DRY~RUN } { \global\PosterSynthetictrue } }
+        \ior_close:N \g__poster_scan_ior
+      }
+  }
+% \PosterIfMDfive{file}{expected}{true}{false}: the file's MD5 equals the state.
+\NewDocumentCommand \PosterIfMDfive { m m m m }
+  { \str_if_eq:eeTF { \file_mdfive_hash:n {#1} } {#2} {#3} {#4} }
+% \PosterIfState{key}{value}{true}{false}
+\NewDocumentCommand \PosterIfState { m m m m }
+  { \str_if_eq:eeTF { \use:c { PosterState#1 } } {#2} {#3} {#4} }
+% \PosterIfDescSeed{X}{true}{false}: seed index X is descriptive (validated
+% sidecar: a seed index with runs that is not complete at the freeze).
+\NewDocumentCommand \PosterIfDescSeed { m m m }
+  { \exp_args:Nv \tl_if_in:nnTF { PosterStateSeedsDesc } {#1} {#2} {#3} }
+% Matched-control text: the registered descriptions of pre-registration
+% amendment 2, or the generator's status when no description applies.
+\NewDocumentCommand \PosterControlText { }
+  {
+    \exp_args:Nv \str_case:nnF { PosterStateControl }
+      {
+        { M+ }           { \emph{placement~accounts~for~most~of~the~gap}~(registered~description) }
+        { M0 }           { \emph{placement~difference~not~detected}~(registered~description) }
+        { M- }           { \emph{placement~difference~reversed}~(registered~description) }
+        { M_partial }    { \emph{both~contribute}~(registered~description) }
+        { M_desc }       { descriptive~only~(a~run~finished~after~the~freeze) }
+        { M_unassessed } { not~assessed~(no~on-time~budget~shift) }
+        { M_noP }        { not~assessed~(no~\ArmBest{}~result~at~seed~A) }
+        { M_na }         { not~assessed~(no~\Arm{random-cb}~result) }
+        { M_incomplete } { not~assessed~(no~registered~\Arm{random}~range) }
+      }
+      { status~unknown,~see~the~paper \iow_term:n { POSTER-PROBLEM:~unknown~control~label } }
+  }
+\cs_new:Npn \__poster_late_word:n #1
+  { \exp_args:Nv \str_case:nnF { PosterState#1 } { { 1 } { late } { 0 } { ontime } } { none } }
+\NewDocumentCommand \PosterLogResults { }
+  {
+    \iow_term:x
+      {
+        POSTER-RESULTS:~
+        \ifPosterResults loaded~(\ifPosterSynthetic SYNTHETIC~DRY~RUN\else real\fi)
+        \else none~(placeholders)\ifPosterSynthetic,~SYNTHETIC~DRY~RUN~file\fi \fi
+      }
+    \ifPosterResults
+      \iow_term:x
+        {
+          POSTER-RESULTS-SEEDS:~present=
+          \ifPosterSeedA A\fi \ifPosterSeedB B\fi \ifPosterSeedC C\fi
+          \c_space_tl descriptive=
+          \tl_if_empty:cTF { PosterStateSeedsDesc } { none } { \use:c { PosterStateSeedsDesc } }
+        }
+      \iow_term:x
+        {
+          POSTER-RESULTS-CONTROL:~\use:c { PosterStateControl } \c_space_tl
+          P=\__poster_late_word:n { PDesc } \c_space_tl B=\__poster_late_word:n { BDesc }
+        }
+      \iow_term:x
+        {
+          POSTER-RESULTS-FIGURE:~
+          \ifPosterSpreadFig included~\use:c { PosterStateFigure } \else missing \fi
+        }
+    \fi
+  }
+\ExplSyntaxOff
+
+\IfFileExists{\PosterAutoDir cr_results.tex}{%
+  \input{\PosterAutoDir cr_results.tex}%
+  \typeout{POSTER: cr_results.tex found and loaded}%
+  \PosterScanMarker{\PosterAutoDir cr_results.tex}%
+  \ifdefined\RepEndpoint\ifdefined\RepNSeedsWord
+    \ifdefined\RepLabelCentroid\ifdefined\RepLabelEnvelope
+      \PosterResultstrue
+    \fi\fi\fi\fi
+  \ifPosterResults\else
+    \typeout{POSTER-PROBLEM: cr_results.tex lacks the sentinel macros; placeholders kept}%
+  \fi
+  \IfFileExists{\PosterStateFile}{\input{\PosterStateFile}}{}%
+  \ifdefined\PosterStateResultsMDfive
+    \PosterIfMDfive{\PosterAutoDir cr_results.tex}{\PosterStateResultsMDfive}{}{%
+      \PosterResultsfalse
+      \typeout{POSTER-PROBLEM: generated/results_state.tex was validated for another
+        cr_results.tex; run build.ps1}}%
+    \PosterIfState{Synthetic}{1}{\PosterSynthetictrue}{}%
+  \else
+    \PosterResultsfalse
+    \typeout{POSTER-PROBLEM: no validated results state (generated/results_state.tex); run
+      build.ps1}%
+  \fi
+}{%
   \typeout{POSTER: cr_results.tex not found; result panels show placeholders}}
+% A seed index is shown if any of its RANDOM, CENTROID or ENVELOPE runs has a
+% generated AUC (the paper's generated replication table has the same rows).
+\ifPosterResults
+  \ifdefined\RepAUCRandomSeedA\PosterSeedAtrue\fi
+  \ifdefined\RepAUCCentroidSeedA\PosterSeedAtrue\fi
+  \ifdefined\RepAUCEnvelopeSeedA\PosterSeedAtrue\fi
+  \ifdefined\RepAUCRandomSeedB\PosterSeedBtrue\fi
+  \ifdefined\RepAUCCentroidSeedB\PosterSeedBtrue\fi
+  \ifdefined\RepAUCEnvelopeSeedB\PosterSeedBtrue\fi
+  \ifdefined\RepAUCRandomSeedC\PosterSeedCtrue\fi
+  \ifdefined\RepAUCCentroidSeedC\PosterSeedCtrue\fi
+  \ifdefined\RepAUCEnvelopeSeedC\PosterSeedCtrue\fi
+  \ifPosterSeedA\PosterIfDescSeed{A}{\PosterAnyDescSeedtrue}{}\fi
+  \ifPosterSeedB\PosterIfDescSeed{B}{\PosterAnyDescSeedtrue}{}\fi
+  \ifPosterSeedC\PosterIfDescSeed{C}{\PosterAnyDescSeedtrue}{}\fi
+  % Late-run note: a shown P or B contrast computed from a run after the freeze.
+  \ifdefined\RepPlacementDelta\PosterIfState{PDesc}{1}{\PosterLateNotetrue}{}\fi
+  \ifdefined\RepBudgetShift\PosterIfState{BDesc}{1}{\PosterLateNotetrue}{}\fi
+  % Seed-spread figure: only the file validated by the precheck (MD5 re-checked).
+  \PosterIfState{Figure}{}{}{%
+    \IfFileExists{\PosterStateFigure}{%
+      \PosterIfMDfive{\PosterStateFigure}{\PosterStateFigureMDfive}{\PosterSpreadFigtrue}{%
+        \typeout{POSTER-PROBLEM: seed-spread figure changed after validation}}}{%
+      \typeout{POSTER-PROBLEM: validated seed-spread figure missing}}}%
+\fi
+\PosterLogResults
 
 % ---------------------------------------------------------------------------
 % Colour-blind-safe palette (Okabe & Ito). Text on coloured fills is white on
@@ -122,13 +270,71 @@
 % the final OpenReview or repository URL (no '#' or '%') to draw a real code.
 \providecommand*{\PosterURL}{}
 
-% Result placeholders (registered replication; README.md lists what to fill).
+% Result placeholders (registered replication; used until auto/cr_results.tex
+% is loaded, see the top of this file and README.md).
 \newcommand{\CRCell}{\colorbox{PendingFill}{\color{black}\strut\,TBD\,}%
   \typeout{POSTER-PLACEHOLDER: result cell}}
 \newcommand{\PosterPendingBanner}[1]{%
   \noindent\fcolorbox{OIVermillion}{PendingFill}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{%
     \raggedright\color{black}\textbf{RESULTS PENDING}\enspace#1}}%
   \typeout{POSTER-PLACEHOLDER: pending banner}}
+% Generated result cell: #1 is a \Rep* macro name without the backslash. With
+% validated results it prints that macro; "---" only where the validated
+% sidecar has no such macro (missing or unregistered run, as in the paper's
+% generated tables); a macro the sidecar lists but cr_results.tex lacks prints
+% MISSING and fails the build; before results, the TBD placeholder.
+% \PosterCellM sets signed differences in math mode; \PosterCellMLate adds a
+% dagger when the validated state marks that contrast as using a late run.
+\newcommand*{\PosterMissing}[1]{\textbf{\color{OIVermillion}MISSING}%
+  \typeout{POSTER-PROBLEM: macro #1 expected from the sidecar but not defined}}
+\newcommand*{\PosterCell}[1]{\ifPosterResults
+  \ifcsname #1\endcsname\csname #1\endcsname
+  \else\ifcsname PosterExpect@#1\endcsname\PosterMissing{#1}\else---\fi\fi
+  \else\CRCell\fi}
+\newcommand*{\PosterCellM}[1]{\ifPosterResults
+  \ifcsname #1\endcsname$\csname #1\endcsname$%
+  \else\ifcsname PosterExpect@#1\endcsname\PosterMissing{#1}\else---\fi\fi
+  \else\CRCell\fi}
+\newcommand*{\PosterCellMLate}[2]{\PosterCellM{#1}\ifPosterResults
+  \ifcsname #1\endcsname\PosterIfState{#2}{1}{\rlap{$^{\dagger}$}}{}\fi\fi}
+% Synthetic dry run (generator marker in auto/cr_results.tex): a banner across
+% the top and a watermark (overlays drawn last, layout unchanged), plus the
+% replication block title, the outcome strip and the takeaway are marked.
+\definecolor{SynthFill}{HTML}{F0E442}
+\newcommand{\PosterSyntheticBanner}[1]{%
+  \noindent{\setlength{\fboxrule}{1.5mm}\fcolorbox{OIVermillion}{SynthFill}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{%
+    \raggedright\color{black}\textbf{SYNTHETIC DRY RUN --- NOT RESULTS}\enspace#1}}}%
+  \typeout{POSTER-SYNTHETIC: banner}}
+% Seed columns of the replication table: one per new seed index with a
+% generated run (seed A = 1234, B = 5678, C = 9012), * if the index is
+% descriptive; a single "new seeds" TBD column while results are pending.
+\newcount\PosterNSeedCols
+\newcommand{\PosterSeedHeads}{}
+\newcommand{\PosterSeedCellsRandom}{}
+\newcommand{\PosterSeedCellsCentroid}{}
+\newcommand{\PosterSeedCellsEnvelope}{}
+\newcommand{\PosterAddSeed}[1]{%
+  \global\advance\PosterNSeedCols by 1
+  \gappto\PosterSeedHeads{& seed #1\PosterIfDescSeed{#1}{$^{*}$}{}}%
+  \gappto\PosterSeedCellsRandom{& \PosterCell{RepAUCRandomSeed#1}}%
+  \gappto\PosterSeedCellsCentroid{& \PosterCell{RepAUCCentroidSeed#1}}%
+  \gappto\PosterSeedCellsEnvelope{& \PosterCell{RepAUCEnvelopeSeed#1}}}
+\ifPosterResults
+  \ifPosterSeedA\PosterAddSeed{A}\fi
+  \ifPosterSeedB\PosterAddSeed{B}\fi
+  \ifPosterSeedC\PosterAddSeed{C}\fi
+\fi
+\ifnum\PosterNSeedCols=0
+  \global\PosterNSeedCols=1
+  \gdef\PosterSeedHeads{& new seeds}%
+  \ifPosterResults
+    \gdef\PosterSeedCellsRandom{& ---}\gdef\PosterSeedCellsCentroid{& ---}%
+    \gdef\PosterSeedCellsEnvelope{& ---}%
+  \else
+    \gdef\PosterSeedCellsRandom{& \CRCell}\gdef\PosterSeedCellsCentroid{& \CRCell}%
+    \gdef\PosterSeedCellsEnvelope{& \CRCell}%
+  \fi
+\fi
 
 % Highlight box for key statements.
 \newcommand{\KeyBox}[1]{%
@@ -378,8 +584,17 @@
       original runs, even with a segmentation-free intensity centroid.
     \item More anatomical specificity (tissue shapes, coverage) added no
       further gain.
+    \ifPosterResults
+    % Replication takeaway: only the generated label macros (digit-free
+    % text), nothing beyond what the registered labels say.
+    \item Target placement, target size and visible context move together.
+      \ifPosterSynthetic\textbf{SYNTHETIC DRY RUN:} \fi Registered replication
+      labels: \ArmBest{} \emph{\RepLabelCentroid}, \Arm{envelope}
+      \emph{\RepLabelEnvelope}.
+    \else
     \item Target placement, target size and visible context move together;
       matched-budget comparisons come next.
+    \fi
   \end{plist}
 }
 
@@ -387,76 +602,156 @@
 
 \PosterCheckFit{after main columns}
 
-% ===================== PENDING RESULTS (full width) =====================
-{\colorlet{blocktitlebgcolor}{PendingTitle}
-\block{Registered replication: results pending (filled after the Oct~22 results freeze)}{
-  \raggedright
-  \begin{minipage}[t]{0.37\linewidth}
-    \textbf{Repeated continuations}\par
-    {\normalsize New seeds from the same epoch-25 checkpoint, stopped at
-    epoch 50.\par}
+% ================ REGISTERED REPLICATION (full width) ================
+% Every result cell is \PosterCell{<macro>} or \PosterCellM{<macro>}: the
+% generated \Rep* value once auto/cr_results.tex is loaded ("---" where the
+% generator wrote none), TBD before. Cell-to-macro map: README.md.
+% Panels: repeated continuations | matched-budget control | pooling, with an
+% outcome strip below them (registered labels, control description, late-run
+% and descriptive-seed notes; RESULTS PENDING banner before the freeze) and the
+% seed-spread figure with its caption on the right. The left part is measured
+% first; figure plus caption take at most its height, so the figure never makes
+% the block taller.
+\newsavebox{\PosterRepBox}
+\newsavebox{\PosterCtlBox}
+\newsavebox{\PosterPoolBox}
+\newsavebox{\PosterLeftBox}
+\newsavebox{\PosterCapBox}
+\newlength{\PosterRowW}
+\newlength{\PosterSpreadW}
+\newlength{\PosterSpreadH}
+% Seed-spread caption (encoding of the generator's figure, as in its caption).
+\newcommand{\PosterSpreadCaption}{Error bars: s.d.\ over probe-head seeds.
+  Open markers: descriptive runs (late or incomplete).}
+\newcommand{\PosterPanelHead}[1]{{\large\bfseries #1}\enspace}
+% Outcome strip: generated labels and the matched-control description only.
+\newcommand{\PosterOutcome}{%
+  \ifPosterSynthetic\textbf{SYNTHETIC DRY RUN.}\space\fi
+  \textbf{Registered labels:} \ArmBest{} \emph{\RepLabelCentroid},
+  \Arm{envelope} \emph{\RepLabelEnvelope}%
+  \ifdefined\RepRandomRange\space(\Arm{random} range \RepRandomRange)\fi.
+  \textbf{Matched-budget control:} \PosterControlText.%
+  \ifPosterAnyDescSeed\space$^{*}$Incomplete at the freeze: descriptive.\fi}
+{\ifPosterSynthetic
+  \colorlet{blocktitlebgcolor}{OIVermillion}\colorlet{blocktitlefgcolor}{black}%
+  \gdef\PosterRepTitle{SYNTHETIC DRY RUN, NOT RESULTS: registered replication}%
+\else\ifPosterResults
+  \gdef\PosterRepTitle{Registered replication: repeated continuations and matched-budget control}%
+\else
+  \colorlet{blocktitlebgcolor}{PendingTitle}%
+  \gdef\PosterRepTitle{Registered replication: results pending (filled after the Oct~22 results freeze)}%
+\fi\fi
+\block{\PosterRepTitle}{
+  \normalsize\raggedright
+  \setlength{\PosterRowW}{\linewidth}%
+  \setlength{\PosterSpreadW}{0.26\PosterRowW}%
+  \sbox{\PosterRepBox}{\begin{minipage}[t]{0.31\PosterRowW}\vspace{0pt}\raggedright
+    \PosterPanelHead{Repeated continuations}Epoch-50 test AUC; originals
+    re-probed, new runs from the epoch-25 checkpoint. Mean and $\Delta$ (vs
+    \Arm{random}, same seed): registered seeds.\par
     \vspace{0.3em}
-    {\normalsize
-    \setlength{\tabcolsep}{0.35em}
-    \begin{tabular}{@{}lcccc@{}}
+    {\setlength{\tabcolsep}{0.3em}%
+    \begin{tabular}{@{}lc*{\PosterNSeedCols}{c}cc@{}}
       \toprule
-      strategy & original & new seeds & mean & $\Delta$ \\
+      strategy & original \PosterSeedHeads & mean & mean $\Delta$ \\
       \midrule
-      \Arm{random}   & \CRCell & \CRCell & \CRCell & --- \\
-      \Arm{envelope} & \CRCell & \CRCell & \CRCell & \CRCell \\
-      \ArmBest{}     & \CRCell & \CRCell & \CRCell & \CRCell \\
+      \Arm{random}   & \PosterCell{RepAUCRandomOrig} \PosterSeedCellsRandom
+        & \PosterCell{RepMeanAUCRandom} & --- \\
+      \Arm{envelope} & \PosterCell{RepAUCEnvelopeOrig} \PosterSeedCellsEnvelope
+        & \PosterCell{RepMeanAUCEnvelope} & \PosterCellM{RepDeltaMeanEnvelope} \\
+      \ArmBest{}     & \PosterCell{RepAUCCentroidOrig} \PosterSeedCellsCentroid
+        & \PosterCell{RepMeanAUCCentroid} & \PosterCellM{RepDeltaMeanCentroid} \\
       \bottomrule
     \end{tabular}\par}
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.33\linewidth}
-    \raggedright
-    \textbf{Matched-budget control}\par
-    {\normalsize \Arm{random-cb}: uniform placement with \ArmBest{}'s
-    per-image target and context budgets.\par}
+  \end{minipage}}%
+  \sbox{\PosterCtlBox}{\begin{minipage}[t]{0.23\PosterRowW}\vspace{0pt}\raggedright
+    \PosterPanelHead{Matched-budget control}\Arm{random-cb}: uniform
+    placement with \ArmBest{}'s per-image budgets; seed A, one run per arm.\par
     \vspace{0.3em}
-    {\normalsize
-    \setlength{\tabcolsep}{0.35em}
+    {\setlength{\tabcolsep}{0.25em}%
     \begin{tabular}{@{}lc@{}}
       \toprule
       contrast & $\Delta$ AUC \\
       \midrule
-      \ArmBest{} $-$ \Arm{random-cb} (placement) & \CRCell \\
-      \Arm{random-cb} $-$ \Arm{random} (budget) & \CRCell \\
+      \ArmBest{} $-$ \Arm{random-cb} (placement) & \PosterCellMLate{RepPlacementDelta}{PDesc} \\
+      \Arm{random-cb} $-$ \Arm{random} (budget)    & \PosterCellMLate{RepBudgetShift}{BDesc} \\
       \bottomrule
     \end{tabular}\par}
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.25\linewidth}
-    \raggedright
-    \textbf{Pooling}\par
-    {\normalsize Maxima within and across B-scans in place of means;
-    $\Delta$ vs \Arm{random}.\par}
+    \ifPosterLateNote\vspace{0.2em}$^{\dagger}$From a run after the freeze:
+      descriptive.\par\fi
+  \end{minipage}}%
+  \sbox{\PosterPoolBox}{\begin{minipage}[t]{0.15\PosterRowW}\vspace{0pt}\raggedright
+    \PosterPanelHead{Pooling}Maxima within or across B-scans; mean
+    $\Delta$ vs \Arm{random} (descriptive).\par
     \vspace{0.3em}
-    {\normalsize
-    \setlength{\tabcolsep}{0.35em}
+    {\setlength{\tabcolsep}{0.3em}%
     \begin{tabular}{@{}lcc@{}}
       \toprule
-      pooling & \Arm{envelope} & \ArmBest{} \\
+      max & within & across \\
       \midrule
-      max within B-scan & \CRCell & \CRCell \\
-      max across B-scans & \CRCell & \CRCell \\
+      \Arm{envelope} & \PosterCellM{RepPoolPatchMaxDeltaEnvelope} & \PosterCellM{RepPoolSliceMaxDeltaEnvelope} \\
+      \ArmBest{}     & \PosterCellM{RepPoolPatchMaxDeltaCentroid} & \PosterCellM{RepPoolSliceMaxDeltaCentroid} \\
       \bottomrule
     \end{tabular}\par}
-  \end{minipage}\par
-  \vspace{0.4em}
-  \PosterPendingBanner{{\normalsize Fill from
-  \texttt{paper/genai4health2026/auto/cr\_results.tex}; see
-  \texttt{poster/genai4health2026/README.md}.}}
+  \end{minipage}}%
+  \sbox{\PosterLeftBox}{\begin{minipage}[t]{\dimexpr\PosterRowW-\PosterSpreadW-0.015\PosterRowW\relax}\vspace{0pt}%
+    \makebox[\linewidth][s]{\usebox{\PosterRepBox}\hfill\usebox{\PosterCtlBox}\hfill\usebox{\PosterPoolBox}}\par
+    \vspace{0.5em}
+    \ifPosterResults
+      {\setlength{\fboxsep}{0.25em}%
+      \ifPosterSynthetic\colorlet{PosterStrip}{SynthFill}\else\colorlet{PosterStrip}{KeyFill}\fi
+      \noindent\colorbox{PosterStrip}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+        \raggedright\PosterOutcome}}\par}
+    \else
+      \PosterPendingBanner{Labels (consistent direction, within run-to-run
+      variation or reversed), cells and figure fill in from
+      \texttt{auto/cr\_results.tex}.}\par
+    \fi
+  \end{minipage}}%
+  \sbox{\PosterCapBox}{\parbox[t]{\PosterSpreadW}{\raggedright\hyphenpenalty=10000
+    \PosterSpreadCaption}}%
+  \setlength{\PosterSpreadH}{\dimexpr\ht\PosterLeftBox+\dp\PosterLeftBox
+    -\ht\PosterCapBox-\dp\PosterCapBox-0.5em\relax}%
+  \ifdim\PosterSpreadH>0.5\PosterSpreadW\setlength{\PosterSpreadH}{0.5\PosterSpreadW}\fi
+  \typeout{POSTER-SPREAD: figure box \the\PosterSpreadW\space x \the\PosterSpreadH}%
+  \noindent\makebox[\linewidth][s]{%
+  \usebox{\PosterLeftBox}\hfill
+  \begin{minipage}[t]{\PosterSpreadW}\vspace{0pt}\centering
+    \ifPosterSpreadFig
+      \includegraphics[width=\PosterSpreadW, height=\PosterSpreadH, keepaspectratio]{\PosterStateFigure}%
+    \else
+      {\setlength{\fboxsep}{0pt}\fcolorbox{OIVermillion}{PendingFill}{%
+        \parbox[c][\dimexpr\PosterSpreadH-2\fboxrule\relax][c]{\dimexpr\PosterSpreadW-2\fboxrule\relax}{%
+          \centering\color{black}\textbf{FIGURE PENDING}\\[0.3em]
+          spread across runs\\
+          \texttt{auto/fig\_cr\_seed\_spread.pdf}}}}%
+      \typeout{POSTER-PLACEHOLDER: seed-spread figure}%
+    \fi\par
+    \vspace{0.5em}\nointerlineskip
+    \noindent\usebox{\PosterCapBox}\par
+  \end{minipage}}\par
 }}
 
 % ===================== CREDITS (full width, no title) =====================
 \block{}{
   \raggedright\normalsize
   I-JEPA: Assran et al., CVPR 2023. MIRAGE: Morano et al., npj Digit.\ Med.\ 2025.
-  FairVision: Luo et al., 2024. OCT example in both figures: Kulyabin et al.,
+  FairVision: Luo et al., 2024. OCT example in both OCT figures: Kulyabin et al.,
   OCTDL, Fig.~1 (arXiv:2312.08255v3), adapted (cropped, overlays added) under
   CC BY 4.0 (\texttt{creativecommons.org/licenses/by/4.0}); illustration only.
   No FairVision images are shown.
 }
+
+% Synthetic dry run: banner across the top and a watermark over the whole
+% poster, drawn last (on top) so the layout is the same as for real results.
+\ifPosterSynthetic
+  \node[rotate=56, opacity=0.3, text=OIVermillion, align=center,
+    font=\fontsize{200}{230}\selectfont\bfseries] at (0, 0) {SYNTHETIC DRY RUN\\NOT RESULTS};
+  \node[anchor=north, inner sep=0pt, text width=0.94\textwidth] at (0, 0.5\textheight-4mm)
+    {\Large\PosterSyntheticBanner{Generated from synthetic inputs to test the
+    poster; never print or share this file.}};
+  \typeout{POSTER-SYNTHETIC: watermark}
+\fi
 
 \PosterCheckFit{end of poster}
 

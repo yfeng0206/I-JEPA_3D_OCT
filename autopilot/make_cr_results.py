@@ -32,17 +32,23 @@ autopilot/numeric_bindings.py exactly as p15_verify_numbers.py re-evaluates it.
 
 Scenario selection (per guided arm, primary pooling) uses the ``final`` labels unchanged:
 consistent_direction -> A, within_run_to_run_variation -> B, reversed -> C,
-incomplete/not_available -> I; both arms equal -> that scenario, else "mixed".
+incomplete/not_available -> I; both arms equal -> that scenario, else "mixed". Before that,
+every label, complete-index set, contrast, mean and RANDOM range of the final JSON is
+recomputed from the verified per-run AUCs with the registered rules and any disagreement is
+refused (``verify_analysis``; V10-1).
 Matched control (pre-registration section 4 and amendment 2): RANDOM-CB is registered at seed
 1234 only (other seeds are refused). P = AUC(C1) - AUC(CB), B = AUC(CB) - AUC(R1), r = the RANDOM
-range of section 3 (cr_stats ``random_range``); descriptions only from runs finished before
-the freeze:
+range of section 3 (cr_stats ``random_range``), used only with the complete registered reference
+set: the eligible re-probed original RANDOM plus the new RANDOM runs of at least two complete
+indices (otherwise M_incomplete, with P and B descriptive; V10-2); descriptions only from runs
+finished before the freeze:
   M0  |P| <= r                     (placement difference not detected)
   M-  P < -r                       (placement difference reversed)
   M+  P > r and P >= (P + B) / 2   (placement accounts for most of the gap)
   M_partial  P > r and P < (P + B) / 2 (both contribute)
   without a description: M_unassessed (P > r but no on-time B), M_desc (P uses a late run),
-  M_noP (no CENTROID result at seed 1234), M_na (no RANDOM-CB result), M_incomplete (no r).
+  M_noP (no CENTROID result at seed 1234), M_na (no RANDOM-CB result), M_incomplete (no
+  registered r).
 Scenario prose is literal for its label: B wording names the failing condition (a
 non-positive continuation and/or a mean not above r), never "smaller" or "comparable".
 
@@ -52,6 +58,13 @@ Usage (repo root, after the freeze):
   python autopilot/make_cr_results.py build ... --check
   python autopilot/make_cr_results.py cb-audit --log <RANDOM-CB train log> --out cb_audit.json
   python autopilot/make_cr_results.py integrate --paper-dir <scratch copy> --results-dir <out>
+  python autopilot/make_cr_results.py register-figure --paper-dir <integrated paper> ^
+      --results-dir <out> --reviewer "<name>"   (or integrate ... --register-figure)
+Integration also applies coordinator note 2 (abstract revision comment deleted; the
+CENTROID-best ranking sentence restated as a single-run difference unless the scenario is A;
+Fig. 3(b) caption names its intervals as original-run test-case intervals). register-figure
+(note 4) adds the release_assets.json producer and the p15 figure receipt.
+The full post-freeze sequence is autopilot/cr_postfreeze.ps1.
 Synthetic dry runs need ``--allow-synthetic`` and an --out-dir/--evidence-dir outside the paper
 and repository.
 """
@@ -284,6 +297,13 @@ def verify_runs(final, run_dirs, allow_synthetic):
             raise InputError("%s: final JSON identity differs from the probe" % name)
         if "eligible" not in (entry.get("eligibility") or {}):
             raise InputError("%s: final JSON has no completion eligibility" % name)
+        # V8-2: the completion evidence (stop file, seal and probe times) may have changed since
+        # final was computed; a stale eligibility would keep or drop a seed index wrongly.
+        current = json.loads(json.dumps(cr_stats.completion_eligibility(run_dir, res, manifest),
+                                        default=str))
+        if current != json.loads(json.dumps(entry["eligibility"], default=str)):
+            raise InputError("%s: final JSON completion eligibility is stale (recorded %s, now %s);"
+                             " recompute cr_stats final" % (name, entry["eligibility"], current))
         variants = receipt.get("variants") or {}
         for variant, block in final["analysis"].items():
             value = block["per_run_test_auc"].get(name)
@@ -299,7 +319,9 @@ def verify_runs(final, run_dirs, allow_synthetic):
         records[name] = {"run_dir": run_dir, "identity": ident, "receipt": receipt,
                          "receipt_path": receipt_path, "receipt_sha256": receipt_sha,
                          "results_sha256": sha256_file(os.path.join(run_dir, "results.json")),
-                         "sealed_manifest_sha256": manifest_sha}
+                         "sealed_manifest_sha256": manifest_sha,
+                         "val_auc": {v: (s or {}).get("val_auc_mean")
+                                     for v, s in (res.get("variants") or {}).items()}}
     if len(set(head_sets.values())) != 1:
         raise InputError("probe-head seeds differ across runs")
     head_seeds = next(iter(head_sets.values()))
@@ -307,6 +329,191 @@ def verify_runs(final, run_dirs, allow_synthetic):
         raise InputError("probe-head seeds %s are not the registered %s"
                          % (list(head_seeds), list(cr_stats.REGISTERED_HEAD_SEEDS)))
     return records, head_seeds
+
+
+def _close(a, b, tol=1e-12):
+    if a is None or b is None:
+        return a is None and b is None
+    try:
+        return abs(float(a) - float(b)) <= tol
+    except (TypeError, ValueError):
+        return False
+
+
+def prereg_label(deltas, random_values, anchor_ok):
+    """Outcome label restated from PREREGISTRATION section 3 and amendment 1 (not cr_stats code):
+    deltas of the complete seed indices; RANDOM realizations = the eligible re-probed original
+    plus the new RANDOM runs of those indices."""
+    if not deltas:
+        return "not_available"
+    if len(deltas) < 2 or not anchor_ok or len(random_values) != 1 + len(deltas):
+        return "incomplete"
+    mean = sum(deltas) / len(deltas)
+    if mean <= 0:
+        return "reversed"
+    if all(d > 0 for d in deltas) and mean > max(random_values) - min(random_values):
+        return "consistent_direction"
+    return "within_run_to_run_variation"
+
+
+ANALYSIS_LISTS = ("primary_contrasts", "matched_control", "descriptive_incomplete_contrasts")
+
+
+def verify_analysis(final, records):
+    """V10-1: recompute everything of the final analysis that does not need the bootstrap from
+    the verified run identities, completion eligibility and receipt AUCs (verify_runs), and
+    refuse any disagreement: per-run AUCs, complete / incomplete seed indices, the contrast sets
+    and their point differences, means, RANDOM realizations and range, outcome labels (rule
+    restated here), sensitivity values and the matched-control range flags. Interval endpoints
+    come from the bootstrap; the pipeline binds them with final.json's output digest."""
+    problems = []
+    facts = {}
+    for name, entry in final["runs"].items():
+        ident = _ident(entry["identity"])
+        seed = int(ident["train_seed"]) if ident["role"] == "new" else None
+        facts[name] = (ident["arm"], ident["role"], seed, bool(entry["eligibility"]["eligible"]))
+    new = {(arm, seed): n for n, (arm, role, seed, _) in facts.items() if role == "new"}
+    anchors = {arm: n for n, (arm, role, _, _) in facts.items() if role == "anchor"}
+    seeds_new = sorted(set(s for _, s in new))
+    receipt_variants = set()
+    for rec in records.values():
+        receipt_variants |= set((rec["receipt"].get("variants") or {}))
+    if receipt_variants - set(final["analysis"]):
+        problems.append("pooling variants without an analysis: %s"
+                        % sorted(receipt_variants - set(final["analysis"])))
+    for variant, block in final["analysis"].items():
+        point = block.get("per_run_test_auc") or {}
+        val = block.get("per_run_val_auc") or {}
+        expected = {n for n, rec in records.items() if ((rec["receipt"].get("variants") or {})
+                                                        .get(variant) or {}).get("test_auc_mean")
+                    is not None}
+        if set(point) != expected:
+            problems.append("%s: per-run test AUCs for %s, receipts have %s"
+                            % (variant, sorted(point), sorted(expected)))
+        for n in set(point) & expected:
+            mean = records[n]["receipt"]["variants"][variant]["test_auc_mean"]
+            if not _close(point[n], mean, 1e-9):
+                problems.append("%s/%s: test AUC is not the unsealed head-seed mean" % (n, variant))
+            if not _close(val.get(n), records[n]["val_auc"].get(variant), 1e-12):
+                problems.append("%s/%s: validation AUC differs from results.json" % (n, variant))
+        if set(val) != set(point):
+            problems.append("%s: validation and test AUCs cover different runs" % variant)
+        point = {n: v for n, v in point.items() if n in expected}
+
+        def has(n):
+            return n is not None and n in point
+
+        def ok(n):
+            return has(n) and facts[n][3]
+
+        complete = [s for s in seeds_new
+                    if all(ok(new.get((arm, s))) for arm in cr_stats.PRIMARY_ARMS)]
+        if list(block.get("complete_seed_indices") or []) != complete:
+            problems.append("%s: complete seed indices %s, recomputed %s"
+                            % (variant, block.get("complete_seed_indices"), complete))
+        if list(block.get("incomplete_seed_indices") or []) != [s for s in seeds_new
+                                                                if s not in complete]:
+            problems.append("%s: incomplete seed indices differ from the eligibility" % variant)
+        want = {}
+        for s in seeds_new:
+            r = new.get(("random", s))
+            for arm in GUIDED:
+                g = new.get((arm, s))
+                if has(r) and has(g):
+                    lst = "primary_contrasts" if s in complete else \
+                        "descriptive_incomplete_contrasts"
+                    want[(lst, "%s-random" % arm, s)] = (g, r)
+            cb = new.get(("random_cb", s))
+            for a, b, kind in ((new.get(("centroid", s)), cb, "centroid-random_cb"),
+                               (cb, r, "random_cb-random")):
+                if has(a) and has(b):
+                    lst = "matched_control" if ok(a) and ok(b) else \
+                        "descriptive_incomplete_contrasts"
+                    want[(lst, kind, s)] = (a, b)
+        got = {}
+        for lst in ANALYSIS_LISTS:
+            for c in block.get(lst) or []:
+                key = (lst, c.get("kind"), c.get("train_seed"))
+                if key in got:
+                    problems.append("%s: duplicate contrast %s" % (variant, key))
+                got[key] = c
+        if set(got) != set(want):
+            problems.append("%s: contrasts %s missing, %s unexpected" % (
+                variant, sorted(set(want) - set(got)), sorted(set(got) - set(want))))
+        for key in sorted(set(got) & set(want)):
+            c, (a, b) = got[key], want[key]
+            if c.get("a") != a or c.get("b") != b:
+                problems.append("%s: %s compares %s with %s" % (variant, key[1:], c.get("a"),
+                                                                c.get("b")))
+                continue
+            if not (_close(c.get("auc_a"), point[a]) and _close(c.get("auc_b"), point[b])
+                    and _close(c.get("delta"), point[a] - point[b])):
+                problems.append("%s: %s point difference disagrees with the per-run AUCs"
+                                % (variant, key[1:]))
+            if c.get("val_delta") is not None and not (
+                    val.get(a) is not None and val.get(b) is not None
+                    and _close(c["val_delta"], val[a] - val[b])):
+                problems.append("%s: %s validation difference disagrees" % (variant, key[1:]))
+            ci = c.get("ci95")
+            if not (isinstance(ci, list) and len(ci) == 2 and all(
+                    isinstance(x, (int, float)) and abs(x) < 1 for x in ci) and ci[0] <= ci[1]):
+                problems.append("%s: %s has no valid interval" % (variant, key[1:]))
+            if key[0] == "primary_contrasts" and c.get("arm") != key[1].split("-")[0]:
+                problems.append("%s: %s has arm %r" % (variant, key[1:], c.get("arm")))
+        anchor_ok = ok(anchors.get("random"))
+        random_values = [point[n] for n in [anchors.get("random")] +
+                         [new.get(("random", s)) for s in complete] if ok(n)]
+        spread = (max(random_values) - min(random_values)) if len(random_values) >= 2 else None
+        all_random = [point[n] for n in [anchors.get("random")] +
+                      [new.get(("random", s)) for s in seeds_new] if has(n)]
+        outcomes = block.get("outcomes") or {}
+        for arm in GUIDED:
+            o = outcomes.get(arm) or {}
+            deltas = [point[new[(arm, s)]] - point[new[("random", s)]] for s in complete]
+            label = prereg_label(deltas, random_values, anchor_ok)
+            where = "%s/%s" % (variant, arm)
+            if o.get("label") != label:
+                problems.append("%s: label %r, the registered rule gives %r"
+                                % (where, o.get("label"), label))
+            recorded = o.get("new_seed_deltas") or []
+            if len(recorded) != len(deltas) or not all(_close(x, y) for x, y in
+                                                       zip(recorded, deltas)):
+                problems.append("%s: new-seed deltas disagree with the per-run AUCs" % where)
+            if o.get("n_new_seeds") != len(deltas) or \
+                    list(o.get("complete_seed_indices") or []) != complete:
+                problems.append("%s: seed counts disagree" % where)
+            if not _close(o.get("mean_delta"), sum(deltas) / len(deltas) if deltas else None):
+                problems.append("%s: mean delta disagrees" % where)
+            realized = o.get("random_realizations") or []
+            if len(realized) != len(random_values) or not all(
+                    _close(x, y) for x, y in zip(realized, random_values)):
+                problems.append("%s: RANDOM realizations disagree" % where)
+            if not _close(o.get("random_range"), spread):
+                problems.append("%s: RANDOM range disagrees" % where)
+            if not _close(o.get("random_range_all_completed_runs"),
+                          max(all_random) - min(all_random) if len(all_random) >= 2 else None):
+                problems.append("%s: range of all completed RANDOM runs disagrees" % where)
+            if bool(o.get("design_complete")) != (len(deltas) >= 2 and
+                                                  len(random_values) == 1 + len(deltas)):
+                problems.append("%s: design_complete disagrees" % where)
+            sens = o.get("sensitivity_with_original") or {}
+            original = (point[anchors[arm]] - point[anchors["random"]]
+                        if ok(anchors.get(arm)) and anchor_ok else None)
+            pooled = deltas + ([original] if original is not None else [])
+            if not (_close(sens.get("original_delta"), original) and sens.get("n") == len(pooled)
+                    and _close(sens.get("pooled_mean_delta"),
+                               sum(pooled) / len(pooled) if pooled else None)):
+                problems.append("%s: sensitivity with the original runs disagrees" % where)
+        for c in block.get("matched_control") or []:
+            flag, delta = c.get("abs_delta_exceeds_random_range"), c.get("delta")
+            if not isinstance(delta, (int, float)) or \
+                    flag != (abs(delta) > spread if spread is not None else None):
+                problems.append("%s: matched-control range flag of %s disagrees"
+                                % (variant, c.get("kind")))
+    if problems:
+        raise InputError("final JSON disagrees with the analysis recomputed from the verified "
+                         "per-run AUCs and the registered rules (recompute cr_stats final):\n  "
+                         + "\n  ".join(problems[:25]))
 
 
 def verify_md(md, final, allow_synthetic):
@@ -324,6 +531,10 @@ def verify_md(md, final, allow_synthetic):
             raise InputError("MD run %s is not in the final analysis" % name)
         if _ident(entry.get("identity")) != _ident(final["runs"][name]["identity"]):
             raise InputError("MD run %s: identity differs from the final analysis" % name)
+        if json.loads(json.dumps(entry.get("eligibility"), default=str)) != \
+                json.loads(json.dumps(final["runs"][name]["eligibility"], default=str)):
+            raise InputError("MD run %s: completion eligibility differs from the final analysis "
+                             "(stale MD JSON; recompute it)" % name)
         test = ((entry.get("subsets") or {}).get("glaucoma") or {}).get("test")
         if not test:
             raise InputError("MD run %s has no glaucoma-subset test metrics" % name)
@@ -512,7 +723,9 @@ def numeric_specs(ctx):
                 "subtract", ref(F, *A, "per_run_val_auc", slots[(arm, "Orig")]),
                 ref(F, *A, "per_run_val_auc", slots[("random", "Orig")]))))
     o, p = block["outcomes"]["centroid"], A + ("outcomes", "centroid")
-    if o["random_range"] is not None:
+    # V10-2: the RANDOM range is shown only as the registered reference (original + complete
+    # indices); a range of the remaining RANDOM runs is never presented as that range.
+    if registered_reference(block, runs)[0] is not None:
         b.add("RepRandomRange", fmt("%.4f", ref(F, *p, "random_range")))
         b.add("RepRandomMin", fmt("%.4f", op("min", ref(F, *p, "random_realizations"))))
         b.add("RepRandomMax", fmt("%.4f", op("max", ref(F, *p, "random_realizations"))))
@@ -720,18 +933,51 @@ CONTROL_NAMES = {"M0": "placement difference not detected",
                  "M_partial": "both contribute"}
 
 
+REFERENCE_WHY = {
+    "indices": "fewer than two seed indices finished all three strategies before the results "
+               "freeze",
+    "anchor_missing": r"the re-probed original \textsc{random} encoder, the reference of the "
+                      r"registered rule, is not available",
+    "anchor_late": r"the re-probed original \textsc{random} encoder, the reference of the "
+                   r"registered rule, finished after the results freeze",
+    "range": r"the range of \textsc{random}'s realizations is not available"}
+
+
+def registered_reference(block, runs):
+    """Section 3's RANDOM reference, which amendment 2 reuses for the matched control (V10-2):
+    the eligible re-probed original RANDOM plus the new RANDOM runs of at least two complete
+    primary indices. Returns (range, reasons); without the complete set the range is None and
+    no registered label may use a range from the remaining RANDOM runs."""
+    reasons = []
+    if len(block.get("complete_seed_indices") or []) < 2:
+        reasons.append("indices")
+    anchors = [r for r in runs.values() if r.get("role") == "anchor" and r.get("arm") == "random"]
+    if not anchors:
+        reasons.append("anchor_missing")
+    elif not all(r.get("eligible") for r in anchors):
+        reasons.append("anchor_late")
+    o = block["outcomes"]["centroid"]
+    if not reasons and (o.get("random_range") is None or len(o.get("random_realizations") or [])
+                        != 1 + len(block["complete_seed_indices"])):
+        reasons.append("range")
+    return (None if reasons else o["random_range"]), reasons
+
+
 def matched_outcome(block, runs, cidx=None):
     """Matched-control description (pre-registration section 4 and amendment 2).
 
     P = AUC(C1) - AUC(CB) and B = AUC(CB) - AUC(R1) at the registered RANDOM-CB seed 1234,
-    r = the RANDOM range of section 3 (``random_range``). Labels only from on-time runs:
+    r = the RANDOM range of section 3 (``random_range``), only with the complete registered
+    reference set (eligible original RANDOM + the new RANDOM runs of >= 2 complete indices).
+    Labels only from on-time runs:
     M0 |P| <= r; M- P < -r; M+ P > r and P >= (P + B) / 2; M_partial (both contribute)
     P > r and P < (P + B) / 2. Otherwise a status without a label: M_na (no RANDOM-CB result),
     M_noP (no CENTROID result at that seed), M_desc (placement contrast uses a late run),
-    M_unassessed (P > r but no on-time B), M_incomplete (no RANDOM range).
+    M_unassessed (P > r but no on-time B), M_incomplete (no registered RANDOM range; P and B
+    stay descriptive).
     """
     cidx = cidx if cidx is not None else contrast_index(block)
-    spread = block["outcomes"]["centroid"]["random_range"]
+    spread, missing = registered_reference(block, runs)
     keys = [k for k in cidx if k[0] in ("centroid-random_cb", "random_cb-random")]
     cb_runs = [r for r in runs.values() if r.get("arm") == "random_cb"]
     seeds = set(k[1] for k in keys) | set(r.get("seed") for r in cb_runs)
@@ -742,7 +988,7 @@ def matched_outcome(block, runs, cidx=None):
             "G": None, "P_ref": None, "B_ref": None, "P_descriptive": None,
             "B_descriptive": None, "cb_present": bool(cb_runs),
             "cb_eligible": bool(cb_runs) and all(r.get("eligible", True) for r in cb_runs),
-            "label": None, "name": None, "reason": None}
+            "reference_missing": missing, "label": None, "name": None, "reason": None}
 
     def pointer(key):
         listname, i, _, _ = cidx[key]
@@ -767,7 +1013,8 @@ def matched_outcome(block, runs, cidx=None):
         info["label"], info["reason"] = "M_desc", "a run of the placement contrast finished late"
         return info
     if spread is None:
-        info["label"], info["reason"] = "M_incomplete", "no RANDOM range"
+        info["label"], info["reason"] = "M_incomplete", "no registered RANDOM range (%s)" % \
+            ", ".join(missing)
         return info
     exceeds = abs(info["P"]) > spread
     flag = cidx[pk][2].get("abs_delta_exceeds_random_range")
@@ -796,8 +1043,8 @@ PLACEMENT = {"centroid": "intensity-guided placement", "envelope": "segmentation
 PLACEMENT_RECT = {"centroid": "intensity-guided rectangle placement",
                   "envelope": "segmentation-guided rectangle placement"}
 GUIDE = {"centroid": "segmentation-free intensity guidance", "envelope": "segmentation guidance"}
-CB_INTRO = (r" When uniform placement receives \ArmBest{}'s per-image target and context "
-            r"budgets, ")
+CB_INTRO = (r" In a single continuation in which uniform placement receives \ArmBest{}'s "
+            r"per-image target and context budgets, ")
 ABSTRACT_CB = (" When uniform placement receives the intensity-guided strategy's target and "
                "context budgets, ")
 
@@ -839,12 +1086,22 @@ def build_text(ctx):
     block, labels, codes, scen = ctx.block, ctx.labels, ctx.codes, ctx.scenario
     m = ctx.matched["label"]
     n_seeds = len(ctx.complete)
-    random_vals = block["outcomes"]["centroid"]["random_realizations"]
     t.put("RepNSeedsWord", word(n_seeds), "number of complete seed indices")
     if n_seeds >= 2:
         t.put("RepAllSeedsWords", "both" if n_seeds == 2 else "all " + word(n_seeds),
               "both / all n complete seed indices")
-    t.put("RepNRandomWord", word(len(random_vals)), "number of RANDOM realizations in the range")
+    # The registered range has the original plus one RANDOM run per complete index (V10-2).
+    t.put("RepNRandomWord", word(n_seeds + 1),
+          "number of RANDOM realizations in the registered range")
+    # V10-3: why the registered labels abstain, from the evidence actually missing (too few
+    # complete indices, original RANDOM missing or late), never inferred from code I alone.
+    abstain = [k for k in ctx.reference[1] if k in ("indices", "anchor_missing", "anchor_late")]
+    only_deadline = abstain == ["indices"]
+
+    def because(plain=False):
+        text = (join_and(REFERENCE_WHY[k] for k in abstain) if abstain
+                else "the registered rule cannot be applied")
+        return text.replace(r"\textsc{random}", "uniform-masking") if plain else text
     t.put("RepNHeadSeedsWord", word(len(ctx.head_seeds)), "number of probe-head seeds")
     if n_seeds in NULL_CHANCE:
         t.put("RepNullChanceWords", NULL_CHANCE[n_seeds],
@@ -869,6 +1126,11 @@ def build_text(ctx):
                 "below_range": (o["mean_delta"] is not None and o["random_range"] is not None
                                 and o["mean_delta"] < -o["random_range"])}
 
+    # V8-4: with an incomplete (descriptive) seed index, universal claims cover only the
+    # continuations of the primary analysis.
+    every_cont = ("every primary-analysis continuation" if block.get("incomplete_seed_indices")
+                  else "every continuation")
+
     def b_phrase(arm, versus, bound):
         """Literal wording for one arm's within-run-to-run-variation label (failing condition)."""
         f = facts(arm)
@@ -880,8 +1142,8 @@ def build_text(ctx):
                     "than %s" % (versus, bound))
         if not f["all_positive"]:
             return "is ahead of %s on average but not in every continuation" % versus
-        return "is ahead of %s in every continuation, but on average by no more than %s" % (
-            versus, bound)
+        return "is ahead of %s in %s, but on average by no more than %s" % (
+            versus, every_cont, bound)
 
     abstract_bound = "the variation between uniform-masking runs"
     intro_bound = (r"the range of \textsc{random}'s realizations (%s)" % t.num("RepRandomRange")
@@ -890,7 +1152,10 @@ def build_text(ctx):
           "registered seed indices (amendment 1 adds the third)")
 
     # ---- abstract (number-free, A6 section 4.3) ------------------------------------------
-    more = " More anatomically specific strategies do not consistently provide further gains."
+    # V8-4: the anatomy-shaped comparison comes from the original single runs only; the
+    # registered labels compare each guide with RANDOM, never the guides with each other.
+    more = (" In the original runs, more anatomically specific strategies did not consistently "
+            "provide further gains.")
     coupled = (" Analysis of the delivered masks shows that target selection, target size and "
                "visible context are coupled")
     ctrl = {"M+": ABSTRACT_CB + "it stays below that strategy in a single continuation.",
@@ -904,7 +1169,7 @@ def build_text(ctx):
         budget = ("the difference between the two falls within run-to-run variation"
                   if m == "M0" else
                   "uniform placement scores higher than the guided strategy by more than "
-                  "run-to-run variation")
+                  "run-to-run variation in a single continuation")
         abstract = ("Across repeated pretraining continuations, tissue-directed rectangle "
                     "placement gives higher frozen-probe AUC than uniform masking, including with "
                     "segmentation-free intensity guidance. These strategies also leave more of the "
@@ -914,11 +1179,13 @@ def build_text(ctx):
                     "placement gives higher frozen-probe AUC than uniform masking, including with "
                     "segmentation-free intensity guidance")
         if m == "M+":
-            abstract += (", and the advantage remains when uniform placement receives the "
-                         "intensity-guided strategy's target and context budgets")
+            # The matched comparison is one continuation per arm (amendment 2): scoped.
+            abstract += (", and in a single continuation the advantage remains when uniform "
+                         "placement receives the intensity-guided strategy's target and context "
+                         "budgets")
         abstract += "."
         if m == "M_partial":
-            abstract += ABSTRACT_CB + "part of the advantage remains."
+            abstract += ABSTRACT_CB + "part of the advantage remains in a single continuation."
         abstract += (more + coupled + " unless they are controlled explicitly. These results "
                      "support tissue-directed target selection as a simple, segmentation-free "
                      "option for retinal OCT pretraining.")
@@ -945,23 +1212,28 @@ def build_text(ctx):
     elif scen == "I":
         abstract = ("In the original single runs, tissue-directed rectangle placement gave higher "
                     "frozen-probe AUC than uniform masking, including with segmentation-free "
-                    "intensity guidance. The registered repeated continuations did not all finish "
-                    "before the results freeze, so they are reported descriptively and do not "
-                    "establish the direction of the effect." + more + coupled + "." + ctrl +
+                    "intensity guidance. " +
+                    ("The registered repeated continuations did not all finish before the results "
+                     "freeze, so they are reported descriptively and do not establish the "
+                     "direction of the effect." if only_deadline else
+                     "No registered label is assigned because %s, so the repeated continuations "
+                     "are reported descriptively and do not establish the direction of the "
+                     "effect." % because(plain=True)) + more + coupled + "." + ctrl +
                     " Our findings motivate anatomy-guided predictive learning for retinal OCT and "
                     "better-controlled comparisons of what to predict and what to keep visible.")
     else:
         def clause(arm, subject):
             code = codes[arm]
             if code == "A":
-                return ("%s gives higher frozen-probe AUC than uniform masking in every "
-                        "continuation" % subject)
+                return ("%s gives higher frozen-probe AUC than uniform masking in %s"
+                        % (subject, every_cont))
             if code == "B":
                 return "%s %s" % (subject, b_phrase(arm, "uniform masking", abstract_bound))
             if code == "C":
                 return "%s does not improve on uniform masking on average" % subject
-            return "%s could not be assessed because its registered runs did not all finish" % \
-                subject
+            return "%s could not be assessed because %s" % (
+                subject, "its registered runs did not all finish" if only_deadline
+                else because(plain=True))
 
         arms = ordered_arms(codes)
         first = clause(arms[0], PLACEMENT_RECT[arms[0]])
@@ -977,11 +1249,11 @@ def build_text(ctx):
     lead = "Across %s further continuations per strategy from the same checkpoint, " % \
         t.bare("RepNSeedsWord")
     if scen == "A":
-        intro = (lead + r"both guided strategies stay above \textsc{random} in every continuation, "
+        intro = (lead + r"both guided strategies stay above \textsc{random} in %s, "
                  r"with mean differences of %s for \ArmBest{} and %s for \textsc{envelope}, larger "
                  r"than the range of \textsc{random}'s own runs (%s). With this few continuations, "
                  r"this is a consistent direction rather than a confirmed replication."
-                 % (mean("centroid"), mean("envelope"), t.num("RepRandomRange")))
+                 % (every_cont, mean("centroid"), mean("envelope"), t.num("RepRandomRange")))
     elif scen == "B":
         intro = (lead + r"\ArmBest{} (mean difference %s) %s, and \textsc{envelope} (mean "
                  r"difference %s) %s. Neither meets the registered criterion for a consistent "
@@ -995,12 +1267,16 @@ def build_text(ctx):
                  % (mean("centroid"), mean("envelope")))
     elif scen == "I":
         intro = ("The registered repeated continuations did not all finish before the results "
-                 "freeze, so they are reported descriptively.")
+                 "freeze, so they are reported descriptively." if only_deadline else
+                 "No registered label is assigned because %s, so the repeated continuations are "
+                 "reported descriptively." % because())
     else:
-        clause = {"A": r"%s stays above \textsc{random} in every continuation (mean difference %s)",
+        clause = {"A": (r"%s stays above \textsc{random} in " + every_cont +
+                        r" (mean difference %s)"),
                   "B": r"%s (mean difference %s) %s",
                   "C": r"%s does not exceed \textsc{random} on average (mean difference %s)",
-                  "I": r"%s has no registered label because its runs did not all finish%s"}
+                  "I": (r"%s has no registered label because " +
+                        ("its runs did not all finish" if only_deadline else because()) + "%s")}
         parts = []
         for arm in ordered_arms(codes):
             value = "" if codes[arm] == "I" else mean(arm)
@@ -1025,7 +1301,7 @@ def build_text(ctx):
     if scen == "A":
         contrib = ("Frozen-probe results, repeated across pretraining continuations, showing gains "
                    "from tissue-directed rectangle placement in a consistent direction, alongside "
-                   "mixed results for more specific anatomical targeting.")
+                   "mixed single-run results for more specific anatomical targeting.")
     elif scen == "B":
         contrib = ("Frozen-probe results with repeated continuations, in which the gains seen in "
                    "single runs fall within run-to-run variation under the registered rule.")
@@ -1087,6 +1363,10 @@ def build_text(ctx):
             setup += (r" %s did not produce an epoch-%s result before the freeze and %s reported "
                       r"as not completed." % (run_list(absent), t.bare("RepEndpoint"),
                                               "is" if len(absent) == 1 else "are"))
+    anchor_state = [k for k in ctx.reference[1] if k.startswith("anchor_")]
+    if anchor_state:  # V10-3: the reference run is not a continuation; say what is missing
+        setup += " " + REFERENCE_WHY[anchor_state[0]][0].upper() + \
+            REFERENCE_WHY[anchor_state[0]][1:] + "."
     setup = ("The third continuation of each strategy was added by a registered amendment before "
              "any new result. " + setup)
     t.put("RepSetupResults", setup, "registered runs: finished / late / not completed")
@@ -1094,11 +1374,8 @@ def build_text(ctx):
     # ---- results: repeated continuations ---------------------------------------------------
     sentences = []
     if scen == "I" or all(codes[arm] == "I" for arm in GUIDED):
-        reason = ("fewer than two seed indices finished all three strategies before the results "
-                  "freeze" if n_seeds < 2 else
-                  r"the re-probed original \textsc{random} encoder is not available")
         sentences.append("No registered label is assigned because %s. The completed runs are "
-                         r"reported descriptively in Table~\ref{tab:replication}." % reason)
+                         r"reported descriptively in Table~\ref{tab:replication}." % because())
     else:
         both = codes["centroid"] if codes["centroid"] == codes["envelope"] else None
         detail = (r"%s for \ArmBest{} (per seed %s) and %s for \textsc{envelope} (per seed %s)"
@@ -1185,8 +1462,10 @@ def build_text(ctx):
                 "repeated runs before they are interpreted.")
     elif scen == "I":
         disc = ("The rectangle-policy results of the original runs motivate anatomy-guided target "
-                "selection, but the registered repeated continuations did not all finish, so the "
-                "direction of these gains across runs is not established.")
+                "selection, but %s, so the direction of these gains across runs is not "
+                "established." % ("the registered repeated continuations did not all finish"
+                                  if only_deadline else
+                                  "no registered label is assigned because " + because()))
     else:
         arms = ordered_arms(codes)
         state = {"A": "keeps its direction",
@@ -1220,7 +1499,9 @@ def build_text(ctx):
                       "therefore be read as preliminary.")
     if scen == "I" or "I" in codes.values():
         limits.append("The registered replication did not finish before the results freeze, so "
-                      "its completed runs are descriptive.")
+                      "its completed runs are descriptive." if only_deadline else
+                      "No registered label is assigned because %s, so the completed runs are "
+                      "descriptive." % because())
     if m in CONTROL_LABELS or m in ("M_unassessed", "M_incomplete"):
         limits.append("The matched-budget control is a single continuation per arm.")
     elif m in ("M_desc", "M_noP"):
@@ -1238,7 +1519,9 @@ def build_text(ctx):
                  "improve on uniform masking.")
     elif scen == "I":
         concl = ("The registered repeated continuations did not all finish before the results "
-                 "freeze.")
+                 "freeze." if only_deadline else
+                 "No registered label is assigned to the repeated continuations because %s."
+                 % because())
     else:
         arms = ordered_arms(codes)
         concl = ("Across repeated continuations, the gain keeps its direction for %s but not for "
@@ -1361,8 +1644,9 @@ def control_text(t, ctx):
             out.append(place + r", beyond %s. Without an on-time same-seed \textsc{random} run, "
                        r"the registered description is not assigned." % rng)
         elif m == "M_incomplete":
-            out.append(place + r". The range of \textsc{random}'s realizations is not available, "
-                       r"so no registered description is assigned.")
+            why = [REFERENCE_WHY[k] for k in info.get("reference_missing") or ["range"]]
+            out.append(place + r" (descriptive). No registered description is assigned because "
+                       r"%s." % join_and(why))
         else:
             out.append(place + " (descriptive).")
         if "RepPurityCentroid" in t.values and "RepPurityRandomCB" in t.values:
@@ -1420,18 +1704,24 @@ def pooling_text(t, ctx):
 
 
 def tldr_text(ctx):
+    """OpenReview TL;DR: number-free and never stronger than the labels. The registered labels
+    compare each guide with RANDOM, so no guide-versus-guide (or anatomical-detail) claim is
+    made; with an incomplete seed index, universal claims cover the primary analysis only."""
     scen, codes, m = ctx.scenario, ctx.codes, ctx.matched["label"]
+    incomplete = bool(ctx.block.get("incomplete_seed_indices"))
     if scen == "A" and m in ("M0", "M-"):
         text = ("Tissue-directed I-JEPA targets on retinal OCT give higher frozen glaucoma-probe "
-                "AUC across repeated continuations; with matched target and context budgets, "
+                "AUC across %s continuations; with matched target and context budgets, "
+                % ("the primary-analysis" if incomplete else "repeated")
                 + ("uniform placement comes within run-to-run variation of the intensity guide."
                    if m == "M0" else
                    "uniform placement scores above the intensity guide in a single continuation."))
     elif scen == "A":
+        every = ("in all primary-analysis continuations" if incomplete
+                 else "in every repeated continuation")
         text = ("Placing I-JEPA prediction targets on retinal tissue, even with a "
                 "segmentation-free intensity guide, gives higher frozen glaucoma-probe AUC than "
-                "uniform masking in every repeated continuation; more anatomical detail does not "
-                "help further.")
+                "uniform masking %s." % every)
     elif scen == "B":
         text = ("Tissue-directed I-JEPA targets on retinal OCT give positive mean gains that fall "
                 "within run-to-run variation under a pre-registered rule; mask audits show target "
@@ -1454,6 +1744,8 @@ def tldr_text(ctx):
                 % (guide[arms[0]], verb[codes[arms[0]]], guide[arms[1]], verb[codes[arms[1]]]))
     if len(text) > TLDR_LIMIT or not text.isascii():
         raise ValueError("TL;DR exceeds %d characters" % TLDR_LIMIT)
+    if re.search(r"\d", text):
+        raise ValueError("digits in the TL;DR (it must stay number-free)")
     return text
 
 
@@ -1704,16 +1996,20 @@ def table_md(ctx):
                           for n in ordered_runs(ctx, excluded))
         caption += (r" Encoders without a per-case feature-cache identity (%s) are not included."
                     % listed)
-    header = (r"policy & run & MAE & RMSE & Spearman & $\Delta$MAE (interval) & "
-              r"$\Delta$Spearman")
+    # "$\Delta$ MAE" with a space: check_docx reads "$\Delta$MAE" as one control word and would
+    # lose the column name, failing the Word gate of p13.
+    header = (r"policy & run & MAE & RMSE & Spearman & $\Delta$ MAE (interval) & "
+              r"$\Delta$ Spearman")
     return float_table("tab:md", caption, "llcccll", header, rows, size=r"\scriptsize",
                        sep="3pt")
 
 
-def figure_float():
+def figure_float(caption):
+    """The generated caption is written out (not a macro), so the p15 figure receipt's
+    caption hash binds the caption text itself."""
     return "\n".join([r"\begin{figure}[t]", r"\centering",
                       r"\includegraphics[width=0.62\linewidth]{fig_cr_seed_spread.png}",
-                      r"\caption{\RepFigSeedSpreadCaption}", r"\label{fig:seed_spread}",
+                      r"\caption{%s}" % caption, r"\label{fig:seed_spread}",
                       r"\end{figure}"]) + "\n"
 
 
@@ -1894,6 +2190,7 @@ def prepare(final_path, run_dirs, md_path=None, budget_paths=(), stats_dir=DEFAU
     final, _ = read_json(final_path)
     verify_final(final, allow_synthetic)
     records, head_seeds = verify_runs(final, run_dirs, allow_synthetic)
+    verify_analysis(final, records)
     md = None
     if md_path:
         md, _ = read_json(md_path)
@@ -1922,6 +2219,7 @@ def prepare(final_path, run_dirs, md_path=None, budget_paths=(), stats_dir=DEFAU
     ctx.md_names = ordered_runs(ctx, md["runs"]) if md else []
     ctx.labels = arm_labels(ctx.block)
     ctx.scenario, ctx.codes = scenario_of(ctx.labels)
+    ctx.reference = registered_reference(ctx.block, ctx.runs)
     ctx.matched = matched_outcome(ctx.block, ctx.runs, ctx.cidx)
 
     stage = Stage(evidence_dir)
@@ -1969,7 +2267,7 @@ def build(final_path, run_dirs, md_path=None, budget_paths=(), stats_dir=DEFAULT
         "cr_table_pooling.tex": table_pooling(ctx),
         "cr_table_seeds.tex": table_seeds(ctx),
         "cr_table_md.tex": table_md(ctx),
-        "cr_figure_seed_spread.tex": figure_float(),
+        "cr_figure_seed_spread.tex": figure_float(text.macros["RepFigSeedSpreadCaption"]),
         "cr_tldr.txt": tldr + "\n",
     }
     for name, content in outputs.items():
@@ -2015,8 +2313,11 @@ def build(final_path, run_dirs, md_path=None, budget_paths=(), stats_dir=DEFAULT
             "incomplete_seed_indices": ctx.block.get("incomplete_seed_indices") or [],
             "matched_control": {k: val for k, val in ctx.matched.items()
                                 if not k.endswith("_ref")},
-            "matched_rule": "s = RANDOM range; M0 |P|<=s; M- P<-s; M+ P>s and P>=(P+B)/2; "
-                            "M_partial P>s and P<(P+B)/2; M_desc late run; M_na no result"},
+            "matched_rule": "s = registered RANDOM range (eligible original RANDOM + new RANDOM "
+                            "of >= 2 complete indices, else M_incomplete); M0 |P|<=s; M- P<-s; "
+                            "M+ P>s and P>=(P+B)/2; M_partial P>s and P<(P+B)/2; M_desc late run; "
+                            "M_na no result",
+            "reference_missing": ctx.reference[1]},
         "macros": macro_records,
         "text_macros": [{"name": n, "text": val, "note": text.notes.get(n)}
                         for n, val in text.macros.items()],
@@ -2140,8 +2441,8 @@ INTEGRATION = (
      r"including the context they leave visible. \RepConclusion{}"),
     ("main_submission.tex",
      "The positive rectangle-policy results motivate anatomy-guided target selection without "
-     "requiring a new encoder architecture. The segmentation-free centroid strategy is "
-     "particularly useful as a simple baseline.", r"\RepDiscussionLead{}"),
+     "requiring a new encoder architecture. The segmentation-free centroid strategy is a useful "
+     "simple baseline.", r"\RepDiscussionLead{}"),
     ("compact_protocol.tex", r"epoch-25 checkpoint with two new seeds, which set",
      r"epoch-25 checkpoint with \RepNRegisteredSeedsWord{} new seeds (the third added by a "
      r"registered amendment), which set"),
@@ -2158,11 +2459,55 @@ REPLICATION_TABLE = re.compile(r"\\begin\{table\}\[t\](?:(?!\\end\{table\}).)*?"
                                r"\\label\{tab:replication\}.*?\\end\{table\}", re.S)
 RESULT_FILES = ("cr_results.tex", "cr_table_replication.tex", "cr_table_control.tex",
                 "cr_table_pooling.tex", "cr_table_seeds.tex", "cr_table_md.tex",
-                "cr_figure_seed_spread.tex", "fig_cr_seed_spread.png", "fig_cr_seed_spread.pdf")
+                "cr_figure_seed_spread.tex", "fig_cr_seed_spread.png", "fig_cr_seed_spread.pdf",
+                "fig_cr_seed_spread.evidence.json")
 
 
 OBSOLETE_PHRASES = ("two further continuations", "two new seeds", "both new-seed differences",
                     r"three \textsc{random} realizations")
+
+# Coordinator note 2 (A6 section 4.5), applied by integrate after the placeholders.
+# The abstract's revision comment is deleted once the result sentences are in place.
+CR_ABSTRACT_COMMENT = ("% CR: the result sentences of this abstract are revised once the registered "
+                       "% replication results are available (scenario text prepared in the "
+                       "campaign plan).")
+# CENTROID-best paragraph: A keeps the single-run ranking sentence; every other scenario (B and
+# C per A6 4.5, and mixed / I, whose labels support no more than B) states the epoch-100
+# comparison as a single-run difference without ranking language. Digit-free on purpose: the
+# remaining literals of the paragraph keep their +-24-character receipt windows.
+RANKING_SENTENCE = (r"\ArmBest{} has the highest epoch-100 point estimate, exceeding "
+                    r"\textsc{envelope} by $\DOracleEnvelopeEpHundred$ (CI "
+                    r"$\DOracleEnvelopeEpHundredCI$).")
+RANKING_SINGLE_RUN = (r"In the original single runs, the \ArmBest{}--\textsc{envelope} difference "
+                      r"at the final evaluated epoch is $\DOracleEnvelopeEpHundred$ (CI "
+                      r"$\DOracleEnvelopeEpHundredCI$).")
+# Fig. 3(b) caption (every scenario): its intervals are test-case intervals of the original runs.
+FIG3B_INTERVALS = r"on identical test cases, \Nboot-resample percentile bootstrap intervals."
+FIG3B_SEED_SPREAD = (r"on identical test cases, \Nboot-resample percentile bootstrap intervals for "
+                     r"the original runs (seed spread: %s).")
+
+
+def _replace_once(rel, text, old, new, drop_newline=False):
+    """Whitespace-insensitive exact passage; exactly one occurrence or refuse."""
+    matches = list(re.finditer(_ws(old), text))
+    if len(matches) != 1:
+        raise InputError("%s: expected one occurrence of %r, found %d"
+                         % (rel, old[:60], len(matches)))
+    start, end = matches[0].start(), matches[0].end()
+    if drop_newline and text[end:end + 1] == "\n":
+        end += 1
+    return text[:start] + new + text[end:]
+
+
+def sidecar_scenario(sidecar, results_dir):
+    """Scenario code from the sidecar, cross-checked with the hash-verified cr_results.tex."""
+    scenario = (sidecar.get("scenario") or {}).get("scenario")
+    tex = (Path(results_dir) / "cr_results.tex").read_text(encoding="utf-8")
+    stated = re.findall(r"^% Scenario: (\S+);", tex, re.M)
+    if scenario not in ("A", "B", "C", "I", "mixed") or stated != [scenario]:
+        raise InputError("results metadata scenario %r disagrees with cr_results.tex %s"
+                         % (scenario, stated))
+    return scenario
 
 
 def verified_results_metadata(results_dir):
@@ -2197,18 +2542,36 @@ def verified_results_metadata(results_dir):
     return sidecar
 
 
+def integration_pairs(scenario, has_figure):
+    """Every whitespace-insensitive (file, old passage, new text, drop_newline) replacement that
+    integrate applies, in order. cr_migrate_receipts.py uses the same list to recognise text that
+    the reviewed integration changed (and nothing else). Not listed: the tab:replication
+    skeleton (REPLICATION_TABLE, removed whole) and, without a figure, the figure input line."""
+    pairs = [(rel, old, new, False) for rel, old, new in INTEGRATION]
+    pairs.append(("main_submission.tex", CR_ABSTRACT_COMMENT, "", True))
+    if scenario != "A":
+        pairs.append(("main_submission.tex", RANKING_SENTENCE, RANKING_SINGLE_RUN, False))
+    spread = r"Figure~\ref{fig:seed_spread}" if has_figure else r"Table~\ref{tab:replication_runs}"
+    pairs.append(("main_submission.tex", FIG3B_INTERVALS, FIG3B_SEED_SPREAD % spread, False))
+    return pairs
+
+
 def integrate(paper_dir, results_dir, allow_real_paper=False):
     """Replace the result placeholders in a paper copy with the generated inputs.
 
     Each passage is matched whitespace-insensitively and must occur exactly once (plain
     replacement, no shell regex on the source). The real paper directory is refused unless
-    allow_real_paper is set and the results are not synthetic.
+    allow_real_paper is set and the results are not synthetic. Coordinator note 2 is applied
+    here too: the abstract's revision comment is deleted, the CENTROID-best ranking sentence is
+    restated as a single-run difference unless the scenario is A, and the Fig. 3(b) caption
+    names its intervals as test-case intervals of the original runs.
     """
     paper_dir, results_dir = Path(paper_dir).resolve(), Path(results_dir).resolve()
     sidecar = verified_results_metadata(results_dir)
     if paper_dir == PAPER.resolve() and (not allow_real_paper or sidecar["synthetic"] is not False):
         raise InputError("refusing to edit the real paper (synthetic results or no "
                          "--allow-real-paper)")
+    scenario = sidecar_scenario(sidecar, results_dir)
     has_figure = bool(sidecar.get("figure"))
     auto = paper_dir / "auto"
     if auto.resolve() != results_dir:
@@ -2218,17 +2581,11 @@ def integrate(paper_dir, results_dir, allow_real_paper=False):
             if (results_dir / name).is_file():
                 shutil.copyfile(results_dir / name, auto / name)
     edits = {}
-    for rel, old, new in INTEGRATION:
+    for rel, old, new, drop in integration_pairs(scenario, has_figure):
         if rel not in edits:
             raw = (paper_dir / rel).read_bytes().decode("utf-8")
             edits[rel] = {"crlf": "\r\n" in raw, "text": raw.replace("\r\n", "\n")}
-        text = edits[rel]["text"]
-        matches = list(re.finditer(_ws(old), text))
-        if len(matches) != 1:
-            raise InputError("%s: expected one occurrence of %r, found %d"
-                             % (rel, old[:60], len(matches)))
-        m = matches[0]
-        edits[rel]["text"] = text[:m.start()] + new + text[m.end():]
+        edits[rel]["text"] = _replace_once(rel, edits[rel]["text"], old, new, drop_newline=drop)
     if not has_figure:
         appendix = edits["compact_protocol.tex"]
         line = "\n\\input{auto/cr_figure_seed_spread}"
@@ -2250,9 +2607,193 @@ def integrate(paper_dir, results_dir, allow_real_paper=False):
         stale = [phrase for phrase in OBSOLETE_PHRASES if phrase in flat]
         if stale:
             raise InputError("%s: superseded seed-count text left: %s" % (rel, stale))
+        if re.search(r"^\s*% CR:", edit["text"], re.M):
+            raise InputError("%s: a '%% CR:' revision comment is left after integration" % rel)
+    for rel, edit in edits.items():
         text = edit["text"].replace("\n", "\r\n") if edit["crlf"] else edit["text"]
         (paper_dir / rel).write_bytes(text.encode("utf-8"))
+    print("note 2 (scenario %s): abstract CR comment removed; ranking sentence %s; Fig. 3(b) "
+          "caption cites %s" % (scenario, "kept" if scenario == "A" else "restated as a "
+                                "single-run difference", "the seed-spread figure" if has_figure
+                                else "the per-run table"))
     return sorted(edits)
+
+
+# ---------------------------------------------------------------------------
+# Figure registration (coordinator note 4): release_assets.json producer + p15 figure receipt
+# ---------------------------------------------------------------------------
+
+FIGURE_GRAPHIC = "fig_cr_seed_spread.png"
+FIGURE_EVIDENCE = "fig_cr_seed_spread.evidence.json"
+FIGURE_SOURCE = "rep_fig_seed_spread"
+REGISTRY = REPO / "autopilot" / "release_assets.json"
+FIGURE_LIMITATIONS = (
+    "Plotted values are not replayed from the image. They equal fig_cr_seed_spread.evidence.json, "
+    "which make_cr_results.py build --check recomputes from the staged final.json and unseal "
+    "receipts (hash-bound below), and every plotted test AUC is also a p15-verified RepAUC macro "
+    "in the per-run appendix table. Continuations share an ancestor checkpoint, so the spread is "
+    "across continuations, not independent initializations. Hash and evidence checks are not "
+    "a verification of every rendered pixel.")
+FIGURE_CHECKS = (
+    "Rendered figure inspected in the compiled paper: one marker per evaluated encoder, head-seed "
+    "s.d. error bars, filled markers for registered runs, open markers for descriptive runs, "
+    "stars for re-probed originals, bars for means over the registered seed indices.",
+    "PNG and PDF hashes equal the figure evidence outputs, the results sidecar and the "
+    "release_assets.json producer pin.",
+    "Figure evidence inputs equal the staged final.json and unseal receipts bound in this review "
+    "file (rep_final and rep_receipt_* sources).",
+    "Generated caption states the endpoint, head-seed averaging, marker meanings and the "
+    "shared-ancestor caveat; it contains no hand-typed number.")
+
+
+def _json_dump_like(data, raw):
+    """numeric_reviews.json convention: indent 2, UTF-8, original line endings."""
+    text = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+    return text.replace("\n", "\r\n") if b"\r\n" in raw else text
+
+
+def _set_producer(raw_text, key, entry):
+    """Insert or replace one producers entry in release_assets.json without reformatting the
+    hand-formatted rest of the file; the result is re-parsed and compared before use."""
+    crlf = "\r\n" in raw_text
+    text = raw_text.replace("\r\n", "\n")
+    old = json.loads(text)
+    decoder = json.JSONDecoder()
+    found = list(re.finditer(r'\n  "producers": ', text))
+    if len(found) != 1:
+        raise InputError("release_assets.json: expected one top-level producers object")
+    start = found[0].end()
+    producers, end = decoder.raw_decode(text, start)
+    body = json.dumps(entry, indent=2, ensure_ascii=False).replace("\n", "\n    ")
+    keys = [m for m in re.finditer(r'\n    "%s": ' % re.escape(key), text[start:end])]
+    if key in producers:
+        if len(keys) != 1:
+            raise InputError("release_assets.json: producer %s is not unique" % key)
+        value_start = start + keys[0].end()
+        _, value_end = decoder.raw_decode(text, value_start)
+        text = text[:value_start] + body + text[value_end:]
+    else:
+        close = text.rindex("}", start, end)
+        head = text[:close].rstrip()
+        text = head + ",\n    %s: %s\n  " % (json.dumps(key), body) + text[close:]
+    new = json.loads(text)
+    expected = dict(old, producers=dict(old["producers"], **{key: entry}))
+    if new != expected:
+        raise InputError("release_assets.json edit would change more than the %s producer" % key)
+    return text.replace("\n", "\r\n") if crlf else text
+
+
+def register_figure(paper_dir, results_dir, reviewer, registry=REGISTRY, review_file=None,
+                    repo_root=REPO, allow_real_paper=False):
+    """Register the integrated seed-spread figure (coordinator note 4).
+
+    Writes (1) a producer entry for the figure in ``registry`` computed from the figure
+    evidence manifest (script and its hash, staged inputs, evidence manifest and hash,
+    expected PNG hash, PDF companion) and (2) a figure receipt in ``review_file`` (source
+    ``rep_fig_seed_spread`` = the evidence manifest, inputs bound to the staged final.json,
+    caption hash of the integrated paper, the named reviewer). Everything is verified before
+    either file is written. Synthetic results never reach the real registry, review file or
+    paper; real targets also need allow_real_paper.
+    """
+    paper_dir, results_dir = Path(paper_dir).resolve(), Path(results_dir).resolve()
+    registry, repo_root = Path(registry).resolve(), Path(repo_root).resolve()
+    review_file = Path(review_file).resolve() if review_file else paper_dir / "numeric_reviews.json"
+    if not (reviewer or "").strip():
+        raise InputError("a figure receipt needs the name of the human reviewer (--reviewer)")
+    sidecar = verified_results_metadata(results_dir)
+    real = {PAPER.resolve(), REGISTRY.resolve(), (PAPER / "numeric_reviews.json").resolve()}
+    if {paper_dir, registry, review_file} & real or inside(paper_dir, PAPER):
+        if sidecar["synthetic"] is not False or not allow_real_paper:
+            raise InputError("refusing to register the figure in the real paper, registry or "
+                             "review file (synthetic results or no --allow-real-paper)")
+    if not sidecar.get("figure"):
+        raise InputError("no seed-spread figure in these results; nothing to register")
+    try:
+        graphic = assets.resolve_graphic(paper_dir, FIGURE_GRAPHIC)
+    except (FileNotFoundError, ValueError) as exc:
+        raise InputError("figure %s not found in %s (%s)" % (FIGURE_GRAPHIC, paper_dir, exc))
+    rel = graphic.relative_to(paper_dir).as_posix()
+    evidence_path = graphic.with_name(FIGURE_EVIDENCE)
+    if not evidence_path.is_file() or not (results_dir / FIGURE_EVIDENCE).is_file() or \
+            sha256_file(evidence_path) != sha256_file(results_dir / FIGURE_EVIDENCE):
+        raise InputError("figure evidence in the paper differs from the results directory")
+    evidence, evidence_sha = read_json(evidence_path)
+    if sha256_file(graphic) != sidecar["figure"]["png"] or \
+            sha256_file(graphic.with_suffix(".pdf")) != sidecar["figure"]["pdf"]:
+        raise InputError("paper figure files differ from the generated results (integrate first)")
+    staged = sidecar.get("inputs") or {}
+    if evidence.get("schema") != FIGURE_SCHEMA or evidence.get("synthetic") is not \
+            sidecar["synthetic"] or evidence.get("outputs") != sidecar["figure"] or \
+            evidence.get("script_sha256") != (sidecar.get("generator") or {}).get("sha256") or \
+            not evidence.get("inputs") or any(
+                (staged.get(name) or {}).get("sha256") != spec.get("sha256")
+                for name, spec in evidence["inputs"].items()):
+        raise InputError("figure evidence does not match the results sidecar")
+    if not inside(evidence_path, repo_root):
+        raise InputError("figure evidence must live inside the repository %s" % repo_root)
+    inputs = []
+    for name in sorted(evidence["inputs"]):
+        path = Path(staged[name]["staged"]).resolve()
+        if not inside(path, repo_root) or sha256_file(path) != staged[name]["sha256"]:
+            raise InputError("figure input %s is not staged unchanged inside the repository" % name)
+        inputs.append(path.relative_to(repo_root).as_posix())
+    reviews_raw = review_file.read_bytes()
+    reviews = json.loads(reviews_raw.decode("utf-8"))
+    final_source = (reviews.get("sources") or {}).get("rep_final") or {}
+    if final_source.get("sha256") != staged["rep_final"]["sha256"]:
+        raise InputError("review file is not bound to these results (run build --update-reviews "
+                         "first; rep_final differs)")
+    text, _ = assets.source_tree(paper_dir)
+    try:
+        caption = numeric.figure_context(text, rel)
+    except ValueError as exc:
+        raise InputError("%s (integrate the results first)" % exc)
+    pdf_rel = graphic.with_suffix(".pdf").relative_to(paper_dir).as_posix()
+    entry = {
+        "script": "autopilot/make_cr_results.py",
+        "script_sha256_at_export": evidence["script_sha256"],
+        "arguments": ["build"],
+        "inputs": inputs,
+        "evidence_manifest": evidence_path.relative_to(repo_root).as_posix(),
+        "evidence_manifest_sha256": evidence_sha,
+        "expected_output_sha256": evidence["outputs"]["png"],
+        "companions": {pdf_rel: evidence["outputs"]["pdf"]},
+        "refresh_policy": "regenerated only by make_cr_results.py build from the post-freeze "
+                          "inputs; changed outputs or caption require renewed review",
+        "evidence_scope": "Per-encoder epoch-50 test AUC (head-seed mean, head-seed s.d. error "
+                          "bars) of every evaluated encoder of the registered cr_seed_v1 "
+                          "analysis, with means over the registered seed indices; values from "
+                          "the unsealed, hash-verified post-freeze analysis.",
+        "rendered_metrics": ["per-encoder test AUC (mean over probe-head seeds)",
+                             "probe-head-seed s.d.", "mean test AUC over registered seeds"],
+        "raw_oct_pixels_rendered": False,
+        "subject_identifiers_rendered": False}
+    if sidecar["synthetic"]:
+        entry["synthetic"] = True
+    registry_raw = registry.read_bytes().decode("utf-8")
+    registry_text = _set_producer(registry_raw, rel, entry)
+    sources = dict(reviews.get("sources") or {})
+    sources[FIGURE_SOURCE] = {"root": "repo", "path": entry["evidence_manifest"],
+                              "sha256": evidence_sha}
+    receipt = {
+        "path": rel, "sha256": evidence["outputs"]["png"],
+        "caption_sha256": numeric.digest_text(caption),
+        "inputs": [{"source": FIGURE_SOURCE, "pointer": "/points", "sha256": evidence_sha},
+                   {"source": FIGURE_SOURCE, "pointer": "/means", "sha256": evidence_sha},
+                   {"source": "rep_final",
+                    "pointer": "/analysis/%s/per_run_test_auc" % PRIMARY,
+                    "sha256": final_source["sha256"]}],
+        "validation": {"method": "reviewed_source_illustration", "reviewer": reviewer.strip(),
+                       "quantitative_scope": "illustrative_only",
+                       "limitations": FIGURE_LIMITATIONS, "review_checks": list(FIGURE_CHECKS)}}
+    reviews["sources"] = sources
+    reviews["figures"] = [f for f in reviews.get("figures") or [] if f.get("path") != rel] + \
+        [receipt]
+    registry.write_bytes(registry_text.encode("utf-8"))
+    review_file.write_bytes(_json_dump_like(reviews, reviews_raw).encode("utf-8"))
+    return {"graphic": rel, "registry": str(registry), "review_file": str(review_file),
+            "expected_output_sha256": entry["expected_output_sha256"],
+            "caption_sha256": receipt["caption_sha256"], "synthetic": sidecar["synthetic"]}
 
 
 # ---------------------------------------------------------------------------
@@ -2286,10 +2827,28 @@ def build_parser():
     p.add_argument("--log", nargs="+", required=True, help="RANDOM-CB trainer log file(s)")
     p.add_argument("--out", required=True)
     p.add_argument("--min-ramp", type=float, default=1.0)
+    def figure_args(p):
+        p.add_argument("--reviewer", help="human reviewer of the rendered figure (receipt)")
+        p.add_argument("--registry", default=str(REGISTRY),
+                       help="release_assets.json to update (default: the repository registry)")
+        p.add_argument("--review-file", help="numeric_reviews.json (default: <paper-dir>)")
+        p.add_argument("--repo-root", default=str(REPO),
+                       help="repository root for repo-relative evidence paths")
+
     p = sub.add_parser("integrate", help="insert the generated inputs into a paper copy")
     p.add_argument("--paper-dir", required=True)
     p.add_argument("--results-dir", required=True)
     p.add_argument("--allow-real-paper", action="store_true")
+    p.add_argument("--register-figure", action="store_true",
+                   help="also register the seed-spread figure (as register-figure)")
+    figure_args(p)
+    p = sub.add_parser("register-figure",
+                       help="release_assets.json producer + p15 figure receipt for the integrated "
+                            "seed-spread figure (coordinator note 4)")
+    p.add_argument("--paper-dir", required=True)
+    p.add_argument("--results-dir", required=True)
+    p.add_argument("--allow-real-paper", action="store_true")
+    figure_args(p)
     return parser
 
 
@@ -2305,6 +2864,15 @@ def main(argv=None):
         if args.command == "integrate":
             changed = integrate(args.paper_dir, args.results_dir, args.allow_real_paper)
             print("integrated:", ", ".join(changed))
+            if not args.register_figure:
+                return 0
+        if args.command in ("integrate", "register-figure"):
+            done = register_figure(args.paper_dir, args.results_dir, args.reviewer,
+                                   args.registry, args.review_file, args.repo_root,
+                                   args.allow_real_paper)
+            print("registered %s (PNG %s) in %s and its receipt in %s"
+                  % (done["graphic"], done["expected_output_sha256"][:12], done["registry"],
+                     done["review_file"]))
             return 0
         budgets = [p for p in (args.budget_cb, args.budget_i7) if p]
         i5 = args.budget_i5 or (str(DEFAULT_I5) if not args.budget_cb and DEFAULT_I5.is_file()

@@ -81,7 +81,7 @@ def prereg_label(deltas, random_values, n_registered_complete):
 
 def test_scenario_selection_follows_the_preregistration(designs, tmp_path):
     expected = {'A': ('A', 'A', 'A', 'M+'), 'B': ('B', 'B', 'B', 'M0'),
-                'C': ('C', 'C', 'C', 'M-'), 'I': ('I', 'I', 'I', 'M+'),
+                'C': ('C', 'C', 'C', 'M-'), 'I': ('I', 'I', 'I', 'M_incomplete'),
                 'mixed': ('mixed', 'A', 'B', 'M_partial'), 'na': ('B', 'B', 'B', 'M_na')}
     for key, d in designs.items():
         if key not in expected:
@@ -123,16 +123,21 @@ def _block(P=None, B=None, spread=0.003, flag=None, descriptive=False, p_desc=Fa
         (late if b_desc else contrasts).append({
             'kind': 'random_cb-random', 'train_seed': seed, 'delta': B,
             'ci95': [B - 0.01, B + 0.01], 'val_delta': B})
-    outcomes = {arm: {'random_range': spread} for arm in ('centroid', 'envelope')}
+    realizations = [0.8600, 0.8600 + spread, 0.8610] if spread is not None else []
+    outcomes = {arm: {'random_range': spread, 'random_realizations': realizations}
+                for arm in ('centroid', 'envelope')}
     if descriptive:
         contrasts, late = [], contrasts + late
     return {'outcomes': outcomes, 'primary_contrasts': [], 'matched_control': contrasts,
-            'descriptive_incomplete_contrasts': late}
+            'descriptive_incomplete_contrasts': late, 'complete_seed_indices': [1234, 5678]}
+
+
+ANCHOR = {'arm': 'random', 'role': 'anchor', 'seed': None, 'eligible': True}
 
 
 def test_matched_control_rule_and_boundaries():
     """PREREGISTRATION amendment 2, labels only from on-time runs at seed 1234."""
-    cb_run = {'cb': {'arm': 'random_cb', 'seed': 1234, 'eligible': True}}
+    cb_run = {'cb': {'arm': 'random_cb', 'seed': 1234, 'eligible': True}, 'r0': ANCHOR}
     cases = [
         (dict(P=0.003, B=0.001), 'M0'),            # |P| == r -> not detected
         (dict(P=-0.003, B=0.004), 'M0'),
@@ -161,6 +166,19 @@ def test_matched_control_rule_and_boundaries():
     with pytest.raises(mk.InputError, match='seed 1234 only'):  # V6-1: unregistered CB seed
         mk.matched_outcome(_block(P=0.005, B=0.001, seed=5678),
                            {'cb': {'arm': 'random_cb', 'seed': 5678, 'eligible': True}})
+    # V10-2: no registered label without the complete registered RANDOM reference set
+    # (eligible original RANDOM + the new RANDOM runs of >= 2 complete indices); P and B stay.
+    no_anchor = {'cb': cb_run['cb']}
+    late_anchor = dict(cb_run, r0=dict(ANCHOR, eligible=False))
+    one_index = dict(_block(P=0.0050, B=0.001), complete_seed_indices=[1234])
+    for runs, block, why in ((no_anchor, _block(P=0.0050, B=0.001), ['anchor_missing']),
+                             (late_anchor, _block(P=0.0050, B=0.001), ['anchor_late']),
+                             (cb_run, one_index, ['indices']),
+                             (no_anchor, _block(P=0.0020, B=0.001), ['anchor_missing'])):
+        info = mk.matched_outcome(block, runs)
+        assert info['label'] == 'M_incomplete' and info['name'] is None, why
+        assert info['reference_missing'] == why and info['spread'] is None
+        assert info['P'] is not None and info['B'] is not None
 
 
 def test_scenario_mapping_is_the_final_labels_unchanged():
@@ -244,7 +262,10 @@ def test_figure_is_headless_and_bound_to_inputs(designs, tmp_path):
     final = json.load(open(d['final']))
     for point in evidence['points']:
         assert point['test_auc'] == final['analysis'][fx.PRIMARY]['per_run_test_auc'][point['run']]
-    assert open(out / 'cr_figure_seed_spread.tex').read().count(r'\RepFigSeedSpreadCaption') == 1
+    figure_tex = open(out / 'cr_figure_seed_spread.tex').read()
+    caption = tex_macros(out / 'cr_results.tex')['RepFigSeedSpreadCaption']
+    # I12: the caption text itself is in the float, so the p15 figure receipt hashes it.
+    assert figure_tex.count(r'\caption{%s}' % caption) == 1 and not re.search(r'\d', caption)
 
 
 # ---------------------------------------------------------------------------
@@ -727,3 +748,363 @@ def test_v6_check_detects_corrupted_provenance(designs, tmp_path):
         assert name in check(), name
         path.write_bytes(good)
     assert check() == []
+
+
+# ---------------------------------------------------------------------------
+# I12: post-freeze runbook automation (coordinator notes 2-4, TL;DR coverage, Word gate)
+# ---------------------------------------------------------------------------
+
+def test_i12_integration_passages_match_the_current_paper():
+    """Every passage integrate replaces still occurs exactly once, applied in order, in the
+    current paper source (a trimmed sentence once broke the discussion passage). The list is
+    integration_pairs, which cr_migrate_receipts.py also uses."""
+    for scenario, figure in (('A', True), ('B', True), ('mixed', False)):
+        texts = {rel: (mk.PAPER / rel).read_text(encoding='utf-8').replace('\r\n', '\n')
+                 for rel in ('main_submission.tex', 'compact_protocol.tex')}
+        pairs = mk.integration_pairs(scenario, figure)
+        assert (('main_submission.tex', mk.RANKING_SENTENCE, mk.RANKING_SINGLE_RUN, False)
+                in pairs) == (scenario != 'A')
+        for rel, old, new, drop in pairs:
+            texts[rel] = mk._replace_once(rel, texts[rel], old, new, drop_newline=drop)
+        assert len(mk.REPLICATION_TABLE.findall(texts['main_submission.tex'])) == 1
+    assert not re.search(r'\d', mk.RANKING_SINGLE_RUN + mk.FIG3B_SEED_SPREAD)
+
+
+def test_i12_note2_edits_follow_the_scenario(designs, tmp_path):
+    flat = lambda text: re.sub(r'\s+', ' ', text)  # noqa: E731
+    for key, keep_ranking, figure in (('A', True, True), ('B', False, True),
+                                      ('mixed', False, False), ('I', False, True)):
+        run_build(designs[key], tmp_path / key, figure=figure)
+        paper = _paper_copy(tmp_path / key / 'paper')
+        mk.integrate(paper, tmp_path / key / 'out')
+        main = (paper / 'main_submission.tex').read_text(encoding='utf-8')
+        assert '% CR:' not in main, key
+        assert (flat(mk.RANKING_SENTENCE) in flat(main)) == keep_ranking, key
+        assert (flat(mk.RANKING_SINGLE_RUN) in flat(main)) == (not keep_ranking), key
+        spread = r'Figure~\ref{fig:seed_spread}' if figure else r'Table~\ref{tab:replication_runs}'
+        assert flat(main).count(flat(mk.FIG3B_SEED_SPREAD % spread)) == 1, key
+    sidecar = tmp_path / 'B' / 'out' / 'cr_results.values.json'
+    _edit_json(sidecar, lambda s: s['scenario'].update(scenario='A'))
+    with pytest.raises(mk.InputError, match='disagrees'):
+        mk.integrate(_paper_copy(tmp_path / 'tampered'), tmp_path / 'B' / 'out')
+
+
+def _mini_repo(tmp, d):
+    """Stand-in repository (as the rehearsal mirror): registry and review file copies, every
+    .tex input of the paper, synthetic results in paper/auto, evidence inside the repo."""
+    import cr_postfreeze as pf
+    repo = tmp / 'repo'
+    paper = repo / 'paper' / 'genai4health2026'
+    for src in [mk.PAPER / n for n in ('numeric_reviews.json',)] + \
+            sorted(mk.PAPER.glob('*.tex')) + sorted((mk.PAPER / 'auto').glob('*.tex')):
+        dst = paper / src.relative_to(mk.PAPER)
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, dst)
+    (repo / 'autopilot').mkdir()
+    shutil.copyfile(mk.REGISTRY, repo / 'autopilot' / 'release_assets.json')
+    (repo / pf.MIRROR_MARKER).write_text('{"note": "test stand-in"}')
+    res = mk.build(d['final'], d['runs'], d['md'], [I5], out_dir=paper / 'auto',
+                   evidence_dir=repo / 'autopilot' / 'investigations' / 'results',
+                   allow_synthetic=True, figure=True)
+    return repo, paper, res
+
+
+def test_i12_register_figure_writes_producer_and_receipt(designs, tmp_path):
+    import cr_postfreeze as pf
+    repo, paper, res = _mini_repo(tmp_path, designs['A'])
+    registry, reviews = repo / 'autopilot' / 'release_assets.json', paper / 'numeric_reviews.json'
+    auto = paper / 'auto'
+    kw = dict(registry=registry, review_file=reviews, repo_root=repo)
+    pf.rehearsal_bind(auto / 'cr_results.values.json', reviews, repo)  # as build --update-reviews
+    with pytest.raises(mk.InputError, match='integrate'):  # no figure float yet
+        mk.register_figure(paper, auto, 'Reviewer', **kw)
+    mk.integrate(paper, auto)
+    unbound = tmp_path / 'unbound.json'
+    shutil.copyfile(mk.PAPER / 'numeric_reviews.json', unbound)
+    with pytest.raises(mk.InputError, match='not bound'):
+        mk.register_figure(paper, auto, 'Reviewer', registry=registry, review_file=unbound,
+                           repo_root=repo)
+    with pytest.raises(mk.InputError, match='reviewer'):
+        mk.register_figure(paper, auto, '  ', **kw)
+    real = {p: mk.sha256_file(p) for p in (mk.REGISTRY, mk.PAPER / 'numeric_reviews.json')}
+    for bad in (dict(kw, registry=mk.REGISTRY), dict(kw, review_file=mk.PAPER / 'numeric_reviews.json')):
+        with pytest.raises(mk.InputError, match='refusing to register'):
+            mk.register_figure(paper, auto, 'Reviewer', allow_real_paper=True, **bad)
+    assert real == {p: mk.sha256_file(p) for p in real}
+    old_text = registry.read_bytes()
+    done = mk.register_figure(paper, auto, 'Synthetic test reviewer', **kw)
+    rel = 'auto/fig_cr_seed_spread.png'
+    assert done['graphic'] == rel
+    new_text = registry.read_bytes()
+    old, new = json.loads(old_text), json.loads(new_text)
+    entry = new['producers'].pop(rel)
+    assert new == old  # nothing else changed
+    head = old_text.index(b'"producers"')
+    assert new_text[:head] == old_text[:head] and b'\r\n' in new_text
+    assert b'\n' not in new_text.replace(b'\r\n', b'')
+    png = auto / 'fig_cr_seed_spread.png'
+    evidence = json.load(open(auto / 'fig_cr_seed_spread.evidence.json'))
+    assert entry['expected_output_sha256'] == mk.sha256_file(png) == evidence['outputs']['png']
+    assert entry['companions'] == {'auto/fig_cr_seed_spread.pdf': evidence['outputs']['pdf']}
+    assert entry['evidence_manifest'] == 'paper/genai4health2026/auto/fig_cr_seed_spread.evidence.json'
+    assert entry['synthetic'] is True and entry['script'] == 'autopilot/make_cr_results.py'
+    for path in entry['inputs']:
+        assert (repo / path).is_file()
+    # The producer pin works as a release_assets declaration ...
+    tiny = tmp_path / 'tiny'
+    (tiny / 'auto').mkdir(parents=True)
+    (tiny / 'main_submission.tex').write_text(r'\includegraphics{fig_cr_seed_spread.png}')
+    shutil.copyfile(png, tiny / 'auto' / 'fig_cr_seed_spread.png')
+    inventory = assets.asset_inventory(tiny, registry)
+    assert inventory['ALL_PASS'] and inventory['items'][0]['identity_status'] == 'generated_input_hashed'
+    (tiny / 'auto' / 'fig_cr_seed_spread.png').write_bytes(b'changed')
+    assert not assets.asset_inventory(tiny, registry)['ALL_PASS']
+    # ... and the receipt satisfies p15's figure-receipt check against the integrated caption.
+    ev = numeric.Evidence(paper, tmp_path, numeric.BUILTIN_SOURCES)
+    ev.roots['repo'] = repo
+    review_data = numeric.read_reviews(paper, ev, reviews)
+    receipts = [f for f in review_data['figures'] if f['path'] == rel]
+    assert len(receipts) == 1 and receipts[0]['validation']['reviewer'] == 'Synthetic test reviewer'
+    text, _ = assets.source_tree(paper)
+    caption = numeric.figure_context(text, rel)
+    assert evidence['points'] and r'\caption{' not in caption
+    item = {'path': rel, 'sha256': mk.sha256_file(png)}
+    assert numeric.figure_receipt(item, receipts[0], ev, caption)['status'] == \
+        'reviewed_source_illustration'
+    # Re-registration is idempotent (one producer, one receipt, identical registry bytes).
+    mk.register_figure(paper, auto, 'Synthetic test reviewer', **kw)
+    assert registry.read_bytes() == new_text
+    assert len([f for f in json.load(open(reviews, encoding='utf-8'))['figures']
+                if f['path'] == rel]) == 1
+
+
+def test_i12_tldr_exists_for_every_scenario_and_never_exceeds_its_label(designs, tmp_path):
+    for key in ('A', 'B', 'C', 'I', 'mixed', 'na', 'noC1_late'):
+        res = run_build(designs[key], tmp_path / key)
+        tldr = (tmp_path / key / 'out' / 'cr_tldr.txt').read_text(encoding='utf-8').strip()
+        assert tldr and tldr == res['tldr'], key
+        if key == 'A':  # two complete indices, none incomplete
+            assert 'in every repeated continuation' in tldr
+    d = designs['mixed']
+    ctx, _, _ = mk.prepare(d['final'], d['runs'], d['md'], [I5],
+                           evidence_dir=os.path.join(d['root'], '_ev_tldr'), allow_synthetic=True)
+    for c in mk.LABEL_CODE:
+        for e in mk.LABEL_CODE:
+            for m in ('M+', 'M0', 'M-', 'M_partial', 'M_desc', 'M_na', 'M_unassessed', 'M_noP'):
+                ctx.labels = {'centroid': c, 'envelope': e}
+                ctx.scenario, ctx.codes = mk.scenario_of(ctx.labels)
+                ctx.matched = dict(ctx.matched, label=m)
+                tldr = mk.tldr_text(ctx)
+                codes = set(ctx.codes.values())
+                assert tldr and len(tldr) <= mk.TLDR_LIMIT and tldr.isascii(), (c, e, m)
+                assert not re.search(r'\d', tldr), (c, e, m)
+                if 'A' not in codes:  # no gain claim without a consistent-direction label
+                    assert 'in every repeated continuation' not in tldr and \
+                        'keeps its gain' not in tldr, (c, e, m)
+                if ctx.block['incomplete_seed_indices']:  # label covers the complete indices
+                    assert 'in every repeated continuation' not in tldr, (c, e, m)
+                if ctx.scenario == 'I':  # incomplete: only the original single runs
+                    assert 'in single runs' in tldr and 'repeated' not in tldr, (c, e, m)
+                if ctx.scenario == 'mixed' and 'I' in codes:
+                    assert 'is incomplete' in tldr, (c, e, m)
+                # V8-4: the labels compare each guide with RANDOM, never the guides with each
+                # other, and say nothing about anatomical detail.
+                assert not [b for b in GUIDE_COMPARISONS if b in tldr.lower()], (c, e, m)
+                text = mk.build_text(ctx)
+                prose = ' '.join(text.macros.values()).lower()
+                assert not [b for b in GUIDE_COMPARISONS if b in prose], (c, e, m)
+                if ctx.block['incomplete_seed_indices']:
+                    for name in ('RepAbstractResults', 'RepIntroResults'):
+                        assert not re.search(r'(?<!not )in every continuation',
+                                             text.macros[name]), (c, e, m, name)
+                if m in ('M+', 'M_partial', 'M-'):  # one continuation per arm (amendment 2)
+                    for name in ('RepAbstractResults', 'RepIntroResults'):
+                        assert 'single continuation' in text.macros[name], (c, e, m, name)
+
+
+GUIDE_COMPARISONS = ('anatomical detail', 'help further', 'better than the intensity',
+                     'better than segmentation', 'outperforms', 'than envelope', 'than centroid',
+                     'more anatomically specific strategies do not')
+
+
+def test_v8_tldr_makes_no_guide_comparison_when_envelope_gains_more(tmp_path, monkeypatch):
+    """V8-4 producer-level counterexample: ENVELOPE gains exceed CENTROID's in every complete
+    index, both labels consistent direction (real cr_stats unseal/final, no label edits)."""
+    monkeypatch.setitem(fx.PATTERNS, 'Aenv', {'centroid': (0.0074, 0.0077, 0.0069),
+                                              'envelope': (0.0190, 0.0200, 0.0190)})
+    d = fx.build_design(tmp_path / 'd', 'A', 'Aenv', 'M+', seeds=(1234, 5678, 9012),
+                        n_test=N_TEST, n_boot=N_BOOT)
+    final = json.load(open(d['final']))
+    out = final['analysis'][fx.PRIMARY]['outcomes']
+    assert out['centroid']['label'] == out['envelope']['label'] == 'consistent_direction'
+    assert all(e > c for c, e in zip(out['centroid']['new_seed_deltas'],
+                                     out['envelope']['new_seed_deltas']))
+    res = run_build(d, tmp_path / 'b')
+    assert res['scenario']['scenario'] == 'A'
+    tldr = res['tldr']
+    assert not [b for b in GUIDE_COMPARISONS if b in tldr.lower()], tldr
+    assert tldr.endswith('than uniform masking in every repeated continuation.')
+    texts = {t['name']: t['text'] for t in res['text_macros']}
+    assert 'In the original runs, more anatomically specific strategies' in \
+        texts['RepAbstractResults']
+    assert 'mixed single-run results for more specific anatomical targeting' in \
+        texts['RepContribResults']
+
+
+def test_v8_stale_final_is_refused_when_completion_evidence_changes(tmp_path):
+    """V8-2: final.json computed with an on-time E3 stop file must be refused once that stop
+    file is missing or changed (the recomputed eligibility differs)."""
+    d = fx.build_design(tmp_path / 'd', 'A', 'A', 'M+', seeds=(1234, 5678, 9012),
+                        n_test=N_TEST, n_boot=N_BOOT)
+    run_build(d, tmp_path / 'ok')
+    stop = os.path.join(d['root'], 'probes', 'train_envelope_s9012', 'stop_epoch_050.json')
+    good = open(stop, 'rb').read()
+    os.remove(stop)
+    with pytest.raises(mk.InputError, match='eligibility is stale'):
+        run_build(d, tmp_path / 'missing')
+    with open(stop, 'wb') as stream:
+        stream.write(good.replace(b'2026-10-20T12:00:00-07:00', b'2026-10-22T09:30:00-07:00'))
+    with pytest.raises(mk.InputError, match='eligibility is stale'):
+        run_build(d, tmp_path / 'changed')
+    with open(stop, 'wb') as stream:
+        stream.write(good)
+    run_build(d, tmp_path / 'restored')
+    # MD JSON carrying another eligibility than final is refused too.
+    _edit_json(d['md'], lambda m: next(iter(m['runs'].values()))['eligibility'].update(
+        eligible=False))
+    with pytest.raises(mk.InputError, match='eligibility differs from the final analysis'):
+        run_build(d, tmp_path / 'md')
+
+
+def _edited(d, tmp_path, name, edit):
+    """Design d with an edited copy of its final JSON (the module fixture stays untouched)."""
+    final = json.load(open(d['final']))
+    edit(final)
+    path = tmp_path / ('%s_final.json' % name)
+    path.write_text(json.dumps(final))
+    return dict(d, final=str(path))
+
+
+def _flip(outcome):
+    outcome['label'] = ('consistent_direction' if outcome['label'] != 'consistent_direction'
+                        else 'reversed')
+
+
+def test_v10_edited_final_labels_or_values_are_refused(designs, tmp_path):
+    """V10-1: labels, indices, contrasts, means and ranges are recomputed from the verified
+    per-run AUCs with the registered rules; an edited final JSON is refused (build and the
+    --check CLI), never turned into prose."""
+    def pri(f):
+        return f['analysis'][fx.PRIMARY]
+
+    def flag(f):
+        c = pri(f)['matched_control'][0]
+        c['abs_delta_exceeds_random_range'] = not c['abs_delta_exceeds_random_range']
+
+    edits = {
+        'labels_C_to_A': ('C', lambda f: [o.update(label='consistent_direction')
+                                          for o in pri(f)['outcomes'].values()]),
+        'label_B_to_A_mixed': ('mixed', lambda f: pri(f)['outcomes']['envelope'].update(
+            label='consistent_direction')),
+        'secondary_label': ('A', lambda f: _flip(
+            f['analysis']['patchmean_slicemax']['outcomes']['envelope'])),
+        'mean': ('B', lambda f: pri(f)['outcomes']['centroid'].update(mean_delta=0.02)),
+        'delta': ('B', lambda f: pri(f)['primary_contrasts'][0].update(delta=0.02)),
+        'range': ('B', lambda f: [o.update(random_range=0.0001)
+                                  for o in pri(f)['outcomes'].values()]),
+        'indices': ('mixed', lambda f: pri(f).update(complete_seed_indices=[1234, 5678, 9012],
+                                                     incomplete_seed_indices=[])),
+        'dropped_contrast': ('A', lambda f: pri(f)['primary_contrasts'].pop()),
+        'matched_flag': ('A', flag),
+        'val_auc': ('A', lambda f: pri(f)['per_run_val_auc'].update(
+            {sorted(pri(f)['per_run_val_auc'])[0]: 0.5})),
+    }
+    for name, (key, edit) in edits.items():
+        d = _edited(designs[key], tmp_path, name, edit)
+        with pytest.raises(mk.InputError, match='recomputed from the verified per-run AUCs'):
+            run_build(d, tmp_path / name)
+    # V10's counterexample through the real CLI: C/C relabelled A/A, every number unchanged.
+    d = _edited(designs['C'], tmp_path, 'cli', edits['labels_C_to_A'][1])
+    assert mk.main(['build', '--final', d['final'], '--runs'] + d['runs'] +
+                   ['--md', d['md'], '--budget-i5', I5, '--out-dir', str(tmp_path / 'cli' / 'o'),
+                    '--evidence-dir', str(tmp_path / 'cli' / 'e'), '--allow-synthetic',
+                    '--no-figure', '--check']) == 2
+    run_build(designs['C'], tmp_path / 'untouched')  # the unedited final still builds
+
+
+def _texts(res):
+    return {t['name']: t['text'] for t in res['text_macros']}
+
+
+def test_v10_missing_or_late_original_random_withholds_registered_labels(tmp_path, monkeypatch):
+    """V10-2 / V10-3, producer level (real unseal / final): all ten new runs on time, three
+    complete indices; original RANDOM present, missing or late. Without it there is no
+    registered RANDOM range: the matched control stays descriptive (M_incomplete) although the
+    range of the remaining RANDOM runs would have turned M0 into M+, and every text names the
+    missing reference instead of unfinished continuations."""
+    monkeypatch.setitem(fx.RANDOM, None, 0.82)
+    kw = dict(seeds=(1234, 5678, 9012), n_test=N_TEST, n_boot=N_BOOT, cb_placement=0.00555)
+    res = run_build(fx.build_design(tmp_path / 'with', 'A', 'A', 'M0', **kw), tmp_path / 'b_with')
+    within = 'within_run_to_run_variation'
+    assert res['scenario']['labels'] == {'centroid': within, 'envelope': within}
+    assert res['scenario']['matched_control']['label'] == 'M0'
+    assert res['scenario']['reference_missing'] == []
+    for case, extra, why, state in (
+            ('missing', dict(drop=[('random', None)]), 'anchor_missing', 'is not available'),
+            ('late', dict(late=[('random', None)]), 'anchor_late',
+             'finished after the results freeze')):
+        d = fx.build_design(tmp_path / case, 'A', 'A', 'M0', **dict(kw, **extra))
+        block = json.load(open(d['final']))['analysis'][fx.PRIMARY]
+        assert block['complete_seed_indices'] == [1234, 5678, 9012]
+        assert {o['label'] for o in block['outcomes'].values()} == {'incomplete'}
+        partial = block['outcomes']['centroid']['random_range']  # remaining RANDOM runs only
+        out = tmp_path / ('b_' + case)
+        res = run_build(d, out)
+        mc = res['scenario']['matched_control']
+        assert partial is not None and mc['P'] > partial and \
+            mc['P'] >= 0.5 * (mc['P'] + mc['B'])  # would have read as M+
+        assert mc['label'] == 'M_incomplete' and mc['name'] is None and mc['spread'] is None
+        assert mc['reference_missing'] == [why] == res['scenario']['reference_missing']
+        assert res['scenario']['scenario'] == 'I'
+        tex = (out / 'out' / 'cr_results.tex').read_text(encoding='utf-8')
+        assert '\\newcommand{\\RepRandomRange}' not in tex
+        texts = _texts(res)
+        assert 'All ten registered continuations finished before the results freeze.' in \
+            texts['RepSetupResults']
+        assert ('original \\textsc{random} encoder, the reference of the registered rule, '
+                + state) in texts['RepSetupResults']
+        for name in ('RepAbstractResults', 'RepIntroResults', 'RepResultsSeeds',
+                     'RepDiscussionLead', 'RepLimitations', 'RepConclusion'):
+            assert 'did not all finish' not in texts[name] and \
+                'did not finish' not in texts[name], (case, name)
+            assert 're-probed original' in texts[name] and state in texts[name], (case, name)
+        control = texts['RepResultsControl']
+        assert 'No registered description is assigned because the re-probed original' in control
+        assert 'Its registered description' not in control
+        # mixed branches with an I arm state the same actual reason
+        ctx, _, _ = mk.prepare(d['final'], d['runs'], d['md'], [I5],
+                               evidence_dir=os.path.join(d['root'], '_ev_mixed'),
+                               allow_synthetic=True)
+        ctx.labels = {'centroid': 'reversed', 'envelope': 'incomplete'}
+        ctx.scenario, ctx.codes = mk.scenario_of(ctx.labels)
+        macros = mk.build_text(ctx).macros
+        assert ctx.scenario == 'mixed'
+        assert ('could not be assessed because the re-probed original uniform-masking encoder'
+                in macros['RepAbstractResults'])
+        assert 'has no registered label because the re-probed original' in \
+            macros['RepIntroResults']
+        assert all('did not all finish' not in macros[n] for n in
+                   ('RepAbstractResults', 'RepIntroResults', 'RepLimitations'))
+
+
+def test_i12_generated_table_cells_keep_their_words_for_the_word_gate(designs, tmp_path):
+    import check_docx
+    run_build(designs['A'], tmp_path, figure=False)
+    for path in sorted((tmp_path / 'out').glob('cr_table_*.tex')):
+        body = assets.uncomment(path.read_text(encoding='utf-8'))
+        # check_docx reads "$\Delta$MAE" as one control word; math must not touch a word.
+        assert not re.search(r'(?<!\\)\$[^$]+\$[A-Za-z]', body), path.name
+    md = (tmp_path / 'out' / 'cr_table_md.tex').read_text(encoding='utf-8')
+    header = [line for line in md.splitlines() if line.startswith('policy &')][0]
+    words = [check_docx.cell_words(cell) for cell in header.rstrip('\\ ').split('&')]
+    assert words[5] == ('mae', 'interval') and words[6] == ('spearman',)

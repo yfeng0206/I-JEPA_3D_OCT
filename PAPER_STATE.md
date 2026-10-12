@@ -12,6 +12,94 @@ upload target Oct 24. **The staged camera-ready plan (seed replication, matched-
 control, reproduction gates, GPU schedule, paper changes) is
 `paper\genai4health2026\CAMERA_READY_PLAN.md`.** Nothing in it has been executed yet.
 
+## Post-freeze runbook (cr_seed_v1; results freeze Thu 2026-10-22 08:00 PDT)
+
+`autopilot\cr_postfreeze.ps1` runs the whole post-freeze sequence fail-closed (every analysis,
+build, integration and gate step must exit 0 and the first failure stops it; only the phase-1
+receipt preview's p15 exit and the scratch poster build's exit are recorded in `REVIEW.md`
+instead; transcript and per-step timing in the output root). It refuses to run before the
+freeze, is CPU-only and Idle/BelowNormal priority (Tectonic and p13 with its Tectonic child at
+Idle), waits for >= 4 GiB free commit before heavy steps and for any other Tectonic compile,
+and never touches a running campaign. Rehearsed end to end on synthetic campaigns on
+2026-10-11 and again after the V8 fixes (report: session files
+`camera_ready\impl_i12_postfreeze_runbook.md`, section "V8 fixes").
+
+1. **Phase 1, about 9-10 min in the rehearsal (unseal ~1 min, final ~5-5.5 min, MD ~2 min);
+   allow 20-30 min with the real MD caches (manuscript text unchanged).** From the repository
+   root:
+
+       powershell -NoProfile -ExecutionPolicy Bypass -File autopilot\cr_postfreeze.ps1
+
+   Preflight plan (campaign state, probe dirs, late / in-progress runs) -> `cr_stats`
+   inventory -> unseal every ready probe dir that has no receipt (never twice) -> `final`
+   (~5-6 min) -> MD on the test split (2 min on synthetic caches; the real caches are larger,
+   allow ~10-20 min) -> RANDOM-CB budget audit from its trainer logs -> `make_cr_results build
+   --update-reviews` -> `build --check` -> scratch copy, integrate, Tectonic -> receipt preview
+   -> scratch poster build -> `REVIEW.md`. `final` and MD are cached by a key over their input
+   hashes *and* the completion evidence (stop file path / existence / hash, seal and probe
+   times), and the cache record also holds the sha256 of the output it produced (an output
+   edited afterwards is recomputed, with a warning). A cached or fresh `final.json` must agree
+   run by run with the current evidence, and its labels, complete indices, contrasts, means and
+   RANDOM range must be what the registered rules give for the receipt-verified per-run AUCs
+   (`cr_postfreeze.py check-final`; `make_cr_results` repeats both checks and refuses a stale
+   or edited final or MD JSON). Phase 1 leaves the manuscript text unchanged but
+   already writes `paper\genai4health2026\auto\cr_*` and the `Rep*` bindings in
+   `numeric_reviews.json` (revert both if you abandon before phase 2).
+   Output root `D:\jepa_phase0\autopilot_out\cr_postfreeze`. Exit 3 = a registered run is still
+   in progress (step 4), exit 2 = refused input (read `logs\`).
+2. **Human review.** `REVIEW.md` (scenario, labels, matched control, display warnings, TL;DR =
+   `paper\genai4health2026\auto\cr_tldr.txt` for OpenReview) and the scratch PDF
+   `scratch\paper\genai4health2026\main_submission.pdf`: abstract, introduction, contributions,
+   section 5.2 with Tables 2-3, discussion, limitations, conclusion, appendix tables and the
+   seed-spread figure; at most 10 main pages (rehearsal worst case: main text ends at 9.81),
+   no undefined references. Fill the acknowledgments (`\CRAcknowledgmentsPending`) before step 3.
+3. **Phase 2, about 1-2 min.**
+
+       powershell -NoProfile -ExecutionPolicy Bypass -File autopilot\cr_postfreeze.ps1 -ApplyToPaper -FigureReviewer "<name>, 2026-10-22"
+
+   Integrates the real paper (including the scenario-dependent coordinator-note-2 edits),
+   registers the seed-spread figure (producer in `autopilot\release_assets.json`, receipt in
+   `numeric_reviews.json`, signed by `-FigureReviewer`), migrates context-hashed receipts, runs
+   p15 and then `p13_build_zip.py --camera-ready` (the camera-ready release command below). A
+   receipt is re-keyed automatically only when its paragraph changed solely through the
+   integration's own replacements (same file, value and window, found exactly once, one to
+   one); every other changed claim context is listed as `manual` in `receipt_migration.json`
+   with `old_context` / `new_context` and needs `-AcceptReceipts <id>` after a human compared
+   them (the `-FigureReviewer` name signs it). The first pass is expected to stop with exit 4
+   on one literal inside a replaced passage: the `epoch-25` in `app:replication`
+   (`compact_protocol.tex:9f4f0a227bd279cf:13` while that paragraph is unchanged). Compare its
+   old and new context, then re-run phase 2 adding
+   `-AcceptReceipts compact_protocol.tex:9f4f0a227bd279cf:13`. p13 fails only on
+   `authors_present` while the acknowledgments placeholder remains. Then review `git diff`,
+   commit, and sync per the release commands below.
+4. **If E3 (or any run) is late.** A run counts only if its trainer stop file, seal and probe
+   all predate the freeze (`cr_stats.completion_eligibility`, timestamps written by the trainer
+   and probe; keep the stop files where they are). A seed index with a late or missing
+   RANDOM/CENTROID/ENVELOPE run is descriptive; the labels then come from the complete indices.
+   The registered labels, including the matched-control description, also need the re-probed
+   original RANDOM anchor on time: without it (or with fewer than two complete indices) no
+   label is assigned, the matched control is reported descriptively (`M_incomplete`, no
+   RANDOM range shown), and the text names that reason.
+   If E3 is still training or probing at 08:00, phase 1 stops with exit 3. Either wait until the
+   campaign marks E3's probe DONE (E3 is then reported as finished after the freeze, an open
+   marker in the figure) and re-run, or re-run now with `-AllowIncomplete` (E3 is reported as
+   not completed, pre-registration section 7). Both leave the primary analysis unchanged; decide
+   before phase 2. A re-run of phase 1 opens only new probe dirs and recomputes `final`/MD only
+   when their inputs or the completion evidence changed. After phase 2, going back needs `git checkout --
+   paper/genai4health2026/main_submission.tex paper/genai4health2026/compact_protocol.tex
+   paper/genai4health2026/numeric_reviews.json autopilot/release_assets.json` and deleting
+   `pre_integration_paper` in the output root.
+5. **Rehearsal (synthetic only).** `python tests\cr_postfreeze_fixtures.py <scratch>\fx [--late
+   envelope:9012 | --in-progress envelope:9012 | --matched M_na]`, then the script with
+   `-Rehearsal -FixtureRoot <scratch>\fx -OutRoot <scratch> -TargetRepo C:\t\<short> -FreshMirror`
+   (a mirror copy of this working tree stands in for the repository). Real run, campaign,
+   worktree, paper and repository paths are refused; the fixture root needs the builder's
+   `CR_SYNTHETIC_FIXTURE.json` and `"synthetic": true` in campaign.json, state.json and every
+   results.json, and every path derived from the synthetic state (probe dirs, stop files,
+   trainer logs, feature caches, sealed entries; junctions resolved) must lie inside the
+   fixture root before it is read or unsealed with `--allow-before-freeze`. Fixture timestamps
+   are fixed (on time: 2026-10-20; late: after the freeze), independent of the wall clock.
+
 ## Current reviewed release
 
 Submission revision: **2026-09-10**, developed on branch `fix/jepa-delivered-task-audit` (merged to `main`).

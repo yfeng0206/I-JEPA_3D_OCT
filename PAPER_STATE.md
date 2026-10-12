@@ -58,7 +58,7 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
    seed letters O/A/B/C; (b) paired differences from RANDOM with the grey +/- r band only when
    the registered RANDOM range exists; printed 1:1 at `\linewidth`, text >= 7 pt; its colour /
    marker / label contract is in `fig_cr_seed_spread.evidence.json` under `encoding`); at most
-   10 main pages (rehearsal worst case: main text ends at 9.81),
+   10 main pages (rehearsal worst case after the 2026-10-12 figure and text polish: main text ends at 9.93),
    no undefined references. Fill the acknowledgments (`\CRAcknowledgmentsPending`) before step 3.
 3. **Phase 2, about 1-2 min.**
 
@@ -74,9 +74,9 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
    with `old_context` / `new_context` and needs `-AcceptReceipts <id>` after a human compared
    them (the `-FigureReviewer` name signs it). The first pass is expected to stop with exit 4
    on one literal inside a replaced passage: the `epoch-25` in `app:replication`
-   (`compact_protocol.tex:9f4f0a227bd279cf:13` while that paragraph is unchanged). Compare its
+   (`compact_protocol.tex:b3f23f54ee770b0c:35` as of the 2026-10-12 text polish; the id changes whenever that paragraph changes, so read the current one from `receipt_migration.json`). Compare its
    old and new context, then re-run phase 2 adding
-   `-AcceptReceipts compact_protocol.tex:9f4f0a227bd279cf:13`. p13 fails only on
+   `-AcceptReceipts compact_protocol.tex:b3f23f54ee770b0c:35`. p13 fails only on
    `authors_present` while the acknowledgments placeholder remains. Then review `git diff`,
    commit, and sync per the release commands below.
 4. **If E3 (or any run) is late.** A run counts only if its trainer stop file, seal and probe
@@ -126,9 +126,10 @@ The extended low-label, subgroup/calibration, fine-tuning, background and
 replication-plan sections are omitted from this workshop submission; their
 research records and previous long manuscript remain preserved.
 The original attribution work now motivates retinal targeting in the introduction.
-Selected archived heatmap panels are included with the feature-occlusion
-delta-logit definition; numerical and clinical headings are omitted, and their
-use remains illustrative rather than a validated localization result.
+The feature-occlusion delta-logit definition is kept; the archived heatmap
+panels were removed in the camera-ready (2026-10-12) because they are adapted
+FairVision B-scans (CC BY-NC-ND 4.0), and the text now says the displays are not
+reproduced. Their use was illustrative rather than a validated localization result.
 The final notation models targets and context jointly, defines strategy-specific
 guidance and explicitly identifies the tissue statistics as a predicted proxy.
 The diagram retains the correct EMA teacher, context encoder, predictor,

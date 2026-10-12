@@ -2608,23 +2608,6 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "b1aadf124a13e90042b720bcffc92ce48c4136760b4c5d988bfe2bfcec68dcf2",
-      "token_index": 0,
-      "value": ".21",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
-        "rationale": "COVER f=0.21 is the declared parameter/artifact identifier, not a measured coverage percentage.",
-        "evidence": [
-          {
-            "source": "lr_cover_cfg",
-            "excerpt": "cover_leave_frac: 0.21"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
       "context_sha256": "db5d3674d9db38a7784b1fe6c843f89dbf6e63fb8446f495cc270b7194dec928",
       "token_index": 0,
       "value": "16",
@@ -2642,12 +2625,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "af187b48086049a326c4190c241024e13f4620ac023cb1b8d6e7a5cf74d1272f",
+      "context_sha256": "3b896debd3895ce6e2399dcac29f8d79be324427b4aa52c140854bf8f8609510",
       "token_index": 0,
       "value": "600",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10",
+        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10; context re-reviewed after the I14 camera-ready text polish ('Training scope' lower-cased; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Declared fixed replay scope24x25=600 views and full production batch64; partial tail is separately disclosed. Current-context review: The retained replay remains600 views,24 volumes,25 views each and complete batches64. Descriptive mask statistics is a wording change; the text still excludes historical-crop reconstruction and independent-replication claims.",
         "evidence": [
           {
@@ -2663,12 +2646,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "af187b48086049a326c4190c241024e13f4620ac023cb1b8d6e7a5cf74d1272f",
+      "context_sha256": "3b896debd3895ce6e2399dcac29f8d79be324427b4aa52c140854bf8f8609510",
       "token_index": 1,
       "value": "24",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10",
+        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10; context re-reviewed after the I14 camera-ready text polish ('Training scope' lower-cased; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Declared fixed replay scope24x25=600 views and full production batch64; partial tail is separately disclosed. Current-context review: The retained replay remains600 views,24 volumes,25 views each and complete batches64. Descriptive mask statistics is a wording change; the text still excludes historical-crop reconstruction and independent-replication claims.",
         "evidence": [
           {
@@ -2684,12 +2667,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "af187b48086049a326c4190c241024e13f4620ac023cb1b8d6e7a5cf74d1272f",
+      "context_sha256": "3b896debd3895ce6e2399dcac29f8d79be324427b4aa52c140854bf8f8609510",
       "token_index": 2,
       "value": "25",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10",
+        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Declared fixed replay scope24x25=600 views and full production batch64; partial tail is separately disclosed. Current-context review: The retained replay remains600 views,24 volumes,25 views each and complete batches64. Descriptive mask statistics is a wording change; the text still excludes historical-crop reconstruction and independent-replication claims.",
         "evidence": [
           {
@@ -2705,12 +2688,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "af187b48086049a326c4190c241024e13f4620ac023cb1b8d6e7a5cf74d1272f",
+      "context_sha256": "3b896debd3895ce6e2399dcac29f8d79be324427b4aa52c140854bf8f8609510",
       "token_index": 3,
       "value": "64",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10",
+        "reviewer": "GitHub Copilot v6 literal source review, 2026-09-10; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Declared fixed replay scope24x25=600 views and full production batch64; partial tail is separately disclosed. Current-context review: The retained replay remains600 views,24 volumes,25 views each and complete batches64. Descriptive mask statistics is a wording change; the text still excludes historical-crop reconstruction and independent-replication claims.",
         "evidence": [
           {
@@ -2818,12 +2801,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "c287a7e0aef706f35075d89dcbeb1958708cf9b731cc94bf82530b12bd4bb7b8",
+      "context_sha256": "2bc4d5c549fb4ecd4b506156e12290884307a94a8b9244c838fc6660a8992d3b",
       "token_index": 1,
       "value": "50",
       "review": {
         "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed checkpoint/analysis epoch descriptor for random, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
         "evidence": [
           {
@@ -2835,12 +2818,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "c287a7e0aef706f35075d89dcbeb1958708cf9b731cc94bf82530b12bd4bb7b8",
+      "context_sha256": "2bc4d5c549fb4ecd4b506156e12290884307a94a8b9244c838fc6660a8992d3b",
       "token_index": 2,
       "value": "75",
       "review": {
         "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed checkpoint/analysis epoch descriptor for random, epoch 75. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
         "evidence": [
           {
@@ -2852,12 +2835,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "c287a7e0aef706f35075d89dcbeb1958708cf9b731cc94bf82530b12bd4bb7b8",
+      "context_sha256": "2bc4d5c549fb4ecd4b506156e12290884307a94a8b9244c838fc6660a8992d3b",
       "token_index": 3,
       "value": "100",
       "review": {
         "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed checkpoint/analysis epoch descriptor for random, epoch 100. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
         "evidence": [
           {
@@ -2869,7 +2852,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "c287a7e0aef706f35075d89dcbeb1958708cf9b731cc94bf82530b12bd4bb7b8",
+      "context_sha256": "2bc4d5c549fb4ecd4b506156e12290884307a94a8b9244c838fc6660a8992d3b",
       "token_index": 4,
       "value": "25",
       "expression": {
@@ -3172,12 +3155,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "39112ffe9716a115615d2e4543f40c3a12c5af78e0cedbb946383ac42062817a",
+      "context_sha256": "b35c84bfc41f2b58d9bcae78ce915eab51ce706d3445175751457e26348face9",
       "token_index": 0,
       "value": "4.0",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "4.0 is the FairVision CC BY-NC-ND license version, not an empirical number or claim of an institutional ethics determination.",
         "evidence": [
           {
@@ -3189,12 +3172,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "39112ffe9716a115615d2e4543f40c3a12c5af78e0cedbb946383ac42062817a",
+      "context_sha256": "b35c84bfc41f2b58d9bcae78ce915eab51ce706d3445175751457e26348face9",
       "token_index": 1,
       "value": "4.0",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "4.0 is the separately verified CC BY license of the external OCTDL image, not the FairVision data license.",
         "evidence": [
           {
@@ -3252,12 +3235,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "896b15184be94e1b29f980fd255758e3ae3f2563c959a75ca57b6c1a68b2af1c",
+      "context_sha256": "82dd61a5e8fb973b7a45b90c9ce24763ca9fa2cc0b40ea7ee014a8a96929811a",
       "token_index": 0,
       "value": "0.21",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after the I14 camera-ready text polish ('The historical run uses' now 'The trained configuration uses'; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "COVER f=0.21 is the declared parameter/artifact identifier, not a measured coverage percentage. Updated-context review: The same configured COVER fraction0.21 is now correctly described as supported soft guide mass, not a guaranteed final encoder-context tissue fraction.",
         "evidence": [
           {
@@ -3269,12 +3252,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
+      "context_sha256": "effdb18a47884ce52dd7a2143a12d1e596b5c8170901e299545c74b42e89e2d8",
       "token_index": 0,
       "value": "100",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The completed rectangle/coverage endpoint is epoch100 for random, centroid, envelope and historical COVER, each separately identified in the primary statistics. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
         "evidence": [
           {
@@ -3298,12 +3281,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
+      "context_sha256": "effdb18a47884ce52dd7a2143a12d1e596b5c8170901e299545c74b42e89e2d8",
       "token_index": 2,
       "value": "75",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed checkpoint/analysis epoch descriptor for anatomy-v2, epoch 75. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Observed anatomy-v2 epoch75, explicitly unmeasured epoch100, and the common five-policy epoch50 comparison remain unchanged.",
         "evidence": [
           {
@@ -3315,12 +3298,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
+      "context_sha256": "effdb18a47884ce52dd7a2143a12d1e596b5c8170901e299545c74b42e89e2d8",
       "token_index": 4,
       "value": "50",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Observed anatomy-v2 epoch75, explicitly unmeasured epoch100, and the common five-policy epoch50 comparison remain unchanged.",
         "evidence": [
           {
@@ -3332,12 +3315,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "60ad6b8d28c7f88780870086b4db46619b764c03a79a72c239063960df7c2cb9",
+      "context_sha256": "a87c5f5ce092dbb65a1496dbae220cf94d2d8d9d33f9e62d3164ff0d043d4295",
       "token_index": 0,
       "value": "25",
       "review": {
         "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
         "evidence": [
           {
@@ -3349,12 +3332,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "2d6d374af56ac3faf95233476b2ba84e1f3748ad48a28e4c1d322a20644912e3",
+      "context_sha256": "7d6646b87f623288faa41e36a2100cc1f2c22d2ffea18ef1e6e489dfda266c4e",
       "token_index": 0,
       "value": "50",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Same named anatomy comparison epoch and unchanged signed difference/interval macros; lower AUC wording removes the prior negative-below ambiguity.",
         "evidence": [
           {
@@ -3382,12 +3365,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "0700576844578b752c250d2b0225ef9f60e943adb7059aca757aa9e9d8e39ead",
+      "context_sha256": "af834d974d84853fc06852ac681fc4753108e336c8334be5336deb1f59c82464",
       "token_index": 2,
       "value": "-25",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Ancestor checkpoint epoch 25 in the moved anatomy-v1 lineage sentence; hyphen is lexical. Template evidence: Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -3416,12 +3399,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "42093ff9891f0c971e53e95b10d146765f43108d4d4a6d3fd29196abbb5f5cb6",
+      "context_sha256": "48cb5dc89ca3f5b6854610758e860af8233a2d6cf68ea2e936bf3215120e4b4d",
       "token_index": 2,
       "value": "16",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after the I14 camera-ready text polish ('resampled to a fixed K=16' now 'resampled to exactly K=16, subsampled when larger and topped up with repeated indices when smaller', as in src/masks/utils.py resample_to_k; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Fixed anatomy target length K=16 in both anatomy-shaped configurations.",
         "evidence": [
           {
@@ -3437,12 +3420,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "823e2832b379e80738e82c02cc08fc728b74f122721898bff4e98e30c9d1f248",
+      "context_sha256": "effdb18a47884ce52dd7a2143a12d1e596b5c8170901e299545c74b42e89e2d8",
       "token_index": 3,
       "value": "-100",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Unmeasured anatomy-v2 epoch-100 horizon; unchanged statement after removing the anatomy-v1 sentence. Template evidence: Epoch100 is explicitly an unmeasured anatomy-v2 horizon, not a measured checkpoint. Re-reviewed current context: Observed anatomy-v2 epoch75, explicitly unmeasured epoch100, and the common five-policy epoch50 comparison remain unchanged.",
         "evidence": [
           {
@@ -3454,12 +3437,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "2d6d374af56ac3faf95233476b2ba84e1f3748ad48a28e4c1d322a20644912e3",
-      "token_index": 3,
+      "context_sha256": "7d6646b87f623288faa41e36a2100cc1f2c22d2ffea18ef1e6e489dfda266c4e",
+      "token_index": 2,
       "value": "50",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after the I14 camera-ready text polish (the preceding duplicate ANATOMY-V1 pointer sentence was removed; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Unchanged anatomy-v2/cover interval statement at epoch 50. Template evidence: Same named anatomy comparison epoch and unchanged signed difference/interval macros; lower AUC wording removes the prior negative-below ambiguity.",
         "evidence": [
           {
@@ -3505,12 +3488,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "bd762969cf05b2a75cfb80cb729ccd5ac91f170decc876897360e65d4b63f08c",
+      "context_sha256": "ff90a6d1a7a14c47fceea4aeefb6457a8c66906a09b4725f366f614d793bcbb7",
       "token_index": 0,
       "value": "50",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after the I14 camera-ready text polish (header 'AUC @ep50' now 'AUC (ep. 50)'; submitted column dropped; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Column label AUC @ep50 of the geometry table. Template evidence: Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement.",
         "evidence": [
           {
@@ -3522,12 +3505,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "4e7b860090e340b2e6fe2d77f40f8d5488e7d4162b916863366e2ae5ac82737f",
+      "context_sha256": "d5b1b0c0ee010dce4039bc6c3b6d5c127294d52ae1369f3a658db3da17f2d584",
       "token_index": 0,
       "value": "95",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Interval convention of the paired context gaps: pooled normal 95% interval over 300 paired batches.",
         "evidence": [
           {
@@ -3559,12 +3542,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "0700576844578b752c250d2b0225ef9f60e943adb7059aca757aa9e9d8e39ead",
+      "context_sha256": "af834d974d84853fc06852ac681fc4753108e336c8334be5336deb1f59c82464",
       "token_index": 1,
       "value": "-27",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Epoch27 is the checked-in anatomy-v1 resume filename. This does not establish the missing historical launch, as the text explicitly qualifies. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -3576,12 +3559,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "0700576844578b752c250d2b0225ef9f60e943adb7059aca757aa9e9d8e39ead",
+      "context_sha256": "af834d974d84853fc06852ac681fc4753108e336c8334be5336deb1f59c82464",
       "token_index": 3,
       "value": "30",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The moved anatomy-v1 sentence names its only evaluated epoch, 30, with the unchanged contrast macros. Template evidence: Same named anatomy comparison epoch and unchanged signed difference/interval macros; lower AUC wording removes the prior negative-below ambiguity.",
         "evidence": [
           {
@@ -3593,12 +3576,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "852ccea5f86db737b9ec032f3615dd94bc14dd73d5a117cb1928f7072c4b747c",
+      "context_sha256": "4eab293147045bdef0b52df3898165ff9948f95f5984033a95d4e2d7731a0a5e",
       "token_index": 0,
       "value": "1",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "T_1 denotes the first target list, not a measured constant. Uniform locations are image-independent; guided placement uses image-derived weights. The separate context block removes the target union before truncation, so target complement is not encoder-visible context. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: T_1 remains the first target list. Joint sampling of context and targets now matches the production collation and strategy-specific intensity/segmentation guidance; no ground-truth equivalence is asserted.",
         "evidence": [
           {
@@ -3614,12 +3597,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "0951569dd3ecf82e0fb289b97a7f3368c28c3ff9c539f05a12e64f535358ee8e",
+      "context_sha256": "452ad33154d132dc367ccc8c1c3273f89179a4a84ac3ba3489e18adc5ac28220",
       "token_index": 0,
       "value": "-100",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 100. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Centroid-versus-envelope comparison uses centroid epoch100,50,75 receipts, not a similarly spelled COVER epoch100 receipt.",
         "evidence": [
           {
@@ -3631,12 +3614,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "0951569dd3ecf82e0fb289b97a7f3368c28c3ff9c539f05a12e64f535358ee8e",
+      "context_sha256": "452ad33154d132dc367ccc8c1c3273f89179a4a84ac3ba3489e18adc5ac28220",
       "token_index": 1,
       "value": "50",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish (the following sentence was reworded (M18); same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Centroid-versus-envelope comparison uses centroid epoch100,50,75 receipts, not a similarly spelled COVER epoch100 receipt.",
         "evidence": [
           {
@@ -3648,12 +3631,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "0951569dd3ecf82e0fb289b97a7f3368c28c3ff9c539f05a12e64f535358ee8e",
+      "context_sha256": "452ad33154d132dc367ccc8c1c3273f89179a4a84ac3ba3489e18adc5ac28220",
       "token_index": 2,
       "value": "75",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish (the following sentence was reworded (M18); same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 75. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Centroid-versus-envelope comparison uses centroid epoch100,50,75 receipts, not a similarly spelled COVER epoch100 receipt.",
         "evidence": [
           {
@@ -3665,12 +3648,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "311af792443d89d5c783b92dbdb45488c68f39d18f0153b46d59f6b5daa8b595",
-      "token_index": 13,
+      "context_sha256": "4ecb329a3b7d0042ebfa5a70f2aa78139e3892013c7a6f822cbcfc5338a608df",
+      "token_index": 35,
       "value": "-25",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Registered continuations start from the shared epoch-25 checkpoint; the hyphen is lexical.",
         "evidence": [
           {
@@ -3682,12 +3665,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "311af792443d89d5c783b92dbdb45488c68f39d18f0153b46d59f6b5daa8b595",
-      "token_index": 14,
+      "context_sha256": "4ecb329a3b7d0042ebfa5a70f2aa78139e3892013c7a6f822cbcfc5338a608df",
+      "token_index": 36,
       "value": "-50",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Registered runs stop after the saved epoch-50 checkpoint; the hyphen is lexical.",
         "evidence": [
           {
@@ -4196,12 +4179,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "c02ae7e8096aac00979f7a26090d25cb359fb53ed96af65bb9c14a3108257577",
+      "context_sha256": "9967027417000074b333aff5aa2f2b29efe0431708d49b8b64406dc1f0149555",
       "token_index": 0,
       "value": "0.25",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Tissue proxy of the camera-ready mask audit: patch occupancy of at least 0.25 on the soft MIRAGE envelope.",
         "evidence": [
           {
@@ -4213,12 +4196,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "c02ae7e8096aac00979f7a26090d25cb359fb53ed96af65bb9c14a3108257577",
+      "context_sha256": "9967027417000074b333aff5aa2f2b29efe0431708d49b8b64406dc1f0149555",
       "token_index": 1,
       "value": "16",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Patch-grid dimension (16 x 16) of the same model input, unchanged in the camera-ready audit. Template evidence: The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
         "evidence": [
           {
@@ -4230,12 +4213,12 @@
     },
     {
       "file": "compact_protocol.tex",
-      "context_sha256": "c02ae7e8096aac00979f7a26090d25cb359fb53ed96af65bb9c14a3108257577",
+      "context_sha256": "9967027417000074b333aff5aa2f2b29efe0431708d49b8b64406dc1f0149555",
       "token_index": 2,
       "value": "16",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish (the following sentence now says 'review version'; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Patch-grid dimension (16 x 16) of the same model input, unchanged in the camera-ready audit. Template evidence: The patch-grid dimension is parsed from the retained 16x16 grid declaration, not inferred from an image.",
         "evidence": [
           {
@@ -4281,12 +4264,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "context_sha256": "b3f8ee6cbb8e60cfc65af396e30aaea3d2bb4a623db0f16288c9a979ed8d99cf",
       "token_index": 0,
       "value": "1",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish (Smooth-L1 name; 'target instances' now 'target tokens'; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The 1 in Smooth-L1 identifies the loss family used by F.smooth_l1_loss. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
         "evidence": [
           {
@@ -4302,12 +4285,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "context_sha256": "b3f8ee6cbb8e60cfc65af396e30aaea3d2bb4a623db0f16288c9a979ed8d99cf",
       "token_index": 1,
       "value": "1",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The numerator 1 denotes a mean over all delivered target-instance feature coordinates for the displayed single-image task; training additionally averages over the batch. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
         "evidence": [
           {
@@ -4323,12 +4306,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "context_sha256": "b3f8ee6cbb8e60cfc65af396e30aaea3d2bb4a623db0f16288c9a979ed8d99cf",
       "token_index": 2,
       "value": "1",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The denominator sum starts at target group m=1 and counts every delivered K_m instance. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
         "evidence": [
           {
@@ -4344,12 +4327,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "context_sha256": "b3f8ee6cbb8e60cfc65af396e30aaea3d2bb4a623db0f16288c9a979ed8d99cf",
       "token_index": 3,
       "value": "1",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The outer numerator sum starts at target group m=1, matching the concatenated target groups. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
         "evidence": [
           {
@@ -4365,12 +4348,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "context_sha256": "b3f8ee6cbb8e60cfc65af396e30aaea3d2bb4a623db0f16288c9a979ed8d99cf",
       "token_index": 4,
       "value": "1",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The target-instance sum starts at k=1 and includes duplicate gathered indices. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
         "evidence": [
           {
@@ -4386,12 +4369,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "context_sha256": "b3f8ee6cbb8e60cfc65af396e30aaea3d2bb4a623db0f16288c9a979ed8d99cf",
       "token_index": 5,
       "value": "1",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The feature-coordinate sum starts at d=1 and covers the final feature dimension. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
         "evidence": [
           {
@@ -4407,12 +4390,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "378b62e21d1f5709fd5d0330e49467160929d43ca0dbed612f603d7b393d08dd",
+      "context_sha256": "b3f8ee6cbb8e60cfc65af396e30aaea3d2bb4a623db0f16288c9a979ed8d99cf",
       "token_index": 6,
       "value": "1",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Smooth-L1 uses the default unit transition: direct inspection of installed torch.nn.functional.smooth_l1_loss confirms reduction='mean', beta=1.0; production passes neither override. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: The same single mean Smooth-L1 reduction now explicitly includes stacked target instances, feature coordinates and images; its unit transition and one-based sums are unchanged.",
         "evidence": [
           {
@@ -4428,12 +4411,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "context_sha256": "1da1211806e70f233b04f0fd6abe18b00a38af8692c824efc9ac4ef05bb9cfa3",
       "token_index": 0,
       "value": "256",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -4469,12 +4452,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "context_sha256": "1da1211806e70f233b04f0fd6abe18b00a38af8692c824efc9ac4ef05bb9cfa3",
       "token_index": 1,
       "value": "256",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -4510,12 +4493,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "context_sha256": "1da1211806e70f233b04f0fd6abe18b00a38af8692c824efc9ac4ef05bb9cfa3",
       "token_index": 2,
       "value": "16",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -4551,12 +4534,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "context_sha256": "1da1211806e70f233b04f0fd6abe18b00a38af8692c824efc9ac4ef05bb9cfa3",
       "token_index": 3,
       "value": "6",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -4592,12 +4575,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "context_sha256": "1da1211806e70f233b04f0fd6abe18b00a38af8692c824efc9ac4ef05bb9cfa3",
       "token_index": 4,
       "value": "-25",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Shared epoch-25 ancestor of the original continuations; the hyphen is lexical. Template evidence: Reviewed checkpoint/analysis epoch descriptor for ancestor, epoch 25. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -4609,12 +4592,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "context_sha256": "1da1211806e70f233b04f0fd6abe18b00a38af8692c824efc9ac4ef05bb9cfa3",
       "token_index": 5,
       "value": "512",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish (the next sentence rephrases the guidance ramp; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -4650,12 +4633,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "context_sha256": "1da1211806e70f233b04f0fd6abe18b00a38af8692c824efc9ac4ef05bb9cfa3",
       "token_index": 6,
       "value": "25",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish (ramp restated as the probability of guided placement rising linearly between epochs 25 and 30; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -4691,12 +4674,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "d60a202c033ed8c99837ba09900342400e8574eda32a5d64c5dceeb511800b24",
+      "context_sha256": "1da1211806e70f233b04f0fd6abe18b00a38af8692c824efc9ac4ef05bb9cfa3",
       "token_index": 7,
       "value": "30",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish (ramp restated as the probability of guided placement rising linearly between epochs 25 and 30; same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Reviewed nominal settings: crop256, patch16, depth6, effective64x8=512 (archived equivalent64x4x2), guidance ramp25--30. Re-reviewed current context: Same nominal crop, patch, predictor-depth, effective-batch and guidance-ramp configuration; epoch27 remains explicitly a config filename and not proof of the early launch.",
         "evidence": [
           {
@@ -4732,12 +4715,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "c970577a933b9767c53481aec425e7e819e6a95637c2ad3a8b6293b84c183404",
+      "context_sha256": "3b16bf3e3abfe9bb9952a9000ceb3dc8d409986d9ba358055b82e6762f6d671a",
       "token_index": 0,
       "value": "-25",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Registered continuations start from the same epoch-25 checkpoint; the hyphen is lexical.",
         "evidence": [
           {
@@ -4749,12 +4732,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "c970577a933b9767c53481aec425e7e819e6a95637c2ad3a8b6293b84c183404",
+      "context_sha256": "3b16bf3e3abfe9bb9952a9000ceb3dc8d409986d9ba358055b82e6762f6d671a",
       "token_index": 1,
       "value": "50",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Registered runs stop at epoch 50 (fixed endpoint).",
         "evidence": [
           {
@@ -4766,7 +4749,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "60ad6b8d28c7f88780870086b4db46619b764c03a79a72c239063960df7c2cb9",
+      "context_sha256": "a87c5f5ce092dbb65a1496dbae220cf94d2d8d9d33f9e62d3164ff0d043d4295",
       "token_index": 6,
       "value": "2",
       "assertion": {
@@ -4854,7 +4837,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "60ad6b8d28c7f88780870086b4db46619b764c03a79a72c239063960df7c2cb9",
+      "context_sha256": "a87c5f5ce092dbb65a1496dbae220cf94d2d8d9d33f9e62d3164ff0d043d4295",
       "token_index": 7,
       "value": "10",
       "assertion": {
@@ -4942,7 +4925,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "60ad6b8d28c7f88780870086b4db46619b764c03a79a72c239063960df7c2cb9",
+      "context_sha256": "a87c5f5ce092dbb65a1496dbae220cf94d2d8d9d33f9e62d3164ff0d043d4295",
       "token_index": 8,
       "value": "-4",
       "assertion": {
@@ -5030,46 +5013,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "549a190fb12cd71815d1747fb02306a38437784cf6928a4bddb41f94388b615b",
+      "context_sha256": "f9f25e5dc8b17651802a72406ee92f074b2776c2cb84f801c956d88a19419412",
       "token_index": 0,
       "value": "50",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/14"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "549a190fb12cd71815d1747fb02306a38437784cf6928a4bddb41f94388b615b",
-      "token_index": 1,
-      "value": "100",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
-        "rationale": "Reviewed checkpoint/analysis epoch descriptor for oracle, epoch 100. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Envelope epoch50 and centroid epoch100 remain paired with their correctly named unchanged difference macros.",
-        "evidence": [
-          {
-            "source": "lr_stats",
-            "pointer": "/table/23"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "3aa303657401dc1934d62215bf9a7a02cf70818dc619a45979db46d36ff73f4b",
-      "token_index": 0,
-      "value": "50",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish (caption adds that COVER and ANATOMY-V2 AUCs are fp32 probes (equal to the fp32 Table 1 macros); same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Geometry-table AUC column is quoted at the matched epoch 50. Template evidence: Reviewed checkpoint/analysis epoch descriptor for envelope, epoch 50. A leading hyphen belongs to 'epoch-N', not a negative measurement. Re-reviewed current context: Revised geometry caption retains the same matched epoch50 AUC, not a new geometry measurement. Updated-context review: The same epoch50 AUC is retained. Added caption text correctly identifies a MIRAGE-derived tissue proxy, not ground truth; no geometry values changed.",
         "evidence": [
           {
@@ -5081,12 +5030,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "4753889ca6b31c2c8574d00ce964606db2a307de4d81249a71758026c5d1d49d",
+      "context_sha256": "52db1e5c0b16ee15493f35a0fa624473a8eaf95c16d80a3ee4596ff0d1f3969a",
       "token_index": 1,
       "value": "16",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Fixed K=16 and M=4 give 4x16=64 prediction instances by construction; the rectangle comparison is now the bound macro.",
         "evidence": [
           {
@@ -5102,12 +5051,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "4753889ca6b31c2c8574d00ce964606db2a307de4d81249a71758026c5d1d49d",
+      "context_sha256": "52db1e5c0b16ee15493f35a0fa624473a8eaf95c16d80a3ee4596ff0d1f3969a",
       "token_index": 2,
       "value": "4",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish ('prediction instances' renamed 'loss slots' (same quantity); same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
         "evidence": [
           {
@@ -5123,12 +5072,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "4753889ca6b31c2c8574d00ce964606db2a307de4d81249a71758026c5d1d49d",
+      "context_sha256": "52db1e5c0b16ee15493f35a0fa624473a8eaf95c16d80a3ee4596ff0d1f3969a",
       "token_index": 3,
       "value": "16",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish ('prediction instances' renamed 'loss slots' (same quantity); same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Fixed K=16 and M=4 imply4x16=64 target-loss slots by construction. Re-reviewed current context: Fixed K=16 and M=4 and about159 rectangle loss slots retain their distinct config/arithmetic versus measured-mean meanings.",
         "evidence": [
           {
@@ -5144,12 +5093,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "4753889ca6b31c2c8574d00ce964606db2a307de4d81249a71758026c5d1d49d",
+      "context_sha256": "52db1e5c0b16ee15493f35a0fa624473a8eaf95c16d80a3ee4596ff0d1f3969a",
       "token_index": 4,
       "value": "64",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the I14 camera-ready text polish ('prediction instances' renamed 'loss slots' (same quantity); same value and claim; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The displayed 64 is the arithmetic product of four target lists and K=16, not a newly measured statistic. Re-reviewed current context: Exact formula/protocol, not an empirical measurement.",
         "evidence": [
           {
@@ -5165,12 +5114,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "1148a13a5fbc4f283842203cbabe9e04ffb9a479fc42cd728585ad0307000e57",
+      "context_sha256": "b78a46b20b17c2e8132d7092749833932d5bda7316eaa7f27524c7bde5fbf546",
       "token_index": 1,
       "value": "-25",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot I8 camera-ready source review, 2026-10-08; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Registered continuations start from the same epoch-25 checkpoint; the hyphen is lexical.",
         "evidence": [
           {
@@ -5182,12 +5131,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "1148a13a5fbc4f283842203cbabe9e04ffb9a479fc42cd728585ad0307000e57",
+      "context_sha256": "b78a46b20b17c2e8132d7092749833932d5bda7316eaa7f27524c7bde5fbf546",
       "token_index": 3,
       "value": "-75",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08)",
+        "reviewer": "GitHub Copilot compact-protocol source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "The shortened limitations paragraph retains anatomy-v2 epoch75 and its inspection-based stopping caveat. The leading hyphen is lexical, not a negative setting.",
         "evidence": [
           {
@@ -5199,7 +5148,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "context_sha256": "1012af51d6e6937ccc7acbd19a5c95ea63201d65e2d90b100dc7f4d99fe0fa93",
       "token_index": 1,
       "value": "6{,}000",
       "expression": {
@@ -5215,7 +5164,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "context_sha256": "1012af51d6e6937ccc7acbd19a5c95ea63201d65e2d90b100dc7f4d99fe0fa93",
       "token_index": 2,
       "value": "1{,}000",
       "expression": {
@@ -5231,12 +5180,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "context_sha256": "1012af51d6e6937ccc7acbd19a5c95ea63201d65e2d90b100dc7f4d99fe0fa93",
       "token_index": 3,
       "value": "100",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Saved primary probe configuration: num_slices100, slice/crop size256, evaluation/probe seed42; not the pretraining seed. Re-reviewed current context: Unchanged full-volume evaluation dimensions: 100 B-scans, each resized to 256 by 256, from retained primary configuration.",
         "evidence": [
           {
@@ -5248,12 +5197,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "context_sha256": "1012af51d6e6937ccc7acbd19a5c95ea63201d65e2d90b100dc7f4d99fe0fa93",
       "token_index": 5,
       "value": "256",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Saved primary probe configuration: num_slices100, slice/crop size256, evaluation/probe seed42; not the pretraining seed. Re-reviewed current context: Unchanged full-volume evaluation dimensions: 100 B-scans, each resized to 256 by 256, from retained primary configuration.",
         "evidence": [
           {
@@ -5265,12 +5214,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "context_sha256": "1012af51d6e6937ccc7acbd19a5c95ea63201d65e2d90b100dc7f4d99fe0fa93",
       "token_index": 6,
       "value": "256",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "reviewer": "GitHub Copilot release/numeric source review, 2026-09-10; context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Saved primary probe configuration: num_slices100, slice/crop size256, evaluation/probe seed42; not the pretraining seed. Re-reviewed current context: Unchanged full-volume evaluation dimensions: 100 B-scans, each resized to 256 by 256, from retained primary configuration.",
         "evidence": [
           {
@@ -5299,12 +5248,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "6214e17c197ac539c1474af9e476fb3b232df9847abd6e486afb5cd4b942a926",
+      "context_sha256": "bbbca5fdf2b927955ca8677fc21fe47b8b33775e67767c33351496b0d41a52c1",
       "token_index": 0,
       "value": "4",
       "review": {
         "kind": "protocol",
-        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Declared target-block count M=4.",
         "evidence": [
           {
@@ -5316,12 +5265,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "445bee6a1d6d7c4b65b589dd2c2c97ebada911717d4d428b8c0d421c1d8a21fe",
+      "context_sha256": "1012af51d6e6937ccc7acbd19a5c95ea63201d65e2d90b100dc7f4d99fe0fa93",
       "token_index": 4,
       "value": "200",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "FairVision volumes are stored as oct_bscans arrays of shape (200, 200, 200); the first axis indexes the 200 B-scans of a volume (loader docstring; one Training file was opened read-only on 2026-10-11 and has this shape).",
         "evidence": [
           {
@@ -5694,30 +5643,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
-      "token_index": 1,
-      "value": "1",
-      "review": {
-        "kind": "citation",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
-        "rationale": "Figure1 identifies the published OCTDL source image, not this paper's result number.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/source_image_url"
-          },
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/attribution"
-          }
-        ],
-        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
-        "locator": "Figure 1 and version-pinned article record"
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "context_sha256": "8dc57b135666e51f15bc492b8dc0e9e28b284d32ec1ca1508cb4555cf2e6d0b6",
       "token_index": 2,
       "value": "2312.08255",
       "review": {
@@ -5736,7 +5662,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "context_sha256": "8dc57b135666e51f15bc492b8dc0e9e28b284d32ec1ca1508cb4555cf2e6d0b6",
       "token_index": 3,
       "value": "3",
       "review": {
@@ -5755,7 +5681,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
+      "context_sha256": "8dc57b135666e51f15bc492b8dc0e9e28b284d32ec1ca1508cb4555cf2e6d0b6",
       "token_index": 4,
       "value": "4.0",
       "review": {
@@ -5772,58 +5698,7 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
-      "token_index": 5,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
-        "rationale": "256 is the input crop width after whole-crop bilinear downsampling, independently reproduced from the retained published image.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/sampler_config/input_size/0"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
-      "token_index": 6,
-      "value": "256",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
-        "rationale": "256 is the input crop height after the same whole-crop downsampling, not a cohort or model outcome.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/sampler_config/input_size/1"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "9c3532c5314ea2bcd2da6ba11ce3c6970b65daaba407d9702c58de034c1a3fcf",
-      "token_index": 7,
-      "value": "4.0",
-      "review": {
-        "kind": "protocol",
-        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
-        "rationale": "4.0 repeats the CC BY license version in its attribution URL.",
-        "evidence": [
-          {
-            "source": "external_oct_manifest",
-            "pointer": "/license_url"
-          }
-        ]
-      }
-    },
-    {
-      "file": "main_submission.tex",
-      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "context_sha256": "b8c2f9de45a59dd25f426e4072b28ac44134e56b4fc870f19606eb238b1f7b1d",
       "token_index": 8,
       "value": "1",
       "review": {
@@ -5840,12 +5715,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "context_sha256": "b8c2f9de45a59dd25f426e4072b28ac44134e56b4fc870f19606eb238b1f7b1d",
       "token_index": 1,
       "value": "200",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "FairVision volumes are stored as oct_bscans arrays of shape (200, 200, 200); the first axis indexes the 200 B-scans of a volume (loader docstring; one Training file was opened read-only on 2026-10-11 and has this shape).",
         "evidence": [
           {
@@ -5857,12 +5732,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "context_sha256": "b8c2f9de45a59dd25f426e4072b28ac44134e56b4fc870f19606eb238b1f7b1d",
       "token_index": 2,
       "value": "100",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Pretraining and evaluation configurations both use num_slices 100: 100 B-scans per volume.",
         "evidence": [
           {
@@ -5878,12 +5753,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "context_sha256": "b8c2f9de45a59dd25f426e4072b28ac44134e56b4fc870f19606eb238b1f7b1d",
       "token_index": 3,
       "value": "256",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Every selected B-scan is resized bilinearly to slice_size 256 (evaluation) / crop_size 256 (pretraining view) pixels.",
         "evidence": [
           {
@@ -5903,12 +5778,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "context_sha256": "b8c2f9de45a59dd25f426e4072b28ac44134e56b4fc870f19606eb238b1f7b1d",
       "token_index": 4,
       "value": "256",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Every selected B-scan is resized bilinearly to slice_size 256 (evaluation) / crop_size 256 (pretraining view) pixels.",
         "evidence": [
           {
@@ -5928,12 +5803,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "context_sha256": "b8c2f9de45a59dd25f426e4072b28ac44134e56b4fc870f19606eb238b1f7b1d",
       "token_index": 5,
       "value": "256",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "A 256 by 256 input with patch size 16 gives a 16 by 16 grid, i.e. 256 patch tokens.",
         "evidence": [
           {
@@ -5953,12 +5828,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "context_sha256": "b8c2f9de45a59dd25f426e4072b28ac44134e56b4fc870f19606eb238b1f7b1d",
       "token_index": 6,
       "value": "16",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Patch size 16 pixels (ViT-Base/16), in both the probe and the pretraining configuration.",
         "evidence": [
           {
@@ -5974,12 +5849,12 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "2db0464cd5927f02719ef8ab79dda65bb5da60b90e59627f75ad8039a384b14a",
+      "context_sha256": "b8c2f9de45a59dd25f426e4072b28ac44134e56b4fc870f19606eb238b1f7b1d",
       "token_index": 7,
       "value": "16",
       "review": {
         "kind": "protocol",
-        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11",
+        "reviewer": "GitHub Copilot I13 camera-ready figure and source review, 2026-10-11; context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
         "rationale": "Patch size 16 pixels (ViT-Base/16), in both the probe and the pretraining configuration.",
         "evidence": [
           {
@@ -6353,13 +6228,247 @@
           }
         ]
       }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "bedb48420c61c77b4ac38538cfb00ab677ab1c1c44640629264361190d6e38bf",
+      "token_index": 0,
+      "value": "0.21",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "Numeric evidence agent; direct source/primary-publication review, 2026-09-04; value written 0.21 instead of .21 in the Table 1 row and re-reviewed (GitHub Copilot I14, 2026-10-12)",
+        "rationale": "COVER f=0.21 is the declared parameter/artifact identifier, not a measured coverage percentage.",
+        "evidence": [
+          {
+            "source": "lr_cover_cfg",
+            "excerpt": "cover_leave_frac: 0.21"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "08d5022d28287eaec96b76e42d2cfea43ed007c9bf04950df0f4c92bab918bef",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I14 camera-ready text-polish review, 2026-10-12",
+        "rationale": "Common endpoint epoch 50 at which ENVELOPE and CENTROID are each compared with RANDOM (DEnvelopeRandomEpFifty, DOracleRandomEpFifty and their CI macros); checkpoint/analysis epoch descriptor, not a measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/14"
+          },
+          {
+            "source": "lr_stats",
+            "pointer": "/table/20"
+          },
+          {
+            "source": "lr_stats",
+            "pointer": "/table/25"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "10a4ef44d01816f5137e1354b77448a8c1204e0bef9b64a35eb962704c402f46",
+      "token_index": 0,
+      "value": "-25",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I14 camera-ready text-polish review, 2026-10-12",
+        "rationale": "Shared epoch-25 ancestor of the original continuations (same statement as in the Pretraining paragraph); the hyphen is lexical, not a negative measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/5"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "10a4ef44d01816f5137e1354b77448a8c1204e0bef9b64a35eb962704c402f46",
+      "token_index": 2,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I14 camera-ready text-polish review, 2026-10-12",
+        "rationale": "First matched epoch of the statement that ANATOMY-V2 (epochs 50, 75) and COVER (epochs 50, 75, 100) scored below ENVELOPE at every matched epoch from epoch 50 on; the AUCs are the p15-bound Table 1 macros (AUCEnvelopeEp*, TAUCAnatomyTwoEp*, TAUCCoverEp*). Epoch descriptor, not a measurement.",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/3"
+          },
+          {
+            "source": "lr_stats",
+            "pointer": "/table/9"
+          },
+          {
+            "source": "lr_stats",
+            "pointer": "/table/14"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "257f89317e2bcb34072b291c310914aa6994ec0b829976d4a1728c1e8cf0ca0f",
+      "token_index": 0,
+      "value": "50",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I14 camera-ready text-polish review, 2026-10-12",
+        "rationale": "Checkpoint/analysis epoch descriptor for the COVER minus RANDOM contrast at epoch 50 (DCoverRandomEpFifty and its CI macro, fp32 null).",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/9"
+          },
+          {
+            "source": "lr_stats",
+            "pointer": "/table/25"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "257f89317e2bcb34072b291c310914aa6994ec0b829976d4a1728c1e8cf0ca0f",
+      "token_index": 1,
+      "value": "100",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I14 camera-ready text-polish review, 2026-10-12",
+        "rationale": "Checkpoint/analysis epoch descriptor for the COVER minus RANDOM contrast at epoch 100 (DCoverRandomEpHundred and its CI macro, fp32 null).",
+        "evidence": [
+          {
+            "source": "lr_stats",
+            "pointer": "/table/12"
+          },
+          {
+            "source": "lr_stats",
+            "pointer": "/table/29"
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "4ecb329a3b7d0042ebfa5a70f2aa78139e3892013c7a6f822cbcfc5338a608df",
+      "token_index": 38,
+      "value": "22",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I14 camera-ready text-polish review, 2026-10-12",
+        "rationale": "Results-freeze date of the registered plan (Thursday October 22 2026, 08:00 PDT); sealed test predictions are opened once after the freeze. Calendar date, not a measurement.",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "October 22 2026, 08:00 PDT; sealed test predictions are opened once after the freeze."
+          }
+        ]
+      }
+    },
+    {
+      "file": "compact_protocol.tex",
+      "context_sha256": "4ecb329a3b7d0042ebfa5a70f2aa78139e3892013c7a6f822cbcfc5338a608df",
+      "token_index": 39,
+      "value": "2026",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot I14 camera-ready text-polish review, 2026-10-12",
+        "rationale": "Results-freeze date of the registered plan (Thursday October 22 2026, 08:00 PDT); sealed test predictions are opened once after the freeze. Calendar date, not a measurement.",
+        "evidence": [
+          {
+            "source": "cr_prereg",
+            "excerpt": "October 22 2026, 08:00 PDT; sealed test predictions are opened once after the freeze."
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "8dc57b135666e51f15bc492b8dc0e9e28b284d32ec1ca1508cb4555cf2e6d0b6",
+      "token_index": 1,
+      "value": "1",
+      "review": {
+        "kind": "citation",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "Figure1 identifies the published OCTDL source image, not this paper's result number.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/source_image_url"
+          },
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/attribution"
+          }
+        ],
+        "immutable_locator": "https://arxiv.org/abs/2312.08255v3",
+        "locator": "Figure 1 and version-pinned article record"
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "8dc57b135666e51f15bc492b8dc0e9e28b284d32ec1ca1508cb4555cf2e6d0b6",
+      "token_index": 5,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "256 is the input crop width after whole-crop bilinear downsampling, independently reproduced from the retained published image.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/sampler_config/input_size/0"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "8dc57b135666e51f15bc492b8dc0e9e28b284d32ec1ca1508cb4555cf2e6d0b6",
+      "token_index": 6,
+      "value": "256",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "256 is the input crop height after the same whole-crop downsampling, not a cohort or model outcome.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/sampler_config/input_size/1"
+          }
+        ]
+      }
+    },
+    {
+      "file": "main_submission.tex",
+      "context_sha256": "8dc57b135666e51f15bc492b8dc0e9e28b284d32ec1ca1508cb4555cf2e6d0b6",
+      "token_index": 7,
+      "value": "4.0",
+      "review": {
+        "kind": "protocol",
+        "reviewer": "GitHub Copilot external-figure source review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-reviewed after the v2 figure redesign (GitHub Copilot I13, 2026-10-11)",
+        "rationale": "4.0 repeats the CC BY license version in its attribution URL.",
+        "evidence": [
+          {
+            "source": "external_oct_manifest",
+            "pointer": "/license_url"
+          }
+        ]
+      }
     }
   ],
   "figures": [
     {
       "path": "figures/fig_oct_strategies_v2.png",
       "sha256": "63d95c7e5f20baae1e16b4c7320e474b91b59184d51a83bd561ac3bdea40141b",
-      "caption_sha256": "0c04ff6d80f5acb9765e7abc0616ee33ba27b04d52a6588e6ecaa55db59358ca",
+      "caption_sha256": "070df2dae34dcf3a7e2b10c0b09428bb890103879d9c7ff1fd7c121d82c96302",
       "inputs": [
         {
           "source": "i13_fig_strategies_evidence",
@@ -6430,7 +6539,7 @@
     {
       "path": "figures/fig_oct_jepa_volume_v2.png",
       "sha256": "cbd33acb96adce0e827127a8b374b63e8e322bc5a0efd3a44fed4cce09bf775d",
-      "caption_sha256": "9ca513e0354653c8ce8c03c813d6e306a829c8b91048663a5abd07c2e2983ba3",
+      "caption_sha256": "37032b70bf75f270d5c403e789b1501d36053041fd4b2165ff487f0aa6cc76ba",
       "inputs": [
         {
           "source": "i13_fig_volume_evidence",

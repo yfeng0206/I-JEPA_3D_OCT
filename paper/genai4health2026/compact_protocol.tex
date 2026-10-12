@@ -61,7 +61,7 @@ Anatomy-v2 results use the continuation with full-precision target-encoder
 outputs. Probes from its earlier mixed-target-precision continuation are
 excluded, as are earlier uniform controls that used different target
 precision and context selection. The main table retains the comparable
-policy endpoints, including the adverse \textsc{cover} trajectory.
+strategy endpoints, including the adverse \textsc{cover} trajectory.
 
 \paragraph{Mask measurement.}
 \label{app:geomprov}
@@ -72,25 +72,26 @@ with the fallback rule used in training. The scope is $\CRAuditVolumes$
 training volumes with $\CRAuditSlices$ views each; every strategy sees the same
 crops, block sizes and placement seeds. Tissue is guide occupancy of at least
 $0.25$ on the soft MIRAGE envelope, on the $16\times16$ patch grid. The
-submitted tables used $\CROldSlices$ slices from $\CROldVolumes$ volumes with
+review version used $\CROldSlices$ B-scans from $\CROldVolumes$ volumes with
 seed $\CROldSeed$, sizes drawn separately for each strategy, the code-default
 \ArmBest{} band width and \textsc{envelope} placed on the soft guide.
 Table~\ref{tab:delivered} compares both. In Table~\ref{tab:geometry},
 ``tissue hidden'' is the share of tissue cells in the target union, ``purity''
-the share of target cells on tissue, ``targets'' the number of unique target
-cells, ``loss slots'' the supervised target-token instances including
+the share of target cells on tissue, ``unique targets'' the number of unique
+target cells, ``loss slots'' the supervised target tokens including
 duplicates, and ``context'' the share of the grid supplied to the context
-encoder. Repeated target indices add loss terms, and the anatomy-shaped and
-coverage strategies use different guide products from the \textsc{envelope}
-run. The band width has little effect on
+encoder; in Table~\ref{tab:delivered}, ``mask ratio'' is the number of unique
+target cells divided by $N$. Repeated target indices add loss slots, and the
+anatomy-shaped and coverage strategies use different guide products from the
+\textsc{envelope} run. The band width has little effect on
 delivered context; most of the difference comes from replay noise and
 pairing, and for \textsc{envelope} also from the guide product and fallback
 rule.
 
 \begin{table}[h]
 \centering
-\caption{Submitted versus camera-ready mask geometry. Each cell gives the
-submitted value, then the value under the trained configuration and the
+\caption{Review-version versus current mask geometry. Each cell gives the
+review-version value, then the value under the trained configuration and the
 protocol of Table~\ref{tab:geometry}. Per-image columns are measured one view
 at a time ($\CRImgDraws$ single-view draws per seed), before batching;
 the last column is the context delivered at batch size $\CRAuditBatch$.}
@@ -101,7 +102,7 @@ the last column is the context delivered at batch size $\CRAuditBatch$.}
 \toprule
 & \multicolumn{5}{c}{per image} & delivered \\
 \cmidrule(lr){2-6}
-policy & tissue hidden & purity & mask ratio & context & loss slots & context \\
+strategy & tissue hidden & purity & mask ratio & context & loss slots & context \\
 \midrule
 \textsc{random}     & \CRImgHidOldRandom{} / \CRImgHidRandom         & \CRImgPurOldRandom{} / \CRImgPurRandom         & \CRImgMaskOldRandom{} / \CRImgMaskRandom         & \CRImgCtxOldRandom{} / \CRImgCtxRandom         & \CRImgSlotsOldRandom{} / \CRImgSlotsRandom         & \CRCtxOldRandom{} / \CRCtxRandom \\
 \ArmBest{}          & \CRImgHidOldCentroid{} / \CRImgHidCentroid     & \CRImgPurOldCentroid{} / \CRImgPurCentroid     & \CRImgMaskOldCentroid{} / \CRImgMaskCentroid     & \CRImgCtxOldCentroid{} / \CRImgCtxCentroid     & \CRImgSlotsOldCentroid{} / \CRImgSlotsCentroid     & \CRCtxOldCentroid{} / \CRCtxCentroid \\
@@ -118,8 +119,9 @@ This is secondary research on the public, de-identified FairVision release
 under its CC BY-NC-ND 4.0 data licence. No new participants were recruited
 or identifying fields added. A separate institutional ethics or exemption
 determination is not recorded for this project. The models are not clinically
-validated or intended for patient care. The illustrative OCT image in the
-main paper comes from the separately attributed CC BY 4.0 OCTDL publication,
+validated or intended for patient care. The illustrative OCT B-scan in
+Figures~\ref{fig:target_selection} and~\ref{fig:policies} comes from the
+separately attributed CC BY 4.0 OCTDL publication,
 not from the FairVision evaluation cohort.
 
 \section{Registered replication protocol}
@@ -127,12 +129,17 @@ not from the FairVision evaluation cohort.
 The replication plan was committed to the project repository before any new
 continuation produced a checkpoint and before any new probe (commit
 {\footnotesize\texttt{86ae8823f3afc9fa2c9ed6a3cb0c459b513ba1c5}}).
+Two amendments, committed before any new probe result, added a third seed
+index (commit {\footnotesize\texttt{40d48f168ad8a04af47708eb08d2269be3a7e1c9}})
+and descriptive labels for the matched-budget control (commit
+{\footnotesize\texttt{35554f92dfd4b0dc8a55c28bc71f49b8243a47e7}}).
 \textsc{random}, \ArmBest{} and \textsc{envelope} each continue from the shared
 epoch-25 checkpoint with two new seeds, which set data order, crops, mask draws
 and data-loader streams. Runs with the same seed share data order only.
-\textsc{envelope} uses the fallback placement of the original run. A
+\textsc{envelope} keeps the original run's fallback when no admissible window
+has low overlap: a uniform choice among admissible windows. A
 uniform-placement control receives \ArmBest{}'s per-image budgets with the first
-seed. Optimiser, schedule horizon and effective batch size match the original
+seed. Optimizer, schedule horizon and effective batch size match the original
 continuations, with full-precision teacher targets as in the originals; each run
 stops after its epoch-50 checkpoint. The original \textsc{random} and \ArmBest{}
 continuations ran on different GPU hardware from the original \textsc{envelope}
@@ -140,14 +147,16 @@ continuation and all new runs.
 The probe keeps the main protocol but runs in fp32, seeds each of five linear
 heads after the feature caches are created, and reports the mean AUC over head
 seeds together with their s.d.; the original encoders are re-probed in the same
-way. Test predictions are stored sealed until the results freeze, and decisions
-during the campaign use validation AUC only. For each new seed the primary
+way. Test predictions were stored sealed (hashed, unscored) until the results
+freeze on 22 October 2026 and scored once afterwards; decisions during the runs
+used validation AUC only. For each new seed the primary
 contrasts are \ArmBest{} and \textsc{envelope} minus \textsc{random}, with paired
 test-case bootstrap intervals. A guided strategy is labelled consistent in
 direction only if both new-seed differences are positive and their mean exceeds
 the range of the three \textsc{random} realizations. A positive mean otherwise
 counts as within run-to-run variation, and a non-positive mean as reversed.
-Analyses including the original runs, validation-split differences and pooling
+Analyses including the original runs, a visual-field mean-deviation regression
+within glaucoma cases, validation-split differences and pooling
 variants are secondary. Every started run is reported.
 
 \section{Guide agreement and envelope plausibility}

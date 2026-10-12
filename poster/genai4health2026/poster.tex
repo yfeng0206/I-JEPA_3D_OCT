@@ -28,14 +28,18 @@
 
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{colortbl}
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{qrcode}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 
-% Paper sources: figures and generated number macros are read in place.
-\graphicspath{{../../paper/genai4health2026/figures/}}
+% Paper sources, read in place: the I13 poster variants of the two paper
+% figures (committed under autopilot/.../figures_v2/poster/ and registered with
+% their SHA-256 in autopilot/release_assets.json, poster_variant; make_preview.py
+% checks both) and the generated number macros.
+\graphicspath{{../../autopilot/investigations/camera_ready_20261008/figures_v2/poster/}}
 \input{../../paper/genai4health2026/auto/auto_numbers}
 \input{../../paper/genai4health2026/auto/cr_numbers}
 
@@ -267,7 +271,8 @@
   $^{2}$Columbia University (\texttt{wl2822@columbia.edu})}
 
 % Paper/code link for the QR code. Leave empty for the placeholder; set it to
-% the final OpenReview or repository URL (no '#' or '%') to draw a real code.
+% the final URL of the public paper with the code and the pre-registration
+% (no '#' or '%') to draw a real code.
 \providecommand*{\PosterURL}{}
 
 % Result placeholders (registered replication; used until auto/cr_results.tex
@@ -340,14 +345,23 @@
 \newcommand{\KeyBox}[1]{%
   {\setlength{\fboxsep}{6mm}\setlength{\fboxrule}{1.2mm}%
   \noindent\fcolorbox{OIBlue}{KeyFill}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\raggedright#1}}}}
+% The 10-second answer (next to the question): white on navy, numbers only
+% from paper macros; with validated results it adds the generated labels
+% (digit-free), nothing else.
+\newcommand{\AnswerBox}[1]{%
+  {\setlength{\fboxsep}{6mm}\setlength{\fboxrule}{1.2mm}%
+  \noindent\fcolorbox{PosterNavy}{PosterNavy}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}{\raggedright\color{white}#1}}}}
 
 % Compact bullet list.
 \newenvironment{plist}{\begin{itemize}\setlength{\itemsep}{0.2em}%
   \setlength{\parskip}{0pt}\setlength{\topsep}{0.1em}}{\end{itemize}}
 
-% Figures keep their reference-layout height on wider canvases.
+% Figures keep their reference-layout height on wider canvases; the log
+% records the size used (POSTER-FIGURE).
 \newcommand{\PosterFigure}[3]{% #1 max width (fraction of \linewidth), #2 max height, #3 file
-  \includegraphics[width=#1\linewidth, height=#2, keepaspectratio]{#3}}
+  \sbox0{\includegraphics[width=#1\linewidth, height=#2, keepaspectratio]{#3}}%
+  \typeout{POSTER-FIGURE: #3 \the\wd0\space x \the\ht0\space (line width \the\linewidth)}%
+  \usebox0}
 
 % Fit check: reports the spare space, or warns if the lowest block runs past
 % the bottom margin (tikzposter itself never warns about this).
@@ -396,12 +410,12 @@
     \ifx\PosterURL\empty
       \fcolorbox{OIVermillion}{white}{\parbox[c][0.82\linewidth][c]{0.82\linewidth}{%
         \centering\color{black}\bfseries QR CODE\\PENDING\\[0.4em]
-        \mdseries\normalsize paper / code link}}%
+        \mdseries\normalsize paper, code \&\\pre-registration}}%
       \typeout{POSTER-PLACEHOLDER: QR code}%
     \else
       \colorbox{white}{\qrcode[height=0.82\linewidth]{\PosterURL}}%
     \fi\\[0.3em]
-    {\color{titlefgcolor}\normalsize paper \& code}
+    {\color{titlefgcolor}\normalsize paper, code \& pre-registration}
   \end{minipage}%
 }
 \makeatother
@@ -425,42 +439,49 @@
   \vspace{0.3em}
   \KeyBox{\textbf{Question.} Does steering I-JEPA targets toward retinal tissue
     give a better frozen encoder for glaucoma detection, with the same
-    architecture and latent loss?}
-}
-
-\block{Same I-JEPA, different targets}{
-  \centering
-  \PosterFigure{1}{216mm}{fig_oct_jepa_comparison_final_cr.pdf}\par
-  \vspace{0.3em}
-  \raggedright
-  Only the sampler of context $C$ and targets $T$ changes:
-  $(C,T)\sim\Pi_s(\,\cdot\mid A_s(x))$ with the guide $A_s(x)$ of strategy
-  $s$. Encoder, EMA teacher, predictor and Smooth-L1 loss are shared.
+    architecture and latent loss?}\par
+  \vspace{0.5em}
+  \AnswerBox{\textbf{Answer (original single runs).} Targets on the retinal
+    band scored higher than uniform I-JEPA masking at epoch 50:
+    $\DOracleRandomEpFifty$ AUC with a segmentation-free intensity centroid,
+    $\DEnvelopeRandomEpFifty$ with a MIRAGE envelope. More anatomical detail did
+    not add gains, and guided masks also leave more context visible.\par
+    \vspace{0.3em}
+    \ifPosterResults
+      \ifPosterSynthetic\textbf{SYNTHETIC DRY RUN:} \fi\textbf{Registered
+      replication:} \ArmBest{} \emph{\RepLabelCentroid}, \Arm{envelope}
+      \emph{\RepLabelEnvelope}.
+    \else
+      \textbf{Registered replication:} labels after the Oct~22 results freeze
+      (bottom).
+    \fi}
 }
 
 \block{Five target-selection strategies}{
   \centering
-  \PosterFigure{0.88}{236mm}{fig_oct_all_strategies.pdf}\par
-  \vspace{0.4em}
-  {\normalsize
-  \renewcommand{\arraystretch}{1.1}
-  \begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}X@{}}
-    \toprule
-    strategy & guide $A_s(x)$ $\rightarrow$ target rule \\
-    \midrule
-    \Arm{random}     & none $\rightarrow$ uniform rectangles (stock I-JEPA) \\
-    \Arm{envelope}   & hard MIRAGE retina envelope $\rightarrow$ rectangles sampled on it \\
-    \ArmBest{}       & intensity-centroid band, no segmenter $\rightarrow$ rectangles weighted by overlap \\
-    \Arm{anatomy-v2} & soft MIRAGE retinal scores $\rightarrow$ tissue-shaped components \\
-    \Arm{cover}      & soft MIRAGE retinal scores $\rightarrow$ greedy coverage rectangles \\
-    \bottomrule
-  \end{tabularx}\par}
+  \PosterFigure{1}{200mm}{fig_oct_strategies_v2_poster.pdf}\par
+  \vspace{0.3em}
+  \raggedright
+  \Arm{random} targets cover much background; guided rectangles cluster on the
+  tissue band; \Arm{anatomy-v2} targets are thin tissue-shaped components.
 }
+
+\block{Same I-JEPA, different sampler; volume-level probe}{
+  \centering
+  \PosterFigure{1}{216mm}{fig_oct_jepa_volume_v2_poster.pdf}\par
+  \vspace{0.3em}
+  \raggedright
+  Only the sampler changes: $(C,T)\sim\Pi_s(\,\cdot\mid A_s(x))$ with the guide
+  $A_s(x)$; encoder, EMA teacher, predictor and Smooth-L1 loss are shared.
+}
+\PosterCheckFit{left column}
 
 % ============================ RIGHT COLUMN ============================
 \column{0.5}
 
-\block{Original runs: tissue-directed rectangles help}{
+% Neutral title (R1 P2): states the single-run observation, which the
+% registered replication below may or may not support.
+\block{Single runs: tissue-directed rectangles scored higher}{
   \raggedright
   {\normalsize FairVision glaucoma OCT; frozen EMA encoder, mean-pooled
   features, linear probe; test $N=\Ntest$ volumes (\Npos{} glaucoma).
@@ -478,28 +499,28 @@
     \midrule
     \Arm{random}   & \AUCRandomEpFifty & --- & \AUCRandomEpSeventyFive & --- & \AUCRandomEpHundred & --- \\
     \Arm{envelope} & \AUCEnvelopeEpFifty & $\DEnvelopeRandomEpFifty$ & \AUCEnvelopeEpSeventyFive & $\DEnvelopeRandomEpSeventyFive$ & \AUCEnvelopeEpHundred & $\DEnvelopeRandomEpHundred$ \\
-    \ArmBest{}     & \AUCOracleEpFifty & $\DOracleRandomEpFifty$ & \AUCOracleEpSeventyFive & $\DOracleRandomEpSeventyFive$ & \textbf{\AUCOracleEpHundred} & $\DOracleRandomEpHundred$ \\
+    \ArmBest{}     & \AUCOracleEpFifty & $\DOracleRandomEpFifty$ & \AUCOracleEpSeventyFive & $\DOracleRandomEpSeventyFive$ & \AUCOracleEpHundred & $\DOracleRandomEpHundred$ \\
     \midrule
     \Arm{anatomy-v2} & \TAUCAnatomyTwoEpFifty & \TAnatomyTwoRandomEpFifty & \TAUCAnatomyTwoEpSeventyFive & \TAnatomyTwoRandomEpSeventyFive & \TAUCAnatomyTwoEpHundred & \TAnatomyTwoRandomEpHundred \\
     \Arm{cover}      & \TAUCCoverEpFifty & \TCoverRandomEpFifty & \TAUCCoverEpSeventyFive & \TCoverRandomEpSeventyFive & \TAUCCoverEpHundred & \TCoverRandomEpHundred \\
     \bottomrule
   \end{tabular}\par}
   \vspace{0.2em}
-  {\normalsize $\Delta$: AUC minus \Arm{random} at the same epoch. Upper rows
-  fp16 probes; lower rows fp32 probes against an fp32 \Arm{random}.
-  \Arm{anatomy-v2} stopped at epoch 75. One pretraining continuation per
-  strategy: intervals reflect test-case sampling (\Nboot{} paired bootstrap
-  resamples), not retraining.\par}
+  {\normalsize $\Delta$: minus \Arm{random} at the same epoch; upper rows fp16
+  probes, lower rows fp32 (vs an fp32 \Arm{random}); \Arm{anatomy-v2} stopped
+  at epoch 75. One continuation per strategy: intervals reflect test-case
+  sampling (\Nboot{} paired bootstrap resamples), not retraining.\par}
   \vspace{0.4em}
   \KeyBox{%
-    \textbf{\ArmBest{}, no segmenter:} $\DOracleRandomEpHundred$ AUC at
-    epoch 100 (95\% CI $\DOracleRandomEpHundredCI$).\par
-    \textbf{\Arm{envelope}:} $\DEnvelopeRandomEpFifty$ at epoch 50
-    (95\% CI $\DEnvelopeRandomEpFiftyCI$).\par
+    \textbf{At epoch 50 (registered endpoint):} \Arm{envelope}
+    $\DEnvelopeRandomEpFifty$ AUC (95\% CI $\DEnvelopeRandomEpFiftyCI$),
+    \ArmBest{} (no segmenter) $\DOracleRandomEpFifty$ (95\% CI
+    $\DOracleRandomEpFiftyCI$); positive at epochs 50, 75 and 100
+    (\Arm{envelope} $\DEnvelopeRandomEpHundred$ to $\DEnvelopeRandomEpFifty$,
+    \ArmBest{} $\DOracleRandomEpFifty$ to $\DOracleRandomEpSeventyFive$).\par
     \textbf{More anatomy did not add gains:} \Arm{anatomy-v2} minus
-    \Arm{envelope} $\DAnatomyTwoEnvelopeEpFifty$ at epoch 50
-    (95\% CI $\DAnatomyTwoEnvelopeEpFiftyCI$); \Arm{cover} $\DCoverPeakToHundred$
-    from its epoch-\CoverPeakEpoch{} peak to epoch 100.}
+    \Arm{envelope} $\DAnatomyTwoEnvelopeEpFifty$ at epoch 50; \Arm{cover}
+    minus \Arm{random} $\DCoverRandomEpHundred$ at epoch 100.}
 }
 
 \block{Which masks actually reach the model?}{
@@ -511,7 +532,8 @@
   {\centering\normalsize
   \renewcommand{\arraystretch}{1.1}
   \setlength{\tabcolsep}{0.38em}
-  \begin{tabular}{@{}lcccccc@{}}
+  % Context (the key confound) on a light fill.
+  \begin{tabular}{@{}lcccc>{\columncolor{KeyFill}}cc@{}}
     \toprule
     & tissue & target & unique & loss & context & AUC \\
     strategy & hidden & purity & targets & slots & (\% grid) & ep.\ 50 \\
@@ -553,7 +575,10 @@
         nodes near coords={\pgfmathprintnumber[fixed,precision=1]{\pgfplotspointmeta}\%},
         nodes near coords align={horizontal},
         every node near coord/.append style={font=\normalsize, black},
-        xlabel={gross disagreement},
+        % Reference: the overall rate (all strata, dashed), the same macro as the text.
+        extra x ticks={\CRFOne}, extra x tick labels={},
+        extra x tick style={grid=major, major grid style={dashed, black!70, line width=0.8mm}},
+        xlabel={\% of B-scans},
       ]
         \addplot[bar shift=0pt, draw=OIBlue, fill=OIBlue]
           coordinates {(\CRFOneNormal,Normal) (\CRFOneGlaucoma,Glaucoma)};
@@ -565,16 +590,16 @@
   \begin{minipage}[c]{0.58\linewidth}
     \raggedright
     \textbf{\ArmBest{} band vs MIRAGE envelope:} gross disagreement in
-    \CRFOne\% of B-scans (95\% CI \CRFOneCI; all training volumes
+    \CRFOne\% of B-scans (dashed; 95\% CI \CRFOneCI; all training volumes
     \CRFOneCensus\%).\par\vspace{0.3em}
     \textbf{Envelope plausibility flags:} \CREnvAnyFlag\% (\CREnvAnyFlagCI).\par\vspace{0.3em}
     \textbf{MIRAGE guide:} GOALS foreground Dice \CRMirageDice{}, in-domain only.
   \end{minipage}\par
   \vspace{0.3em}
-  {\normalsize Agreement between two automatic guides, not anatomical
-  accuracy (FairVision has no layer labels). Bars: unweighted rates in a
-  stratified sample of \CRGuideVolumes{} volumes (\CRGuideBscans{} B-scans);
-  high/low signal: top/bottom tertile of a signal-to-noise proxy.\par}
+  {\normalsize Agreement of two automatic guides, not anatomical accuracy
+  (no layer labels). Bars: unweighted rates, stratified sample of
+  \CRGuideVolumes{} volumes (\CRGuideBscans{} B-scans); signal: tertiles of an
+  SNR proxy.\par}
 }
 
 \block{Takeaways}{
@@ -597,6 +622,7 @@
     \fi
   \end{plist}
 }
+\PosterCheckFit{right column}
 
 \end{columns}
 
@@ -620,18 +646,27 @@
 \newlength{\PosterRowW}
 \newlength{\PosterSpreadW}
 \newlength{\PosterSpreadH}
-% Seed-spread caption (encoding of the generator's figure, as in its caption).
-\newcommand{\PosterSpreadCaption}{Error bars: s.d.\ over probe-head seeds.
-  Open markers: descriptive runs (late or incomplete).}
+% Seed-spread caption (encoding of the generator's figure, contract
+% cr_seed_spread_encoding_v2; the legend inside the figure names the fills).
+\newcommand{\PosterSpreadCaption}{{\small Error bars: s.d.\ over probe-head seeds.
+  Letters: seed index (O: original). Open markers: descriptive runs (late or
+  incomplete). (b): guided minus \Arm{random}, same seed.\par}}
 \newcommand{\PosterPanelHead}[1]{{\large\bfseries #1}\enspace}
-% Outcome strip: generated labels and the matched-control description only.
+% Outcome strip: generated labels and the matched-control description only,
+% then the registered label rule (pre-registration section 3 and amendment 1;
+% digit-free apart from the comparison with zero).
+\newcommand{\PosterLabelRule}{\textbf{Label rule:} consistent direction if every
+  registered $\Delta>0$ and the mean $\Delta$ exceeds the \Arm{random} range;
+  reversed if the mean $\Delta\le 0$; otherwise within run-to-run variation;
+  incomplete with too few on-time runs.}
 \newcommand{\PosterOutcome}{%
   \ifPosterSynthetic\textbf{SYNTHETIC DRY RUN.}\space\fi
   \textbf{Registered labels:} \ArmBest{} \emph{\RepLabelCentroid},
   \Arm{envelope} \emph{\RepLabelEnvelope}%
   \ifdefined\RepRandomRange\space(\Arm{random} range \RepRandomRange)\fi.
   \textbf{Matched-budget control:} \PosterControlText.%
-  \ifPosterAnyDescSeed\space$^{*}$Incomplete at the freeze: descriptive.\fi}
+  \ifPosterAnyDescSeed\space$^{*}$Incomplete at the freeze: descriptive.\fi
+  \space\PosterLabelRule}
 {\ifPosterSynthetic
   \colorlet{blocktitlebgcolor}{OIVermillion}\colorlet{blocktitlefgcolor}{black}%
   \gdef\PosterRepTitle{SYNTHETIC DRY RUN, NOT RESULTS: registered replication}%
@@ -682,7 +717,7 @@
   \end{minipage}}%
   \sbox{\PosterPoolBox}{\begin{minipage}[t]{0.15\PosterRowW}\vspace{0pt}\raggedright
     \PosterPanelHead{Pooling}Maxima within or across B-scans; mean
-    $\Delta$ vs \Arm{random} (descriptive).\par
+    $\Delta$ vs \Arm{random} (descriptive; mean+max: paper).\par
     \vspace{0.3em}
     {\setlength{\tabcolsep}{0.3em}%
     \begin{tabular}{@{}lcc@{}}
@@ -703,9 +738,7 @@
       \noindent\colorbox{PosterStrip}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
         \raggedright\PosterOutcome}}\par}
     \else
-      \PosterPendingBanner{Labels (consistent direction, within run-to-run
-      variation or reversed), cells and figure fill in from
-      \texttt{auto/cr\_results.tex}.}\par
+      \PosterPendingBanner{\PosterLabelRule}\par
     \fi
   \end{minipage}}%
   \sbox{\PosterCapBox}{\parbox[t]{\PosterSpreadW}{\raggedright\hyphenpenalty=10000
@@ -737,9 +770,9 @@
   \raggedright\normalsize
   I-JEPA: Assran et al., CVPR 2023. MIRAGE: Morano et al., npj Digit.\ Med.\ 2025.
   FairVision: Luo et al., 2024. OCT example in both OCT figures: Kulyabin et al.,
-  OCTDL, Fig.~1 (arXiv:2312.08255v3), adapted (cropped, overlays added) under
-  CC BY 4.0 (\texttt{creativecommons.org/licenses/by/4.0}); illustration only.
-  No FairVision images are shown.
+  OCTDL, Fig.~1 (arXiv:2312.08255v3), adapted (cropped, downsampled, overlays
+  added) under CC BY 4.0 (\texttt{creativecommons.org/licenses/by/4.0});
+  illustration only. No FairVision images are shown.
 }
 
 % Synthetic dry run: banner across the top and a watermark over the whole

@@ -18,19 +18,23 @@ bundle that autopilot/make_cr_results.py wrote to ../../paper/genai4health2026/a
   * every output it lists (cr_results.tex, cr_table_replication.tex, ...) and the figure PNG/PDF
     match their SHA-256; fig_cr_seed_spread.evidence.json is required with a figure, records the
     same figure hashes, and its arms/points/means equal exactly (no extra, missing or duplicate
-    entries) the series built from the sidecar's AUC, s.d. and mean macros;
+    entries) the series built from the sidecar's AUC, s.d. and mean macros; its panel (b), if
+    present, equals the paired differences, mean differences and registered-range band built
+    from the sidecar; its encoding (contract cr_seed_spread_encoding_v2) is validated;
   * cr_results.tex defines exactly the sidecar's macros with the same values; the label macros
     equal the sidecar labels; P/B macros exist exactly when the sidecar has P/B;
   * if autopilot/make_cr_results.py is importable, its own verified_results_metadata() passes.
 On success it writes generated/results_state.tex|json (validated control status, late-run
 flags, seed status, expected macros, MD5s that poster.tex re-checks) and renders
 generated/fig_cr_seed_spread_poster.pdf from that sidecar-built series (never from the evidence
-file) with poster-size labels.
+file; only the validated encoding is read from it) with poster-size labels.
 Any failure removes the generated state and exits 1, so nothing unvalidated is compiled.
 Synthetic results exit 1 unless --allow-synthetic is given.
 
 The report mode renders page 1 of the print PDF with PyMuPDF and reports page count, size,
-fonts, Overfull/Underfull boxes, the fit check, placeholders, figures, and re-validates the
+fonts, Overfull/Underfull boxes, the fit check, placeholders, figures (allow-list; the two paper
+figures must be the committed poster variants whose SHA-256 autopilot/release_assets.json
+registers), the KeyBox/Answer wording against the paper macros, and re-validates the
 results: the bundle again, the state the poster used, the log, and every result cell, label
 and late-run mark extracted from the PDF against the sidecar. Exit 1 on any problem.
 """
@@ -73,10 +77,25 @@ ARM_WORD = {"random": "Random", "centroid": "Centroid", "envelope": "Envelope",
 ARM_PLAIN = {"random": "RANDOM", "centroid": "CENTROID", "envelope": "ENVELOPE",
              "random_cb": "RANDOM-CB"}
 FIG_ARMS = ("random", "centroid", "envelope", "random_cb")
-FIG_COLORS = {"random": "#555555", "centroid": "#0072B2", "envelope": "#D55E00",
-              "random_cb": "#009E73"}
+GUIDED = ("centroid", "envelope")
+# Figure encoding contract of the generator (make_cr_results.figure_encoding, recorded in the
+# evidence as "encoding"): the poster render reads it from the validated evidence; these are
+# the defaults for evidence that predates the contract (same values as contract v2: the
+# paper's single arm-to-colour mapping, p8 arm markers, fill by status, seed letters).
+FIG_ENCODING = "cr_seed_spread_encoding_v2"
+FIG_COLORS = {"random": "#000000", "centroid": "#882255", "envelope": "#0072B2",
+              "random_cb": "#E69F00"}
+FIG_ARM_MARKERS = {"random": "o", "centroid": "s", "envelope": "^", "random_cb": "h"}
 FIG_OFFSETS = {"Orig": -0.24, "SeedA": -0.08, "SeedB": 0.08, "SeedC": 0.24}
-FIG_MARKERS = {"SeedA": "o", "SeedB": "s", "SeedC": "^"}
+FIG_B_OFFSETS = {"SeedA": -0.18, "SeedB": 0.0, "SeedC": 0.18}
+FIG_SEED_LABELS = {"Orig": "O", "SeedA": "A", "SeedB": "B", "SeedC": "C"}
+FIG_FILL = {"registered": "full", "control": "full", "original": "left", "descriptive": "none"}
+FIG_BAND_GREY = "0.86"
+DEFAULT_ENCODING = {"contract": FIG_ENCODING, "colors": FIG_COLORS, "markers": FIG_ARM_MARKERS,
+                    "fill_by_status": FIG_FILL, "seed_labels": FIG_SEED_LABELS,
+                    "x_offsets_panel_a": FIG_OFFSETS, "x_offsets_panel_b": FIG_B_OFFSETS,
+                    "band_color": FIG_BAND_GREY}
+ALLOWED_MARKERS = set("os^vh<>dDpPH8X*")
 CONTROL_TEXT = {
     "M+": "placement accounts for most of the gap (registered description)",
     "M0": "placement difference not detected (registered description)",
@@ -209,14 +228,15 @@ AUC_MACRO = re.compile(r"^RepAUC(RandomCB|Random|Centroid|Envelope)(Orig|Seed[AB
 WORD_ARM = {v: k for k, v in ARM_WORD.items()}
 POSTER_ROWS = ("random", "envelope", "centroid")
 
-# Figures built from the CC BY 4.0 OCTDL crop (no FairVision pixels), the generated
-# seed-spread plot and its poster render (no images).
-ALLOWED_FIGURES = {
-    "fig_oct_jepa_comparison_final_cr.pdf",
-    "fig_oct_all_strategies.pdf",
-    "fig_cr_seed_spread.pdf",
-    POSTER_FIG_NAME,
-}
+# Figures: the I13 poster variants of the two paper figures (CC BY 4.0 OCTDL crop, no
+# FairVision pixels), read in place from the committed figures_v2/poster folder and checked
+# against the SHA-256 that autopilot/release_assets.json records for them (poster_variant);
+# the generated seed-spread plot and its poster render (no images).
+REPO_ROOT = HERE / ".." / ".."
+POSTER_VARIANT_DIR = "autopilot/investigations/camera_ready_20261008/figures_v2/poster"
+REGISTRY = "autopilot/release_assets.json"
+PAPER_FIGURES = ("fig_oct_strategies_v2_poster.pdf", "fig_oct_jepa_volume_v2_poster.pdf")
+ALLOWED_FIGURES = set(PAPER_FIGURES) | {"fig_cr_seed_spread.pdf", POSTER_FIG_NAME}
 
 
 class GateError(Exception):
@@ -493,6 +513,11 @@ TAG_ORDER = ("Orig", "SeedA", "SeedB", "SeedC")
 LETTER_SEED = {v: k for k, v in SEED_LETTERS.items()}
 POINT_KEYS = {"run", "arm", "tag", "seed", "x", "test_auc", "head_sd", "status"}
 MEAN_KEYS = {"x", "mean", "n"}
+PANEL_B_KEYS = {"arms", "points", "means", "band"}
+B_POINT_KEYS = {"arm", "tag", "seed", "x", "delta", "status", "contrast"}
+B_MEAN_KEYS = {"x", "mean_delta", "n"}
+BAND_KEYS = {"drawn", "r", "missing"}
+DELTA_MACRO = re.compile(r"^RepDelta(Centroid|Envelope)(Seed[ABC])$")
 
 
 def number(value):
@@ -532,7 +557,150 @@ def figure_series(runs, fullp, numeric, complete, mc, problems):
                 problems.append(f"\\{name} has no plottable arm or full precision")
                 continue
             means[arm] = {"x": arms.index(arm), "mean": fullp[name], "n": len(complete)}
-    return {"arms": arms, "points": points, "means": means}
+    # Panel (b), the generator's figure_panel_b rules: one point per paired difference
+    # \RepDelta<Arm>Seed<X> (registered iff the seed index is complete), one mean per
+    # \RepDeltaMean<Arm> over the complete indices, the band +/- \RepRandomRange only with the
+    # registered RANDOM reference (the macro exists only then).
+    deltas = {}
+    for name in numeric:
+        m = DELTA_MACRO.match(name)
+        if m:
+            deltas[(WORD_ARM[m.group(1)], m.group(2))] = name
+    bpoints = []
+    for arm, tag in sorted(deltas, key=lambda k: (GUIDED.index(k[0]), TAG_ORDER.index(k[1]))):
+        name = deltas[(arm, tag)]
+        if not number(fullp.get(name)):
+            problems.append(f"no finite full-precision value for \\{name}")
+            continue
+        seed = LETTER_SEED[tag[-1]]
+        bpoints.append({"arm": arm, "tag": tag, "seed": seed,
+                        "x": GUIDED.index(arm) + FIG_B_OFFSETS[tag], "delta": fullp[name],
+                        "status": "registered" if seed in complete else "descriptive"})
+    bmeans = {}
+    for arm in GUIDED:
+        name = "RepDeltaMean" + ARM_WORD[arm]
+        if name in numeric:
+            if not number(fullp.get(name)):
+                problems.append(f"no finite full-precision value for \\{name}")
+                continue
+            bmeans[arm] = {"x": GUIDED.index(arm), "mean_delta": fullp[name], "n": len(complete)}
+    r = fullp.get("RepRandomRange") if "RepRandomRange" in numeric else None
+    panel_b = {"arms": list(GUIDED), "points": bpoints, "means": bmeans,
+               "band": {"drawn": r is not None, "r": r,
+                        "missing": list(mc.get("reference_missing") or [])}} if bpoints else None
+    return {"arms": arms, "points": points, "means": means, "panel_b": panel_b}
+
+
+def check_panel_b(evb, want, problems):
+    """Evidence panel (b) must equal the sidecar-built panel exactly (or both be absent)."""
+    if want is None or evb is None:
+        if (want is None) != (evb is None):
+            problems.append("figure evidence panel (b) " + ("present without" if want is None
+                            else "missing despite") + " paired-difference macros in the sidecar")
+        return
+    if not isinstance(evb, dict) or set(evb) != PANEL_B_KEYS:
+        problems.append(f"figure evidence panel (b) keys "
+                        f"{sorted(evb) if isinstance(evb, dict) else evb!r} != "
+                        f"{sorted(PANEL_B_KEYS)}")
+        return
+    if evb["arms"] != want["arms"]:
+        problems.append(f"figure panel (b) arms {evb['arms']} != {want['arms']}")
+    wp = {(q["arm"], q["tag"]): q for q in want["points"]}
+    seen = set()
+    for p in evb["points"] if isinstance(evb["points"], list) else [None]:
+        if not isinstance(p, dict) or set(p) != B_POINT_KEYS:
+            problems.append(f"figure panel (b) point {p!r} has keys other than "
+                            f"{sorted(B_POINT_KEYS)}")
+            continue
+        key = (p["arm"], p["tag"])
+        if key not in wp:
+            problems.append(f"figure panel (b) point {key} has no paired-difference macro in "
+                            f"the sidecar (extra point)")
+            continue
+        if key in seen:
+            problems.append(f"figure panel (b) point {key} appears twice")
+            continue
+        seen.add(key)
+        q = wp[key]
+        if not (number(p["delta"]) and close(p["delta"], q["delta"])):
+            problems.append(f"figure panel (b) point {key} difference disagrees with the sidecar")
+        if not close(p["x"], q["x"]) or p["status"] != q["status"] or p["seed"] != q["seed"]:
+            problems.append(f"figure panel (b) point {key} position, status or seed disagrees")
+        c = p["contrast"]
+        if not (isinstance(c, list) and len(c) == 2 and isinstance(c[0], str)
+                and type(c[1]) is int):
+            problems.append(f"figure panel (b) point {key} has a malformed contrast reference")
+    missing = sorted(set(wp) - seen)
+    if missing:
+        problems.append(f"figure panel (b) lacks points {missing}")
+    means = evb["means"] if isinstance(evb["means"], dict) else {}
+    if set(means) != set(want["means"]):
+        problems.append(f"figure panel (b) means {sorted(means)} != sidecar mean-difference "
+                        f"macros {sorted(want['means'])} (extra or missing mean)")
+    for arm, q in want["means"].items():
+        m = means.get(arm)
+        if m is None:
+            continue
+        if not isinstance(m, dict) or set(m) != B_MEAN_KEYS or not number(m["mean_delta"]) \
+                or not close(m["mean_delta"], q["mean_delta"]) or not close(m["x"], q["x"]) \
+                or type(m["n"]) is not int or m["n"] != q["n"]:
+            problems.append(f"figure panel (b) mean for {arm} {m!r} disagrees with the sidecar")
+    band, wb = evb["band"], want["band"]
+    if not isinstance(band, dict) or set(band) != BAND_KEYS or band["drawn"] is not wb["drawn"] \
+            or band["missing"] != wb["missing"] or (wb["r"] is None) != (band["r"] is None) \
+            or (wb["r"] is not None and not close(band["r"], wb["r"])):
+        problems.append(f"figure panel (b) band {band!r} disagrees with the registered RANDOM "
+                        f"reference of the sidecar {wb!r}")
+
+
+HEX_COLOR = re.compile(r"^#[0-9A-Fa-f]{6}$")
+
+
+def check_encoding(enc, series, problems):
+    """The generator's figure encoding (colours, markers, fill by status, seed letters,
+    offsets), validated so the poster render can follow it; defaults if the evidence predates
+    the contract. Presentation only: no value is read from it."""
+    if enc is None:
+        return dict(DEFAULT_ENCODING, source="poster default (evidence has no encoding)")
+    n0 = len(problems)
+    if not isinstance(enc, dict) or enc.get("contract") != FIG_ENCODING:
+        problems.append(f"figure encoding contract "
+                        f"{enc.get('contract') if isinstance(enc, dict) else enc!r} != "
+                        f"{FIG_ENCODING} (update the poster render)")
+        return None
+    arms = set(series["arms"]) | set((series.get("panel_b") or {}).get("arms", []))
+    points = series["points"] + list((series.get("panel_b") or {}).get("points", []))
+    statuses = {p["status"] for p in points}
+    tags = {p["tag"] for p in points}
+    colors, markers = enc.get("colors"), enc.get("markers")
+    fills, labels = enc.get("fill_by_status"), enc.get("seed_labels")
+    if not (isinstance(colors, dict) and arms <= set(colors)
+            and all(isinstance(colors[a], str) and HEX_COLOR.match(colors[a]) for a in arms)):
+        problems.append("figure encoding colours missing or not #RRGGBB for every arm")
+    if not (isinstance(markers, dict) and arms <= set(markers)
+            and all(markers[a] in ALLOWED_MARKERS for a in arms)):
+        problems.append("figure encoding markers missing or unknown for an arm")
+    if not (isinstance(fills, dict) and statuses <= set(fills)
+            and all(fills[s] in ("full", "left", "none") for s in statuses)):
+        problems.append("figure encoding fill_by_status missing or unknown for a status")
+    if not (isinstance(labels, dict) and tags <= set(labels)
+            and all(isinstance(labels[t], str) and 1 <= len(labels[t]) <= 2 for t in tags)):
+        problems.append("figure encoding seed_labels missing or malformed")
+    if enc.get("x_offsets_panel_a") != FIG_OFFSETS or enc.get("x_offsets_panel_b") != FIG_B_OFFSETS:
+        problems.append("figure encoding x offsets differ from the poster's (update the render)")
+    band = enc.get("band_color")
+    try:
+        grey_ok = isinstance(band, str) and (HEX_COLOR.match(band) or 0.0 <= float(band) <= 1.0)
+    except ValueError:
+        grey_ok = False
+    if not grey_ok:
+        problems.append(f"figure encoding band colour {band!r} is not a grey level or #RRGGBB")
+    if len(problems) != n0:
+        return None
+    return {"contract": FIG_ENCODING, "colors": dict(colors), "markers": dict(markers),
+            "fill_by_status": dict(fills), "seed_labels": dict(labels),
+            "x_offsets_panel_a": dict(FIG_OFFSETS), "x_offsets_panel_b": dict(FIG_B_OFFSETS),
+            "band_color": band, "source": "figure evidence (generator contract)"}
 
 
 def check_evidence(ev, side, figure, series, problems):
@@ -597,67 +765,126 @@ def check_evidence(ev, side, figure, series, problems):
                 or not close(m["mean"], q["mean"]) or not close(m["x"], q["x"]) \
                 or type(m["n"]) is not int or m["n"] != q["n"]:
             problems.append(f"figure mean for {arm} {m!r} disagrees with the sidecar {q!r}")
+    if "panel_b" in ev:
+        check_panel_b(ev["panel_b"], series["panel_b"], problems)
+    else:
+        series["panel_b"] = None  # evidence before panel (b): the poster draws panel (a) only
+    series["encoding"] = check_encoding(ev.get("encoding"), series, problems)
     return ev if len(problems) == n0 else None
 
 
 def render_poster_figure(bundle, out_pdf):
     """Poster-size render of the series built from the validated sidecar (equal to the checked
-    evidence; same encoding as the generator's plot). Nothing from the evidence file is plotted."""
+    evidence), drawn with the generator's figure encoding (validated contract
+    cr_seed_spread_encoding_v2: arm colours and markers, fill by status, seed letters under
+    the points): (a) test AUC of every encoder with head-seed s.d. and the registered means,
+    (b) the paired differences guided minus RANDOM of the same seed index, their registered
+    means and the band +/- the registered RANDOM range (only with that reference). Nothing
+    from the evidence file is plotted; only the encoding (presentation) is read from it."""
     try:
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
         from matplotlib.lines import Line2D
+        from matplotlib.patches import Patch
+        from matplotlib.ticker import FuncFormatter, MaxNLocator
     except ImportError:
         return None
-    series = bundle["series"]
-    arms, points, means = series["arms"], series["points"], series["means"]
-    plt.rcParams.update({"font.size": 17, "pdf.fonttype": 42, "ps.fonttype": 42,
-                         "font.family": "DejaVu Sans", "axes.linewidth": 1.0})
-    fig, ax = plt.subplots(figsize=(8.1, 3.75))
+    series, enc = bundle["series"], bundle["series"]["encoding"]
+    arms, points, means, pb = (series["arms"], series["points"], series["means"],
+                               series.get("panel_b"))
+    colors, markers = enc["colors"], enc["markers"]
+    fills, letters = enc["fill_by_status"], enc["seed_labels"]
+    fs = 14
+    plt.rcParams.update({"font.size": fs, "pdf.fonttype": 42, "ps.fonttype": 42,
+                         "font.family": "DejaVu Sans", "axes.linewidth": 1.0,
+                         "axes.titlesize": fs, "axes.labelsize": fs, "xtick.labelsize": fs,
+                         "ytick.labelsize": fs, "legend.fontsize": fs})
+    if pb:
+        fig, (ax, bx) = plt.subplots(1, 2, figsize=(8.1, 3.4), gridspec_kw={
+            "width_ratios": [len(arms) + 0.15, len(pb["arms"]) + 0.15]})
+    else:
+        fig, ax = plt.subplots(figsize=(8.1, 3.4))
+        bx = None
+
+    def draw(axis, x, y, arm, status, yerr=None):
+        color = colors[arm]
+        if yerr is not None:
+            axis.errorbar(x, y, yerr=yerr, fmt="none", ecolor=color, elinewidth=1.3,
+                          capsize=3, zorder=2)
+        fill = fills[status]
+        axis.plot(x, y, marker=markers[arm], markersize=9.5, linestyle="none",
+                  fillstyle="full" if fill == "none" else fill,
+                  markerfacecolor="white" if fill == "none" else color,
+                  markerfacecoloralt="white", markeredgecolor=color, markeredgewidth=1.5,
+                  zorder=3)
+
+    def x_labels(axis, groups, seeds):
+        axis.xaxis.remove_overlapping_locs = False  # keep the letter at a group centre
+        axis.set_xticks(range(len(groups)))
+        axis.set_xticklabels([ARM_PLAIN[g].replace("-", "-\n") for g in groups],
+                             linespacing=0.95, fontsize=fs - 1)
+        axis.set_xticks([x for x, _ in seeds], minor=True)
+        axis.set_xticklabels([letter for _, letter in seeds], minor=True)
+        axis.tick_params(axis="x", which="minor", length=0, pad=2, labelcolor="0.3",
+                         labelsize=fs - 2)
+        axis.tick_params(axis="x", which="major", length=0, pad=fs + 4)
+        axis.set_xlim(-0.55, len(groups) - 0.45)
+        axis.grid(axis="y", linewidth=0.6, alpha=0.5)
+        axis.yaxis.set_major_locator(MaxNLocator(nbins=4))
+        for side in ("top", "right"):
+            axis.spines[side].set_visible(False)
+
     for p in points:
-        color = FIG_COLORS[p["arm"]]
-        if p["tag"] == "Orig":
-            marker, face, size = "*", color, 20
-        else:
-            marker, size = FIG_MARKERS[p["tag"]], 11
-            face = color if p["status"] in ("registered", "control") else "none"
-        if p["head_sd"] is not None:
-            ax.errorbar(p["x"], p["test_auc"], yerr=p["head_sd"], fmt="none", ecolor=color,
-                        elinewidth=1.2, capsize=3, zorder=2)
-        ax.plot(p["x"], p["test_auc"], marker=marker, markersize=size, markerfacecolor=face,
-                markeredgecolor="black" if p["tag"] == "Orig" else color, markeredgewidth=1.2,
-                linestyle="none", zorder=3)
-    for mean in means.values():
-        ax.plot([mean["x"] - 0.34, mean["x"] + 0.34], [mean["mean"]] * 2, color="black",
-                linewidth=2.0, zorder=1)
-    ax.set_xticks(range(len(arms)))
-    ax.set_xticklabels([ARM_PLAIN[a] for a in arms], fontsize=17)
-    ax.tick_params(axis="y", labelsize=17)
-    ax.set_xlim(-0.6, len(arms) - 0.4)
-    ax.set_ylabel("test AUC (epoch %s)" % bundle["numeric"]["RepEndpoint"], fontsize=17)
-    ax.grid(axis="y", linewidth=0.6, alpha=0.5)
-    for side in ("top", "right"):
-        ax.spines[side].set_visible(False)
-    handles = [Line2D([], [], marker="*", color="grey", markeredgecolor="black", linestyle="none",
-                      markersize=17, label="original (re-probed)")]
-    for tag in ("SeedA", "SeedB", "SeedC"):
-        if any(p["tag"] == tag for p in points):
-            handles.append(Line2D([], [], marker=FIG_MARKERS[tag], color="grey", linestyle="none",
-                                  markersize=10, label="seed " + tag[-1]))
-    if any(p["status"] == "descriptive" for p in points):
-        handles.append(Line2D([], [], marker="o", markerfacecolor="none", color="grey",
-                              linestyle="none", markersize=10, label="descriptive"))
-    handles.append(Line2D([], [], color="black", linewidth=2.0, label="mean (registered)"))
+        draw(ax, p["x"], p["test_auc"], p["arm"], p["status"], p["head_sd"])
+    for arm, mean in means.items():
+        ax.plot([mean["x"] - 0.34, mean["x"] + 0.34], [mean["mean"]] * 2, color=colors[arm],
+                linewidth=2.2, zorder=1)
+    x_labels(ax, arms, [(p["x"], letters[p["tag"]]) for p in points])
+    ax.set_ylabel("test AUC (epoch %s)" % bundle["numeric"]["RepEndpoint"])
+    ax.set_title("(a) every encoder", loc="left")
+    if bx is not None:
+        band = pb["band"]
+        if band["drawn"]:
+            bx.axhspan(-band["r"], band["r"], color=enc["band_color"], linewidth=0, zorder=0)
+        bx.axhline(0.0, color="0.45", linewidth=1.0, zorder=1)
+        for q in pb["points"]:
+            draw(bx, q["x"], q["delta"], q["arm"], q["status"])
+        for arm, mean in pb["means"].items():
+            bx.plot([mean["x"] - 0.3, mean["x"] + 0.3], [mean["mean_delta"]] * 2,
+                    color=colors[arm], linewidth=2.2, zorder=2)
+        top = max([abs(q["delta"]) for q in pb["points"]] +
+                  [band["r"] if band["drawn"] else 0.0])
+        bx.set_ylim(-1.25 * top, 1.25 * top)
+        x_labels(bx, pb["arms"], [(q["x"], letters[q["tag"]]) for q in pb["points"]])
+        bx.yaxis.set_major_formatter(FuncFormatter(
+            lambda v, _: "0" if abs(v) < 1e-12 else ("%+.3f" % v).replace("-", "\u2212")))
+
+        bx.set_title("(b) \u0394 vs RANDOM", loc="left")
+    statuses = {p["status"] for p in points} | {q["status"] for q in (pb or {}).get("points", [])}
+    handles = [Line2D([], [], marker="o", color="0.3", fillstyle="full", linestyle="none",
+                      markersize=9, label="registered")]
+    if "original" in statuses:
+        handles.append(Line2D([], [], marker="o", color="0.3", fillstyle="left",
+                              markerfacecoloralt="white", linestyle="none", markersize=9,
+                              label="original (re-probed)"))
+    if "descriptive" in statuses:
+        handles.append(Line2D([], [], marker="o", color="0.3", markerfacecolor="white",
+                              linestyle="none", markersize=9, label="descriptive"))
+    handles.append(Line2D([], [], color="0.3", linewidth=2.2, label="mean (registered)"))
+    if pb and pb["band"]["drawn"]:
+        handles.append(Patch(facecolor=enc["band_color"], edgecolor="none",
+                             label="\u00b1 RANDOM range"))
     rows = 2 if len(handles) > 3 else 1
-    fig.legend(handles=handles, fontsize=16, frameon=False, loc="lower center",
-               ncol=math.ceil(len(handles) / rows), handletextpad=0.3, columnspacing=1.2,
+    fig.legend(handles=handles, frameon=False, loc="lower center",
+               ncol=math.ceil(len(handles) / rows), handletextpad=0.3, columnspacing=1.0,
                borderaxespad=0.1)
-    fig.tight_layout(pad=0.3, rect=(0, 0.125 * rows, 1, 1))
+    fig.tight_layout(pad=0.3, rect=(0, 0.12 * rows, 1, 1), w_pad=0.6)
     out_pdf.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_pdf, metadata={"Creator": None, "Producer": None, "CreationDate": None})
     plt.close(fig)
-    return {"matplotlib": matplotlib.__version__}
+    return {"matplotlib": matplotlib.__version__, "panels": "a+b" if bx is not None else "a",
+            "encoding": enc["source"]}
 
 
 def clear_state():
@@ -697,7 +924,15 @@ def write_state(bundle):
              "seeds_present": bundle["present_seeds"],
              "seeds_descriptive": bundle["desc_seeds"], "figure": figure,
              "figure_series": {"points": [[q["arm"], q["tag"]] for q in bundle["series"]["points"]],
-                               "means": sorted(bundle["series"]["means"])}
+                               "means": sorted(bundle["series"]["means"]),
+                               "panel_b_points": [[q["arm"], q["tag"]] for q in
+                                                  (bundle["series"]["panel_b"] or {})
+                                                  .get("points", [])],
+                               "panel_b_means": sorted((bundle["series"]["panel_b"] or {})
+                                                       .get("means", {})),
+                               "panel_b_band": ((bundle["series"]["panel_b"] or {})
+                                                .get("band") or {}).get("drawn"),
+                               "encoding": bundle["series"]["encoding"]}
              if bundle["series"] else None,
              "expected_macros": sorted(bundle["numeric"]) + sorted(bundle["texts"])}
     STATE_JSON.write_text(json.dumps(state, indent=1) + "\n", encoding="utf-8")
@@ -845,12 +1080,15 @@ def pdf_results_check(page, bundle):
          "Registered labels: CENTROID %s, ENVELOPE %s" % (lab["centroid"], lab["envelope"])),
         ("takeaway labels", "Registered replication labels: CENTROID %s, ENVELOPE %s."
          % (lab["centroid"], lab["envelope"])),
+        ("answer box labels", "Registered replication: CENTROID %s, ENVELOPE %s."
+         % (lab["centroid"], lab["envelope"])),
         ("control description", "Matched-budget control: %s." % CONTROL_TEXT[mc["label"]]),
         ("seed-spread caption", "Error bars: s.d. over probe-head seeds."),
+        ("label rule", "Label rule: consistent direction if every registered"),
     ]
     if "RepRandomRange" in num:
         phrases.append(("RANDOM range", "(RANDOM range %s)" % val("RepRandomRange")))
-    elif squash("RANDOM range") in text.replace(squash("registered RANDOM range"), ""):
+    elif squash("(RANDOM range") in text:
         problems.append("PDF shows a RANDOM range although the registered RANDOM reference "
                         "is incomplete")
     for what, phrase in phrases:
@@ -918,6 +1156,96 @@ def check_log_and_state(log, bundle, problems):
             problems.append("included seed-spread figure changed after validation")
         else:
             print(f"               seed-spread figure: {fig_state['kind']}")
+
+
+def registered_variants(problems):
+    """Every poster_variant entry (repository path -> SHA-256) in the release registry."""
+    reg = read_json(REPO_ROOT / REGISTRY, problems, REGISTRY + " (figure registry)")
+    found = {}
+
+    def walk(node):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key == "poster_variant" and isinstance(value, dict):
+                    found.update(value)
+                else:
+                    walk(value)
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+    if reg is not None:
+        walk(reg)
+    return found
+
+
+def check_paper_figures(log, problems):
+    """Each paper figure must be loaded from the committed poster-variant folder and match the
+    SHA-256 that the release registry records for it (poster_variant)."""
+    registered = registered_variants(problems)
+    used = [u.strip().strip('"') for u in re.findall(r"<use ([^<>]+?)>", log)]
+    for name in PAPER_FIGURES:
+        rel = POSTER_VARIANT_DIR + "/" + name
+        want = (REPO_ROOT / rel).resolve()
+        paths = sorted({u for u in used if u.endswith(name)})
+        if not paths:
+            problems.append(f"{name} was not included")
+        for path in paths:
+            got = (HERE / path).resolve()
+            if got != want:
+                problems.append(f"{name} loaded from {path}, not from the committed {rel}")
+                continue
+            digest = sha256_file(got)
+            if registered.get(rel) != digest:
+                problems.append(f"{name} (SHA-256 {digest[:12]}) is not the poster variant "
+                                f"registered in {REGISTRY}")
+            else:
+                print(f"               {name}: registered poster variant "
+                      f"(SHA-256 {digest[:12]})")
+
+
+def paper_macros(problems):
+    values = {}
+    for name in ("auto_numbers.tex", "cr_numbers.tex"):
+        path = REPO_ROOT / "paper" / "genai4health2026" / "auto" / name
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError as exc:
+            problems.append(f"{name} unreadable ({exc})")
+            continue
+        for m in re.finditer(r"^\\newcommand\{\\(\w+)\}\{([^{}]*)\}", text, re.M):
+            values[m.group(1)] = m.group(2)
+    return values
+
+
+def check_static_claims(problems):
+    """Words in the KeyBox and the Answer box that depend on the original-run macros: the
+    signs, and which epochs give the end points of the stated ranges."""
+    v = paper_macros(problems)
+    try:
+        env = [float(v["DEnvelopeRandomEp" + e]) for e in ("Fifty", "SeventyFive", "Hundred")]
+        cen = [float(v["DOracleRandomEp" + e]) for e in ("Fifty", "SeventyFive", "Hundred")]
+        ana, cov = float(v["DAnatomyTwoEnvelopeEpFifty"]), float(v["DCoverRandomEpHundred"])
+        ctx = [float(v["CRCtxGapCentroid"]), float(v["CRCtxGapEnvelope"])]
+    except (KeyError, ValueError) as exc:
+        problems.append(f"KeyBox/Answer macros missing or not numeric ({exc})")
+        return
+    claims = [
+        ("guided minus RANDOM positive at epochs 50, 75 and 100", min(env + cen) > 0),
+        ("ENVELOPE range runs from epoch 100 to epoch 50", min(env) == env[2] and
+         max(env) == env[0]),
+        ("CENTROID range runs from epoch 50 to epoch 75", min(cen) == cen[0] and
+         max(cen) == cen[1]),
+        ("more anatomy did not add gains (ANATOMY-V2 - ENVELOPE, COVER - RANDOM < 0)",
+         ana < 0 and cov < 0),
+        ("guided masks leave more context visible (CENTROID, ENVELOPE context gaps > 0)",
+         min(ctx) > 0),
+    ]
+    bad = [text for text, ok in claims if not ok]
+    for text in bad:
+        problems.append(f"poster wording no longer matches the paper macros: {text}")
+    if not bad:
+        print(f"Claims         {len(claims)} KeyBox/Answer wording checks agree with the paper "
+              f"macros")
 
 
 def main() -> int:
@@ -1002,6 +1330,8 @@ def main() -> int:
     bad = [f for f in figs if f not in ALLOWED_FIGURES]
     if bad:
         problems.append(f"figures outside the allow-list: {bad}")
+    check_paper_figures(log, problems)
+    check_static_claims(problems)
     problems += re.findall(r"POSTER-PROBLEM: ([^\n]+)", log)
 
     bundle, gate_problems = gate(a.results_dir, a.allow_synthetic, "Results")

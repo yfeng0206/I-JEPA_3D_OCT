@@ -18,16 +18,19 @@ until then it shows TBD placeholders and a RESULTS PENDING banner.
 | `poster.tex` | design master (tikzposter); produces `poster.pdf` |
 | `poster_print.tex` | scales `poster.pdf` to the exact print size; produces `poster_print.pdf` |
 | `build.ps1` | results gate (`make_preview.py --precheck`), both PDFs with Tectonic, PNG preview and build report |
-| `make_preview.py` | results gate (validates the generated bundle, writes `generated/`), headless PNG render (PyMuPDF) and checks: page count, size, Overfull boxes, fit, placeholders, figure allow-list, every result cell/label/late-run mark in the PDF against the generator's metadata |
-| `tests/test_results_gate.py` | regression tests of the results gate on a synthetic bundle (tampered numbers, labels, macros, figure, evidence, sidecar) |
+| `make_preview.py` | results gate (validates the generated bundle, writes `generated/`), headless PNG render (PyMuPDF) and checks: page count, size, Overfull boxes, fit, placeholders, figure allow-list and registered poster-variant hashes, KeyBox/Answer wording against the paper macros, every result cell/label/late-run mark in the PDF against the generator's metadata |
+| `tests/test_results_gate.py` | regression tests of the results gate on a synthetic bundle (tampered numbers, labels, macros, figure, evidence incl. panel (b) and encoding, sidecar, registered RANDOM reference) |
 | `tests/test_build_guard.ps1` | regression tests of the synthetic-output repository guard (both shells, with and without git) |
 | `generated/` (ignored) | `results_state.tex/.json` and `fig_cr_seed_spread_poster.pdf`, written by the gate for the current results only |
 | `poster_print.pdf` | file to print (exact physical size) |
 | `poster_preview.png` | low-resolution preview (50 dpi by default) |
 
-The poster reads the paper's files in place (no copies):
-`../../paper/genai4health2026/figures/fig_oct_jepa_comparison_final_cr.pdf`,
-`../../paper/genai4health2026/figures/fig_oct_all_strategies.pdf`,
+The poster reads its sources in place (no copies):
+`../../autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.pdf`
+and `.../fig_oct_jepa_volume_v2_poster.pdf` (I13's poster variants of the
+paper's Fig. 1 and Fig. 2: same data, labels of at least 14 pt at 12 in width;
+registered with their SHA-256 under `poster_variant` in
+`../../autopilot/release_assets.json`, which the report checks),
 `../../paper/genai4health2026/auto/auto_numbers.tex` (Table 1 macros) and
 `../../paper/genai4health2026/auto/cr_numbers.tex` (delivered-mask, guide
 agreement and reference macros). After the results freeze the gate validates
@@ -37,6 +40,33 @@ folder (`cr_results.tex`, `cr_results.values.json`, the generated tables,
 poster then inputs `cr_results.tex` (`\Rep*` macros) and the gate's
 `generated/results_state.tex`. Every number on the poster is one of these
 macros; do not type result numbers into `poster.tex`.
+
+### Layout (R1 polish review, section 5)
+
+- Left column: why OCT (question, then a navy **Answer** box with the
+  epoch-50 original-run differences `\DOracleRandomEpFifty`,
+  `\DEnvelopeRandomEpFifty` and, once results are validated, the generated
+  replication labels, digit-free); **Five target-selection strategies** (v2
+  poster figure; the old strategy table is dropped because the figure's column
+  heads and target-rule row carry it); **Same I-JEPA, different sampler;
+  volume-level probe** (v2 framework figure with the one-line $\Pi_s$ caption).
+- Right column: neutral title "Single runs: tissue-directed rectangles scored
+  higher" (the replication may disagree); KeyBox at the registered epoch 50
+  for both arms with 95% CIs, "positive at epochs 50, 75 and 100" with the
+  per-arm range (R1 H1), ANATOMY-V2 minus ENVELOPE at epoch 50 and COVER minus
+  RANDOM at epoch 100 (no post hoc peak); no bold AUC; delivered-mask table
+  with the context column on a light fill; guide chart with the overall rate
+  as a dashed reference and "% of B-scans" axis; takeaways unchanged.
+- The report checks the wording that depends on the original-run macros
+  (`Claims`): all six guided-minus-RANDOM differences positive, the range end
+  points (ENVELOPE epoch 100 to 50, CENTROID epoch 50 to 75), ANATOMY-V2
+  minus ENVELOPE and COVER minus RANDOM negative, and both context gaps
+  positive ("guided masks also leave more context visible").
+- Replication block: the label rule (pre-registration section 3, amendment 1)
+  in the RESULTS PENDING banner and, with results, at the end of the outcome
+  strip; pooling panel notes the mean+max variant (paper).
+- Credits: "adapted (cropped, downsampled, overlays added)"; QR placeholder
+  "paper, code & pre-registration" (R1 M15).
 
 ## Build
 
@@ -64,7 +94,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build.ps1   # Windows 
   are shown only with its validated `generated/results_state.tex`), then
   compile `poster.tex` and `poster_print.tex` with XeLaTeX or LuaLaTeX
   (fontspec/unicode-math; pdfLaTeX will not work), from this folder so the
-  `../../paper/...` paths resolve.
+  `../../paper/...` and `../../autopilot/...` paths resolve.
 - `build.ps1 -Size X` writes temporary job files `poster-X.tex` and
   `poster_print-X.tex`, builds `poster-X.pdf`, `poster_print-X.pdf` and
   `poster-X_preview.png`, then deletes the job files.
@@ -74,7 +104,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build.ps1   # Windows 
   compiled, so the tracked outputs are never overwritten with them.
 - The report ends with `Checks OK` or `PROBLEMS ...` (exit code 1): more than
   one page, content running past the bottom margin (tikzposter does not warn
-  about this itself), a figure outside the allow-list, a `POSTER-PROBLEM`
+  about this itself), a figure outside the allow-list, a paper figure that is
+  not the committed poster variant or whose SHA-256 differs from its
+  `poster_variant` entry in `autopilot/release_assets.json`, KeyBox/Answer
+  wording that no longer matches the paper macros, a `POSTER-PROBLEM`
   line in the log, an invalid or synthetic (without `-AllowSynthetic`)
   results bundle, a stale gate state, or any result cell, label or late-run
   mark in the PDF that differs from the sidecar. The `Results` lines state
@@ -134,7 +167,16 @@ with it:
   exact record keys) the series built from the sidecar alone: one point per
   `\RepAUC<Arm><Run>` macro with its full-precision AUC, head-seed s.d.,
   position, seed and status, one mean per `\RepMeanAUC<Arm>` macro with its
-  value, position and the number of complete seed indices;
+  value, position and the number of complete seed indices; if the evidence has
+  panel (b) (current generator), it must equal the panel built from the
+  sidecar in the same way: one point per paired difference
+  `\RepDelta<Arm>Seed<X>` (registered iff the index is complete), one mean per
+  `\RepDeltaMean<Arm>`, and the band drawn exactly when `\RepRandomRange`
+  exists (registered RANDOM reference) with that full-precision range and the
+  recorded `reference_missing`; its `encoding` (contract
+  `cr_seed_spread_encoding_v2`: arm colours `#RRGGBB`, arm markers, fill by
+  status, seed letters, offsets equal to the poster's, grey band colour) is
+  validated; another contract is refused (update the poster render);
 - if `autopilot/make_cr_results.py` is importable (repository layout, or
   `$env:POSTER_GENERATOR_DIR`), its own `verified_results_metadata()` must
   also pass (read-only use).
@@ -145,11 +187,20 @@ registered RANDOM reference (JSON only), shown and descriptive seed
 indices, the list of expected macros, MD5s) and renders
 `generated/fig_cr_seed_spread_poster.pdf`, a poster-size version of the
 seed-spread plot drawn from that sidecar-built series (nothing is plotted
-from the evidence file itself; `results_state.json` lists the plotted points
-and means) with the generator's encoding (colours, markers, offsets, open markers for
-descriptive runs, registered-seed means, head-seed s.d. error bars) and
-16 to 17 pt labels, legend below the axes (without matplotlib it falls back
-to the validated generator PDF). Any failure deletes `generated/` state and exits 1.
+from the evidence file itself; `results_state.json` lists the plotted points,
+means, panel (b) points and band, and the encoding used) with the generator's
+encoding read from the validated evidence (I12's contract
+`cr_seed_spread_encoding_v2`: the paper's arm colours RANDOM `#000000`,
+CENTROID `#882255`, ENVELOPE `#0072B2`, RANDOM-CB `#E69F00`; arm markers
+o/s/^/hexagon; filled = registered or on-time control, left half filled =
+re-probed original, open = descriptive; seed letters O/A/B/C under the
+points; arm-coloured registered means; head-seed s.d. error bars; panel (b)
+paired differences with the grey ±RANDOM-range band only with the registered
+reference). Evidence without an encoding (older generator) uses the same v2
+values as poster defaults; evidence without panel (b) gives panel (a) only.
+The render is 8.1 x 3.4 in with 14 pt text (13 pt arm names), legend below
+(without matplotlib it falls back to the validated generator PDF). Any
+failure deletes `generated/` state and exits 1.
 
 `poster.tex` shows results only if `cr_results.tex` defines the sentinel
 macros `\RepEndpoint`, `\RepNSeedsWord`, `\RepLabelCentroid` and
@@ -182,7 +233,7 @@ paper's generated tables:
 | Pooling, max `across` B-scans | `\RepPoolSliceMaxDeltaEnvelope`, `\RepPoolSliceMaxDeltaCentroid` | `tab:pooling`, row "mean, max" Δ |
 | Outcome strip, registered labels | `\RepLabelCentroid`, `\RepLabelEnvelope`, `\RepRandomRange` (only with the registered RANDOM reference) | `tab:pooling` labels, results text |
 | Outcome strip, matched-budget control | sidecar `scenario.matched_control.label` (via the gate state) | registered description (pre-registration amendment 2) |
-| Seed-spread panel | `generated/fig_cr_seed_spread_poster.pdf` (from `fig_cr_seed_spread.evidence.json`) | `fig:seed_spread` |
+| Seed-spread panel | `generated/fig_cr_seed_spread_poster.pdf`, panels (a) AUC per encoder and (b) paired Δ vs RANDOM (from the sidecar; equal to `fig_cr_seed_spread.evidence.json`) | `fig:seed_spread` |
 
 Before the freeze the block has 17 TBD cells (the "new seeds" column is one
 placeholder per strategy), a FIGURE PENDING box and a RESULTS PENDING banner.
@@ -216,13 +267,16 @@ placeholder per strategy), a FIGURE PENDING box and a RESULTS PENDING banner.
   the third bullet ends after "move together." and the replication takeaway
   states only the generated labels ("Registered replication labels: CENTROID
   `\RepLabelCentroid`, ENVELOPE `\RepLabelEnvelope`."), with no digits and no
-  claim beyond the labels.
+  claim beyond the labels; the Answer box says the same ("Registered
+  replication: CENTROID ..., ENVELOPE ...."), both checked in the PDF.
 - The RESULTS PENDING banner, the grey title and the TBD styling disappear
   when results are loaded; the block title becomes "Registered replication:
-  repeated continuations and matched-budget control".
+  repeated continuations and matched-budget control". The label rule stays
+  (banner before, outcome strip after).
 - Seed-spread panel: the validated figure, else a FIGURE PENDING box of the
-  same size, with the caption "Error bars: s.d. over probe-head seeds. Open
-  markers: descriptive runs (late or incomplete)." Figure plus caption take
+  same size, with the caption "Error bars: s.d. over probe-head seeds.
+  Letters: seed index (O: original). Open markers: descriptive runs (late or
+  incomplete). (b): guided minus RANDOM, same seed." Figure plus caption take
   the height of the table panels plus the outcome strip, so the figure never
   makes the block taller.
 
@@ -254,9 +308,11 @@ With synthetic results:
 
 Scratch dry run (as used for the fit test): copy this folder to
 `<scratch>\poster\genai4health2026\`, and create
-`<scratch>\paper\genai4health2026\figures\` (the two OCT figures) and
 `<scratch>\paper\genai4health2026\auto\` (`auto_numbers.tex`,
-`cr_numbers.tex` and the generator's synthetic output folder); then run
+`cr_numbers.tex` and the generator's synthetic output folder),
+`<scratch>\autopilot\release_assets.json` and
+`<scratch>\autopilot\investigations\camera_ready_20261008\figures_v2\poster\`
+(the two `*_v2_poster.pdf` files); then run
 `build.ps1 -OnlyCached -AllowSynthetic` in the scratch poster folder (set
 `$env:POSTER_GENERATOR_DIR` to the repository's `autopilot` folder to include
 the generator's own metadata check).
@@ -264,13 +320,17 @@ the generator's own metadata check).
 ### Tests
 
 ```powershell
-# results gate: baseline passes (plotted series = sidecar AUC/mean macros; registered
-# RANDOM reference, control label and shown range = sidecar), 28 tampered variants fail
-# (V7 and V9 counterexamples included) plus 5 or 6 registered-reference variants that
-# depend on the bundle (complete reference: marked late, range moved, \RepRandomRange
-# dropped; original RANDOM missing/late or < 2 complete indices: the registered label a
-# partial range would give, reasons cleared, range macro or registered label added; both:
-# reason lists disagree, reason swapped); relative paths are fine
+# results gate: baseline passes (plotted series = sidecar AUC/mean macros, panel (b) =
+# sidecar paired differences with the band only with the registered reference, encoding
+# read from the evidence; registered RANDOM reference, control label and shown range =
+# sidecar), 28 tampered variants fail (V7 and V9 counterexamples included) plus 5 or 6
+# registered-reference variants that depend on the bundle (complete reference: marked
+# late, range moved, \RepRandomRange dropped; original RANDOM missing/late or < 2 complete
+# indices: the registered label a partial range would give, reasons cleared, range macro
+# or registered label added; both: reason lists disagree, reason swapped) plus, with a
+# current generator, 4 panel (b) variants (extra point, changed difference, forged band,
+# extra mean) and 2 encoding variants (unknown contract, malformed colour); relative
+# paths are fine
 $env:POSTER_GENERATOR_DIR = '<repo>\autopilot'   # optional: also run the generator's check
 D:\jepa_phase0\.venv\Scripts\python.exe tests\test_results_gate.py `
   --bundle <synthetic auto folder> --other-bundle <another scenario> --work <scratch dir>
@@ -302,10 +362,10 @@ sizes are A0-equivalent: block body 29.9 pt, tables and notes 24.9 pt, block
 titles 43 pt, title 84 pt. Shorter formats keep the 1261.5 mm canvas height
 and gain width, so the same content fits every size; figures keep their
 height. `poster_print.tex` scales the canvas to the print size. All four sizes
-were built on 2026-10-08 without overflow or Overfull boxes; on 2026-10-11 the
-default and the longest synthetic replication scenario were rebuilt at `a0`,
-`a1` and `us-36x48` (no overflow, 0 Overfull). Landscape formats need a
-different column layout and are not supported.
+were built on 2026-10-08 without overflow or Overfull boxes; on 2026-10-12
+(new layout) the default and the `one_index` synthetic scenario were rebuilt
+at `a0`, `a1` and `us-36x48` (no overflow, 0 Overfull, at least 73 pt spare).
+Landscape formats need a different column layout and are not supported.
 
 ### Sources (checked 2026-10-08; NeurIPS 2026 page rechecked 2026-10-11)
 
@@ -341,10 +401,13 @@ and rebuild.
 1. **Authors and affiliations**: done (2026-10-10). `\PosterAuthors` and
    `\PosterAffiliations` in `poster.tex` carry the same names and order as
    `paper/genai4health2026/camera_ready_authors.json`.
-2. **QR code: pending a decision by the authors** (OpenReview page or code
-   repository). Set `\providecommand*{\PosterURL}{...}` in `poster.tex` to the
-   chosen URL (avoid `#` and `%`). An empty value draws the "QR CODE PENDING"
-   box; a URL draws a real code (tested).
+2. **QR code: pending a decision by the authors.** It should point to the
+   public paper together with the code and the pre-registration
+   (`PREREGISTRATION_cr_seed_v1.md`, R1 M15: "registered" must be
+   verifiable); the placeholder says "paper, code & pre-registration". Set
+   `\providecommand*{\PosterURL}{...}` in `poster.tex` to the chosen URL
+   (avoid `#` and `%`). An empty value draws the "QR CODE PENDING" box; a URL
+   draws a real code (tested).
 3. **Registered replication, matched-budget control, pooling, seed spread**:
    automatic, nothing to edit in `poster.tex`. After the Oct 22 freeze, once
    `autopilot/make_cr_results.py build` has written the real results to
@@ -366,12 +429,14 @@ and rebuild.
 
 ## Content rules
 
-- OCT pixels come only from the paper figures built on the CC BY 4.0 OCTDL
-  crop (Kulyabin et al., arXiv:2312.08255v3, Fig. 1), attributed in the
-  figures and in the credits line. No FairVision images are shown. The only
-  other figure is the seed-spread plot (no images): the poster render of the
-  validated generator evidence (or the generator's own PDF).
-  `make_preview.py` fails if any other figure file is included.
+- OCT pixels come only from the two I13 v2 figures built on the CC BY 4.0
+  OCTDL crop (Kulyabin et al., arXiv:2312.08255v3, Fig. 1), attributed in the
+  figures and in the credits line ("adapted (cropped, downsampled, overlays
+  added)"). No FairVision images are shown. The only other figure is the
+  seed-spread plot (no images): the poster render of the validated generator
+  evidence (or the generator's own PDF). `make_preview.py` fails if any other
+  figure file is included, or if a v2 figure is not the registered poster
+  variant.
 - Colours: Okabe-Ito palette; white text only on dark blue, navy or grey
   (contrast at least 5:1); black text on the vermillion synthetic title (about
   5.4:1) and on the yellow synthetic banner; placeholders use text ("TBD",
@@ -382,34 +447,33 @@ and rebuild.
 
 ## Known limitations
 
-- Text inside the two reused paper figures is about 13 to 20 pt
-  A0-equivalent (a few labels about 10 pt; measured from the PDF), because
-  the figures are used unchanged. Poster renders with larger labels were not
-  made: both producers
-  (`autopilot/investigations/submission_refresh_20260910/comparison_final/generate_comparison_final.py`,
-  `.../figure/generate_all_strategies.py`) hard-code their font sizes and the
-  diagram geometry around them, so larger labels need producer changes (not a
-  re-run), and `autopilot/release_assets.json` requires renewed review for
-  changed outputs. All poster text is at least 24.9 pt A0-equivalent (sub- and
-  superscripts excepted).
-- Seed-spread figure: the poster renders it from the sidecar-built series at
-  8.1 x 3.75 in with 16 to 17 pt labels, shown at about 0.96 scale: legend
-  11.2 pt and ticks/categories 11.9 pt printed at 24 x 36 in (15.5 and
-  16.4 pt A0-equivalent; measured with PyMuPDF), against 7.4 and 9.4 pt for the
-  generator's own plot. Still below the 18 pt printed body text. The render repeats the
-  generator's plotting conventions (`make_cr_results.make_figure`); if those
-  change, update `render_poster_figure` in `make_preview.py`.
-- The framework figure inherits a slight overlap of the subscript in
-  "p_C, p_T_m" with "+ mask" from the paper figure.
-- Spare space at 24 x 36 in (design canvas): 66 pt (23 mm) with placeholders;
-  at least 13.3 pt (about 4.7 mm) in every fresh synthetic replication
-  scenario tested (13.3 pt when the matched control is not assessed, otherwise
-  18.6 to 19.4 pt)
+- Text inside the two v2 figures (I13's poster variants, labels at least
+  14 pt at their 12 in width): the strategies figure is shown at 348 x 201 mm
+  (height cap 200 mm, scale 1.14, so at least about 16 pt A0-equivalent, 11.6
+  pt printed at 24 x 36 in) and the framework figure at 322 x 217 mm (height
+  cap 216 mm, scale 1.06, at least about 14.8 pt A0-equivalent, 10.7 pt
+  printed). Full width would need about 20 mm more in the left column, which
+  the fit does not allow; body text is 29.9 pt A0-equivalent.
+- Seed-spread figure: the poster renders panels (a) and (b) from the
+  sidecar-built series at 8.1 x 3.4 in with 14 pt text (13 pt arm names, 12 pt
+  seed letters), shown at about 1.0 scale (about 10 pt printed at
+  24 x 36 in, against 7 pt in the paper's figure at 5.5 in); panel (b) made
+  the text 1 to 2 pt smaller than the earlier single-panel render. The render
+  repeats the generator's plotting conventions through the validated encoding
+  contract (`cr_seed_spread_encoding_v2`); a new contract is refused until
+  `render_poster_figure` in `make_preview.py` is updated.
+- Spare space at 24 x 36 in (design canvas, layout of 2026-10-12): 90.3 pt
+  (32 mm) with placeholders; at least 12.2 pt (about 4.3 mm) in every fresh
+  synthetic replication scenario tested (17 bundles from the current
+  generator: 12.2 pt with a descriptive seed C and three complete arms,
+  16.6 to 17.2 pt with a descriptive seed or long labels, 36.1 pt when no
+  registered RANDOM reference exists, 41.6 to 42.2 pt otherwise)
   (two or three seed indices, late or missing runs, every control state,
-  late placement or budget contrasts, the longest labels; real results have no
-  synthetic prefixes and at least as much space). The block spacing is 8 mm.
-  A longer title, author list or table would need trimming (the fit check
-  reports it).
+  late placement or budget contrasts, missing or late original RANDOM, the
+  longest labels; real results have no synthetic prefixes and at least as much
+  space). The outcome strip ends with the label rule (2 lines). The block
+  spacing is 8 mm. A longer title, author list or table would need trimming
+  (the fit check reports it).
 - The sidecar `cr_results.values.json` is the root of trust: the gate checks
   that every other generated file, macro value, label and figure point agrees
   with it and that its displays and control label follow from its own full

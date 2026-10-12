@@ -14,6 +14,9 @@ with a complete reference (e.g. all runs on time) they mark it late, move the ra
 \\RepRandomRange; without it (original RANDOM missing or late, or fewer than two complete seed
 indices; generator label M_incomplete) they forge the registered label a partial range would
 give, clear the recorded reasons, add a range macro or a registered replication label.
+With a current generator the figure evidence also has panel (b) (paired differences) and the
+encoding contract: an extra point, a changed difference, a forged band, an extra mean, an
+unknown contract or a malformed colour must all fail.
 Synthetic data only; files are written only under WORKDIR.
 Set POSTER_GENERATOR_DIR to autopilot/ to include the generator's own metadata check.
 Relative paths are resolved first. Exit code: number of failing expectations.
@@ -148,7 +151,9 @@ def cases(bundle):
 
     def sidecar_label_changed(a, o):
         side = load_side(a)
-        side["scenario"]["labels"]["centroid"] = "reversed"
+        old = side["scenario"]["labels"]["centroid"]
+        side["scenario"]["labels"]["centroid"] = "reversed" if old != "reversed" \
+            else "consistent_direction"
         save_side(a, side)
 
     def sidecar_p_changed(a, o):
@@ -184,8 +189,8 @@ def cases(bundle):
     def evidence_extra_point(a, o):
         def add(ev):
             extra = dict(ev["points"][-1])
-            extra.update({"run": "invented", "tag": "SeedC" if extra["tag"] != "SeedC"
-                          else "SeedB", "test_auc": 0.95})
+            extra.update({"run": "invented", "arm": "random_cb", "tag": "SeedB", "seed": 5678,
+                          "test_auc": 0.95})
             ev["points"].append(extra)
         edit_evidence(a, add)
 
@@ -299,6 +304,55 @@ def cases(bundle):
     def baseline(a, o):
         pass
 
+    # Panel (b) and the figure encoding (generator contract cr_seed_spread_encoding_v2).
+    ev0 = json.loads((bundle / "fig_cr_seed_spread.evidence.json").read_text(encoding="utf-8"))
+    has_b = isinstance(ev0.get("panel_b"), dict)
+
+    def b_extra_point(a, o):
+        def add(ev):
+            extra = dict(ev["panel_b"]["points"][-1])
+            extra.update({"arm": "random_cb", "tag": "SeedA", "seed": 1234, "delta": 0.05})
+            ev["panel_b"]["points"].append(extra)
+        edit_evidence(a, add)
+
+    def b_delta_changed(a, o):
+        edit_evidence(a, lambda ev: ev["panel_b"]["points"][0].__setitem__(
+            "delta", ev["panel_b"]["points"][0]["delta"] + 0.01))
+
+    def b_band_forged(a, o):
+        def forge(ev):
+            band = ev["panel_b"]["band"]
+            if band["drawn"]:
+                band["r"] = band["r"] * 3
+            else:
+                band.update({"drawn": True, "r": 0.001})
+        edit_evidence(a, forge)
+
+    def b_extra_mean(a, o):
+        edit_evidence(a, lambda ev: ev["panel_b"]["means"].__setitem__(
+            "random_cb", {"x": 2, "mean_delta": 0.05, "n": 3}))
+
+    def encoding_contract(a, o):
+        edit_evidence(a, lambda ev: ev["encoding"].__setitem__(
+            "contract", "cr_seed_spread_encoding_v3"))
+
+    def encoding_bad_color(a, o):
+        edit_evidence(a, lambda ev: ev["encoding"]["colors"].__setitem__("random", "red"))
+
+    figure_cases = []
+    if has_b:
+        figure_cases += [
+            ("panel_b_extra_point", 1, b_extra_point, "(extra point)"),
+            ("panel_b_delta_changed", 1, b_delta_changed, "difference disagrees"),
+            ("panel_b_band_forged", 1, b_band_forged, "band"),
+            ("panel_b_extra_mean", 1, b_extra_mean, "extra or missing mean"),
+        ]
+    if isinstance(ev0.get("encoding"), dict):
+        figure_cases += [
+            ("encoding_contract_changed", 1, encoding_contract, "figure encoding contract"),
+            ("encoding_bad_color", 1, encoding_bad_color, "#RRGGBB"),
+        ]
+
     reference_cases = [
         ("v10_reference_lists_disagree", 1, reference_lists_disagree,
          "!= scenario.reference_missing"),
@@ -325,7 +379,8 @@ def cases(bundle):
                                     "for centroid without the registered RANDOM reference"))
     else:
         reference_cases += [
-            ("v10_reference_marked_late", 1, reference_marked_late, "pre-registered rule"),
+            ("v10_reference_marked_late", 1, reference_marked_late,
+             "without the registered RANDOM reference"),
             ("v10_range_not_from_random_runs", 1, range_not_from_random_runs,
              "is not the range of the registered RANDOM runs"),
             ("v10_range_macro_removed", 1, range_macro_removed,
@@ -363,7 +418,7 @@ def cases(bundle):
         ("evidence_missing_point", 1, evidence_missing_point, "lacks points"),
         ("v9_sidecar_display_forged", 1, v9_display_forged, "recorded format"),
         ("v9_sidecar_control_relabelled", 1, v9_control_relabelled, "pre-registered rule"),
-    ] + reference_cases
+    ] + reference_cases + figure_cases
 
 
 def main():
@@ -409,6 +464,22 @@ def main():
             series = state.get("figure_series") or {}
             ok = len(series.get("points", [])) == len(auc) and series.get("means") == means
             needle = "plotted series = sidecar AUC/mean macros" if ok else "SERIES MISMATCH"
+            deltas = {n for n in macros if re.match(r"^RepDelta(Centroid|Envelope)Seed[ABC]$", n)}
+            ev = json.loads((bundle / "fig_cr_seed_spread.evidence.json").read_text(
+                encoding="utf-8"))
+            if isinstance(ev.get("panel_b"), dict):
+                b_ok = len(series.get("panel_b_points", [])) == len(deltas) and \
+                    series.get("panel_b_band") is ("RepRandomRange" in macros)
+                ok = ok and b_ok
+                needle += ("; panel (b) = sidecar paired differences, band %s" % (
+                    "drawn" if series.get("panel_b_band") else "not drawn")
+                    if b_ok else "; PANEL B MISMATCH")
+            enc = series.get("encoding") or {}
+            if isinstance(ev.get("encoding"), dict):
+                e_ok = enc.get("colors") == ev["encoding"]["colors"] and \
+                    enc.get("source", "").startswith("figure evidence")
+                ok = ok and e_ok
+                needle += "; encoding from evidence" if e_ok else "; ENCODING MISMATCH"
             side = load_side(bundle)
             missing = side["scenario"]["reference_missing"]
             mc = side["scenario"]["matched_control"]

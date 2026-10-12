@@ -16,3 +16,5 @@ paper/genai4health2026/*.sty -text
 # Byte-exact v9 source snapshots pinned by numeric review receipts.
 autopilot/investigations/camera_ready_20261008/paper_i8/source_snapshots/** -text
 autopilot/investigations/submission_refresh_20260910/figure/octdl_primary_license.html -text -whitespace
+# Byte-exact figure producers, snapshots and evidence pinned by I13 receipts.
+autopilot/investigations/camera_ready_20261008/figures_v2/** -text

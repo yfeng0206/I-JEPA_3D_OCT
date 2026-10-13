@@ -35,9 +35,19 @@ def unique_work(root=None, prefix="release"):
     return path
 
 
+def portable_relpath(relative):
+    """Spell a stored locator with '/' so it resolves on POSIX too.
+
+    Receipts, the registry and built-ins may store Windows separators. Windows
+    accepts both, so the resolved file there is unchanged; on Linux/macOS a
+    backslash would otherwise be part of a single file name.
+    """
+    return relative.replace("\\", "/") if isinstance(relative, str) else relative
+
+
 def safe_path(root, relative):
     root = Path(root).resolve()
-    path = (root / relative).resolve()
+    path = (root / portable_relpath(relative)).resolve()
     if not path.is_relative_to(root):
         raise ValueError("path escapes source tree: " + str(relative))
     return path

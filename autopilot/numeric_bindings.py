@@ -211,17 +211,17 @@ class Evidence:
 
 
 BUILTIN_SOURCES = {
-    "subgroup_auc.json": {"root": "stats_parent", "path": r"subgroup\subgroup_auc.json"},
-    "p17_subgroup_multiplicity.json": {"root": "repo", "path": r"results\p17_subgroup_multiplicity.json"},
-    "intersectional": {"root": "phase0", "path": r"reports\subgroup\intersectional_auc.json"},
-    "background_skill": {"root": "phase0", "path": r"reports\background_signal\skill_scores.json"},
-    "composition": {"root": "phase0", "path": r"reports\composition_vs_auc\composition_vs_auc_ep50.json"},
+    "subgroup_auc.json": {"root": "stats_parent", "path": "subgroup/subgroup_auc.json"},
+    "p17_subgroup_multiplicity.json": {"root": "repo", "path": "results/p17_subgroup_multiplicity.json"},
+    "intersectional": {"root": "phase0", "path": "reports/subgroup/intersectional_auc.json"},
+    "background_skill": {"root": "phase0", "path": "reports/background_signal/skill_scores.json"},
+    "composition": {"root": "phase0", "path": "reports/composition_vs_auc/composition_vs_auc_ep50.json"},
 }
 for _seed in (42, 1234, 2026):
     BUILTIN_SOURCES["geometry%d" % _seed] = {
-        "root": "repo", "path": r"results\masking\table2_geometry\mask_geometry_600slices_bs1_coverf021_seed%d.json" % _seed}
+        "root": "repo", "path": "results/masking/table2_geometry/mask_geometry_600slices_bs1_coverf021_seed%d.json" % _seed}
 BUILTIN_SOURCES["geometry_batch64"] = {
-    "root": "repo", "path": r"results\masking\table2_geometry\mask_geometry_600slices_bs64_coverf021_seed42.json"}
+    "root": "repo", "path": "results/masking/table2_geometry/mask_geometry_600slices_bs64_coverf021_seed42.json"}
 
 
 def extended_bindings(evidence, base):
@@ -831,7 +831,7 @@ def read_reviews(paper, evidence, review_file=None):
             raise ValueError("review cannot override built-in evidence: " + name)
         if spec.get("root") not in ("repo", "paper", "stats") or not re.fullmatch("[0-9a-f]{64}", spec.get("sha256", "")):
             raise ValueError("custom sources require an allowed root and immutable sha256")
-        if Path(spec["path"]).name == "auto_numbers.tex":
+        if Path(assets.portable_relpath(spec["path"])).name == "auto_numbers.tex":
             raise ValueError("rendered numbers are not source evidence")
         evidence.specs[name] = spec
     return data

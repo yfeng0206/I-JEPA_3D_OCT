@@ -10,7 +10,7 @@ from collections import Counter
 import hashlib
 import json
 import math
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import re
 import sys
 
@@ -388,7 +388,10 @@ def audit(paper, stats_dir, review_file=None):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--paper-dir", default=PAPER)
-    parser.add_argument("--stats-dir", default=str(Path(INV).parent))
+    # INV is a Windows path: parse it as one so POSIX gets this missing directory
+    # (and fails closed) rather than the current directory.
+    parser.add_argument("--stats-dir", default=str(PureWindowsPath(INV).parent),
+                        help="directory holding p1c_stats.json etc.; required on Linux/macOS")
     parser.add_argument("--report")
     parser.add_argument("--markdown-report")
     parser.add_argument("--review-file", help="Version-1 evidence receipt file; default paper/numeric_reviews.json")

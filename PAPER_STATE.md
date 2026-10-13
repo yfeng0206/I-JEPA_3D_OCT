@@ -249,7 +249,17 @@ exists to prevent.
     # External stats-root and deliberately gitignored sources need separate acquisition.
     # Byte-exact CRLF sources carry -text in .gitattributes; when pinning one, add the rule,
     # then `git add --renormalize <path>` (plain `git add` for a new file), then rerun this
-    # audit (exit 0 required). This fixes line endings only, not POSIX path separators.
+    # audit (exit 0 required). This covers line endings only. Path separators are handled
+    # in code: receipt, registry and built-in paths may keep '\', since p15 resolves them
+    # with '/' (release_assets.safe_path), which is identical on Windows. On Linux/macOS
+    # pass the stats root explicitly: p15_verify_numbers.py --stats-dir <dir with
+    # p1c_stats.json>. The default D:\ path is missing there, so p15 fails closed.
+    # Known POSIX gap: the P8 replay of fig_trajectories_ci loads the absolute Windows
+    # .npz paths stored in p1b_full_inventory.json, so that figure stays unresolved there.
+    # Validator hashes recorded in historical freeze/release evidence (e.g. the Sept 2026
+    # final_numeric_freeze_receipt.json and v8 release manifest) describe the validators
+    # of that release and are kept byte-exact; they do not certify the current validators.
+    # A new release is certified only by a fresh p15 run and the p13 manifest embedding it.
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\audit_receipt_pins_eol.py
 
     # push to the live Overleaf project (refuses on conflict; --force to override)

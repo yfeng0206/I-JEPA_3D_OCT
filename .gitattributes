@@ -18,3 +18,29 @@ autopilot/investigations/camera_ready_20261008/paper_i8/source_snapshots/** -tex
 autopilot/investigations/submission_refresh_20260910/figure/octdl_primary_license.html -text -whitespace
 # Byte-exact figure producers, snapshots and evidence pinned by I13 receipts.
 autopilot/investigations/camera_ready_20261008/figures_v2/** -text
+# Byte-exact sources pinned by numeric review receipts (CRLF as pinned).
+# numeric_reviews.json pins these by SHA-256 of their CRLF bytes; -text stores those exact
+# bytes in Git so LF checkouts reproduce the pins. Audit: autopilot/audit_receipt_pins_eol.py
+autopilot/investigations/camera_ready_20261008/figures_staging/external_guides/octdl_crop_guides.json -text whitespace=cr-at-eol
+autopilot/investigations/camera_ready_20261008/figures_staging/fig_oct_all_strategies.evidence.json -text whitespace=cr-at-eol
+autopilot/investigations/camera_ready_20261008/guide_quality/ANALYSIS_PLAN.md -text whitespace=cr-at-eol
+autopilot/investigations/camera_ready_20261008/guide_quality/summary.json -text whitespace=cr-at-eol
+autopilot/investigations/camera_ready_20261008/mask_audit/delivered_mask_audit_trained_3seeds_100draws.json -text whitespace=cr-at-eol
+autopilot/investigations/camera_ready_20261008/mask_audit/runs/per_image_bs1_trained_3seeds.json -text whitespace=cr-at-eol
+autopilot/investigations/camera_ready_20261008/paper_i8/external_reference_values.json -text whitespace=cr-at-eol
+autopilot/investigations/delivered_task/evidence/literal_sources/metadata_reduction.json -text whitespace=cr-at-eol
+autopilot/investigations/delivered_task/evidence/literal_sources/retained_lr_rectangles.json -text whitespace=cr-at-eol
+autopilot/investigations/delivered_task/evidence/mask_replay600_v2/full_batch64_confirmation.json -text whitespace=cr-at-eol
+autopilot/investigations/delivered_task/evidence/training_gpu_guided_v1/joint_summary.json -text whitespace=cr-at-eol
+autopilot/p1c_stats.py -text whitespace=cr-at-eol
+autopilot/p8_make_assets.py -text whitespace=cr-at-eol
+configs/patch_anatomy_v2.yaml -text whitespace=cr-at-eol
+configs/patch_cover_f021_ep25.yaml -text whitespace=cr-at-eol
+configs/patch_mirage_anatomy.yaml -text whitespace=cr-at-eol
+results/downstream/meanpool_sweep_random/ep100_results.json -text whitespace=cr-at-eol
+results/masking/table2_geometry/mask_geometry_600slices_bs1_coverf021_seed42.json -text whitespace=cr-at-eol
+results/masking/table2_geometry/mask_geometry_600slices_bs64_coverf021_seed42.json -text whitespace=cr-at-eol
+scripts/make_replication_configs.py -text whitespace=cr-at-eol
+src/masks/multiblock.py -text whitespace=cr-at-eol
+src/masks/utils.py -text whitespace=cr-at-eol
+src/models/vision_transformer.py -text whitespace=cr-at-eol

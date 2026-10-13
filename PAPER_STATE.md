@@ -244,6 +244,14 @@ exists to prevent.
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\check_manuscript.py
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p15_verify_numbers.py
 
+    # receipt-pin portability: each cited, tracked repository source's receipt pin must equal
+    # the SHA-256 of its index-blob contents, so LF (Linux/macOS, ZIP) checkouts reproduce it.
+    # External stats-root and deliberately gitignored sources need separate acquisition.
+    # Byte-exact CRLF sources carry -text in .gitattributes; when pinning one, add the rule,
+    # then `git add --renormalize <path>` (plain `git add` for a new file), then rerun this
+    # audit (exit 0 required). This fixes line endings only, not POSIX path separators.
+    D:\jepa_phase0\.venv\Scripts\python.exe autopilot\audit_receipt_pins_eol.py
+
     # push to the live Overleaf project (refuses on conflict; --force to override)
     D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py
     # after you upload by hand, reset the change baseline:

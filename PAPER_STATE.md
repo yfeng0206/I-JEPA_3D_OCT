@@ -59,7 +59,10 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
    the registered RANDOM range exists; printed 1:1 at `\linewidth`, text >= 7 pt; its colour /
    marker / label contract is in `fig_cr_seed_spread.evidence.json` under `encoding`); at most
    10 main pages (rehearsal worst case after the 2026-10-12 figure and text polish: main text ends at 9.93),
-   no undefined references. Fill the acknowledgments (`\CRAcknowledgmentsPending`) before step 3.
+   no undefined references. The scratch poster build should exit 0 with `Checks OK` in
+   `logs\review_poster_build.log` (only the QR-code placeholders listed); since I17 its scratch
+   copy carries the figure registry and runs the generator check, so a non-zero exit is a real
+   poster-gate finding. Fill the acknowledgments (`\CRAcknowledgmentsPending`) before step 3.
 3. **Phase 2, about 1-2 min.**
 
        powershell -NoProfile -ExecutionPolicy Bypass -File autopilot\cr_postfreeze.ps1 -ApplyToPaper -FigureReviewer "<name>, 2026-10-22"
@@ -90,14 +93,16 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
    If E3 is still training or probing at 08:00, phase 1 stops with exit 3. Either wait until the
    campaign marks E3's probe DONE (E3 is then reported as finished after the freeze, an open
    marker in the figure) and re-run, or re-run now with `-AllowIncomplete` (E3 is reported as
-   not completed, pre-registration section 7). Both leave the primary analysis unchanged; decide
+   not completed, pre-registration section 7). Both leave the primary analysis unchanged. A run
+   that has not started at 08:00 (e.g. E3 queued behind a C3 still in progress) does not stop
+   the preflight by itself and is reported as not completed (rehearsed by I17). Decide
    before phase 2. A re-run of phase 1 opens only new probe dirs and recomputes `final`/MD only
    when their inputs or the completion evidence changed. After phase 2, going back needs `git checkout --
    paper/genai4health2026/main_submission.tex paper/genai4health2026/compact_protocol.tex
    paper/genai4health2026/numeric_reviews.json autopilot/release_assets.json` and deleting
    `pre_integration_paper` in the output root.
 5. **Rehearsal (synthetic only).** `python tests\cr_postfreeze_fixtures.py <scratch>\fx [--late
-   envelope:9012 | --in-progress envelope:9012 | --matched M_na]`, then the script with
+   envelope:9012 | --in-progress envelope:9012 | --not-started envelope:9012 | --matched M_na]`, then the script with
    `-Rehearsal -FixtureRoot <scratch>\fx -OutRoot <scratch> -TargetRepo C:\t\<short> -FreshMirror`
    (a mirror copy of this working tree stands in for the repository). Real run, campaign,
    worktree, paper and repository paths are refused; the fixture root needs the builder's

@@ -498,6 +498,8 @@ try {
         $env:TECTONIC = $Tectonic
         $oldPath = $env:PATH
         $env:PATH = (Split-Path -Parent $Python) + ';' + $env:PATH
+        # The poster gate then also runs the generator's verified_results_metadata (read-only).
+        $env:POSTER_GENERATOR_DIR = $Tools
         try {
           $posterArgs = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', (Join-Path $ScratchPoster 'build.ps1'))
           # The poster build refuses synthetic results unless -AllowSynthetic (scratch copies only).
@@ -505,7 +507,7 @@ try {
           # The poster README builds with pwsh; Windows PowerShell 5.1 is the fallback.
           $shell = if (Get-Command pwsh -ErrorAction SilentlyContinue) { (Get-Command pwsh).Source } else { 'powershell.exe' }
           $code = Invoke-Native -Exe $shell -Arguments $posterArgs -Name 'poster_build' -WorkDir $ScratchPoster -TailLines 25
-        } finally { $env:PATH = $oldPath }
+        } finally { $env:PATH = $oldPath; Remove-Item Env:POSTER_GENERATOR_DIR -ErrorAction SilentlyContinue }
         $plog = Join-Path $ScratchPoster 'poster.log'
         $loaded = (Test-Path $plog) -and ((Get-Content -Raw $plog) -match 'cr_results.tex found and loaded')
         $note = "cr_results.tex loaded: $loaded; poster.pdf: $(Test-Path (Join-Path $ScratchPoster 'poster.pdf')); see the poster build report (Placeholders / Results lines) in the poster_build log for remaining manual items"

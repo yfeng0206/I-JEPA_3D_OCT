@@ -18,9 +18,10 @@ CR_SYNTHETIC_FIXTURE.json and every campaign.json / state.json / results.json ca
 "synthetic": true, which the rehearsal preflight requires (V8-1).
 
 Run states: on time (default), ``late`` (stop file after the freeze; probe complete),
-``in_progress`` (probe running at the freeze: partial dir without results.json) and ``absent``
-(training failed; no probe). AUC patterns and the matched-control construction are those of
-tests/cr_results_fixtures.py.
+``in_progress`` (probe running at the freeze: partial dir without results.json), ``absent``
+(training failed; no probe) and ``not_started`` (queued behind the run in progress: training
+PENDING without attempts, no run directory). AUC patterns and the matched-control construction
+are those of tests/cr_results_fixtures.py.
 """
 import hashlib
 import json
@@ -197,19 +198,20 @@ def _cb_log(path, n=40):
 
 def build_campaign(root, centroid='A', envelope='A', matched='M+', seeds=(1234, 5678, 9012),
                    late=(), in_progress=(), absent=(), n_test=3000, n_train=6000, n_val=1000,
-                   cb_placement=None):
+                   cb_placement=None, not_started=()):
     """Sealed synthetic campaign under ``root``; returns the paths the pipeline needs."""
     root = os.path.abspath(str(root))
     runs_root = os.path.join(root, 'runs')
     os.makedirs(runs_root)
     late, in_progress, absent = set(late), set(in_progress), set(absent)
+    not_started = set(not_started)
     if matched == 'M_na':
         absent.add(('random_cb', 1234))
     cohort = fx.Cohort(n_test)
     md = MDCohort(cohort, n_train, n_val)
     md.write_metadata(os.path.join(root, 'metadata.csv'))
     values = fx.primary_aucs(centroid, envelope, seeds)
-    skipped = late | in_progress | absent
+    skipped = late | in_progress | absent | not_started
     complete = [s for s in seeds if not any((a, s) in skipped for a in cr_stats.PRIMARY_ARMS)]
     realizations = [fx.RANDOM[None]] + [fx.RANDOM[s] for s in complete]
     spread = max(realizations) - min(realizations)
@@ -255,6 +257,11 @@ def build_campaign(root, centroid='A', envelope='A', matched='M+', seeds=(1234, 
     for run_id, arm, seed in RUNS:
         if seed not in seeds:
             continue  # the campaign never reached this run
+        if (arm, seed) in not_started:
+            state['runs'][run_id] = {'spec': {'id': run_id, 'arm': arm, 'seed': seed},
+                                     'train': {'status': 'PENDING', 'attempts': []},
+                                     'probe': {'status': 'PENDING', 'attempts': []}}
+            continue
         run_dir = os.path.join(runs_root, 'cr_seed_v1_%s_s%d' % (arm, seed))
         os.makedirs(run_dir)
         log = os.path.join(run_dir, 'train_a0.log')
@@ -324,6 +331,7 @@ if __name__ == '__main__':
     ap.add_argument('--late', nargs='*', default=[], help='arm:seed')
     ap.add_argument('--in-progress', nargs='*', default=[], help='arm:seed')
     ap.add_argument('--absent', nargs='*', default=[], help='arm:seed')
+    ap.add_argument('--not-started', nargs='*', default=[], help='arm:seed')
     ap.add_argument('--n-test', type=int, default=3000)
     ap.add_argument('--n-train', type=int, default=6000)
     ap.add_argument('--n-val', type=int, default=1000)
@@ -338,5 +346,6 @@ if __name__ == '__main__':
         sys.exit('synthetic fixtures never go under D:\\jepa_phase0')
     built = build_campaign(a.root, a.centroid, a.envelope, a.matched,
                            tuple(int(s) for s in a.seeds.split(',')), pairs(a.late),
-                           pairs(a.in_progress), pairs(a.absent), a.n_test, a.n_train, a.n_val)
+                           pairs(a.in_progress), pairs(a.absent), a.n_test, a.n_train, a.n_val,
+                           not_started=pairs(a.not_started))
     print(json.dumps({k: v for k, v in built.items() if k != 'values'}, indent=1))

@@ -511,6 +511,19 @@ def scratch_copy(src, dst, kind):
             shutil.copytree(external, target)
             (target / SCRATCH_MARKER).write_text("scratch copy of %s (poster figures)\n"
                                                  % external, encoding="utf-8")
+        # The poster gate checks its figures against the registry's poster_variant hashes
+        # (../../autopilot/release_assets.json); without this copy it always reports PROBLEMS.
+        registry = src.parents[1] / "autopilot" / "release_assets.json"
+        target = root / "autopilot" / "release_assets.json"
+        if not inside(target, root) or inside(target, assets.REPO):
+            raise Refused("figure registry copy would leave the scratch tree: %s" % target)
+        if not registry.is_file():
+            # Fail closed: never let a registry left by an earlier run stand in for it.
+            if target.exists():
+                target.unlink()
+            raise Refused("figure registry missing for the scratch poster: %s" % registry)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(registry, target)
     return dst
 
 

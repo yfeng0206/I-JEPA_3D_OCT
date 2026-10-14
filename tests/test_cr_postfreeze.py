@@ -82,6 +82,24 @@ def test_plan_classifies_ready_late_in_progress_and_absent_runs(campaigns, tmp_p
     assert plan['cb']['status'] == 'not_completed' and len(plan['ready_dirs']) == 12
 
 
+def test_plan_c3_in_progress_with_e3_not_started(tmp_path):
+    """I17: the sequential campaign at the freeze with C3 still running and E3 queued behind it
+    (training PENDING, no attempts): exit 3 until -AllowIncomplete; E3 is not_started."""
+    c = pfx.build_campaign(tmp_path / 'c', in_progress=[('centroid', 9012)],
+                           not_started=[('envelope', 9012)], **SMALL)
+    plan = plan_of(c)
+    runs = by_id(plan)
+    assert plan['in_progress'] == ['C3'] and plan['not_started'] == ['E3']
+    assert runs['E3']['status'] == 'not_started' and plan['blocking'] == []
+    assert len(plan['ready_dirs']) == 11 and not plan['seed_indices']['9012']['primary_on_time']
+    assert not os.path.exists(os.path.join(c['runs_root'], 'cr_seed_v1_envelope_s9012'))
+    args = dict(campaign=c['campaign'], state=c['state'], runs_root=None,
+                out=str(tmp_path / 'plan.json'), rehearsal=True, fixture_root=c['root'],
+                inputs=[])
+    assert pf.cmd_plan(argparse.Namespace(allow_in_progress=False, **args)) == 3
+    assert pf.cmd_plan(argparse.Namespace(allow_in_progress=True, **args)) == 0
+
+
 def test_plan_late_is_exactly_cr_stats_final_eligibility(tmp_path):
     c = pfx.build_campaign(tmp_path / 'c', late=[('envelope', 9012), ('random_cb', 1234)],
                            matched='M_desc', **SMALL)
@@ -408,12 +426,34 @@ def test_scratch_poster_copy_brings_the_figure_directories_it_names(tmp_path):
         '\\graphicspath{{../../autopilot/figs/poster/}{../../paper/genai4health2026/figures/}}\n'
         '\\includegraphics{a.pdf}\n')
     (figs / 'a.pdf').write_bytes(b'%PDF-1.4 synthetic')
+    # I17: the poster gate checks its figures against ../../autopilot/release_assets.json.
+    (repo / 'autopilot' / 'release_assets.json').write_bytes(b'{"producers": {}}\r\n')
     dst = tmp_path / 'out' / 'scratch' / 'poster' / 'genai4health2026'
     for _ in range(2):  # re-runnable
         pf.scratch_copy(poster, dst, 'poster')
         assert (tmp_path / 'out' / 'scratch' / 'autopilot' / 'figs' / 'poster' / 'a.pdf').is_file()
+        assert (tmp_path / 'out' / 'scratch' / 'autopilot' / 'release_assets.json').read_bytes() \
+            == b'{"producers": {}}\r\n'
     assert not (tmp_path / 'out' / 'scratch' / 'paper').exists()
     assert pf.poster_external_dirs(poster) == [figs.resolve()]
+    copied = tmp_path / 'out' / 'scratch' / 'autopilot' / 'release_assets.json'
+    (repo / 'autopilot' / 'release_assets.json').write_bytes(b'{"producers": {"x": {}}}\r\n')
+    pf.scratch_copy(poster, dst, 'poster')  # changed source bytes are refreshed
+    assert copied.read_bytes() == b'{"producers": {"x": {}}}\r\n'
+    (repo / 'autopilot' / 'release_assets.json').unlink()
+    with pytest.raises(pf.Refused, match='registry missing'):  # never reuse a stale copy
+        pf.scratch_copy(poster, dst, 'poster')
+    assert not copied.exists()
+
+
+def test_ps1_scratch_poster_gate_runs_the_generator_check():
+    """I17: the scratch poster's results gate also runs make_cr_results' own
+    verified_results_metadata (POSTER_GENERATOR_DIR), only for the poster build."""
+    text = open(os.path.join(REPO, 'autopilot', 'cr_postfreeze.ps1'), encoding='utf-8').read()
+    step = text[text.index("Invoke-Step 'poster-scratch'"):text.index("Invoke-Step 'summary'")]
+    assert '$env:POSTER_GENERATOR_DIR = $Tools' in step
+    assert step.index('$env:POSTER_GENERATOR_DIR = $Tools') < step.index("-Name 'poster_build'") \
+        < step.index('Remove-Item Env:POSTER_GENERATOR_DIR')
 
 
 def test_ps1_always_runs_the_md_secondary_analysis_and_passes_it_to_build():

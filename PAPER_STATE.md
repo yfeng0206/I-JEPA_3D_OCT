@@ -171,10 +171,60 @@ their acquisition manifest is under the investigation's `literal_sources\public`
 Missing or changed evidence blocks release rather than being silently skipped.
 The Word conflict guard must not be bypassed if collaborators have edited it.
 
-For authorized sync, load credentials from Windows user scope in the same
-process without printing them, then use the newly generated release manifest:
+For authorized sync, use the newly generated release manifest. Overleaf git
+access needs a premium plan this account does not have, so use the HTTP
+(browser-session) transport (2026-10-15, `scripts\overleaf_http.py`). It runs
+the same three-way check, refuses on remote edits, deletes from Overleaf only
+files removed locally that Overleaf has not changed since the last sync, then
+re-downloads the project and verifies every managed hash and the project
+history before it records `.overleaf_sync.json`. Unlike git it cannot make a
+write conditional, so a concurrent co-author edit is detected (exit 4), not
+prevented. See step 3.
 
-    D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py --release-manifest C:\Users\Gary\Downloads\OCT_JEPA_GenAI4Health2026_20260910_v8.release.json
+1. Log in (creates `%USERPROFILE%\.overleaf\.olauth`, a credential: never
+   print, copy or commit it): double-click
+   `C:\Users\Gary\Downloads\OVERLEAF_LOGIN_double_click.cmd`, sign in with the
+   account that owns the paper, and close the window once the project list
+   loads. Sessions expire. When the sync reports "Overleaf refused the session"
+   or "session has expired", run the login again.
+2. Check and preview (nothing is sent to Overleaf and the state file is not
+   written):
+
+       D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py --transport http --project-id 6a8fb344bf38f34a9e545791 --check
+       D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py --transport http --project-id 6a8fb344bf38f34a9e545791 --dry-run --release-manifest <new camera-ready .release.json>
+
+3. Push. The real project additionally needs the explicit confirmation flag,
+   for either transport:
+
+       D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py --transport http --project-id 6a8fb344bf38f34a9e545791 --release-manifest <new camera-ready .release.json> --i-understand-this-writes-the-real-project
+
+   Exit 2 means a co-author edited Overleaf: run `--pull` (then `--pull --yes`)
+   with the same `--transport http --project-id` and reconcile. Exit 1 after
+   uploads ("VERIFY FAILED") leaves the state unrecorded; re-run `--dry-run`.
+   Overleaf allows about 10 project downloads a minute and a push uses 3; on
+   HTTP 429 the script waits and retries, reporting each wait.
+
+   **HTTP has no compare-and-swap.** Unlike a git push, an upload overwrites
+   whatever Overleaf holds at that moment. The script re-checks the project
+   immediately before the first write and aborts with nothing written if
+   anything managed changed. Afterwards it reads Overleaf's project history
+   from just before that check. Exit 4 ("PUSH NOT CERTIFIED") means one of
+   three things: the history shows an edit by another or an unattributed user
+   during the push; the history could not be read or did not form a gap-free
+   chain of versions up to the project's current version; or the push stopped
+   after its first write. A co-author's change may then have been
+   overwritten. The state is not recorded. Open the project's History panel
+   (it keeps every earlier version), restore or merge the change by hand, then
+   re-run `--dry-run`. Edits made from the same account cannot be told apart
+   from the script's, so the operational rule is: tell co-authors before
+   pushing, do not edit in Overleaf (anyone, including you) while a push runs,
+   and never run an HTTP push unattended.
+   `--dry-run` cannot be combined with `--pull`/`--yes` (exit 1, nothing written).
+
+The git transport remains the default for premium accounts: load
+`OVERLEAF_TOKEN` and `OVERLEAF_PROJECT_ID` from Windows user scope in the same
+process without printing them, and pass the same `--release-manifest` (plus
+`--i-understand-this-writes-the-real-project` for the real project).
 
 No force sync, automatic main merge, sustained pretraining or actual OpenReview
 submission is implied by these commands.
@@ -267,8 +317,11 @@ exists to prevent.
     # A new release is certified only by a fresh p15 run and the p13 manifest embedding it.
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\audit_receipt_pins_eol.py
 
-    # push to the live Overleaf project (refuses on conflict; --force to override)
-    D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py
+    # push to the live Overleaf project (refuses on conflict; there is no force option).
+    # Free plan: HTTP transport after Downloads\OVERLEAF_LOGIN_double_click.cmd; see the
+    # numbered Overleaf steps near the top of this file for --dry-run/--pull and the
+    # --release-manifest + --i-understand-this-writes-the-real-project push.
+    D:\jepa_phase0\.venv\Scripts\python.exe scripts\sync_overleaf.py --transport http --project-id 6a8fb344bf38f34a9e545791 --dry-run
     # after you upload by hand, reset the change baseline:
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p13_build_zip.py --mark-uploaded
 
@@ -347,6 +400,15 @@ exists to prevent.
       $env:OVERLEAF_TOKEN = [Environment]::GetEnvironmentVariable('OVERLEAF_TOKEN','User')
       $env:OVERLEAF_PROJECT_ID = [Environment]::GetEnvironmentVariable('OVERLEAF_PROJECT_ID','User')
 
+  That git token only helps on a premium plan. The free-plan path is the HTTP
+  transport, whose credential is the browser session in
+  `%USERPROFILE%\.overleaf\.olauth`. The script reads it only in memory; never
+  print or copy it. Renew it with `Downloads\OVERLEAF_LOGIN_double_click.cmd`.
+- **Never test Overleaf writes on the paper project.** Write-path changes to
+  `sync_overleaf.py`/`overleaf_http.py` are exercised on a throwaway scratch
+  project that is deleted afterwards. The code refuses to modify
+  `6a8fb344bf38f34a9e545791` without `--release-manifest` and
+  `--i-understand-this-writes-the-real-project`.
 - **PDF text extraction has three traps here.** TeX ligatures ff/fi/fl/ffi/ffl are
   single glyphs (normalise NFKD); words hyphenate across lines; and line numbers
   interleave *inside* sentences, so "Hard patches mining" extracts as

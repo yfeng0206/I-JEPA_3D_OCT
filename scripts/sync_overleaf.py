@@ -65,15 +65,58 @@ tree bytes are the blob bytes, and CRLF folded to LF on commit, so the project
 history keeps the line endings it already has. Hashes of text files are taken
 over LF-normalised content for the same reason - see content_hash().
 
+TRANSPORTS
+----------
+--transport git (the default) clones git.overleaf.com and pushes a commit.
+--transport http reaches the same project through the browser session saved
+by Downloads\\OVERLEAF_LOGIN_double_click.cmd (scripts/overleaf_http.py): the
+project ZIP stands in for the clone, and a push uploads files and deletes
+entities through the web editor's endpoints. Everything that decides what is
+safe - managed_remote scope, content_hash normalisation, classify(), refusal
+on remote edits, the release gate and the recorded state - is shared by both.
+
+The HTTP transport also completes one thing git never did: a file recorded as
+pushed, absent from the managed set and deleted from the local paper
+directory is deleted from Overleaf too, so material withdrawn locally (for
+example for licensing) does not linger in the project. It is planned by
+plan_deletions() and obeys the same three-way rule: if Overleaf changed the
+file since the agreement, that is a conflict and nothing is deleted. A file
+merely left out of a release tree but still present locally is retained, as
+before. After an HTTP push the project ZIP is downloaded again and every
+managed hash must equal what was pushed; otherwise the state is not written.
+
+Unlike git, HTTP has no compare-and-swap: an upload cannot be made
+conditional on the remote being unchanged. The last remote observation is
+therefore taken immediately before the first write (abort, nothing written,
+if anything managed moved), and after the push Overleaf's project history
+from just before that observation must show updates by this session's user
+only, as a gap-free chain of versions up to the project's current version.
+Any update by another (or unattributed) user, an unreadable or incomplete
+history, or a transport failure after the first write exits 4 without
+recording state: a co-author's edit may have been overwritten
+and must be restored from Overleaf History by hand. A post-push content
+mismatch (the re-downloaded files differ from ours) exits 1, also without
+recording state. Edits made through the
+same account are indistinguishable, so nobody may edit during a push.
+
+REAL PROJECT GUARD
+------------------
+Any push (either transport) to the real paper project needs both a successful
+--release-manifest and --i-understand-this-writes-the-real-project. The HTTP
+client refuses mutating calls to that project on its own as well.
+
 Requirements
 ------------
 1. An Overleaf project id. Open the project; the URL is
        https://www.overleaf.com/project/<PROJECT_ID>
-2. An Overleaf git authentication token:
+2. git transport: an Overleaf git authentication token:
        Account Settings -> Git Integration -> Generate token
    HONEST CAVEAT: Overleaf's git integration is a PREMIUM feature. On a free
-   plan the remote will refuse authentication. If that happens, nothing here
-   will work and the loose-file mirror remains the fallback.
+   plan the remote will refuse authentication. Use --transport http instead.
+3. http transport: a browser session. Double-click
+   Downloads\\OVERLEAF_LOGIN_double_click.cmd and log in; it writes
+   %USERPROFILE%\\.overleaf\\.olauth (override with --olauth). Sessions expire;
+   when Overleaf refuses the session, run it again.
 
 Configure credentials only in the process environment (not CLI arguments):
 
@@ -95,12 +138,23 @@ Usage
                                                      # change locally
     python scripts/sync_overleaf.py --pull --yes     # actually write it locally
 
+Add --transport http --project-id <ID> to any of these to use the browser
+session instead of git; pushing to the real project additionally needs
+--i-understand-this-writes-the-real-project.
+
 Exit codes
 ----------
     0  success
-    1  bad usage, missing credentials, clone or validation failure
+    1  bad usage, missing credentials or session, clone, validation or
+       post-push verification failure, real-project guard
     2  refused: Overleaf has changes we have not seen
     3  refused: --pull would change local files and --yes was not given
+    4  HTTP push applied (possibly only in part) but NOT certified: it stopped
+       after its first write, or Overleaf history shows (or, being unreadable
+       or incomplete, cannot rule out) another user's edit during the push;
+       state not recorded, reconcile in Overleaf History
+
+--dry-run cannot be combined with --pull or --yes (exit 1).
 
 The push is refused unless the build passes all of p13_build_zip.py's checks,
 so a broken or over-length paper can never reach the project.
@@ -116,12 +170,14 @@ import re
 import shutil
 import subprocess
 import sys
+import uuid
 from datetime import datetime, timezone
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if REPO not in sys.path:
     sys.path.insert(0, REPO)
 from autopilot import release_assets as assets
+from scripts import overleaf_http
 PAPER_DEFAULT = os.path.join(REPO, "paper", "genai4health2026")
 VENV_PY = r"D:\jepa_phase0\.venv\Scripts\python.exe"
 STATE_DEFAULT = os.path.join(REPO, ".overleaf_sync.json")
@@ -554,6 +610,9 @@ CONFLICT_UNKNOWN = "conflict_no_recorded_state"
 CONFLICT_EDITED = "conflict_remote_edited"
 CONFLICT_DELETED = "conflict_remote_deleted"
 CONFLICTS = (CONFLICT_UNKNOWN, CONFLICT_EDITED, CONFLICT_DELETED)
+# Deletion plan (HTTP transport); a remote edit of such a file is CONFLICT_EDITED.
+DELETE = "delete"
+DELETED_BOTH = "deleted_both_sides"
 
 
 def classify(items, rhashes, state):
@@ -625,6 +684,205 @@ def report(records, paper, clone, verbose_diffs):
         if len(show) < len(rows):
             say("   ... and %d more" % (len(rows) - len(show)))
     return buckets
+
+
+def safe_project_path(rel):
+    if not isinstance(rel, str) or not rel:
+        return False
+    return ("\\" not in rel and ":" not in rel and not rel.startswith("/")
+            and all(part not in ("", ".", "..") for part in rel.split("/")))
+
+
+def plan_deletions(items, rhashes, state, paper):
+    """Recorded files that were removed locally since the last agreement.
+
+    A candidate is a file the last agreement says was on Overleaf, that is not
+    in this run's managed set, and that no longer exists in the local paper
+    directory. Being left out of a release tree is not enough: such files are
+    retained, exactly as the push has always retained them. The remote side
+    follows classify(): unchanged since the agreement -> delete; already gone
+    -> both sides agree, record it as absent; changed -> someone edited
+    Overleaf, which is a conflict and blocks the whole push.
+    """
+    managed = {rel for _src, rel in items}
+    out = []
+    for rel, entry in sorted(state.get("files", {}).items()):
+        if rel in managed or not isinstance(entry, dict) or entry.get("remote_sha256") is None:
+            continue
+        if not safe_project_path(rel):
+            raise ValueError("unsafe path in sync state: %r" % rel)
+        if os.path.lexists(remote_to_local(rel, paper)):
+            continue
+        recorded, rh = entry["remote_sha256"], rhashes.get(rel)
+        if rh is None:
+            status = DELETED_BOTH
+        elif rh == recorded:
+            status = DELETE
+        else:
+            status = CONFLICT_EDITED
+        out.append({"local": None, "remote": rel, "local_sha256": None,
+                    "remote_sha256": rh, "recorded_remote": recorded,
+                    "status": status})
+    return out
+
+
+def report_deletions(deletions, remote_dir):
+    order = [(CONFLICT_EDITED, "CONFLICT - edited in Overleaf since last sync, but removed locally"),
+             (DELETE, "would delete from Overleaf (removed locally since last sync)"),
+             (DELETED_BOTH, "removed locally and already absent from Overleaf")]
+    for key, label in order:
+        rows = [d for d in deletions if d["status"] == key]
+        if not rows:
+            continue
+        say("\n%s (%d):" % (label, len(rows)))
+        for d in rows:
+            say("   %s" % d["remote"])
+            if key == CONFLICT_EDITED:
+                say("      overleaf %s  recorded %s  local -" %
+                    (short(d["remote_sha256"]), short(d["recorded_remote"])))
+                show_diff(os.path.join(remote_dir, d["remote"].replace("/", os.sep)), None,
+                          d["remote"], "(removed)")
+
+
+# ------------------------------------------------------------ HTTP transport
+
+def open_http_transport(a, pushing):
+    """Load the browser session in memory and bind it to one project."""
+    cookies, csrf = overleaf_http.load_session(a.olauth)
+    _SECRETS.extend(list(cookies.values()) + ([csrf] if csrf else []))
+    allow = bool(pushing and a.release_manifest and a.confirm_real_project)
+    return overleaf_http.OverleafHTTP(a.project_id, cookies, csrf,
+                                      allow_real_project_write=allow, notify=say,
+                                      on_secret=_SECRETS.append)
+
+
+def http_remote_hashes(client, work, tracked_paths):
+    """Fresh ZIP snapshot, hashed exactly like the reviewed one."""
+    snapshot = os.path.join(str(work), "remote-%s" % uuid.uuid4().hex)
+    try:
+        client.snapshot(snapshot)
+        return scan_remote(snapshot, extra_paths=tracked_paths)
+    finally:
+        rmtree_force(snapshot)
+
+
+def upload_bytes(record):
+    """The exact bytes git would have committed: text LF-normalised."""
+    data = Path(record["local"]).read_bytes()
+    if is_text(record["remote"]):
+        data = data.replace(b"\r\n", b"\n")
+    if hashlib.sha256(data).hexdigest() != record["local_sha256"]:
+        raise ValueError("local file changed since the conflict review: " + record["remote"])
+    return data
+
+
+def http_push(client, paper, manifest, state, records, deletions, reviewed,
+              tracked_paths, work, state_path, project_id):
+    """Upload, delete, re-download and verify; record state only if it all holds.
+
+    Overleaf has no conditional write, so the last remote observation is made
+    immediately before the first write, and afterwards the project history
+    from just before that observation must show nobody but us. See "No
+    compare-and-swap" in overleaf_http.py.
+    """
+    to_push = [r for r in records if r["status"] in (ADD, UPDATE)]
+    to_delete = [d for d in deletions if d["status"] == DELETE]
+    verify_local_release(paper, manifest)
+    if not to_push and not to_delete:
+        if http_remote_hashes(client, work, tracked_paths) != reviewed:
+            raise ValueError("Overleaf moved since conflict review; restart sync (no force)")
+        say("\nOverleaf already matches the local paper; nothing to push.")
+        action = "verify"
+    else:
+        tree = client.file_tree()
+        if tree.get("permissions") not in overleaf_http.WRITE_ROLES:
+            raise overleaf_http.OverleafHTTPError(
+                "this session cannot edit the project (permission %r)" % tree.get("permissions"))
+        if not client.user_id:
+            raise overleaf_http.OverleafHTTPError(
+                "the editor page did not identify the logged-in user, so a concurrent edit could "
+                "not be detected; nothing pushed")
+        say("\nNo server-side compare-and-swap over HTTP: co-authors must not edit Overleaf during")
+        say("this push. A concurrent edit is detected afterwards from Overleaf history.")
+        baseline = client.history_head()
+        if http_remote_hashes(client, work, tracked_paths) != reviewed:
+            raise ValueError("Overleaf moved since conflict review; restart sync (no force)")
+        say("\npublishing only the frozen validated source tree and checked Word attachment")
+        # From the first request that may change the project onwards, every
+        # failure ends in the "not certified" contract (exit 4), never in the
+        # generic no-write refusal: something may already have been replaced.
+        wrote, failure, after = False, None, {}
+        try:
+            for r in to_push:
+                data = upload_bytes(r)
+                wrote = True
+                client.upload(r["remote"], data, tree)
+                say("   %s %s" % ("added" if r["status"] == ADD else "updated", r["remote"]))
+            for d in to_delete:
+                wrote = True
+                client.delete(d["remote"], tree)
+                say("   deleted %s" % d["remote"])
+            after = http_remote_hashes(client, work, tracked_paths)
+        except (overleaf_http.OverleafHTTPError, OSError, ValueError, KeyError) as exc:
+            if not wrote:
+                raise
+            failure = "%s: %s" % (type(exc).__name__, exc)
+
+        expected = dict(reviewed)
+        for r in records:
+            if r["status"] in (IN_SYNC, ADD, UPDATE):
+                expected[r["remote"]] = r["local_sha256"]
+        for d in deletions:
+            if d["status"] in (DELETE, DELETED_BOTH):
+                expected.pop(d["remote"], None)
+        wrong = sorted(rel for rel in set(after) | set(expected) if after.get(rel) != expected.get(rel))
+        window, foreign, problem = [], [], None
+        try:
+            window = client.updates_since(baseline)
+            foreign = [u for u in window if client.foreign(u)]
+            problem = None if window else "the history shows no update for this push"
+        except overleaf_http.OverleafHTTPError as exc:
+            problem = str(exc)
+        except (ValueError, KeyError, TypeError, AttributeError) as exc:
+            problem = "malformed history data (%s)" % type(exc).__name__
+        if foreign or problem or failure:
+            say("\nPUSH NOT CERTIFIED: a co-author's concurrent edit may have been overwritten.")
+            if failure:
+                say("   the push stopped part-way or could not be re-downloaded: %s" % failure)
+            for u in foreign:
+                say("   history v%s-v%s by another or unattributed user, files: %s"
+                    % (u["fromV"], u["toV"], ", ".join(map(str, u.get("pathnames") or []))
+                       or "(project structure)"))
+            if problem:
+                say("   the Overleaf history check failed: %s" % problem)
+            say("Overleaf History keeps every earlier version: open the project's History panel,")
+            say("compare around this push, and restore or merge the co-author's change by hand.")
+            say("Sync state NOT updated. After reconciling, re-run --dry-run.")
+            return 4
+        if wrong:
+            say("\nVERIFY FAILED: the re-downloaded project differs from what was pushed.")
+            for rel in wrong:
+                say("   %s  overleaf %s  expected %s" % (rel, short(after.get(rel)), short(expected.get(rel))))
+            say("Sync state NOT updated. Re-run with --dry-run to see the current position.")
+            return 1
+        say("\npushed and verified: the re-downloaded project matches all %d managed file(s);"
+            % len(expected))
+        say("Overleaf history shows only this session's %d update(s) during the push." % len(window))
+        action = "push"
+
+    # Same agreement the git push records, plus deletions recorded as absent.
+    files = dict(state.get("files", {}))
+    for r in records:
+        if r["status"] == AGREED_ABSENT:
+            files[r["remote"]] = {"remote_sha256": None, "local_sha256": r["local_sha256"]}
+        else:
+            files[r["remote"]] = {"remote_sha256": r["local_sha256"], "local_sha256": r["local_sha256"]}
+    for d in deletions:
+        if d["status"] in (DELETE, DELETED_BOTH):
+            files[d["remote"]] = {"remote_sha256": None, "local_sha256": None}
+    save_state(state_path, project_id, action, files)
+    say("recorded agreement in %s (%d files)" % (os.path.relpath(state_path, REPO), len(files)))
+    return 0
 
 
 # -------------------------------------------------------------------- pull
@@ -702,12 +960,36 @@ def main(argv=None):
     ap.add_argument("--state", default=STATE_DEFAULT,
                     help="sync state file (default: .overleaf_sync.json)")
     ap.add_argument("--message", default="sync validated submission")
+    ap.add_argument("--transport", choices=("git", "http"), default="git",
+                    help="git: git.overleaf.com (premium plans only); http: the browser "
+                         "session saved by Downloads\\OVERLEAF_LOGIN_double_click.cmd")
+    ap.add_argument("--olauth", default=None,
+                    help="http transport: ols session file "
+                         "(default: %%USERPROFILE%%\\.overleaf\\.olauth); never printed")
+    ap.add_argument("--i-understand-this-writes-the-real-project",
+                    dest="confirm_real_project", action="store_true",
+                    help="required, together with --release-manifest, for any push "
+                         "to the real paper project")
     a = ap.parse_args(argv)
     token = os.environ.get("OVERLEAF_TOKEN")
     if token:
         _SECRETS.append(token)
     paper = os.path.abspath(a.paper_dir)
     state_path = os.path.abspath(a.state)
+    http = a.transport == "http"
+
+    if a.dry_run and (a.pull or a.yes):
+        say("--dry-run cannot be combined with --pull or --yes: a pull writes local files")
+        say("and records sync state. Run --dry-run on its own to compare without writing.")
+        return 1
+
+    pushing = not (a.pull or a.check or a.dry_run)
+    if pushing and a.project_id and overleaf_http.is_real_project(a.project_id) and not (
+            a.release_manifest and a.confirm_real_project):
+        say("REFUSING: that is the real paper project. A push to it needs both a")
+        say("successful --release-manifest and --i-understand-this-writes-the-real-project.")
+        say("Nothing was contacted or pushed.")
+        return 1
 
     if not os.path.isdir(paper):
         say("no such paper directory: %s" % paper)
@@ -751,42 +1033,65 @@ def main(argv=None):
     else:
         say("sync state: none recorded yet (first run)")
 
-    if not a.project_id or not token:
-        say("\nMissing credentials. Set OVERLEAF_PROJECT_ID and OVERLEAF_TOKEN,")
-        say("or pass --project-id with OVERLEAF_TOKEN set in the process environment.")
-        say("Token: Overleaf Account Settings -> Git Integration -> Generate token.")
-        say("Note: Overleaf git access is a premium feature; on a free plan this")
-        say("will fail authentication and the loose-file mirror stays the fallback.")
-        return 1
+    if http:
+        if not a.project_id:
+            say("\nMissing project id. Pass --project-id or set OVERLEAF_PROJECT_ID.")
+            return 1
+        if not overleaf_http.PROJECT_ID.fullmatch(a.project_id):
+            say("Invalid project identifier (expected 24 lowercase hex digits).")
+            return 1
+        remote_url = "%s/project/%s" % (overleaf_http.BASE, a.project_id)
+    else:
+        if not a.project_id or not token:
+            say("\nMissing credentials. Set OVERLEAF_PROJECT_ID and OVERLEAF_TOKEN,")
+            say("or pass --project-id with OVERLEAF_TOKEN set in the process environment.")
+            say("Token: Overleaf Account Settings -> Git Integration -> Generate token.")
+            say("Note: Overleaf git access is a premium feature; on a free plan this")
+            say("will fail authentication; use --transport http instead.")
+            return 1
 
-    if not re.fullmatch(r"[A-Za-z0-9_-]+", a.project_id):
-        say("Invalid project identifier.")
-        return 1
-    remote_url = "https://git.overleaf.com/%s" % a.project_id
-    auth_env = authentication_environment(token, remote_url)
+        if not re.fullmatch(r"[A-Za-z0-9_-]+", a.project_id):
+            say("Invalid project identifier.")
+            return 1
+        remote_url = "https://git.overleaf.com/%s" % a.project_id
+        auth_env = authentication_environment(token, remote_url)
 
     # The scratch checkout lives inside the ignored _release_work tree
     # rather than in the system temp directory, so a crash leaves the evidence
-    # next to the work instead of somewhere nobody will look.
-    clone = str(work / "clone")
+    # next to the work instead of somewhere nobody will look. Over HTTP the
+    # unpacked project ZIP takes the clone's place.
+    clone = str(work / ("remote" if http else "clone"))
+    client = None
     try:
-        say("\ncloning %s" % remote_url)
-        r = run(GIT + ["clone", "--depth", "1", remote_url, clone],
-                check=False, quiet=True, env=auth_env)
-        if r.returncode != 0:
-            say(r.stderr.strip()[:400])
-            say("\nClone failed. Most likely causes: wrong project id, wrong or")
-            say("expired token, or a free plan without git integration.")
-            return 1
-        say("  clone OK - authentication works")
-        # Persist the setting so add/commit agree with what was checked out.
-        run(["git", "config", "core.autocrlf", "input"], cwd=clone, quiet=True)
-        run(["git", "config", "core.eol", "lf"], cwd=clone, quiet=True)
-        remote_tip = run(GIT + ["rev-parse", "HEAD"], cwd=clone, quiet=True).stdout.strip()
-        branch = run(GIT + ["symbolic-ref", "--short", "HEAD"], cwd=clone, quiet=True).stdout.strip()
-        if a.check:
-            say("\n--check: authentication verified, nothing pushed")
-            return 0
+        if http:
+            say("\nopening %s with the saved browser session" % remote_url)
+            client = open_http_transport(a, pushing)
+            client.open_project()
+            _SECRETS.extend(client.secrets())
+            say("  session OK - the project opens")
+            if a.check:
+                say("\n--check: session verified, nothing pushed")
+                return 0
+            client.snapshot(clone)
+            say("  downloaded the project ZIP")
+        else:
+            say("\ncloning %s" % remote_url)
+            r = run(GIT + ["clone", "--depth", "1", remote_url, clone],
+                    check=False, quiet=True, env=auth_env)
+            if r.returncode != 0:
+                say(r.stderr.strip()[:400])
+                say("\nClone failed. Most likely causes: wrong project id, wrong or")
+                say("expired token, or a free plan without git integration.")
+                return 1
+            say("  clone OK - authentication works")
+            # Persist the setting so add/commit agree with what was checked out.
+            run(["git", "config", "core.autocrlf", "input"], cwd=clone, quiet=True)
+            run(["git", "config", "core.eol", "lf"], cwd=clone, quiet=True)
+            remote_tip = run(GIT + ["rev-parse", "HEAD"], cwd=clone, quiet=True).stdout.strip()
+            branch = run(GIT + ["symbolic-ref", "--short", "HEAD"], cwd=clone, quiet=True).stdout.strip()
+            if a.check:
+                say("\n--check: authentication verified, nothing pushed")
+                return 0
 
         tracked_paths = {rel for _, rel in items} | set(state.get("files", {}))
         rhashes = scan_remote(clone, extra_paths=tracked_paths)
@@ -798,12 +1103,15 @@ def main(argv=None):
 
         records = classify(items, rhashes, state)
         report(records, paper, clone, verbose_diffs=True)
+        deletions = plan_deletions(items, rhashes, state, paper) if http else []
+        report_deletions(deletions, clone)
 
-        conflicts = [r for r in records if r["status"] in CONFLICTS]
+        conflicts = [r for r in records + deletions if r["status"] in CONFLICTS]
         if manifest and any(record["status"] == AGREED_ABSENT for record in records):
             say("REFUSING: a required validated input was intentionally deleted remotely; reconcile first.")
             return 2
         to_push = [r for r in records if r["status"] in (ADD, UPDATE)]
+        to_delete = [d for d in deletions if d["status"] == DELETE]
 
         # --dry-run reports and never fails. It writes nothing in either
         # direction, so giving it the refusal exit code would only make it
@@ -816,6 +1124,8 @@ def main(argv=None):
                 say("%d other file(s) would have been written." % len(to_push))
             else:
                 say("%d file(s) would be written to Overleaf." % len(to_push))
+            if http:
+                say("%d file(s) would be deleted from Overleaf." % len(to_delete))
             return 0
 
         if conflicts:
@@ -831,6 +1141,10 @@ def main(argv=None):
             say("  --pull --yes    take Overleaf's version into the repository")
             say("  reconcile       review and merge edits before rebuilding a release")
             return 2
+
+        if http:
+            return http_push(client, paper, manifest, state, records, deletions,
+                             rhashes, tracked_paths, work, state_path, a.project_id)
 
         if not to_push:
             verify_local_release(paper, manifest)
@@ -894,11 +1208,18 @@ def main(argv=None):
         say("recorded agreement in %s (%d files)"
             % (os.path.relpath(state_path, REPO), len(files)))
         return 0
+    except overleaf_http.OverleafHTTPError as exc:
+        say("Overleaf HTTP transport: %s" % exc)
+        say("Nothing further was sent; sync state not updated.")
+        return 1
     except (OSError, ValueError, KeyError) as exc:
         say("REFUSING TO PUSH: " + str(exc))
         return 1
     finally:
-        cleanup_clone(clone)
+        if http:
+            rmtree_force(clone)
+        else:
+            cleanup_clone(clone)
 
 
 if __name__ == "__main__":

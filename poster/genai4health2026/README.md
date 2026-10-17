@@ -379,27 +379,42 @@ Set `\providecommand{\PosterSize}{...}` in `poster_size.tex`:
 
 | value | print size | design canvas | body text, A0-equivalent |
 |---|---|---|---|
-| `neurips-ws` (default) | 24 x 36 in portrait | 841 x 1261.5 mm | 29.9 pt |
+| `neurips26-ws` (default) | 61 x 85 cm portrait | 905.3 x 1261.5 mm | 27.7 pt |
+| `neurips-ws` | 24 x 36 in portrait | 841 x 1261.5 mm | 29.9 pt |
 | `a0` | 841 x 1189 mm | 892 x 1261.5 mm | 28.1 pt |
 | `a1` | 594 x 841 mm | 892 x 1261.5 mm | 28.2 pt |
 | `us-36x48` | 36 x 48 in portrait | 946 x 1261.5 mm | 26.5 pt |
 
-The design canvas is 841 mm (A0) wide for the 2:3 workshop format, so font
-sizes are A0-equivalent: block body 29.9 pt, tables and notes 24.9 pt, block
-titles 43 pt, title 84 pt. Shorter formats keep the 1261.5 mm canvas height
-and gain width, so the same content fits every size; figures keep their
-height. `poster_print.tex` scales the canvas to the print size. All four sizes
-were built on 2026-10-08 without overflow or Overfull boxes; on 2026-10-12
-(new layout) the default and the `one_index` synthetic scenario were rebuilt
-at `a0`, `a1` and `us-36x48` (no overflow, 0 Overfull, at least 73 pt spare).
+The design canvas is 841 mm (A0) wide for the 2:3 format of earlier NeurIPS
+workshops, so font sizes are A0-equivalent there: block body 29.9 pt, tables
+and notes 24.9 pt, block titles 43 pt, title 84 pt. Shorter formats keep the
+1261.5 mm canvas height and gain width, so the same content fits every size;
+figures keep their height. `poster_print.tex` scales the canvas to the print
+size. At the default 61 x 85 cm the canvas is 905.3 mm wide, so printed sizes
+are 610/905.3 of the canvas values: block body about 20.1 pt, tables and notes
+16.8 pt, block titles 29 pt, title 57 pt. All four earlier sizes were built on
+2026-10-08 without overflow or Overfull boxes; on 2026-10-12 (new layout) the
+default of that time and the `one_index` synthetic scenario were rebuilt at
+`a0`, `a1` and `us-36x48` (no overflow, 0 Overfull, at least 73 pt spare).
 Landscape formats need a different column layout and are not supported.
 
-### Sources (checked 2026-10-08; NeurIPS 2026 page rechecked 2026-10-11)
+### Sources (checked 2026-10-08; NeurIPS 2026 page rechecked 2026-10-11 and 2026-10-17)
 
 - NeurIPS 2026 poster instructions,
-  <https://neurips.cc/Conferences/2026/PosterInstructions>: on 2026-10-08 and
-  again on 2026-10-11 the page read only "This page has not yet been updated
-  to 2026"; no 2026 workshop poster size has been published there.
+  <https://neurips.cc/Conferences/2026/PosterInstructions>, as published by
+  2026-10-17: "Printed Poster Sizes for Sydney, Atlanta, and Paris ...
+  Workshops: 61 cm (W) x 85 cm (H) Portrait format ... Do not print your
+  poster larger than what is listed here." Sydney workshop posters go on
+  allocated boards near the workshop room (not on walls), one venue command
+  strip per corner, taken down after the session. Printing: the Sydney
+  workshop order form at postersessiononline.eu (linked from that page;
+  advance ordering deadline November 4, 11 PM AEST; pick-up at the Exhibition
+  Centre, Level 2, Registration Desk 3). On 2026-10-08 and 2026-10-11 the page
+  still read "This page has not yet been updated to 2026".
+- GenAI4Health 2026 Program Chairs (OpenReview notification, 2026-10-16):
+  "Please prepare your GenAI4Health poster in portrait format, 61 cm wide x
+  85 cm high. Posters must not exceed these dimensions", for all tracks; board
+  assignments to follow.
 - NeurIPS 2025 poster instructions,
   <https://neurips.cc/Conferences/2025/PosterInstructions>: workshop posters
   "24W x 36H inches portrait layout" (San Diego) and "24W x 36H inches"
@@ -411,17 +426,12 @@ Landscape formats need a different column layout and are not supported.
   recommends 100 dpi at poster size (pdf, jpg, tiff, png).
 - GenAI4Health 2026, <https://genai4health.github.io/2026-NeurIPS/> (and its
   source repository `genai4health/2026-NeurIPS`): "All accepted papers will be
-  presented with posters"; the schedule lists an "Interactive Poster Session";
-  no size or format is given (rechecked 2026-10-11). The 2024 and 2025
-  workshop sites (`genai4health/2024-NeurIPS`, `genai4health/2025-NeurIPS`)
-  give no size either.
-- Not used: third-party poster-template sites claiming that Sydney venues
-  expect A0; no official source was found.
+  presented with posters"; the schedule lists an "Interactive Poster Session".
 
-Default: 24 x 36 in portrait, the size NeurIPS asked of workshop posters in
-2024 and in both 2025 venues. If the 2026 page or the organizers specify
-another size (A0 is common at Australian venues), change `poster_size.tex`
-and rebuild.
+Default: 61 x 85 cm portrait (`neurips26-ws`), the 2026 workshop size from
+both sources above; `poster_print.pdf` is exactly 610 x 850 mm, the maximum
+allowed. Until 2026-10-17 the default was 24 x 36 in (`neurips-ws`), which is
+64 mm too tall for 2026.
 
 ## What to fill in later
 
@@ -447,8 +457,10 @@ and rebuild.
    pending) and `Checks OK`. Look at the preview: the outcome strip shows the
    registered labels exactly as in the paper. Do not copy synthetic dry-run
    outputs into the paper's `auto/` folder (the build refuses them).
-4. **Poster size** once the 2026 guidance appears (see above; not published as
-   of 2026-10-11).
+4. **Poster size**: done (2026-10-17). The 2026 workshop size, 61 x 85 cm
+   portrait (`neurips26-ws`), is the default; order the print through the
+   Sydney workshop form (see "Sources" above) before the Nov 4 advance
+   deadline.
 5. **Acknowledgments** do not apply to the poster (the paper's
    acknowledgments are not reproduced; the credits line covers the cited
    methods, data and the licensed OCT example).
@@ -489,6 +501,17 @@ and rebuild.
   repeats the generator's plotting conventions through the validated encoding
   contract (`cr_seed_spread_encoding_v2`); a new contract is refused until
   `render_poster_figure` in `make_preview.py` is updated.
+- Spare space at 61 x 85 cm (`neurips26-ws`, design canvas 905.3 x 1261.5 mm,
+  2026-10-17): 86.2 pt with placeholders; 38.0 pt with synthetic results for
+  C3 and E3 finishing after the freeze (labels A/B, `M_partial`) and 68.4 pt
+  for labels B/C, `M_desc`, a late RANDOM-CB run and a descriptive seed A
+  (cr_postfreeze rehearsal fixtures; 0 Overfull, claims checks agree). The
+  fixtures cannot mark an original as late; that case does not arise in this
+  campaign (all originals were re-probed long before the freeze). Printed
+  sizes are 610/905.3 = 0.674 of the canvas (0.725 at 24 x 36 in), so the
+  smallest figure labels print at about 8.8 to 10.5 pt (readable at arm's
+  length; body text is about 20 pt) in the strategies, framework and
+  seed-spread figures.
 - Spare space at 24 x 36 in (design canvas, layout of 2026-10-12): 90.3 pt
   (32 mm) with placeholders; at least 11.6 pt (about 4.1 mm) in every fresh
   synthetic replication scenario tested (17 bundles from the generator of

@@ -6,7 +6,7 @@
   count, size, overfull boxes, fit check, placeholders, result cells checked
   against the generator's metadata).
 .PARAMETER Size
-  Optional one-off override of poster_size.tex: neurips-ws | a0 | a1 | us-36x48.
+  Optional one-off override of poster_size.tex: neurips26-ws | neurips-ws | a0 | a1 | us-36x48.
   Outputs are then named poster-<size>.pdf, poster_print-<size>.pdf and
   poster-<size>_preview.png.
 .PARAMETER Dpi
@@ -28,7 +28,7 @@
   else python on PATH; it runs CPU-only.
 #>
 param(
-  [ValidateSet('', 'neurips-ws', 'a0', 'a1', 'us-36x48')] [string]$Size = '',
+  [ValidateSet('', 'neurips26-ws', 'neurips-ws', 'a0', 'a1', 'us-36x48')] [string]$Size = '',
   [int]$Dpi = 50,
   [switch]$OnlyCached,
   [switch]$AllowSynthetic

@@ -4,6 +4,16 @@ Self-supervised pretraining using [I-JEPA](https://github.com/facebookresearch/i
 
 ## Current workshop study
 
+**Accepted poster, GenAI4Health @ NeurIPS 2026.** The camera-ready work is on
+[`poster-ready`](https://github.com/yfeng0206/I-JEPA_3D_OCT/tree/poster-ready).
+Start with the [paper and poster guide](paper/genai4health2026/README.md) for
+the paper, printable poster draft, code and
+[registered replication protocol](paper/genai4health2026/PREREGISTRATION_cr_seed_v1.md).
+The registered campaign adds repeated epoch-25-to-50 continuations, a
+CENTROID-matched budget control, and alternative frozen-probe pooling.
+Results integration is pending the **October 22, 2026, 08:00 PDT** freeze;
+the historical results below are not the campaign's results.
+
 The canonical paper is `paper\genai4health2026\main_submission.tex`; the older
 `main.tex` in that directory is not the current submission source. The active
 investigation is recorded in `autopilot\investigations\delivered_task\BOARD.md`,
@@ -19,7 +29,7 @@ The current paper compares **frozen MeanPool probes** after different masking
 policies. CENTROID (historically named `oracle`) reaches **0.8855** test AUC;
 the **0.8947** value below is from a different, fine-tuned evaluation regime.
 The encoder operates on **2D B-scans**, followed by pooling across a volume.
-There is one completed pretraining continuation per policy and the same test
+The original comparison has one pretraining continuation per policy and the same test
 split was repeatedly inspected. The results describe those runs, not an
 established ranking over independent retrainings.
 

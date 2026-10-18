@@ -1,5 +1,30 @@
 # GenAI4Health 2026 paper package
 
+## Paper, poster, code and registration
+
+**Where to Predict in Retinal OCT? Anatomy-Guided Target Selection for I-JEPA**
+— Yunchu Feng and Wai Tak Lau. Accepted poster, GenAI4Health @ NeurIPS 2026.
+
+This is the poster QR destination on the `poster-ready` branch.
+
+| Resource | Status |
+|---|---|
+| [Paper PDF](main_submission.pdf) | Historical reviewed v9, anonymous; not the final camera-ready PDF |
+| [Camera-ready source](main_submission.tex) | Revision in progress; results and acknowledgments pending |
+| [Poster PDF, 61 × 85 cm](../../poster/genai4health2026/poster_print.pdf) | Draft with registered-results placeholders; not ready to print |
+| [Code and project overview](../../README.md) | Original experiments and camera-ready tooling |
+| [Pre-registration and amendments](PREREGISTRATION_cr_seed_v1.md) | Committed protocol, outcome rules and treatment of incomplete/late runs |
+| [Campaign configurations](../../configs/cr_seed_v1) | Repeated continuations and matched-budget control |
+
+The campaign's test results remain sealed until **October 22, 2026, 08:00 PDT**.
+New seeds are continuations from one shared epoch-25 checkpoint, not independent
+initializations. RANDOM-CB matches CENTROID shadow-mask budgets; it is one
+control run, and ENVELOPE is not budget-matched. Guide agreement and plausibility
+statistics do not measure anatomical accuracy. Final results will replace the
+placeholders after the registered analysis and release checks.
+
+## Package and historical release
+
 Working directory for the NeurIPS 2026 GenAI4Health workshop paper. The
 submitted version used the double-blind 9-page format; the camera-ready version
 uses the workshop template (`genai4health_2026.sty`, which loads the unmodified

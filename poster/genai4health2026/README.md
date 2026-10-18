@@ -4,8 +4,8 @@ Poster for the accepted workshop paper "Where to Predict in Retinal OCT?
 Anatomy-Guided Target Selection for I-JEPA" (GenAI for Health Workshop,
 NeurIPS 2026, Sydney, Dec 12 2026; every accepted paper presents a poster).
 
-Status: draft. Authors and affiliations are final. The QR link is pending a
-decision (see "What to fill in later"). The registered-replication block fills
+Status: draft. Authors and affiliations are final. The QR links to the public
+paper folder on `poster-ready`, with paper, code and registration links. The registered-replication block fills
 in automatically from the generated results after the Oct 22 results freeze;
 until then it shows TBD placeholders and a RESULTS PENDING banner.
 
@@ -72,7 +72,7 @@ macros; do not type result numbers into `poster.tex`.
 - Replication block: the label rule (pre-registration section 3, amendment 1)
   in the RESULTS PENDING banner and, with results, at the end of the outcome
   strip; pooling panel notes the mean+max variant (paper).
-- Credits: "adapted (cropped, downsampled, overlays added)"; QR placeholder
+- Credits: "adapted (cropped, downsampled, overlays added)"; QR caption
   "paper, code & pre-registration" (R1 M15).
 
 ## Build
@@ -438,13 +438,13 @@ allowed. Until 2026-10-17 the default was 24 x 36 in (`neurips-ws`), which is
 1. **Authors and affiliations**: done (2026-10-10). `\PosterAuthors` and
    `\PosterAffiliations` in `poster.tex` carry the same names and order as
    `paper/genai4health2026/camera_ready_authors.json`.
-2. **QR code: pending a decision by the authors.** It should point to the
-   public paper together with the code and the pre-registration
-   (`PREREGISTRATION_cr_seed_v1.md`, R1 M15: "registered" must be
-   verifiable); the placeholder says "paper, code & pre-registration". Set
-   `\providecommand*{\PosterURL}{...}` in `poster.tex` to the chosen URL
-   (avoid `#` and `%`). An empty value draws the "QR CODE PENDING" box; a URL
-   draws a real code (tested).
+2. **QR code: configured.** It points to
+   `https://github.com/yfeng0206/I-JEPA_3D_OCT/tree/poster-ready/paper/genai4health2026`,
+   whose README links the paper, code, poster and pre-registration. The guide
+   distinguishes the historical reviewed PDF from the unfinished camera-ready
+   source and poster. After release, update those status descriptions and
+   verify the links while signed out. Keep the `poster-ready` branch available
+   for the printed QR. `\PosterURL` in `poster.tex` controls the destination.
 3. **Registered replication, matched-budget control, pooling, seed spread**:
    automatic, nothing to edit in `poster.tex`. After the Oct 22 freeze, once
    `autopilot/make_cr_results.py build` has written the real results to

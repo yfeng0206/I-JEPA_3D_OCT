@@ -14,6 +14,9 @@ CENTROID-matched budget control, and alternative frozen-probe pooling.
 Results integration is pending the **October 22, 2026, 08:00 PDT** freeze;
 the historical results below are not the campaign's results.
 
+For checkpoint names, private Hugging Face backups, figure/result provenance and
+pinned upstream restore instructions, see the [research artifact catalog](docs/artifacts/ARCHIVE_CATALOG.md).
+
 The canonical paper is `paper\genai4health2026\main_submission.tex`; the older
 `main.tex` in that directory is not the current submission source. The active
 investigation is recorded in `autopilot\investigations\delivered_task\BOARD.md`,

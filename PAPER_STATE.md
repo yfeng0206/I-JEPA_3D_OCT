@@ -5,12 +5,19 @@
 **Accepted** to the GenAI4Health NeurIPS 2026 workshop. Release v9 (v8 plus one
 Introduction sentence on medical imaging foundation models) is merged to `main`;
 its evidence is `autopilot\investigations\submission_refresh_20260910\release_handoff_v9.json`.
-Overleaf still holds v8. Camera-ready/poster work continues on branch `poster-ready`:
-use the `genai4health_2026` template, restore authors, and address reviewer feedback.
+The last documented Overleaf version is v8; its live contents must be checked before
+release sync. Camera-ready/poster work continues on branch `poster-ready`: the workshop
+template, confirmed author block, corrected mask audit, guide diagnostics, all-strategy
+figures and 61 x 85 cm poster are implemented. Registered results and acknowledgments
+remain pending.
 Camera-ready deadline: October 25, 2026, 11:59 PM AoE (= Oct 26 04:59 PDT); internal
-upload target Oct 24. **The staged camera-ready plan (seed replication, matched-budget
-control, reproduction gates, GPU schedule, paper changes) is
-`paper\genai4health2026\CAMERA_READY_PLAN.md`.** Nothing in it has been executed yet.
+upload target Oct 24. **The approved remaining scope and acceptance checklist are in
+`paper\genai4health2026\RELEASE_READINESS.md` (2026-10-18).**
+`paper\genai4health2026\CAMERA_READY_PLAN.md` preserves the original planning history;
+the committed pre-registration and amendments govern analysis eligibility and labels.
+Continue the existing campaign, prioritize completion of CB and E2, and prepare the
+release at the freeze without waiting for late runs. No new experiment or redesign is
+required. Storage cleanup is deferred until after release.
 
 ## Post-freeze runbook (cr_seed_v1; results freeze Thu 2026-10-22 08:00 PDT)
 
@@ -28,7 +35,7 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
    allow 20-30 min with the real MD caches (manuscript text unchanged).** From the repository
    root:
 
-       powershell -NoProfile -ExecutionPolicy Bypass -File autopilot\cr_postfreeze.ps1
+       powershell -NoProfile -ExecutionPolicy Bypass -File autopilot\cr_postfreeze.ps1 -AllowIncomplete
 
    Preflight plan (campaign state, probe dirs, late / in-progress runs) -> `cr_stats`
    inventory -> unseal every ready probe dir that has no receipt (never twice) -> `final`
@@ -60,7 +67,7 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
    marker / label contract is in `fig_cr_seed_spread.evidence.json` under `encoding`); at most
    10 main pages (rehearsal worst case after the 2026-10-12 figure and text polish: main text ends at 9.93),
    no undefined references. The scratch poster build should exit 0 with `Checks OK` in
-   `logs\review_poster_build.log` (only the QR-code placeholders listed); since I17 its scratch
+   `logs\review_poster_build.log` (no unresolved results; the QR was configured October 17); since I17 its scratch
    copy carries the figure registry and runs the generator check, so a non-zero exit is a real
    poster-gate finding. Fill the acknowledgments (`\CRAcknowledgmentsPending`) before step 3.
 3. **Phase 2, about 1-2 min.**
@@ -90,13 +97,15 @@ and never touches a running campaign. Rehearsed end to end on synthetic campaign
    original RANDOM anchor on time: without it (or with fewer than two complete indices) no
    label is assigned, the matched control is reported descriptively (`M_incomplete`, no
    RANDOM range shown), and the text names that reason.
-   If E3 is still training or probing at 08:00, phase 1 stops with exit 3. Either wait until the
-   campaign marks E3's probe DONE (E3 is then reported as finished after the freeze, an open
-   marker in the figure) and re-run, or re-run now with `-AllowIncomplete` (E3 is reported as
-   not completed, pre-registration section 7). Both leave the primary analysis unchanged. A run
+   Without `-AllowIncomplete`, an in-progress run stops phase 1 with exit 3. The approved
+   October 18 release plan uses `-AllowIncomplete` at the freeze and reports such runs as
+   not completed in that candidate (pre-registration section 7), while training continues.
+   Do not delay the review candidate until E3 finishes. A later refresh before phase 2 may
+   show newly completed late runs descriptively, but must repeat evidence and figure checks;
+   it cannot change their primary eligibility. A run
    that has not started at 08:00 (e.g. E3 queued behind a C3 still in progress) does not stop
-   the preflight by itself and is reported as not completed (rehearsed by I17). Decide
-   before phase 2. A re-run of phase 1 opens only new probe dirs and recomputes `final`/MD only
+   the preflight by itself and is reported as not completed (rehearsed by I17). Fix the
+   candidate's inclusion snapshot before phase 2. A re-run of phase 1 opens only new probe dirs and recomputes `final`/MD only
    when their inputs or the completion evidence changed. After phase 2, going back needs `git checkout --
    paper/genai4health2026/main_submission.tex paper/genai4health2026/compact_protocol.tex
    paper/genai4health2026/numeric_reviews.json autopilot/release_assets.json` and deleting
@@ -349,18 +358,18 @@ exists to prevent.
 
 ## Open items, all operator decisions
 
-1. **Public repository and double-blind.** `main_submission.pdf` is world-readable
-   at `yfeng0206/I-JEPA_3D_OCT` under the author's real identity, while the call
-   names "a GitHub repository revealing authorship" as grounds for desk rejection.
-   Not acted on because changing visibility affects a collaborator's clone. See
-   `autopilot/reports/GITHUB_AUDIT.md`.
-2. **Rotate the Overleaf git token.** It was pasted into a chat session. The
-   sync itself works and the project is currently up to date; after rotating,
-   update the user-scope variable with
-   `setx OVERLEAF_TOKEN <new token>` and open a new shell.
-3. **Replication.** Now requested by the area chair and all three reviewers for the
-   camera-ready. The August chain must not be resumed as-is; follow
-   `paper\genai4health2026\CAMERA_READY_PLAN.md`.
+1. **Acknowledgments/funding.** Obtain exact wording or an explicit none from the authors.
+   The author list is already confirmed; do not invent a disclosure.
+2. **Real-result review.** Review the post-freeze candidate and any manual receipt
+   migrations before phase 2. Follow `paper\genai4health2026\RELEASE_READINESS.md`.
+3. **Overleaf and release destinations.** Inspect current project contents and collaborator
+   activity before the manifest-gated sync. The historical notes about an up-to-date
+   project and git-token access do not establish current state. The accepted camera-ready
+   paper requires visible authors; the old anonymous-submission visibility concern is
+   not a current release blocker.
+4. **Historical credential-exposure follow-up.** An earlier note requested rotation of an
+   Overleaf git token shared in chat. Resolution was not verified in this readiness audit;
+   confirm it before sync without printing or copying credentials.
 
 ## Hard-won conventions, do not relearn these
 

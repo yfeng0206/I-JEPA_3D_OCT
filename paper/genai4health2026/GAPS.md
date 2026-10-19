@@ -1,5 +1,9 @@
 # Gaps and required follow-up
 
+> Historical audit of an earlier manuscript and experiment chain. Its pending-run,
+> tooling and branch statements are not current instructions. Do not restart the old
+> chains from this file. Use [RELEASE_READINESS.md](RELEASE_READINESS.md) for current work.
+
 There are **5 `\TODO` occurrences** in `main.tex`, representing four scientific
 gaps. The first two occurrences refer to the same pending measurement.
 

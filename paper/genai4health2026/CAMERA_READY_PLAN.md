@@ -1,8 +1,34 @@
 # Camera-ready plan: GenAI4Health @ NeurIPS 2026 (Accept, Poster), Submission 252
 
-Status: PLAN ONLY (no code changed, no GPU job launched). Version 2, 2026-10-08 ~01:45 PDT,
+## Current execution plan — approved 2026-10-18
+
+The campaign is running and most result-independent paper/poster work is complete.
+Use [RELEASE_READINESS.md](RELEASE_READINESS.md) for the remaining work, reviewer-point
+coverage, blockers and release criteria. Use [../../PAPER_STATE.md](../../PAPER_STATE.md)
+for the executable post-freeze runbook. Live state/logs take precedence over ETA snapshots.
+
+- Finish the existing campaign; CB and E2 are the immediate scientific priorities.
+- Preserve the October 22, 08:00 PDT test freeze and registered outcome rules.
+- Prepare the review candidate at the freeze using `-AllowIncomplete` if runs remain in
+  progress. Continue late training, reporting incomplete seed indices descriptively.
+- Target review on October 22–23 and upload on October 24. No new experimental scope,
+  poster redesign, or storage cleanup is required for this release.
+- Author details and the 61 x 85 cm poster size are resolved; acknowledgments/funding
+  and real registered results are still required.
+
+This is an execution update, not an amendment to
+[PREREGISTRATION_cr_seed_v1.md](PREREGISTRATION_cr_seed_v1.md).
+
+## Historical plan — October 8 (retained for provenance)
+
+The schedule, unexecuted-work statements, fallback order and decision requests below
+describe the original plan only. They are not current instructions. In particular,
+the historical October 20–21 unsealing line is superseded: **never unseal before
+October 22 at 08:00 PDT**. The registered amendments added seed index 9012.
+
+Historical status: PLAN ONLY. Version 2, 2026-10-08 ~01:45 PDT,
 revised after an independent plan critique.
-Branch: `poster-ready` (= main `b941814`). Evidence reports (local Copilot session workspace, `files\camera_ready\`; not committed because they quote confidential review text):
+Historical branch: `poster-ready` (= main `b941814`). Evidence reports (local Copilot session workspace, `files\camera_ready\`; not committed because they quote confidential review text):
 `01_provenance.md` (A1), `02_seed_code_verification.md` (A2), `03_matched_control.md` (A3),
 `04_eval_analysis.md` (A4), `05_external_research.md` (A5), `06_review_triage_paper_plan.md` (A6).
 Labels: [M] measured, [I] inferred, [A] assumption/estimate.

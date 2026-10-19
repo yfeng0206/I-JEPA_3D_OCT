@@ -1,5 +1,9 @@
 # TODO / ROADMAP -- GenAI4Health @ NeurIPS 2026 submission
 
+> Historical submission-stage roadmap. Its deadlines, page limits, experiment priorities
+> and status statements are not the current camera-ready plan. Use
+> [RELEASE_READINESS.md](RELEASE_READINESS.md) for the approved remaining work.
+
 Working doc. Not compiled into the PDF. Delete or keep out of the Overleaf
 compile -- it is a `.md`, so LaTeX ignores it.
 

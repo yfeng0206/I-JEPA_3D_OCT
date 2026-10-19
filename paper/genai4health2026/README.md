@@ -14,6 +14,7 @@ This is the poster QR destination on the `poster-ready` branch.
 | [Poster PDF, 61 × 85 cm](../../poster/genai4health2026/poster_print.pdf) | Draft with registered-results placeholders; not ready to print |
 | [Code and project overview](../../README.md) | Original experiments and camera-ready tooling |
 | [Pre-registration and amendments](PREREGISTRATION_cr_seed_v1.md) | Committed protocol, outcome rules and treatment of incomplete/late runs |
+| [Release readiness and remaining work](RELEASE_READINESS.md) | Approved October 18 scope, reviewer-point coverage and final checks |
 | [Campaign configurations](../../configs/cr_seed_v1) | Repeated continuations and matched-budget control |
 
 The campaign's test results remain sealed until **October 22, 2026, 08:00 PDT**.

@@ -5,12 +5,15 @@
 Post-freeze phase 1 completed October 22 at 20:54 PDT. The registered statistics, severity analysis,
 CB budget audit and generated results passed their checks; independent gpt-6-astra numeric
 review found no major issue. Review PDFs are in Downloads as
-`CR_REVIEW_20261023_paper_future_work.pdf` and `POSTER_REVIEW_20261022_61x85cm.pdf`.
+`CR_REVIEW_latest_paper.pdf` and `POSTER_REVIEW_20261022_61x85cm.pdf`.
 The latest paper adds section 6.1, Future work, on the author's request. It prioritizes
 delivered-mask controls, complete preregistered replication and independent initialization,
 untouched evaluation, guide ground truth and broader transfer. These are proposed experiments,
-not changes to the registered analysis. Main text ends at 9.84 pages (9.49 before this
-addition), with no overfull boxes or undefined references; the poster is 610 x 850 mm. These are review
+not changes to the registered analysis. The background motivation now distinguishes
+visually uniform pixels from informative embeddings, and future work includes a
+fixed-budget tissue/background composition ablation. Main text ends at 9.93 pages
+(9.84 with future work alone; initial review 9.49), with no overfull boxes or undefined
+references; the poster is 610 x 850 mm. These are review
 copies: the real manuscript text has not been integrated, and no final release was synced.
 
 Only seed 1234 is complete on time. Seed 5678 is descriptive because E2 finished after
@@ -33,6 +36,17 @@ independent report. Visual checks found no clipping; all fonts are embedded and 
 decodes to the intended public paper folder.
 The October 23 prose edit introduced no new numeric-audit errors or unresolved items;
 the existing pre-integration receipt and asset-registration findings still require phase 2.
+The later background clarification changed one formula receipt's surrounding prose;
+gpt-6-astra independently verified the unchanged equation and evidence, and only that
+receipt was re-keyed. It makes no empirical claim about disease signal in black pixels.
+
+An uploadable Overleaf review ZIP is available in Downloads as
+`OCT_JEPA_GenAI4Health2026_Overleaf_REVIEW_latest.zip`. It contains the 21 compiled
+source inputs, `main.pdf`, a README and explicit review status. It was extracted and
+compiled with `main.tex`; all source hashes match, all 19 PDF pages' text match the
+review copy, and all 22 fonts are embedded. Set `main.tex` as the Overleaf main document
+and select XeLaTeX. The local `.review.json` records verification; it is not a final
+release manifest. Author acknowledgment/funding information remains pending.
 
 ## Status
 

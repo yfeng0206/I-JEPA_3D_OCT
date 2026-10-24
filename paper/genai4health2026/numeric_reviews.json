@@ -3576,13 +3576,13 @@
     },
     {
       "file": "main_submission.tex",
-      "context_sha256": "4eab293147045bdef0b52df3898165ff9948f95f5984033a95d4e2d7731a0a5e",
+      "context_sha256": "fb825f74cf6cb6ef5f473d2fe81726691b09904c096b078aea8d7c487e132aeb",
       "token_index": 0,
       "value": "1",
       "review": {
         "kind": "formula",
-        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12)",
-        "rationale": "T_1 denotes the first target list, not a measured constant. Uniform locations are image-independent; guided placement uses image-derived weights. The separate context block removes the target union before truncation, so target complement is not encoder-visible context. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: T_1 remains the first target list. Joint sampling of context and targets now matches the production collation and strategy-specific intensity/segmentation guidance; no ground-truth equivalence is asserted.",
+        "reviewer": "GitHub Copilot final notation review, 2026-09-10; context re-reviewed after camera-ready edits (GitHub Copilot I8, 2026-10-08); context re-keyed after the I14 camera-ready text polish (value and +-24-character source window unchanged; GitHub Copilot I14, 2026-10-12); earlier attributions apply to preceding contexts only; current context independently checked by Codex gpt-6-astra formula-context verifier, 2026-10-23",
+        "rationale": "T_1 denotes the first target list, not a measured constant. Uniform locations are image-independent; guided placement uses image-derived weights. The separate context block removes the target union before truncation, so target complement is not encoder-visible context. Re-reviewed current context: Exact formula/protocol, not an empirical measurement. Updated-context review: T_1 remains the first target list. Joint sampling of context and targets now matches the production collation and strategy-specific intensity/segmentation guidance; no ground-truth equivalence is asserted. Current-context verification: only background-motivation prose changed. The equation, definitions and entire context from For strategy onward are unchanged; T_1 is still the first target list, not an empirical value. Existing immutable evidence hashes and excerpts were reverified. This does not assert a measured disease signal in black pixels.",
         "evidence": [
           {
             "source": "refresh_uniform_masks",

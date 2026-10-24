@@ -15,11 +15,15 @@ or resume the queue without a new user instruction. This supersedes the earlier
 Post-freeze phase 1 has produced review copies of the paper and poster, with real
 results, verified numeric outputs and successful builds. Only seed 1234 is complete
 on time; E2's late finish makes index 5678 descriptive. Both guided outcomes remain
-incomplete, and the matched control is descriptive. The latest main text ends at 9.84 pages
-after the author's October 23 request to add a Future work subsection (initial draft: 9.49);
+incomplete, and the matched control is descriptive. The latest main text ends at 9.93 pages
+after the author's October 23 future-work and background-context clarifications
+(future-work-only draft: 9.84; initial draft: 9.49);
 the print poster remains 610 x 850 mm. The source manuscript awaits final integration.
 Author review, acknowledgment/funding wording and final receipt migration/release checks
 remain open. See the current checkpoint in `PAPER_STATE.md` for artifact paths and findings.
+The newest Overleaf review ZIP is in Downloads; its extracted source compiles as
+`main.tex` and matches the latest review PDF. It remains a review package pending those
+open items, not a certified final release.
 
 ## Scope and timing
 

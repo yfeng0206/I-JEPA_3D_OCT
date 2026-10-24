@@ -329,9 +329,11 @@ Figure~\ref{fig:policies} shows the pretraining and evaluation paths.
 
 \subsection{Guided target selection}
 
-Background patches above and below the retina are nearly uniform and easy to
-predict, whereas tissue patches carry the layered structure. Guided strategies
-direct targets toward tissue so that the prediction task depends more on it.
+Background patches above and below the retina often have low intensity
+variation, whereas tissue patches carry the layered structure. Guided strategies
+direct targets toward tissue so that prediction depends more on it. However,
+background-position embeddings can incorporate tissue information through
+attention; visually uniform pixels need not imply uninformative targets or context.
 For strategy $s$, let $A_s(x)$ denote its patch-grid guidance:
 an intensity-derived band for \ArmBest{}, a repaired segmentation envelope
 for \textsc{envelope}, or soft retinal-class score maps for the anatomy-shaped
@@ -731,7 +733,8 @@ configuration whose downstream effect remains untested.
 Comparisons should hold the guide product, delivered target-token and
 loss-slot budgets, and total visible context fixed where feasible, while
 varying placement and coverage. Remaining differences in visible tissue
-should be measured explicitly.
+should be measured explicitly. Controlled ablations should also vary the
+tissue/background composition of targets and context at fixed token budgets.
 
 Future replication should use complete preregistered seed sets and
 independently initialized pretraining runs. Evaluation on

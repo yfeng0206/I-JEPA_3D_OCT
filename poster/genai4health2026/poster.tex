@@ -450,7 +450,8 @@
   \raggedright
   \begin{plist}
     \item In retinal OCT the layered retina fills only a band of each B-scan;
-      much of the rest is near-uniform background.
+      much of the rest is near-uniform background. Near-uniform pixels can
+      still contribute informative latent context through attention.
     \item I-JEPA learns by predicting the \emph{latent features} of hidden
       target blocks from visible context, but places targets uniformly.
   \end{plist}
@@ -789,6 +790,9 @@
 % ===================== CREDITS (full width, no title) =====================
 \block{}{
   \raggedright\normalsize
+  \textbf{Acknowledgments.} We thank Prof. Kaveri A. Thakoor for research
+  guidance, medical expertise and retinal anatomy insights, discussions of
+  prior work, and manuscript feedback.\par\vspace{0.25em}
   I-JEPA: Assran et al., CVPR 2023. MIRAGE: Morano et al., npj Digit.\ Med.\ 2025.
   FairVision: Luo et al., 2024. OCT example in both OCT figures: Kulyabin et al.,
   OCTDL, Fig.~1 (arXiv:2312.08255v3), adapted (cropped, downsampled, overlays

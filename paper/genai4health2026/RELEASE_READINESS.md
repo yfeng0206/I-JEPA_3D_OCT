@@ -13,6 +13,12 @@ review. It is included in the manuscript source and refreshed Overleaf review pa
 Michael may expand it tomorrow. Funding disclosure remains an author-review item.
 This edit does not change the author list or resolve the separate authorship request.
 
+The poster's October 24 print checks passed with real results and the acknowledgment:
+610 x 850 mm, no placeholders/overflow, all 16 fonts embedded, all 21 result slots
+verified and QR decoded. Downloads contains the print PDF, preview and print package;
+the QR landing page now links the current paper review PDF. Manuscript release items
+below remain open. See `../../poster/genai4health2026/PRINT_CHECKS.md`.
+
 The user approved pausing optional third-seed training to focus on finalization.
 R3 paused after its saved epoch-29 checkpoint on October 22 at 21:29:45 PDT; do not start C3/E3
 or resume the queue without a new user instruction. This supersedes the earlier

@@ -8,6 +8,14 @@ and manuscript review. It is now in the source manuscript and refreshed review P
 Overleaf ZIP. Michael can expand it during author review. Funding disclosure still
 needs author review; no funding statement or authorship change is inferred from this edit.
 
+The October 24 poster print check also passed: real results, all 21 result slots and
+six original-claim checks agree, no placeholders or overflow, all 16 fonts embedded,
+and QR decoded. The 610 x 850 mm poster includes the Thakoor acknowledgment.
+Downloads now contains `POSTER_print_ready_61x85cm.pdf` and its preview/checks,
+plus `POSTER_print_package_61x85cm.zip` with print instructions. The public QR landing
+page links the current `camera_ready_review.pdf`, clearly labeled as a review copy,
+and retains the historical v9 separately. See `poster/genai4health2026/PRINT_CHECKS.md`.
+
 Post-freeze phase 1 completed October 22 at 20:54 PDT. The registered statistics, severity analysis,
 CB budget audit and generated results passed their checks; independent gpt-6-astra numeric
 review found no major issue. Review PDFs are in Downloads as

@@ -1,13 +1,23 @@
-# GenAI4Health @ NeurIPS 2026 poster (draft)
+# GenAI4Health @ NeurIPS 2026 poster
 
 Poster for the accepted workshop paper "Where to Predict in Retinal OCT?
 Anatomy-Guided Target Selection for I-JEPA" (GenAI for Health Workshop,
 NeurIPS 2026, Sydney, Dec 12 2026; every accepted paper presents a poster).
 
-Status: draft. Authors and affiliations are final. The QR links to the public
-paper folder on `poster-ready`, with paper, code and registration links. The registered-replication block fills
-in automatically from the generated results after the Oct 22 results freeze;
-until then it shows TBD placeholders and a RESULTS PENDING banner.
+Status (October 24): print preparation with real post-freeze results. The existing
+author block is unchanged. The QR links to the public paper folder on `poster-ready`,
+with paper, code and registration links. Only seed index 1234 is complete on time;
+index 5678 is descriptive, both guided labels are incomplete, and the matched-control
+description is incomplete. No registered RANDOM range is shown. These are reporting
+outcomes, not missing poster content. Final manuscript release checks and author review
+remain separate from the poster's build/print checks.
+
+The poster includes the author-approved acknowledgment to Prof. Kaveri A. Thakoor,
+and the distinction between uniform pixels and potentially informative latent context.
+The paper linked by the QR contains the full Future work subsection.
+
+The [print checks](PRINT_CHECKS.md) record the October 24 verification. Print
+`poster_print.pdf` at actual size (100%); the PNG is for preview only.
 
 ## Files
 

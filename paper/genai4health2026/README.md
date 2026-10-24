@@ -9,20 +9,25 @@ This is the poster QR destination on the `poster-ready` branch.
 
 | Resource | Status |
 |---|---|
-| [Paper PDF](main_submission.pdf) | Historical reviewed v9, anonymous; not the final camera-ready PDF |
-| [Camera-ready source](main_submission.tex) | Revision in progress; results and acknowledgments pending |
-| [Poster PDF, 61 × 85 cm](../../poster/genai4health2026/poster_print.pdf) | Draft with registered-results placeholders; not ready to print |
+| [Current paper review PDF](camera_ready_review.pdf) | October 24 review copy with real post-freeze results, Future work and Thakoor acknowledgment; final release checks pending |
+| [Historical paper PDF](main_submission.pdf) | Reviewed v9, anonymous; retained as the historical release |
+| [Camera-ready source](main_submission.tex) | Acknowledgment included; final result integration and release checks pending |
+| [Poster PDF, 61 × 85 cm](../../poster/genai4health2026/poster_print.pdf) | Real results and acknowledgment; print checks passed October 24 |
 | [Code and project overview](../../README.md) | Original experiments and camera-ready tooling |
 | [Pre-registration and amendments](PREREGISTRATION_cr_seed_v1.md) | Committed protocol, outcome rules and treatment of incomplete/late runs |
 | [Release readiness and remaining work](RELEASE_READINESS.md) | Approved October 18 scope, reviewer-point coverage and final checks |
 | [Campaign configurations](../../configs/cr_seed_v1) | Repeated continuations and matched-budget control |
 
-The campaign's test results remain sealed until **October 22, 2026, 08:00 PDT**.
+The campaign's ready test results were unsealed after the fixed **October 22, 2026,
+08:00 PDT** freeze. Only seed index 1234 is complete on time; index 5678 is descriptive
+because ENVELOPE finished late. Both registered guided labels remain incomplete;
+the matched control is reported descriptively without a registered RANDOM range.
 New seeds are continuations from one shared epoch-25 checkpoint, not independent
 initializations. RANDOM-CB matches CENTROID shadow-mask budgets; it is one
 control run, and ENVELOPE is not budget-matched. Guide agreement and plausibility
-statistics do not measure anatomical accuracy. Final results will replace the
-placeholders after the registered analysis and release checks.
+statistics do not measure anatomical accuracy. The current review PDF and poster
+show these registered outcomes; final source integration and manuscript release checks
+remain pending. The author list is unchanged; the acknowledgment credits Prof. Thakoor.
 
 ## Package and historical release
 

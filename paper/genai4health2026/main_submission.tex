@@ -719,6 +719,35 @@ This study uses a public, de-identified retinal dataset under its release terms
 and involves no new recruitment or data collection, and no model reported here
 is clinically validated or intended for deployment (Appendix~\ref{app:ethics}).
 
+\subsection{Future work}
+\label{sec:future}
+
+An immediate priority is a controlled test of coverage on the masks delivered
+to the model. \textsc{cover} should score post-equalization targets and verify
+retinal tissue in the final encoder context, rather than relying on coverage
+or visibility before collation (Appendices~\ref{app:covbug}
+and~\ref{app:delivered_audit}). Any correction defines a new training
+configuration whose downstream effect remains untested.
+Comparisons should hold the guide product, delivered target-token and
+loss-slot budgets, and total visible context fixed where feasible, while
+varying placement and coverage. Remaining differences in visible tissue
+should be measured explicitly.
+
+Future replication should use complete preregistered seed sets and
+independently initialized pretraining runs. Evaluation on
+an untouched cohort, with fixed checkpoint, pooling and analysis rules,
+would strengthen evidence after the test-set reuse disclosed here. These
+future experiments do not change the current registration's treatment of
+late or incomplete runs.
+
+Representative layer-annotated OCT scans are needed to measure guide accuracy,
+especially under low signal and pathology. Transfer to other datasets and
+spatial tasks such as segmentation would test whether the learned features
+retain information obscured by volume-level pooling. External models and
+other self-supervised objectives should be compared under the same probe
+protocol. Together, these studies would test the trade-off between anatomical
+target coverage and informative visible context.
+
 \section{Conclusion}
 
 We investigated where I-JEPA should predict in retinal OCT.

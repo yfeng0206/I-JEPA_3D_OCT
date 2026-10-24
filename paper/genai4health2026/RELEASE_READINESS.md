@@ -5,6 +5,22 @@ Approved scope: 2026-10-18. This is the current execution checklist for submissi
 It does not change the [pre-registration or amendments](PREREGISTRATION_cr_seed_v1.md).
 The [post-freeze runbook](../../PAPER_STATE.md) supplies the detailed commands.
 
+## Current update — October 22, 2026
+
+The user approved pausing optional third-seed training to focus on finalization.
+R3 paused after its saved epoch-29 checkpoint on October 22 at 21:29:45 PDT; do not start C3/E3
+or resume the queue without a new user instruction. This supersedes the earlier
+"continue campaign" scheduling instruction below, not the registered reporting rules.
+
+Post-freeze phase 1 has produced review copies of the paper and poster, with real
+results, verified numeric outputs and successful builds. Only seed 1234 is complete
+on time; E2's late finish makes index 5678 descriptive. Both guided outcomes remain
+incomplete, and the matched control is descriptive. The latest main text ends at 9.84 pages
+after the author's October 23 request to add a Future work subsection (initial draft: 9.49);
+the print poster remains 610 x 850 mm. The source manuscript awaits final integration.
+Author review, acknowledgment/funding wording and final receipt migration/release checks
+remain open. See the current checkpoint in `PAPER_STATE.md` for artifact paths and findings.
+
 ## Scope and timing
 
 - Continue `cr_seed_v1` in its current order. Finish CB and E2 as the immediate priorities.

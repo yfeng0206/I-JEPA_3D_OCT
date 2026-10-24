@@ -1,5 +1,39 @@
 # Paper workflow state
 
+## Current review checkpoint — October 23, 2026
+
+Post-freeze phase 1 completed October 22 at 20:54 PDT. The registered statistics, severity analysis,
+CB budget audit and generated results passed their checks; independent gpt-6-astra numeric
+review found no major issue. Review PDFs are in Downloads as
+`CR_REVIEW_20261023_paper_future_work.pdf` and `POSTER_REVIEW_20261022_61x85cm.pdf`.
+The latest paper adds section 6.1, Future work, on the author's request. It prioritizes
+delivered-mask controls, complete preregistered replication and independent initialization,
+untouched evaluation, guide ground truth and broader transfer. These are proposed experiments,
+not changes to the registered analysis. Main text ends at 9.84 pages (9.49 before this
+addition), with no overfull boxes or undefined references; the poster is 610 x 850 mm. These are review
+copies: the real manuscript text has not been integrated, and no final release was synced.
+
+Only seed 1234 is complete on time. Seed 5678 is descriptive because E2 finished after
+the freeze; the generated outcome is incomplete for both guided arms, and the control
+is descriptive (`M_incomplete`). Preserve these rules despite the positive point estimates.
+
+The user approved pausing the optional third seed set to focus on finalization. R3
+reached PAUSED after verified epoch 29 at October 22, 21:29:45 PDT; C3/E3 remain queued.
+The pause was rechecked October 23. Keep the campaign paused until an explicit user resume.
+
+Review package: `D:\jepa_phase0\autopilot_out\cr_postfreeze\REVIEW.md`; independent report:
+`C:\Users\Gary\Documents\Codex\2026-10-17\this\outputs\postfreeze_numeric_review_20261022.md`.
+The generated report's phrase "in progress at the freeze" describes the snapshot state:
+R3 actually began at 16:51 PDT, after the freeze, and is not eligible.
+Before phase 2: obtain the author's review of these PDFs and exact acknowledgment/funding
+wording (still pending), then resolve the recorded context-receipt migration. Do not
+treat a successful phase-1 outer exit as a final numeric-release pass. Two small MD
+values round to `-0.00`; their full-precision values are retained in the evidence and
+independent report. Visual checks found no clipping; all fonts are embedded and the QR
+decodes to the intended public paper folder.
+The October 23 prose edit introduced no new numeric-audit errors or unresolved items;
+the existing pre-integration receipt and asset-registration findings still require phase 2.
+
 ## Status
 
 **Accepted** to the GenAI4Health NeurIPS 2026 workshop. Release v9 (v8 plus one

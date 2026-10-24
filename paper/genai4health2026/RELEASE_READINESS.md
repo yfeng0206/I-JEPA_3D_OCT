@@ -5,7 +5,13 @@ Approved scope: 2026-10-18. This is the current execution checklist for submissi
 It does not change the [pre-registration or amendments](PREREGISTRATION_cr_seed_v1.md).
 The [post-freeze runbook](../../PAPER_STATE.md) supplies the detailed commands.
 
-## Current update — October 22, 2026
+## Current update — October 24, 2026
+
+The author approved the acknowledgment to Prof. Kaveri A. Thakoor for research guidance,
+medical expertise and retinal anatomy insights, discussions of prior work, and manuscript
+review. It is included in the manuscript source and refreshed Overleaf review package;
+Michael may expand it tomorrow. Funding disclosure remains an author-review item.
+This edit does not change the author list or resolve the separate authorship request.
 
 The user approved pausing optional third-seed training to focus on finalization.
 R3 paused after its saved epoch-29 checkpoint on October 22 at 21:29:45 PDT; do not start C3/E3
@@ -19,7 +25,7 @@ incomplete, and the matched control is descriptive. The latest main text ends at
 after the author's October 23 future-work and background-context clarifications
 (future-work-only draft: 9.84; initial draft: 9.49);
 the print poster remains 610 x 850 mm. The source manuscript awaits final integration.
-Author review, acknowledgment/funding wording and final receipt migration/release checks
+Author review, funding disclosure and final receipt migration/release checks
 remain open. See the current checkpoint in `PAPER_STATE.md` for artifact paths and findings.
 The newest Overleaf review ZIP is in Downloads; its extracted source compiles as
 `main.tex` and matches the latest review PDF. It remains a review package pending those

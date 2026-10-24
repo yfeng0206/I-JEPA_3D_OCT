@@ -1,6 +1,12 @@
 # Paper workflow state
 
-## Current review checkpoint — October 23, 2026
+## Current review checkpoint — October 24, 2026
+
+The author approved an acknowledgment thanking Prof. Kaveri A. Thakoor for research
+guidance, medical expertise and retinal anatomy insights, discussions of prior work,
+and manuscript review. It is now in the source manuscript and refreshed review PDF/
+Overleaf ZIP. Michael can expand it during author review. Funding disclosure still
+needs author review; no funding statement or authorship change is inferred from this edit.
 
 Post-freeze phase 1 completed October 22 at 20:54 PDT. The registered statistics, severity analysis,
 CB budget audit and generated results passed their checks; independent gpt-6-astra numeric
@@ -28,8 +34,8 @@ Review package: `D:\jepa_phase0\autopilot_out\cr_postfreeze\REVIEW.md`; independ
 `C:\Users\Gary\Documents\Codex\2026-10-17\this\outputs\postfreeze_numeric_review_20261022.md`.
 The generated report's phrase "in progress at the freeze" describes the snapshot state:
 R3 actually began at 16:51 PDT, after the freeze, and is not eligible.
-Before phase 2: obtain the author's review of these PDFs and exact acknowledgment/funding
-wording (still pending), then resolve the recorded context-receipt migration. Do not
+Before phase 2: obtain the author's review of these PDFs and funding disclosure
+(still pending), then resolve the recorded context-receipt migration. Do not
 treat a successful phase-1 outer exit as a final numeric-release pass. Two small MD
 values round to `-0.00`; their full-precision values are retained in the evidence and
 independent report. Visual checks found no clipping; all fonts are embedded and the QR
@@ -46,7 +52,7 @@ source inputs, `main.pdf`, a README and explicit review status. It was extracted
 compiled with `main.tex`; all source hashes match, all 19 PDF pages' text match the
 review copy, and all 22 fonts are embedded. Set `main.tex` as the Overleaf main document
 and select XeLaTeX. The local `.review.json` records verification; it is not a final
-release manifest. Author acknowledgment/funding information remains pending.
+release manifest. The Thakoor acknowledgment is included; funding review remains pending.
 
 ## Status
 
@@ -56,8 +62,8 @@ its evidence is `autopilot\investigations\submission_refresh_20260910\release_ha
 The last documented Overleaf version is v8; its live contents must be checked before
 release sync. Camera-ready/poster work continues on branch `poster-ready`: the workshop
 template, confirmed author block, corrected mask audit, guide diagnostics, all-strategy
-figures and 61 x 85 cm poster are implemented. Registered results and acknowledgments
-remain pending.
+figures and 61 x 85 cm poster are implemented. The acknowledgment is in the source;
+registered result integration, funding review and final release checks remain pending.
 Camera-ready deadline: October 25, 2026, 11:59 PM AoE (= Oct 26 04:59 PDT); internal
 upload target Oct 24. **The approved remaining scope and acceptance checklist are in
 `paper\genai4health2026\RELEASE_READINESS.md` (2026-10-18).**
@@ -218,7 +224,8 @@ Camera-ready release (2026-10-08 tooling; authors-present gate, 10 main pages,
 workshop template gate). It fails while `\CRAuthorsPending`,
 `\CRAcknowledgmentsPending` or any `\ph` result placeholder remains, and until
 `paper\genai4health2026\camera_ready_authors.json` is confirmed (authors were
-filled and confirmed 2026-10-10; acknowledgments are still pending):
+filled and confirmed 2026-10-10; the Thakoor acknowledgment was added 2026-10-24,
+while funding disclosure still needs author review):
 
     D:\jepa_phase0\.venv\Scripts\python.exe autopilot\p13_build_zip.py --camera-ready --stats-dir D:\jepa_phase0\autopilot_out\p1_stats --citation-record autopilot\investigations\camera_ready_20261008\paper_i8\citation_authorities_cr.json --review-file paper\genai4health2026\numeric_reviews.json
 
@@ -406,8 +413,10 @@ exists to prevent.
 
 ## Open items, all operator decisions
 
-1. **Acknowledgments/funding.** Obtain exact wording or an explicit none from the authors.
-   The author list is already confirmed; do not invent a disclosure.
+1. **Funding disclosure.** Obtain exact wording or an explicit none from the authors.
+   The Thakoor acknowledgment is approved and included; Michael may expand it during
+   review. The existing author list is unchanged; do not infer an authorship-policy
+   exception or invent a funding disclosure.
 2. **Real-result review.** Review the post-freeze candidate and any manual receipt
    migrations before phase 2. Follow `paper\genai4health2026\RELEASE_READINESS.md`.
 3. **Overleaf and release destinations.** Inspect current project contents and collaborator

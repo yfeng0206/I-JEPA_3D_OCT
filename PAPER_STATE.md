@@ -2,6 +2,16 @@
 
 ## Current review checkpoint — October 24, 2026
 
+Downloads was tidied on the author's request: the visible current deliverables are
+`OCT_JEPA_GenAI4Health2026_Overleaf_REVIEW_latest.zip` and
+`POSTER_print_ready_61x85cm.pdf`. Ninety older project items (including three folders,
+previews, check reports and duplicate packages) were moved without deletion to
+`C:\Users\Gary\Downloads\OCT_JEPA_archive_20261024_002752`; its
+`ARCHIVE_INDEX.json` records the moves and file hashes. The shared campaign notes
+remain at their original path. The current standalone paper review PDF is also
+available as `paper/genai4health2026/camera_ready_review.pdf`; earlier Downloads paths
+below describe their locations before this cleanup.
+
 The author approved an acknowledgment thanking Prof. Kaveri A. Thakoor for research
 guidance, medical expertise and retinal anatomy insights, discussions of prior work,
 and manuscript review. It is now in the source manuscript and refreshed review PDF/

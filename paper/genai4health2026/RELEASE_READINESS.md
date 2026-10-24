@@ -15,7 +15,9 @@ This edit does not change the author list or resolve the separate authorship req
 
 The poster's October 24 print checks passed with real results and the acknowledgment:
 610 x 850 mm, no placeholders/overflow, all 16 fonts embedded, all 21 result slots
-verified and QR decoded. Downloads contains the print PDF, preview and print package;
+verified and QR decoded. Downloads keeps the print PDF and latest Overleaf review ZIP;
+previews, check reports and older packages are preserved in
+`OCT_JEPA_archive_20261024_002752` in Downloads after the author's cleanup request;
 the QR landing page now links the current paper review PDF. Manuscript release items
 below remain open. See `../../poster/genai4health2026/PRINT_CHECKS.md`.
 

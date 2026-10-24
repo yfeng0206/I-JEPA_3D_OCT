@@ -27,6 +27,8 @@ Rebuilding the real-result poster requires the verified generated `auto/cr_*`
 bundle described in the README. It is retained locally pending final paper integration.
 Before the bundle exists, the source intentionally displays result placeholders.
 
-Downloads copies: `POSTER_print_ready_61x85cm.pdf`, matching `.png`,
-`.checks.json`, `POSTER_PRINT_INSTRUCTIONS.txt`, and
-`POSTER_print_package_61x85cm.zip`. Regenerate these if the wording changes.
+Downloads keeps `POSTER_print_ready_61x85cm.pdf` beside the latest Overleaf review ZIP.
+On the author's cleanup request, the matching PNG, `.checks.json`, print instructions
+and separate poster ZIP were moved to `OCT_JEPA_archive_20261024_002752` in Downloads,
+along with older project deliverables. Nothing was deleted. Regenerate the poster
+and its checks if the wording changes.

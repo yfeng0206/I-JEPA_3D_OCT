@@ -1,7 +1,7 @@
 {
   "kind": "poster_visual_schematics_v1",
   "generator": "poster/genai4health2026/make_visuals.py",
-  "generator_sha256": "59c02bb77f449338a5b0f963c7ec1fa49db630c0fa70c099c4fb70e158eb2834",
+  "generator_sha256": "0d63046fa69d3f52cb9669ab47d91ee8f6f72c7e399865f5364d206115a5b6d8",
   "source_image_sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5",
   "source_crop": [
     3200,

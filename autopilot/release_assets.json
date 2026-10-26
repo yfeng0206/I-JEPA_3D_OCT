@@ -378,9 +378,9 @@
   },
   "poster_visual_schematics": {
     "script": "poster/genai4health2026/make_visuals.py",
-    "script_sha256": "59c02bb77f449338a5b0f963c7ec1fa49db630c0fa70c099c4fb70e158eb2834",
+    "script_sha256": "0d63046fa69d3f52cb9669ab47d91ee8f6f72c7e399865f5364d206115a5b6d8",
     "evidence_manifest": "autopilot/investigations/camera_ready_20261008/figures_v2/poster/poster_visual_schematics.evidence.json",
-    "evidence_manifest_sha256": "e9bfa194981825a739ea8d360c2700a11dce744d3a4db2efaaa631d50b0f71f2",
+    "evidence_manifest_sha256": "71d3886b7ebb8cf7b0c10f01ecb9d3fc2354cde9ed61927a70af10875f79c18f",
     "scope": "Illustrative target proposals before token equalization; not delivered training masks",
     "license": "CC BY 4.0",
     "poster_variant": {

@@ -139,7 +139,7 @@ def main():
                 "clinical_images":"External OCTDL example only; no FairVision pixels or patient identifiers",
                 "layouts":layouts,"outputs":outputs}
     path = out / "poster_visual_schematics.evidence.json"
-    path.write_text(json.dumps(evidence,indent=2)+"\n",encoding="utf-8")
+    path.write_text(json.dumps(evidence,indent=2)+"\n",encoding="utf-8",newline="\n")
     registry_path = ROOT / "autopilot/release_assets.json"
     registry_text=registry_path.read_text(encoding="utf-8")
     registry=json.loads(registry_text)

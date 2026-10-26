@@ -4,8 +4,13 @@ Poster for the accepted workshop paper "Where to Predict in Retinal OCT?
 Anatomy-Guided Target Selection for I-JEPA" (GenAI for Health Workshop,
 NeurIPS 2026, Sydney, Dec 12 2026; every accepted paper presents a poster).
 
-Status (October 24): print preparation with real post-freeze results. The existing
-author block is unchanged. The QR links to the public paper folder on `poster-ready`,
+Status (October 25): visual refresh matching the author's latest marked-up paper PDF.
+A larger native-resolution external OCTDL crop labels the retinal tissue band and
+low-intensity background; a separate clean schematic shows full rectangular target
+proposals before batching. The delivered-mask audit remains distinct. Anatomy-guided
+terminology and AUC differences in percentage points (pp) match the revision; absolute
+AUCs and the plotted original-AUC-scale differences are explicitly distinguished.
+The existing author block is unchanged. The QR links to the public paper folder on `poster-ready`,
 with paper, code and registration links. Only seed index 1234 is complete on time;
 index 5678 is descriptive, both guided labels are incomplete, and the matched-control
 description is incomplete. No registered RANDOM range is shown. These are reporting
@@ -16,14 +21,26 @@ The poster includes the author-approved acknowledgment to Prof. Kaveri A. Thakoo
 and the distinction between uniform pixels and potentially informative latent context.
 The paper linked by the QR contains the full Future work subsection.
 
-The [print checks](PRINT_CHECKS.md) record the October 24 verification. Print
+The [print checks](PRINT_CHECKS.md) record the October 25 verification. Print
 `poster_print.pdf` at actual size (100%); the PNG is for preview only.
+
+The October 25 refresh uses `make_visuals.py` for the two new poster-only visuals.
+It verifies the OCTDL source/license and staged replay, reconstructs each full rectangle
+from its verified row-major prefix and original block size, and records a separate
+`poster_visual_schematics.evidence.json` plus registry hashes. It never replaces the
+paper's delivered-mask evidence. The region labels are schematic, not clinical layer
+annotations or a disease comparison. `make_preview.py --precheck` also writes
+`generated/poster_units.tex`: display-only pp aliases from the original paper macros
+and verified full-precision replication values. Their content and hashes are checked;
+the underlying results files are not rescaled. Run `tests/test_percentage_points.py`
+to check signs, intervals, missing endpoints and absolute-AUC separation.
 
 ## Files
 
 | file | role |
 |---|---|
 | `poster_size.tex` | the single size parameter `\PosterSize` |
+| `make_visuals.py` | attributed OCT structure image and explicitly labeled pre-batching proposal schematic; registers poster-only hashes |
 | `poster_setup.tex` | maps `\PosterSize` to the print size and the design canvas |
 | `poster.tex` | design master (tikzposter); produces `poster.pdf` |
 | `poster_print.tex` | scales `poster.pdf` to the exact print size; produces `poster_print.pdf` |
@@ -36,9 +53,9 @@ The [print checks](PRINT_CHECKS.md) record the October 24 verification. Print
 | `poster_preview.png` | low-resolution preview (50 dpi by default) |
 
 The poster reads its sources in place (no copies):
-`../../autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_strategies_v2_poster.pdf`
-and `.../fig_oct_jepa_volume_v2_poster.pdf` (I13's poster variants of the
-paper's Fig. 1 and Fig. 2: same data, labels of at least 14 pt at 12 in width;
+`../../autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_proposals_poster.pdf`,
+`.../fig_oct_structure_poster.pdf` (October 25's poster-only schematics),
+and `.../fig_oct_jepa_volume_v2_poster.pdf` (I13's framework poster variant;
 registered with their SHA-256 under `poster_variant` in
 `../../autopilot/release_assets.json`, which the report checks),
 `../../paper/genai4health2026/auto/auto_numbers.tex` (original-run result macros, paper Table 2) and
@@ -47,22 +64,19 @@ agreement and reference macros). After the results freeze the gate validates
 the bundle that `autopilot/make_cr_results.py` writes to the same `auto/`
 folder (`cr_results.tex`, `cr_results.values.json`, the generated tables,
 `fig_cr_seed_spread.pdf/.png` and `fig_cr_seed_spread.evidence.json`); the
-poster then inputs `cr_results.tex` (`\Rep*` macros) and the gate's
-`generated/results_state.tex`. Every number on the poster is one of these
-macros; do not type result numbers into `poster.tex`.
+poster then inputs `cr_results.tex` (`\Rep*` macros), the gate's
+`generated/results_state.tex` and its display-only `generated/poster_units.tex`.
+Do not type result numbers into `poster.tex`.
 
-### Layout (R1 polish review, section 5)
+### Layout (October 25 refresh; R1 checks retained)
 
-- Left column: why OCT (question, then a navy **Answer** box: tissue-directed
-  rectangles scored higher at epoch 50, `\DOracleRandomEpFifty` with CENTROID
-  and `\DEnvelopeRandomEpFifty` with ENVELOPE, more anatomical detail did not
-  add gains, CENTROID and ENVELOPE (named; COVER is the exception) also leave
-  more context visible, and, once results are validated, the generated
-  replication labels, digit-free); **Five target-selection strategies** (v2
-  poster figure; the old strategy table is dropped because the figure's column
-  heads and target-rule row carry it); **Same I-JEPA, different sampler;
+- Left column: annotated external OCT structure image, question and a navy
+  **Original single runs** box (anatomy-guided rectangle gains displayed in pp,
+  coupled placement/context caveat and validated replication labels);
+  **Five target-selection strategies** (clean proposals explicitly before batching);
+  **Same I-JEPA, different sampler;
   volume-level probe** (v2 framework figure with the one-line $\Pi_s$ caption).
-- Right column: neutral title "Single runs: tissue-directed rectangles scored
+- Right column: neutral title "Single runs: anatomy-guided rectangles scored
   higher" (the replication may disagree); KeyBox at the registered epoch 50
   for both arms with 95% CIs, "positive at epochs 50, 75 and 100" with the
   per-arm range (R1 H1, now also the paper's Section 5.1), ANATOMY-V2 minus
@@ -71,7 +85,7 @@ macros; do not type result numbers into `poster.tex`.
   with the context column on a light fill and the bullet "CENTROID and
   ENVELOPE leave more context visible than RANDOM ...; COVER leaves less";
   guide chart with the overall rate as a dashed reference and "% of B-scans"
-  axis; takeaways as before, "tissue-directed rectangles" as in the paper.
+  axis; takeaways use "anatomy-guided rectangles" as in the revised paper.
 - The report checks the wording that depends on the paper macros (`Claims`,
   6 checks): CENTROID and ENVELOPE minus RANDOM positive at all three epochs,
   the range end points (ENVELOPE epoch 100 to 50, CENTROID epoch 50 to 75),
@@ -243,7 +257,7 @@ and compares them with the sidecar.
 ### Cells
 
 Every result cell is `\PosterCell{<macro>}` (or `\PosterCellM` for signed
-differences, set in math): the generated value when results are loaded;
+differences, formatted in pp from verified full precision): the generated value when results are loaded;
 `---` only where the validated sidecar has no such macro (a missing or
 unregistered run, exactly as in the paper's generated tables); `MISSING` (and
 a failed report) for a macro the sidecar lists but the file lacks; the TBD

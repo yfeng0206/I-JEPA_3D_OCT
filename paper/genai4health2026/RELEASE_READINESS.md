@@ -5,7 +5,19 @@ Approved scope: 2026-10-18. This is the current execution checklist for submissi
 It does not change the [pre-registration or amendments](PREREGISTRATION_cr_seed_v1.md).
 The [post-freeze runbook](../../PAPER_STATE.md) supplies the detailed commands.
 
-## Current update — October 24, 2026
+## Current update — October 25, 2026
+
+The author's October 25 Downloads PDF contains tracked edits and supersedes the
+October 24 review copy for editorial intent. Its updated source has not been synced
+to this repository; reconcile live Overleaf sources before any upload/sync. The 21
+marked-up pages do not establish the clean manuscript's page count.
+
+The approved poster refresh incorporates the clean pre-batching schematic, a larger
+annotated external OCT example, anatomy-guided terminology and pp displays. All 53
+numeric slots/intervals checked across the original and replication panels pass;
+absolute AUC and the explicitly labeled original-scale seed-spread plot remain separate
+from pp displays. The 610 x 850 mm print build has no overflow and all 15 fonts embedded.
+No experiment, outcome label, paper source or underlying numeric evidence was changed.
 
 The author approved the acknowledgment to Prof. Kaveri A. Thakoor for research guidance,
 medical expertise and retinal anatomy insights, discussions of prior work, and manuscript

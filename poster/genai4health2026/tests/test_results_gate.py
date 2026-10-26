@@ -8,7 +8,7 @@ DIR (and DIR2, a different scenario) are synthetic result bundles written by
 paper/genai4health2026/auto/). Each case copies DIR to WORKDIR/<case>/auto, applies one
 tampering, and runs the gate exactly as build.ps1 does
 (``make_preview.py --precheck --allow-synthetic --results-dir ...``) from a copy of the tool
-in WORKDIR/tool, so no state is written into the repository. The baseline must pass and every
+in WORKDIR/repo/poster/tool, so no state is written into the repository. The baseline must pass and every
 tampered case must fail. The registered-RANDOM-reference cases (V10-2) depend on the bundle:
 with a complete reference (e.g. all runs on time) they mark it late, move the range or drop
 \\RepRandomRange; without it (original RANDOM missing or late, or fewer than two complete seed
@@ -476,10 +476,23 @@ def main():
         sys.exit("--bundle needs a generated results directory (cr_results.tex missing)")
     if "SYNTHETIC DRY RUN" not in (bundle / "cr_results.tex").read_text(encoding="utf-8"):
         sys.exit("refusing to use non-synthetic results for tests")
+    # Refuse a broad or existing non-test location before any recursive cleanup.
+    if work == pathlib.Path(work.anchor) or work == HERE or work in HERE.parents:
+        sys.exit("--work must be an isolated scratch test directory")
+    if work.exists() and not (work / ".poster_gate_test_scratch").is_file():
+        sys.exit("refusing to clear a directory without the poster-gate test marker")
     shutil.rmtree(work, ignore_errors=True)
-    tool = work / "tool"
+    tool = work / "repo" / "poster" / "tool"
     tool.mkdir(parents=True)
+    (work / ".poster_gate_test_scratch").write_text("poster results-gate tests\n")
     shutil.copyfile(TOOL, tool / "make_preview.py")
+    # The display-only pp aliases also read the original paper macros. Keep their
+    # normal relative layout entirely inside WORKDIR for the isolated child gate.
+    macro_source = HERE.parents[2] / "paper" / "genai4health2026" / "auto"
+    macro_target = work / "repo" / "paper" / "genai4health2026" / "auto"
+    macro_target.mkdir(parents=True)
+    for name in ("auto_numbers.tex", "cr_numbers.tex"):
+        shutil.copyfile(macro_source / name, macro_target / name)
     env = dict(os.environ, CUDA_VISIBLE_DEVICES="-1", OMP_NUM_THREADS="1",
                PYTHONIOENCODING="utf-8")
     failures = 0

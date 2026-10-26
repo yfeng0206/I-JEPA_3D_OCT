@@ -1,0 +1,159 @@
+{
+  "kind": "poster_visual_schematics_v1",
+  "generator": "poster/genai4health2026/make_visuals.py",
+  "generator_sha256": "59c02bb77f449338a5b0f963c7ec1fa49db630c0fa70c099c4fb70e158eb2834",
+  "source_image_sha256": "75bfdf6c9b2eb54e8cb9391f7d0bb92e30bbd1e4ba2a906c166a183b666ee7e5",
+  "source_crop": [
+    3200,
+    245,
+    4480,
+    1525
+  ],
+  "attribution": "Mikhail Kulyabin et al., OCTDL, Fig. 1, arXiv:2312.08255v3 (2024)",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_url": "https://arxiv.org/abs/2312.08255v3",
+  "stage": "Illustrative target proposals before token equalization; not delivered training masks",
+  "replay_source_sha256": "57b725073338f4b3fa54e6f82b6b772d24d1c3b00d85a75c08273dd2be8e03a7",
+  "guide_grids_sha256": {
+    "hard": "28af5f5af85de7ee000052fe1ff19546f9cc686577547c5bb71cdd22cc24fb8a",
+    "soft": "98465df8d023bb0bb62bc57e8cf21b99a32f5733844f92ee11eab6c2d75a2beb"
+  },
+  "rectangles": {
+    "random": [
+      {
+        "row": 1,
+        "col": 0,
+        "height": 7,
+        "width": 6
+      },
+      {
+        "row": 4,
+        "col": 3,
+        "height": 8,
+        "width": 6
+      },
+      {
+        "row": 3,
+        "col": 2,
+        "height": 8,
+        "width": 5
+      },
+      {
+        "row": 1,
+        "col": 10,
+        "height": 7,
+        "width": 6
+      }
+    ],
+    "centroid": [
+      {
+        "row": 6,
+        "col": 9,
+        "height": 7,
+        "width": 6
+      },
+      {
+        "row": 8,
+        "col": 4,
+        "height": 8,
+        "width": 6
+      },
+      {
+        "row": 7,
+        "col": 4,
+        "height": 8,
+        "width": 5
+      },
+      {
+        "row": 5,
+        "col": 8,
+        "height": 7,
+        "width": 6
+      }
+    ],
+    "envelope": [
+      {
+        "row": 7,
+        "col": 10,
+        "height": 7,
+        "width": 6
+      },
+      {
+        "row": 3,
+        "col": 5,
+        "height": 8,
+        "width": 6
+      },
+      {
+        "row": 7,
+        "col": 1,
+        "height": 8,
+        "width": 5
+      },
+      {
+        "row": 4,
+        "col": 4,
+        "height": 7,
+        "width": 6
+      }
+    ],
+    "cover": [
+      {
+        "row": 5,
+        "col": 1,
+        "height": 7,
+        "width": 6
+      },
+      {
+        "row": 4,
+        "col": 7,
+        "height": 8,
+        "width": 6
+      },
+      {
+        "row": 0,
+        "col": 0,
+        "height": 8,
+        "width": 5
+      },
+      {
+        "row": 2,
+        "col": 3,
+        "height": 7,
+        "width": 6
+      }
+    ]
+  },
+  "anatomy": "Unique component cells from the staged replay; repetitions omitted",
+  "structure_image": "Same external OCTDL crop at native crop resolution, no contrast enhancement; region labels are schematic",
+  "clinical_images": "External OCTDL example only; no FairVision pixels or patient identifiers",
+  "layouts": {
+    "fig_oct_proposals_poster": {
+      "texts_checked": 45,
+      "pad_pt": [
+        0.5,
+        0.15
+      ],
+      "canvas_margin_pt": 0.2,
+      "overlaps": [],
+      "outside_canvas": []
+    },
+    "fig_oct_structure_poster": {
+      "texts_checked": 3,
+      "pad_pt": [
+        0.5,
+        0.15
+      ],
+      "canvas_margin_pt": 0.2,
+      "overlaps": [],
+      "outside_canvas": []
+    }
+  },
+  "outputs": {
+    "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_proposals_poster.pdf": "e43481b7d3ff4553468cd1f8ae70f42f27e16435aa6d4cfc6bc02270ec49f28e",
+    "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_proposals_poster.png": "a488218a502e45d13c8556292c5f177a35221e9f2e82b63c5dcde5504898e86c",
+    "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_structure_poster.pdf": "7df1cb10547fbd3c95424f602cafe763aeca93de803564ae79af169dd9570e4b",
+    "autopilot/investigations/camera_ready_20261008/figures_v2/poster/fig_oct_structure_poster.png": "d989d34d609307069205f3c1e61be6a2bf9240c45920ac0083bea631fbe2bb1a"
+  }
+}

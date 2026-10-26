@@ -1,6 +1,26 @@
 # Paper workflow state
 
-## Current review checkpoint — October 24, 2026
+## Current review checkpoint — October 25, 2026
+
+The author supplied `Downloads\OCT_JEPA_GenAI4Health2026_Overleaf_REVIEW_latest.pdf`
+on October 25 at 16:46 PDT. It is a 21-page marked-up PDF with red additions and
+struck-out deletions: revised related work/guide descriptions, anatomy-guided terminology,
+AUC differences in percentage points, and the clean pre-batching Figure 1 schematic.
+All pages were read; the tracked/deleted text must be excluded before judging final
+page length. This newer source is not in the local canonical TeX or October 24 review
+ZIP. Retrieve/reconcile the current Overleaf sources before any manuscript sync; do
+not overwrite the author's changes with the older local manuscript. The clean author
+export still needs a page-limit check and final manuscript release gates.
+
+The author approved a focused poster refresh against that PDF. It adds a larger
+annotated native-resolution external OCTDL crop, a clean proposal schematic labeled
+before batching, anatomy-guided terminology and display-only pp differences. The
+delivered-mask audit and incomplete/descriptive labels are retained; no underlying
+result values or registered rules change. Print checks pass at 610 x 850 mm with all
+15 fonts embedded, no overflow, 30 original table cells plus two key intervals checked,
+21 replication/control/pooling cells checked, and 24.88 design points bottom clearance.
+The display conversion tests and complete/incomplete synthetic gate regressions pass.
+See the poster README and PRINT_CHECKS.md; manuscript finalization remains separate.
 
 Downloads was tidied on the author's request: the visible current deliverables are
 `OCT_JEPA_GenAI4Health2026_Overleaf_REVIEW_latest.zip` and

@@ -1,4 +1,4 @@
-% GenAI4Health @ NeurIPS 2026 poster (draft).
+% GenAI4Health @ NeurIPS 2026 poster (visual refresh, 2026-10-25).
 % "Where to Predict in Retinal OCT? Anatomy-Guided Target Selection for I-JEPA"
 %
 % Build: see README.md (build.ps1 compiles this file with Tectonic, then
@@ -179,6 +179,15 @@
   \fi
 }{%
   \typeout{POSTER: cr_results.tex not found; result panels show placeholders}}
+% Display-only percentage-point aliases, generated from verified numeric inputs.
+\IfFileExists{generated/poster_units.tex}{\input{generated/poster_units.tex}}{%
+  \typeout{POSTER-PROBLEM: percentage-point aliases missing; run build.ps1}}
+\ifdefined\PosterStateUnitsMDfive
+  \PosterIfMDfive{generated/poster_units.tex}{\PosterStateUnitsMDfive}{}{%
+    \typeout{POSTER-PROBLEM: percentage-point aliases changed after validation}}%
+\fi
+\newcommand*{\PosterPP}[1]{\ifcsname PosterPP#1\endcsname
+  \ensuremath{\csname PosterPP#1\endcsname}\else\PosterMissing{#1}\fi}
 % A seed index is shown if any of its RANDOM, CENTROID or ENVELOPE runs has a
 % generated AUC (the paper's generated replication table has the same rows).
 \ifPosterResults
@@ -310,7 +319,7 @@
   \else\ifcsname PosterExpect@#1\endcsname\PosterMissing{#1}\else---\fi\fi
   \else\CRCell\fi}
 \newcommand*{\PosterCellM}[1]{\ifPosterResults
-  \ifcsname #1\endcsname$\csname #1\endcsname$%
+  \ifcsname #1\endcsname\PosterPP{#1}%
   \else\ifcsname PosterExpect@#1\endcsname\PosterMissing{#1}\else---\fi\fi
   \else\CRCell\fi}
 \newcommand*{\PosterCellMLate}[2]{\PosterCellM{#1}\ifPosterResults
@@ -446,25 +455,18 @@
 % ============================ LEFT COLUMN ============================
 \column{0.5}
 
-\block{Why target selection matters in OCT}{
+\block{OCT structure motivates target selection}{
   \raggedright
-  \begin{plist}
-    \item In retinal OCT the layered retina fills only a band of each B-scan;
-      much of the rest is near-uniform background. Near-uniform pixels can
-      still contribute informative latent context through attention.
-    \item I-JEPA learns by predicting the \emph{latent features} of hidden
-      target blocks from visible context, but places targets uniformly.
-  \end{plist}
+  \centering\PosterFigure{1}{110mm}{fig_oct_structure_poster.pdf}\par
+  \vspace{0.2em}\raggedright
+  \textbf{Question.} Can guiding I-JEPA targets toward retinal tissue improve
+  frozen glaucoma features?\par
   \vspace{0.3em}
-  \KeyBox{\textbf{Question.} Does steering I-JEPA targets toward retinal tissue
-    give a better frozen encoder for glaucoma detection, with the same
-    architecture and latent loss?}\par
-  \vspace{0.5em}
-  \AnswerBox{\textbf{Answer (original single runs).} Tissue-directed rectangles
+  \AnswerBox{\textbf{Original single runs.} Anatomy-guided rectangles
     scored higher than uniform I-JEPA masking at epoch 50:
-    $\DOracleRandomEpFifty$ AUC with the segmentation-free \ArmBest{},
-    $\DEnvelopeRandomEpFifty$ with \Arm{envelope}. More anatomical detail did not
-    add gains; \ArmBest{} and \Arm{envelope} also leave more context visible.\par
+    $\PosterPP{DOracleRandomEpFifty}$ pp with segmentation-free \ArmBest{},
+    $\PosterPP{DEnvelopeRandomEpFifty}$ pp with \Arm{envelope}. Target placement and
+    visible context change together.\par
     \vspace{0.3em}
     \ifPosterResults
       \ifPosterSynthetic\textbf{SYNTHETIC DRY RUN:} \fi\textbf{Registered
@@ -478,16 +480,16 @@
 
 \block{Five target-selection strategies}{
   \centering
-  \PosterFigure{1}{200mm}{fig_oct_strategies_v2_poster.pdf}\par
-  \vspace{0.3em}
+  \PosterFigure{1}{215mm}{fig_oct_proposals_poster.pdf}\par
+  \vspace{0.2em}
   \raggedright
-  \Arm{random} targets cover much background; guided rectangles cluster on the
-  tissue band; \Arm{anatomy-v2} targets are thin tissue-shaped components.
+  Proposals before batching; delivered masks can differ (right).
+  Near-uniform pixels can still provide informative latent context.
 }
 
 \block{Same I-JEPA, different sampler; volume-level probe}{
   \centering
-  \PosterFigure{1}{216mm}{fig_oct_jepa_volume_v2_poster.pdf}\par
+  \PosterFigure{1}{196mm}{fig_oct_jepa_volume_v2_poster.pdf}\par
   \vspace{0.3em}
   \raggedright
   Only the sampler changes: $(C,T)\sim\Pi_s(\,\cdot\mid A_s(x))$ with the guide
@@ -500,7 +502,7 @@
 
 % Neutral title (R1 P2): states the single-run observation, which the
 % registered replication below may or may not support.
-\block{Single runs: tissue-directed rectangles scored higher}{
+\block{Single runs: anatomy-guided rectangles scored higher}{
   \raggedright
   {\normalsize FairVision glaucoma OCT; frozen EMA encoder, mean-pooled
   features, linear probe; test $N=\Ntest$ volumes (\Npos{} glaucoma).
@@ -514,14 +516,14 @@
     \toprule
     & \multicolumn{2}{c}{epoch 50} & \multicolumn{2}{c}{epoch 75} & \multicolumn{2}{c}{epoch 100} \\
     \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-    strategy & AUC & $\Delta$ & AUC & $\Delta$ & AUC & $\Delta$ \\
+    strategy & AUC & $\Delta$ (pp) & AUC & $\Delta$ (pp) & AUC & $\Delta$ (pp) \\
     \midrule
     \Arm{random}   & \AUCRandomEpFifty & --- & \AUCRandomEpSeventyFive & --- & \AUCRandomEpHundred & --- \\
-    \Arm{envelope} & \AUCEnvelopeEpFifty & $\DEnvelopeRandomEpFifty$ & \AUCEnvelopeEpSeventyFive & $\DEnvelopeRandomEpSeventyFive$ & \AUCEnvelopeEpHundred & $\DEnvelopeRandomEpHundred$ \\
-    \ArmBest{}     & \AUCOracleEpFifty & $\DOracleRandomEpFifty$ & \AUCOracleEpSeventyFive & $\DOracleRandomEpSeventyFive$ & \AUCOracleEpHundred & $\DOracleRandomEpHundred$ \\
+    \Arm{envelope} & \AUCEnvelopeEpFifty & $\PosterPP{DEnvelopeRandomEpFifty}$ & \AUCEnvelopeEpSeventyFive & $\PosterPP{DEnvelopeRandomEpSeventyFive}$ & \AUCEnvelopeEpHundred & $\PosterPP{DEnvelopeRandomEpHundred}$ \\
+    \ArmBest{}     & \AUCOracleEpFifty & $\PosterPP{DOracleRandomEpFifty}$ & \AUCOracleEpSeventyFive & $\PosterPP{DOracleRandomEpSeventyFive}$ & \AUCOracleEpHundred & $\PosterPP{DOracleRandomEpHundred}$ \\
     \midrule
-    \Arm{anatomy-v2} & \TAUCAnatomyTwoEpFifty & \TAnatomyTwoRandomEpFifty & \TAUCAnatomyTwoEpSeventyFive & \TAnatomyTwoRandomEpSeventyFive & \TAUCAnatomyTwoEpHundred & \TAnatomyTwoRandomEpHundred \\
-    \Arm{cover}      & \TAUCCoverEpFifty & \TCoverRandomEpFifty & \TAUCCoverEpSeventyFive & \TCoverRandomEpSeventyFive & \TAUCCoverEpHundred & \TCoverRandomEpHundred \\
+    \Arm{anatomy-v2} & \TAUCAnatomyTwoEpFifty & \PosterPP{DAnatomyTwoRandomEpFifty} & \TAUCAnatomyTwoEpSeventyFive & \PosterPP{DAnatomyTwoRandomEpSeventyFive} & \TAUCAnatomyTwoEpHundred & --- \\
+    \Arm{cover}      & \TAUCCoverEpFifty & \PosterPP{DCoverRandomEpFifty} & \TAUCCoverEpSeventyFive & \PosterPP{DCoverRandomEpSeventyFive} & \TAUCCoverEpHundred & \PosterPP{DCoverRandomEpHundred} \\
     \bottomrule
   \end{tabular}\par}
   \vspace{0.2em}
@@ -532,15 +534,15 @@
   \vspace{0.4em}
   \KeyBox{%
     \textbf{At epoch 50 (registered endpoint):} \Arm{envelope}
-    $\DEnvelopeRandomEpFifty$ AUC (95\% CI $\DEnvelopeRandomEpFiftyCI$),
-    \ArmBest{} (no segmenter) $\DOracleRandomEpFifty$ (95\% CI
-    $\DOracleRandomEpFiftyCI$); positive at epochs 50, 75 and 100
-    (\Arm{envelope} $\DEnvelopeRandomEpHundred$ to $\DEnvelopeRandomEpFifty$,
-    \ArmBest{} $\DOracleRandomEpFifty$ to $\DOracleRandomEpSeventyFive$).\par
+    $\PosterPP{DEnvelopeRandomEpFifty}$ pp (95\% CI $\PosterPP{DEnvelopeRandomEpFiftyCI}$),
+    \ArmBest{} (no segmenter) $\PosterPP{DOracleRandomEpFifty}$ (95\% CI
+    $\PosterPP{DOracleRandomEpFiftyCI}$); positive at epochs 50, 75 and 100
+    (\Arm{envelope} $\PosterPP{DEnvelopeRandomEpHundred}$ to $\PosterPP{DEnvelopeRandomEpFifty}$,
+    \ArmBest{} $\PosterPP{DOracleRandomEpFifty}$ to $\PosterPP{DOracleRandomEpSeventyFive}$).\par
     \textbf{More anatomy did not add gains:} \Arm{anatomy-v2} minus
-    \Arm{envelope} $\DAnatomyTwoEnvelopeEpFifty$ at epoch 50; \Arm{cover}
-    minus \Arm{random} $\DCoverRandomEpFifty$ at epoch 50,
-    $\DCoverRandomEpHundred$ at epoch 100.}
+    \Arm{envelope} $\PosterPP{DAnatomyTwoEnvelopeEpFifty}$ at epoch 50; \Arm{cover}
+    minus \Arm{random} $\PosterPP{DCoverRandomEpFifty}$ at epoch 50,
+    $\PosterPP{DCoverRandomEpHundred}$ at epoch 100 (all differences in pp).}
 }
 
 \block{Which masks actually reach the model?}{
@@ -624,7 +626,7 @@
 \block{Takeaways}{
   \raggedright
   \begin{plist}
-    \item Tissue-directed rectangles improved frozen glaucoma probes in the
+    \item Anatomy-guided rectangles improved frozen glaucoma probes in the
       original runs, even with a segmentation-free intensity centroid.
     \item More anatomical specificity (tissue shapes, coverage) added no
       further gain.
@@ -669,7 +671,8 @@
 % cr_seed_spread_encoding_v2; the legend inside the figure names the fills).
 \newcommand{\PosterSpreadCaption}{{\small Error bars: s.d.\ over probe-head seeds.
   Letters: seed index (O: original). Open markers: descriptive runs (late or
-  incomplete). (b): guided minus \Arm{random}, same seed.\par}}
+  incomplete). Panel (b): guided minus \Arm{random}, same seed, on the original
+  AUC scale. Tables show differences in pp.\par}}
 \newcommand{\PosterPanelHead}[1]{{\large\bfseries #1}\enspace}
 % Outcome strip: generated labels and the matched-control description only,
 % then the registered label rule (pre-registration section 3 and amendment 1;
@@ -682,7 +685,7 @@
   \ifPosterSynthetic\textbf{SYNTHETIC DRY RUN.}\space\fi
   \textbf{Registered labels:} \ArmBest{} \emph{\RepLabelCentroid},
   \Arm{envelope} \emph{\RepLabelEnvelope}%
-  \ifdefined\RepRandomRange\space(\Arm{random} range \RepRandomRange)\fi.
+  \ifdefined\RepRandomRange\space(\Arm{random} range \PosterPP{RepRandomRange} pp)\fi.
   \textbf{Matched-budget control:} \PosterControlText.%
   \ifPosterAnyDescSeed\space$^{*}$Incomplete at the freeze\ifPosterLateOrig,
     $^{\dagger}$original re-probed after the freeze\fi: descriptive.%
@@ -710,7 +713,7 @@
     {\setlength{\tabcolsep}{0.3em}%
     \begin{tabular}{@{}lc*{\PosterNSeedCols}{c}cc@{}}
       \toprule
-      strategy & original \PosterSeedHeads & mean & mean $\Delta$ \\
+      strategy & original \PosterSeedHeads & mean & $\Delta$ (pp) \\
       \midrule
       \Arm{random}   & \PosterCellOrig{Random} \PosterSeedCellsRandom
         & \PosterCell{RepMeanAUCRandom} & --- \\
@@ -728,7 +731,7 @@
     {\setlength{\tabcolsep}{0.25em}%
     \begin{tabular}{@{}lc@{}}
       \toprule
-      contrast & $\Delta$ AUC \\
+      contrast & $\Delta$ (pp) \\
       \midrule
       \ArmBest{} $-$ \Arm{random-cb} (placement) & \PosterCellMLate{RepPlacementDelta}{PDesc} \\
       \Arm{random-cb} $-$ \Arm{random} (budget)    & \PosterCellMLate{RepBudgetShift}{BDesc} \\
@@ -739,7 +742,7 @@
   \end{minipage}}%
   \sbox{\PosterPoolBox}{\begin{minipage}[t]{0.15\PosterRowW}\vspace{0pt}\raggedright
     \PosterPanelHead{Pooling}Maxima within or across B-scans; mean
-    $\Delta$ vs \Arm{random} (descriptive; mean+max: paper).\par
+    $\Delta$ (pp) vs \Arm{random} (descriptive; mean+max: paper).\par
     \vspace{0.3em}
     {\setlength{\tabcolsep}{0.3em}%
     \begin{tabular}{@{}lcc@{}}
@@ -794,7 +797,7 @@
   guidance, medical expertise and retinal anatomy insights, discussions of
   prior work, and manuscript feedback.\par\vspace{0.25em}
   I-JEPA: Assran et al., CVPR 2023. MIRAGE: Morano et al., npj Digit.\ Med.\ 2025.
-  FairVision: Luo et al., 2024. OCT example in both OCT figures: Kulyabin et al.,
+  FairVision: Luo et al., 2024. All illustrative OCT examples: Kulyabin et al.,
   OCTDL, Fig.~1 (arXiv:2312.08255v3), adapted (cropped, downsampled, overlays
   added) under CC BY 4.0 (\texttt{creativecommons.org/licenses/by/4.0});
   illustration only. No FairVision images are shown.

@@ -10,8 +10,9 @@ low-intensity background; a separate clean schematic shows full rectangular targ
 proposals before batching. The delivered-mask audit remains distinct. Anatomy-guided
 terminology and AUC differences in percentage points (pp) match the revision; absolute
 AUCs and the plotted original-AUC-scale differences are explicitly distinguished.
-The existing author block is unchanged. The QR links to the public paper folder on `poster-ready`,
-with paper, code and registration links. Only seed index 1234 is complete on time;
+The existing author block is unchanged. The QR code and caption were removed on the
+author's October 25 request. Paper, code and registration remain linked from the
+public paper folder on `poster-ready`. Only seed index 1234 is complete on time;
 index 5678 is descriptive, both guided labels are incomplete, and the matched-control
 description is incomplete. No registered RANDOM range is shown. These are reporting
 outcomes, not missing poster content. Final manuscript release checks and author review
@@ -19,7 +20,7 @@ remain separate from the poster's build/print checks.
 
 The poster includes the author-approved acknowledgment to Prof. Kaveri A. Thakoor,
 and the distinction between uniform pixels and potentially informative latent context.
-The paper linked by the QR contains the full Future work subsection.
+The paper contains the full Future work subsection.
 
 The [print checks](PRINT_CHECKS.md) record the October 25 verification. Print
 `poster_print.pdf` at actual size (100%); the PNG is for preview only.
@@ -96,8 +97,8 @@ Do not type result numbers into `poster.tex`.
 - Replication block: the label rule (pre-registration section 3, amendment 1)
   in the RESULTS PENDING banner and, with results, at the end of the outcome
   strip; pooling panel notes the mean+max variant (paper).
-- Credits: "adapted (cropped, downsampled, overlays added)"; QR caption
-  "paper, code & pre-registration" (R1 M15).
+- Credits: "adapted (cropped, downsampled, overlays added)"; the QR and its caption
+  were removed at the author's request.
 
 ## Build
 

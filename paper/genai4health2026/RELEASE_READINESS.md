@@ -7,6 +7,10 @@ The [post-freeze runbook](../../PAPER_STATE.md) supplies the detailed commands.
 
 ## Current update — October 25, 2026
 
+The poster QR code and its caption were removed at the author's subsequent request.
+The full-width header and rebuilt print PDF pass all checks, with 26.30 design points
+bottom clearance. Earlier QR-verification notes below describe prior versions.
+
 The author's October 25 Downloads PDF contains tracked edits and supersedes the
 October 24 review copy for editorial intent. Its updated source has not been synced
 to this repository; reconcile live Overleaf sources before any upload/sync. The 21

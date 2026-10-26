@@ -13,14 +13,14 @@ the author-approved acknowledgment to Prof. Kaveri A. Thakoor is included.
 | Reporting | Only index 1234 complete on time; 5678 descriptive; both guided labels incomplete; control descriptive, no registered RANDOM range |
 | Figures | New native-resolution OCT structure image and clean pre-batching proposals registered separately; original framework and generated plot hashes checked |
 | Units | Differences/intervals in pp; absolute AUC unchanged; seed-spread plot explicitly retains the original AUC scale |
-| Text fit | No overfull/underfull boxes; 24.88 design points spare above the bottom margin |
+| Text fit | No overfull/underfull boxes; 26.30 design points spare above the bottom margin after QR removal |
 | Placeholders | None; no synthetic results |
 | Fonts | All 15 embedded |
-| QR | Decoded from the rendered PDF to the public paper folder on `poster-ready` |
+| QR | Removed with its caption at the author's October 25 request |
 | Visual review | Full poster and enlarged results/credits inspected; no clipping or overlap |
 
 The October 25 author PDF was reviewed with tracked edits visible; its clean export
-and source sync remain separate manuscript work. The QR landing page includes the
+and source sync remain separate manuscript work. The public paper folder includes the
 October 24 paper **review** PDF with real results,
 Future work and the acknowledgment. The historical v9 PDF is separately labeled.
 Final manuscript integration, receipt/release checks, funding disclosure and author

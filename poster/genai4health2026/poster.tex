@@ -31,7 +31,6 @@
 \usepackage{colortbl}
 \usepackage{tabularx}
 \usepackage{array}
-\usepackage{qrcode}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 
@@ -292,11 +291,6 @@
   (\texttt{yfeng26@engineering.upenn.edu})\quad
   $^{2}$Columbia University (\texttt{wl2822@columbia.edu})}
 
-% Paper/code link for the QR code. Leave empty for the placeholder; set it to
-% the final URL of the public paper with the code and the pre-registration
-% (no '#' or '%') to draw a real code.
-\providecommand*{\PosterURL}{https://github.com/yfeng0206/I-JEPA_3D_OCT/tree/poster-ready/paper/genai4health2026}
-
 % Result placeholders (registered replication; used until auto/cr_results.tex
 % is loaded, see the top of this file and README.md).
 \newcommand{\CRCell}{\colorbox{PendingFill}{\color{black}\strut\,TBD\,}%
@@ -422,7 +416,7 @@
 
 \makeatletter
 \settitle{%
-  \begin{minipage}[c]{0.81\linewidth}
+  \begin{minipage}[c]{\linewidth}
     \raggedright\color{titlefgcolor}
     {\fontsize{84}{100}\selectfont\bfseries \PosterTitle\par}
     \vspace{0.5em}
@@ -431,18 +425,6 @@
     {\Large \PosterAffiliations\par}
     \vspace{0.35em}
     {\Large GenAI for Health Workshop @ NeurIPS 2026, Sydney}
-  \end{minipage}\hfill
-  \begin{minipage}[c]{0.15\linewidth}
-    \centering
-    \ifx\PosterURL\empty
-      \fcolorbox{OIVermillion}{white}{\parbox[c][0.82\linewidth][c]{0.82\linewidth}{%
-        \centering\color{black}\bfseries QR CODE\\PENDING\\[0.4em]
-        \mdseries\normalsize paper, code \&\\pre-registration}}%
-      \typeout{POSTER-PLACEHOLDER: QR code}%
-    \else
-      \colorbox{white}{\qrcode[height=0.82\linewidth]{\PosterURL}}%
-    \fi\\[0.3em]
-    {\color{titlefgcolor}\normalsize paper, code \& pre-registration}
   \end{minipage}%
 }
 \makeatother

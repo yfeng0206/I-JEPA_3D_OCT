@@ -5,7 +5,8 @@
 **Where to Predict in Retinal OCT? Anatomy-Guided Target Selection for I-JEPA**
 — Yunchu Feng and Wai Tak Lau. Accepted poster, GenAI4Health @ NeurIPS 2026.
 
-This is the poster QR destination on the `poster-ready` branch.
+Public paper, poster and registration resources on the `poster-ready` branch.
+The poster QR code was removed at the author's request on October 25.
 
 | Resource | Status |
 |---|---|

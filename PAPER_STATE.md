@@ -2,6 +2,11 @@
 
 ## Current review checkpoint — October 25, 2026
 
+The author subsequently requested removing the poster QR code. Its code, caption
+and reserved title column were removed; the header now uses the full available width.
+The rebuilt poster passes all 53 display checks, with 26.30 design points bottom clearance.
+This supersedes the QR-presence checks recorded for earlier poster versions.
+
 The author supplied `Downloads\OCT_JEPA_GenAI4Health2026_Overleaf_REVIEW_latest.pdf`
 on October 25 at 16:46 PDT. It is a 21-page marked-up PDF with red additions and
 struck-out deletions: revised related work/guide descriptions, anatomy-guided terminology,

@@ -21,8 +21,12 @@ $env:OMP_NUM_THREADS = '1'
 $env:MKL_NUM_THREADS = '1'
 $env:OPENBLAS_NUM_THREADS = '1'
 $env:MPLBACKEND = 'Agg'
-.\.venv\Scripts\python.exe -m pytest tests -q --basetemp ._pytest_tmp
+.\.venv\Scripts\python.exe -m pytest tests -q
 ```
+
+Keep pytest's default temporary directory. On Windows, nesting `--basetemp`
+inside a deep checkout can exceed the release tooling's file-path limit when
+it creates transaction recovery files.
 
 The requirements file pins direct test dependencies; it is not a complete
 transitive lock or a production training environment. Torch and torchvision

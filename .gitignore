@@ -59,4 +59,4 @@ paper/dist/archive/
 paper/**/*.zip
 .pytest_cache/
 .venv/
-._pytest_tmp/
+._pytest_tmp*/

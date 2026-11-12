@@ -8,7 +8,6 @@ Compatible with PyTorch 1.13.1.
 """
 
 import math
-from functools import partial
 
 import numpy as np
 import torch

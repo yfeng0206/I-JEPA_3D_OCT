@@ -174,6 +174,14 @@ def say(text=""):
     print(scrub(str(text)))
 
 
+def display_path(path, root):
+    """Prefer a relative diagnostic path, allowing separate Windows drives."""
+    try:
+        return os.path.relpath(path, root)
+    except ValueError:
+        return os.path.abspath(path)
+
+
 def child_environment():
     env = dict(os.environ)
     for key in list(env):
@@ -612,7 +620,7 @@ def report(records, paper, clone, verbose_diffs):
                 rp = os.path.join(clone, r["remote"].replace("/", os.sep))
                 show_diff(rp if os.path.exists(rp) else None, r["local"],
                           r["remote"],
-                          os.path.relpath(r["local"], paper).replace("\\", "/"))
+                          display_path(r["local"], paper).replace("\\", "/"))
         if len(show) < len(rows):
             say("   ... and %d more" % (len(rows) - len(show)))
     return buckets
@@ -644,10 +652,10 @@ def do_pull(clone, rhashes, items, paper, state_path, project_id, yes):
         say("\nthese local files WOULD CHANGE (%d):" % len(changes))
         for rel, dst, cur in changes:
             say("   %s  ->  %s%s"
-                % (rel, os.path.relpath(dst, paper).replace("\\", "/"),
+                % (rel, display_path(dst, paper).replace("\\", "/"),
                    "   (new file)" if cur is None else ""))
             show_diff(os.path.join(clone, rel.replace("/", os.sep)), dst, rel,
-                      os.path.relpath(dst, paper).replace("\\", "/"))
+                      display_path(dst, paper).replace("\\", "/"))
         if not yes:
             say("\nrefusing to overwrite local work without confirmation.")
             say("re-run with --pull --yes to apply the %d change(s) above."
@@ -656,7 +664,7 @@ def do_pull(clone, rhashes, items, paper, state_path, project_id, yes):
         for rel, dst, _cur in changes:
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             shutil.copy2(os.path.join(clone, rel.replace("/", os.sep)), dst)
-            say("   wrote %s" % os.path.relpath(dst, paper).replace("\\", "/"))
+            say("   wrote %s" % display_path(dst, paper).replace("\\", "/"))
 
     files = {rel: {"remote_sha256": rhashes[rel], "local_sha256": rhashes[rel]}
              for rel in rhashes}
@@ -665,7 +673,7 @@ def do_pull(clone, rhashes, items, paper, state_path, project_id, yes):
             files[rel] = {"remote_sha256": None, "local_sha256": content_hash(src, rel)}
     save_state(state_path, project_id, "pull", files)
     say("\nrecorded agreement in %s (%d files)"
-        % (os.path.relpath(state_path, REPO), len(files)))
+        % (display_path(state_path, REPO), len(files)))
     return 0
 
 
@@ -731,7 +739,7 @@ def main(argv=None):
     state, had_state = load_state(state_path)
     if had_state:
         say("sync state: %s, %d files, last %s at %s"
-            % (os.path.relpath(state_path, REPO), len(state.get("files", {})),
+            % (display_path(state_path, REPO), len(state.get("files", {})),
                state.get("last_action", "?"), state.get("updated_utc", "?")))
         if a.project_id and state.get("project") not in (
                 None, project_fingerprint(a.project_id)):
@@ -832,7 +840,7 @@ def main(argv=None):
                      for r in records}
             save_state(state_path, a.project_id, "verify", files)
             say("recorded agreement in %s (%d files)"
-                % (os.path.relpath(state_path, REPO), len(files)))
+                % (display_path(state_path, REPO), len(files)))
             return 0
 
         say("\npublishing only the frozen validated source tree and checked Word attachment")
@@ -883,7 +891,7 @@ def main(argv=None):
         files = {**state.get("files", {}), **files}
         save_state(state_path, a.project_id, "push", files)
         say("recorded agreement in %s (%d files)"
-            % (os.path.relpath(state_path, REPO), len(files)))
+            % (display_path(state_path, REPO), len(files)))
         return 0
     except (OSError, ValueError, KeyError) as exc:
         say("REFUSING TO PUSH: " + str(exc))

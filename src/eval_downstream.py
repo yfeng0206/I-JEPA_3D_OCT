@@ -32,7 +32,6 @@ import warnings
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from contextlib import nullcontext
 from torch.cuda.amp import GradScaler, autocast
 
@@ -924,6 +923,12 @@ def evaluate_slice(encode_fn, head, loader, criterion, device):
 
 def run_slice_downstream(config, device):
     """Downstream evaluation using a slice-level I-JEPA pretrained encoder."""
+    if FrozenFeatureExtractor is None:
+        raise RuntimeError(
+            "The slice-level ConvNeXt feature extractor is archived under "
+            "archive/slice_level/feature_extractor.py. Use patch mode, or restore "
+            "the archived slice-level dependencies explicitly."
+        )
     data_cfg = config['data']
     model_cfg = config['model']
     train_cfg = config['training']

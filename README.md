@@ -10,9 +10,11 @@ investigation is recorded in `autopilot\investigations\delivered_task\BOARD.md`,
 with the baseline audit in `VERSION_BOARD.md`.
 
 The reviewed engineering/workshop release is documented in
-`autopilot\investigations\delivered_task\RESULTS.md`. It is on the separate
-`fix/jepa-delivered-task-audit` branch; the corrected COVER configurations remain
-untrained and have no new AUC result. The final source ZIP and editable Word
+`autopilot\investigations\delivered_task\RESULTS.md` and was merged into `main`
+in [PR #4](https://github.com/yfeng0206/I-JEPA_3D_OCT/pull/4). Its corrected COVER
+configurations have no trained-model AUC in that release. The separate local
+`full_blocks_v2` campaign is not imported by this repository cleanup; its results
+must not be attributed to the earlier release. The final source ZIP and editable Word
 copy are version-matched, rather than inferred current from a timestamp.
 
 The current paper compares **frozen MeanPool probes** after different masking
@@ -107,6 +109,11 @@ Each `.pth.tar` is a full training state (`encoder`, `target_encoder`, `predicto
 Details and backlog: [`docs/research_log.md`](docs/research_log.md).
 
 ## Documentation
+
+For an isolated CPU test environment and the scope of automated checks, see
+[`docs/testing.md`](docs/testing.md). Historical experiment artifacts under
+`archive/`, `autopilot/`, and `results/` are retained as provenance; an unused
+runtime import does not make those records disposable.
 
 | | |
 |---|---|

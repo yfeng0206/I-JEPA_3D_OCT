@@ -107,14 +107,22 @@ def test_snapshot_keeps_net_rank_change_distinct_from_disagreement_count():
     assert data["all_pair_order_disagreements"] != abs(data["net_concordance_pair_equivalents"])
 
 
-def test_revised_current_candidate_has_no_unresolved_text_quantities():
+def test_historical_literal_candidate_does_not_approve_changed_manuscript(historical_numeric_inputs):
     from autopilot import p15_verify_numbers as numbers
-    path = assets.REPO / "autopilot" / "investigations" / "delivered_task" / "evidence" / "literal_review_candidate_current.json"
+    paper, receipts = historical_numeric_inputs
+    path = receipts["literal_review_candidate_current.json"]
     stats = Path(numbers.INV).parent
-    if not path.exists() or not stats.is_dir():
+    if not stats.is_dir():
         pytest.skip("local reviewed source/evidence not installed")
-    report = numbers.audit(assets.PAPER, stats, path)
+    # This immutable candidate belongs to b4e5f35e4d7df16a6dd5c48f108560ecffb1a188,
+    # before the pinned b941814 manuscript rewrite. Its filename is not an
+    # approval of later prose. Matched positive context-review coverage lives in
+    # test_numeric_bindings.test_context_bound_protocol_review_and_mutation.
+    approved = path.read_bytes()
+    report = numbers.audit(paper, stats, path)
     blockers = [item for item in report["items"] if item["kind"] in ("literal", "macro")
                 and item["status"] in ("unresolved", "mismatch", "undefined")]
-    assert not blockers, [(item["id"], item["value"]) for item in blockers]
-    assert not report["errors"]
+    assert not report["ALL_PASS"]
+    assert blockers
+    assert any("stale or inapplicable literal review" in error for error in report["errors"])
+    assert path.read_bytes() == approved

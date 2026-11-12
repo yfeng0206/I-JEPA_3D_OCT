@@ -1,5 +1,8 @@
+import io
 import json
 from pathlib import Path
+import subprocess
+import zipfile
 
 import pytest
 
@@ -474,16 +477,41 @@ def test_new_delivered_diagnostic_macros_use_typed_source_bindings():
     assert rows and all(r["status"] == "verified" and r["source_hashes"] for r in rows)
 
 
-def test_selected_maps_only_review_is_scoped_and_source_pinned():
-    review_file = assets.REPO / "autopilot" / "investigations" / "delivered_task" / "evidence" / "delivered_illustration_review.json"
-    if not review_file.exists():
-        pytest.skip("selected-case review not installed")
-    evidence = binding.Evidence(assets.PAPER, assets.REPO)
-    reviews = binding.read_reviews(assets.PAPER, evidence, review_file)
+def test_selected_maps_only_review_is_scoped_and_source_pinned(tmp_path, monkeypatch):
+    # The receipt was introduced with this paper revision. Later manuscript
+    # edits removed its figure, so it must not approve the moving current paper.
+    # Restore the original Windows checkout, including its CRLF source hashes,
+    # without rewriting the review or using mutable working-tree source code.
+    commit = "b4e5f35e4d7df16a6dd5c48f108560ecffb1a188"
+    paper_relative = "paper/genai4health2026"
+    review_relative = "autopilot/investigations/delivered_task/evidence/delivered_illustration_review.json"
+    review_bytes = subprocess.check_output(
+        ["git", "show", f"{commit}:{review_relative}"], cwd=assets.REPO)
+    receipt = json.loads(review_bytes)
+    paper_files = subprocess.check_output(
+        ["git", "ls-tree", "-r", "--name-only", commit, "--", paper_relative],
+        cwd=assets.REPO, text=True).splitlines()
+    paths = [path for path in paper_files if path.endswith(".tex")]
+    paths += [review_relative, paper_relative + "/" + receipt["figures"][0]["path"]]
+    assert all(spec["root"] == "repo" for spec in receipt["sources"].values())
+    paths += [spec["path"] for spec in receipt["sources"].values()]
+    archive = subprocess.check_output(
+        ["git", "-c", "core.autocrlf=true", "-c", "core.eol=crlf",
+         "archive", "--format=zip", commit, "--", *paths], cwd=assets.REPO)
+    with zipfile.ZipFile(io.BytesIO(archive)) as bundle:
+        bundle.extractall(tmp_path)
+    paper_root = tmp_path / paper_relative
+    review_file = tmp_path / review_relative
+    assert review_file.read_bytes().replace(b"\r\n", b"\n") == review_bytes
+    for spec in receipt["sources"].values():
+        assert assets.sha256(tmp_path / spec["path"]) == spec["sha256"]
+    monkeypatch.setattr(assets, "REPO", tmp_path)
+    evidence = binding.Evidence(paper_root, tmp_path)
+    reviews = binding.read_reviews(paper_root, evidence, review_file)
     entry = reviews["figures"][0]
-    text, _ = assets.source_tree(assets.PAPER)
+    text, _ = assets.source_tree(paper_root)
     caption = binding.figure_context(text, entry["path"])
-    item = {"path": entry["path"], "sha256": assets.sha256(assets.safe_path(assets.PAPER, entry["path"]))}
+    item = {"path": entry["path"], "sha256": assets.sha256(assets.safe_path(paper_root, entry["path"]))}
     result = binding.figure_receipt(item, entry, evidence, caption)
     assert result["status"] == "reviewed_source_illustration"
     assert not result["mathematically_verified"]

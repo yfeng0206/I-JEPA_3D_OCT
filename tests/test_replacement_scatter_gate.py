@@ -110,14 +110,15 @@ def test_changed_source_pin_fails(scatter):
     assert "hash mismatch" in row["action"]
 
 
-def test_complete_numeric_candidate_passes_under_staged_root_rename(tmp_path):
+def test_staged_root_rename_cannot_revive_historical_numeric_approval(tmp_path, historical_numeric_inputs):
+    pinned_paper, receipts = historical_numeric_inputs
     stats = Path(numbers.INV).parent
-    candidate = assets.REPO / "autopilot" / "investigations" / "delivered_task" / "evidence" / "paper_release_numeric_candidate.json"
-    if not candidate.exists() or not (stats / "p1c_stats.json").exists():
+    candidate = receipts["paper_release_numeric_candidate.json"]
+    if not (stats / "p1c_stats.json").exists():
         pytest.skip("complete scientific release candidate not installed")
     paper = tmp_path / "paper"
-    for relative in assets.input_hashes(assets.PAPER):
-        source = assets.safe_path(assets.PAPER, relative)
+    for relative in assets.input_hashes(pinned_paper):
+        source = assets.safe_path(pinned_paper, relative)
         target = assets.safe_path(paper, relative)
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
@@ -129,8 +130,15 @@ def test_complete_numeric_candidate_passes_under_staged_root_rename(tmp_path):
     (paper / "main_submission.tex").rename(paper / "main.tex")
     private_review = tmp_path / "immutable_numeric_review.json"
     shutil.copyfile(candidate, private_review)
+    # This receipt belongs to b4e5f35e4d7df16a6dd5c48f108560ecffb1a188, not the
+    # rewritten manuscript above. A root alias preserves logical identities;
+    # it must never make stale approval applicable. The matched synthetic
+    # positive case is test_staged_main_alias_preserves_bindings_receipts_and_physical_hashes
+    # in test_numeric_bindings.py, including immutable receipt/hash checks.
     report = numbers.audit(paper, stats, private_review)
-    assert report["ALL_PASS"], (report["errors"], report["unresolved_ids"])
+    assert not report["ALL_PASS"]
+    assert report["unresolved_ids"]
+    assert any("stale or inapplicable literal review" in error for error in report["errors"])
     assert report["source_aliases"] == {"main.tex": "main_submission.tex"}
     assert "main.tex" in report["input_hashes"] and "main_submission.tex" not in report["input_hashes"]
     assert private_review.read_bytes() == candidate.read_bytes()

@@ -3,13 +3,13 @@ Model initialization, optimizer setup, and checkpoint management for I-JEPA.
 
 Provides factory functions for both patch-level and slice-level I-JEPA
 encoders/predictors, as well as the frozen ConvNeXt feature extractor
-used in the slice-level approach.  Delegates to the model definitions in
-``src.models.vision_transformer`` and ``src.models.feature_extractor``.
+used in the archived slice-level approach. Active model definitions live in
+``src.models.vision_transformer``; the optional ConvNeXt extractor must be
+explicitly restored from ``archive/slice_level/feature_extractor.py``.
 
 Compatible with PyTorch 1.13.1 and Python 3.8.
 """
 
-import copy
 import hashlib
 import os
 import random
@@ -17,7 +17,6 @@ import warnings
 
 import numpy as np
 import torch
-import torch.nn as nn
 
 from src.models.vision_transformer import (
     VisionTransformer,
@@ -143,6 +142,12 @@ def init_feature_extractor(device, checkpoint_path=None, freeze=True):
     Returns:
         FrozenFeatureExtractor on *device*.
     """
+    if FrozenFeatureExtractor is None:
+        raise RuntimeError(
+            "The slice-level ConvNeXt feature extractor is archived under "
+            "archive/slice_level/feature_extractor.py. Use the active patch-level "
+            "pipeline, or restore the archived slice-level dependencies explicitly."
+        )
     fe = FrozenFeatureExtractor(checkpoint_path=checkpoint_path, freeze=freeze)
     fe = fe.to(device)
     return fe

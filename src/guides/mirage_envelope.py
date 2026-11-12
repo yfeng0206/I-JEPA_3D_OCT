@@ -35,7 +35,7 @@ Design constraints (see docs/experiments/curriculum_masking.md):
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
-from typing import Dict, Optional, Tuple
+from typing import Dict, Tuple
 
 import numpy as np
 

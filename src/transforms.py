@@ -8,7 +8,7 @@ paper.
 Compatible with PyTorch 1.13.1 / Python 3.8.
 """
 
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 import torchvision.transforms as T
 import torchvision.transforms.functional as TF

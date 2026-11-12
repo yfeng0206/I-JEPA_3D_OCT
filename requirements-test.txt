@@ -1,0 +1,14 @@
+# Direct dependencies for the Python 3.11 CPU test suite, not a training recipe.
+# Install torch==2.7.1 and torchvision==0.22.1 from the CPU wheel index first:
+# python -m pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cpu
+# These pins match the versions used for local validation, except CPU torch wheels.
+jsonschema==4.26.0
+matplotlib==3.11.0
+numpy==2.4.4
+Pillow==12.2.0
+PyMuPDF==1.26.7
+pypandoc_binary==1.17
+pytest==9.1.1
+PyYAML==6.0.3
+scikit-learn==1.9.0
+scipy==1.17.1

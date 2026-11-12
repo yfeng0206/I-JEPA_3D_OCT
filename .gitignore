@@ -58,3 +58,5 @@ paper/dist/archive/
 # is unaffected.
 paper/**/*.zip
 .pytest_cache/
+.venv/
+._pytest_tmp/

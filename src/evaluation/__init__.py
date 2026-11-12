@@ -1,8 +1,7 @@
-"""Reusable frozen-representation evaluation helpers."""
+"""Evaluation package for the active OCT pipeline.
 
-from .imagenet_frozen import (  # noqa: F401
-    classification_metrics,
-    deterministic_class_split,
-    fit_linear_probe,
-    weighted_knn_predict,
-)
+The experimental ImageNet frozen-representation helpers were archived under
+``archive/semantic_teacher_phase0/src/evaluation``.  They are not part of this
+package; importing it must not depend on the archived experiment tree.
+The active OCT evaluation entry point is ``src.eval_downstream``.
+"""

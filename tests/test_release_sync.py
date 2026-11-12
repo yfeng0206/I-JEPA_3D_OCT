@@ -40,7 +40,13 @@ def test_manifest_root_input_scan_preserves_conflict_detection(tmp_path, remote_
     assert sync.classify([(str(local), rel)], hashes, state)[0]["status"] == expected
 
 
-def test_manifest_dry_run_discovers_additional_root_inputs(tmp_path, monkeypatch):
+@pytest.mark.parametrize("cross_drive", [False, True])
+def test_manifest_dry_run_discovers_additional_root_inputs(tmp_path, monkeypatch, capsys, cross_drive):
+    if cross_drive:
+        if sync.os.name != "nt":
+            pytest.skip("different-drive paths are a Windows-specific case")
+        other_drive = "Z:" if tmp_path.drive.upper() != "Z:" else "Y:"
+        monkeypatch.setattr(sync, "REPO", other_drive + "\\synthetic-checkout")
     paper = tmp_path / "paper"
     paper.mkdir()
     local = paper / "compact_protocol.tex"
@@ -50,13 +56,15 @@ def test_manifest_dry_run_discovers_additional_root_inputs(tmp_path, monkeypatch
     state = {"version": 1, "files": {
         rel: {"local_sha256": baseline, "remote_sha256": baseline},
     }}
+    state_path = tmp_path / "state.json"
+    state_path.write_text(json.dumps(state))
+    original_state = state_path.read_bytes()
     work = tmp_path / "work"
     work.mkdir()
     monkeypatch.setenv("OVERLEAF_TOKEN", "SYNTHETIC_SCAN_TEST_ONLY")
     monkeypatch.setattr(sync, "_SECRETS", [])
     monkeypatch.setattr(sync.assets, "unique_work", lambda *a, **k: work)
     monkeypatch.setattr(sync, "validate", lambda *a: ([(str(local), rel)], {"ALL_PASS": True}))
-    monkeypatch.setattr(sync, "load_state", lambda *a: (state, True))
 
     def fake_run(command, **kwargs):
         if "clone" in command:
@@ -69,9 +77,14 @@ def test_manifest_dry_run_discovers_additional_root_inputs(tmp_path, monkeypatch
     monkeypatch.setattr(sync, "run", fake_run)
     assert sync.main([
         "--dry-run", "--project-id", "syntheticproject",
-        "--paper-dir", str(paper), "--state", str(tmp_path / "state.json"),
+        "--paper-dir", str(paper), "--state", str(state_path),
         "--release-manifest", str(tmp_path / "manifest.json"),
     ]) == 0
+    assert state_path.read_bytes() == original_state
+    output = capsys.readouterr().out
+    assert "already identical" in output
+    if cross_drive:
+        assert "sync state: " + str(state_path) in output
 
 
 def test_remote_tip_must_be_fresh(monkeypatch):
